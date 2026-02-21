@@ -1,0 +1,3108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ── SEO ── -->
+<title>What's On Wellington — Family Events, Cafés & Walks</title>
+<meta name="description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington, Hutt Valley, Kāpiti and Wairarapa. Updated every weekend by a local family.">
+<meta name="keywords" content="Wellington family events, Wellington kids activities, Wellington cafes kids, Wellington walks children, Hutt Valley family, Kāpiti family events">
+<meta name="author" content="What's On Wellington">
+<link rel="canonical" href="https://irishchris1-lab.github.io/Wellington-events/">
+
+<!-- ── Open Graph (Facebook, WhatsApp) ── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://irishchris1-lab.github.io/Wellington-events/">
+<meta property="og:title" content="What's On Wellington — Family Events, Cafés & Walks">
+<meta property="og:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend. Updated weekly by a local family.">
+<meta property="og:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
+<meta property="og:locale" content="en_NZ">
+<meta property="og:site_name" content="What's On Wellington">
+
+<!-- ── Twitter / X card ── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What's On Wellington — Family Events, Cafés & Walks">
+<meta name="twitter:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend.">
+<meta name="twitter:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
+
+<!-- ── PWA & theme ── -->
+<meta name="theme-color" content="#0B5563">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="What's On Welly">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal:  #0B5563;
+    --teal2: #0d7a8a;
+    --jade:  #1A8A6E;
+    --gold:  #C8901A;
+    --ember: #C4522A;
+    --cream: #F7F2EB;
+    --muted: #6a7a7a;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: #1a2a2a; font-family: 'DM Sans', sans-serif; font-weight: 300; }
+
+  /* ── HAMBURGER BUTTON ── */
+  .hamburger-btn {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px; padding: 10px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .hamburger-btn:hover { background: rgba(255,255,255,0.25); }
+  .hamburger-btn span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; }
+
+  /* ── DROPDOWN OVERLAY ── */
+  .dropdown-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    z-index: 999; backdrop-filter: blur(2px);
+  }
+  .dropdown-overlay.open { display: block; }
+
+  /* ── DROPDOWN PANEL ── */
+  .dropdown-panel {
+    position: fixed; top: 0; right: -340px; width: 320px; max-width: 90vw;
+    height: 100%; background: #fff; z-index: 1000;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.18);
+    transition: right 0.3s ease; overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .dropdown-panel.open { right: 0; }
+  .dropdown-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 20px 16px; border-bottom: 1px solid #f0eeea;
+    background: linear-gradient(135deg, var(--teal), var(--jade));
+  }
+  .dropdown-title { color: #fff; font-weight: 700; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .dropdown-close {
+    background: rgba(255,255,255,0.2); border: none; color: #fff;
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .dropdown-close:hover { background: rgba(255,255,255,0.35); }
+  .dropdown-nav { padding: 12px 0; border-bottom: 1px solid #f0eeea; }
+  .dropdown-nav-btn {
+    width: 100%; background: none; border: none; text-align: left;
+    padding: 14px 22px; font-family: 'DM Sans', sans-serif; font-size: 15px;
+    font-weight: 500; color: #2a3a3a; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .dropdown-nav-btn:hover { background: #f0f7f7; color: var(--teal); }
+  .dropdown-nav-btn span { font-size: 20px; }
+
+  /* ── DROPDOWN ABOUT ── */
+  .dropdown-about { padding: 24px 22px; flex: 1; }
+  .dropdown-about-title {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700;
+    color: var(--teal); margin-bottom: 16px; line-height: 1.2;
+  }
+  .dropdown-about p {
+    font-size: 13.5px; color: #4a5a5a; line-height: 1.75; margin-bottom: 14px;
+  }
+  .dropdown-about strong { color: #1a2a2a; }
+  .dropdown-made-with {
+    margin-top: 24px; font-size: 12px; color: #9aacac;
+    text-align: center; letter-spacing: 0.05em;
+  }
+  .dropdown-contact {
+    margin-top: 16px; font-size: 12.5px; color: #6a7a7a;
+    line-height: 1.7; text-align: center; padding: 14px 4px;
+    border-top: 1px solid #f0eeea;
+  }
+  .dropdown-contact a { color: var(--teal); font-weight: 600; text-decoration: none; }
+  .dropdown-contact a:hover { text-decoration: underline; }
+  .main-nav { background: #fff; border-bottom: 2px solid rgba(11,85,99,0.1); }
+  .main-nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  .main-nav-inner::-webkit-scrollbar { display: none; }
+  .main-nav-btn {
+    background: none; border: none; border-bottom: 3px solid transparent;
+    color: #6a7a7a; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; padding: 16px 24px;
+    cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px;
+    transition: color 0.2s, border-color 0.2s; margin-bottom: -2px;
+  }
+  .main-nav-btn:hover { color: var(--teal); }
+  .main-nav-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .main-nav-btn .nav-icon { font-size: 16px; }
+
+  /* ── SECTIONS ── */
+  .app-section { display: none; }
+  .app-section.active { display: block; }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal2) 55%, var(--jade) 100%);
+    color: #fff; position: relative; overflow: hidden;
+  }
+  .header-blob {
+    position: absolute; top: -80px; right: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: rgba(200,144,26,0.12); pointer-events: none;
+  }
+  .header-blob2 {
+    position: absolute; bottom: -60px; left: 20%;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.04); pointer-events: none;
+  }
+  .header-inner {
+    max-width: 1080px; margin: 0 auto;
+    padding: 48px 28px 62px; position: relative;
+  }
+  .eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255,255,255,0.45);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content:''; width:22px; height:1px; background:var(--gold); }
+  h1 { font-family: 'Fraunces', serif; font-size: clamp(42px,7vw,80px); font-weight: 900; line-height: 0.92; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .header-sub { margin-top: 16px; font-size: 13.5px; color: rgba(255,255,255,0.55); line-height: 1.7; max-width: 400px; }
+  .last-updated {
+    margin-top: 18px; display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 4px; padding: 7px 13px; font-size: 12px; color: rgba(255,255,255,0.7);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #4fc58f; animation: pulse 2.5s infinite; }
+  .header-wave { display: block; width: 100%; height: 44px; }
+
+  /* ── WEEKEND TABS ── */
+  .tabs-bar { background: #0A4750; border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
+  .tabs-inner { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none; border: none; border-bottom: 3px solid transparent;
+    color: rgba(255,255,255,0.4); font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 15px 20px; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0; transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: rgba(255,255,255,0.75); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4fc58f; display: inline-block; margin-right: 7px; vertical-align: middle; animation: pulse 2.5s infinite; }
+
+  /* ── REGION FILTERS ── */
+  .filter-bar { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .filter-inner { max-width: 1080px; margin: 0 auto; padding: 12px 28px; display: flex; gap: 8px; align-items: center; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
+  .filter-inner::-webkit-scrollbar { display: none; }
+  .filter-label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #aaa; margin-right: 4px; flex-shrink: 0; }
+  .filter-btn {
+    background: none; border: 1.5px solid rgba(11,85,99,0.2); color: var(--teal);
+    font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 600;
+    padding: 6px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap;
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .filter-btn:hover { border-color: var(--teal); background: rgba(11,85,99,0.05); }
+  .filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .filter-btn .region-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  main { max-width: 1080px; margin: 0 auto; padding: 36px 28px 80px; }
+  .weekend-panel { display: none; }
+  .weekend-panel.active { display: block; animation: fadeUp 0.4s ease; }
+
+  /* ── BANNER ── */
+  .banner {
+    background: linear-gradient(135deg, var(--teal), var(--jade));
+    color: #fff; border-radius: 4px; padding: 20px 24px;
+    margin-bottom: 30px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .banner-icon { font-size: 28px; flex-shrink: 0; }
+  .banner-text h3 { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 700; margin-bottom: 3px; }
+  .banner-text p { font-size: 13px; opacity: 0.75; line-height: 1.5; }
+  .banner-sponsored {
+    background: linear-gradient(135deg, #1a1028, #2d1b4e, #4a2040);
+    color: #fff; border-radius: 4px; padding: 14px 18px;
+    margin-bottom: 30px; display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap; position: relative; border: 1px solid rgba(200,144,26,0.3);
+  }
+  .banner-sponsored-badge {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); background: rgba(200,144,26,0.15); padding: 2px 7px;
+    border-radius: 20px; border: 1px solid rgba(200,144,26,0.35);
+  }
+  .banner-sponsored-logo {
+    height: 32px; width: auto; object-fit: contain;
+    flex-shrink: 0; opacity: 0.92;
+  }
+  .banner-sponsored-logo-fallback {
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    background: rgba(200,144,26,0.2); border: 1px solid rgba(200,144,26,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .banner-sponsored-text h3 { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .banner-sponsored-text p { font-size: 11.5px; color: rgba(255,255,255,0.65); line-height: 1.5; margin-bottom: 8px; }
+  .banner-sponsored-link {
+    display: inline-block; background: var(--gold); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 5px 12px; border-radius: 20px;
+    text-decoration: none; letter-spacing: 0.04em; transition: background 0.2s;
+  }
+  .banner-sponsored-link:hover { background: #a87010; }
+
+  /* ── DAY SECTION ── */
+  .day-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .day-label .pip { width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0; }
+  .day-label .line { flex: 1; height: 1px; }
+  .day-sat { color: var(--teal); }
+  .day-sat .pip { background: var(--gold); }
+  .day-sat .line { background: linear-gradient(90deg, rgba(11,85,99,0.2), transparent); }
+  .day-sun { color: var(--jade); }
+  .day-sun .pip { background: var(--jade); }
+  .day-sun .line { background: linear-gradient(90deg, rgba(26,138,110,0.2), transparent); }
+
+  /* ── EVENTS GRID ── */
+  .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; margin-bottom: 36px; }
+
+  /* ── EVENT CARD ── */
+  .card {
+    background: #fff; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.07); display: flex; flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(11,85,99,0.12); }
+  .card.card-featured { background: #fffbf2; border: 2px solid var(--gold); }
+  .card-strip { height: 4px; flex-shrink: 0; }
+  .card-body { padding: 16px 18px 12px; flex: 1; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+  .card-cat { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 5px; }
+  .card-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700; color: var(--teal); line-height: 1.25; }
+  .card-badges { display: flex; flex-wrap: wrap; gap: 4px; flex-shrink: 0; justify-content: flex-end; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .badge-free     { background: #e1f5e9; color: #1a6b3a; }
+  .badge-ticketed { background: #fff3e0; color: #7a4400; }
+  .badge-family   { background: #e8f0fb; color: #2550a0; }
+  .badge-hot      { background: #ffe8e3; color: #b02a0a; }
+  .badge-sponsored { background: #fff3d0; color: #8a5c00; }
+  .card-meta { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+  .meta-row { display: flex; gap: 7px; font-size: 12.5px; color: #4a5a5a; line-height: 1.4; }
+  .meta-icon { opacity: 0.5; flex-shrink: 0; }
+
+  /* ── STAR RATINGS ── */
+  .venue-rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .stars { color: #f5a623; font-size: 13px; letter-spacing: 1px; }
+  .rating-score { font-size: 12px; font-weight: 700; color: #333; }
+  .rating-link { font-size: 10.5px; color: var(--teal); text-decoration: none; font-weight: 600; }
+  .rating-link:hover { color: var(--jade); text-decoration: underline; }
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.65; border-top: 1px solid #f0eeea; padding-top: 10px; }
+  .card-footer { padding: 8px 18px 10px; border-top: 1px solid #f5f3ef; display: flex; justify-content: flex-end; }
+  .card-link { font-size: 11px; font-weight: 600; color: var(--teal); text-decoration: none; letter-spacing: 0.04em; transition: color 0.15s; }
+  .card-link:hover { color: var(--jade); }
+
+  /* Strip colours per category */
+  .strip-festival { background: linear-gradient(90deg, #C8901A, #e0ad40); }
+  .strip-outdoor  { background: linear-gradient(90deg, #1A8A6E, #2dc49a); }
+  .strip-culture  { background: linear-gradient(90deg, #5B4A8A, #8b70d4); }
+  .strip-sport    { background: linear-gradient(90deg, #2478A8, #44a8e0); }
+  .strip-food     { background: linear-gradient(90deg, #C4522A, #e87a55); }
+  .strip-market   { background: linear-gradient(90deg, #0B5563, #148090); }
+  .strip-kids     { background: linear-gradient(90deg, #C4348A, #e870b8); }
+  .strip-music    { background: linear-gradient(90deg, #8A1A1A, #c44040); }
+  .strip-other    { background: linear-gradient(90deg, #888,    #bbb);    }
+
+  .card.hidden, .venue-card.hidden { display: none; }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 48px 20px; color: #bbb; }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty p { font-size: 14px; }
+
+  /* ── VENUE & WALK CARDS ── */
+  .section-intro { max-width: 1080px; margin: 0 auto; padding: 36px 28px 0; }
+  .section-intro h2 { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--teal); margin-bottom: 8px; }
+  .section-intro p { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 560px; }
+
+  .venue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+  .venue-card {
+    background: #fff; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.07); display: flex; flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .venue-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(11,85,99,0.12); }
+  .venue-card-strip {
+    height: 6px; flex-shrink: 0;
+  }
+  .venue-card-body { padding: 18px 20px 14px; flex: 1; }
+  .venue-tag { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
+  .venue-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--teal); line-height: 1.25; margin-bottom: 10px; }
+  .venue-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+  .venue-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #f0f5f5; color: var(--teal); }
+  .venue-pill.highlight { background: #e1f5e9; color: #1a6b3a; }
+  .venue-desc { font-size: 12px; color: var(--muted); line-height: 1.65; border-top: 1px solid #f0eeea; padding-top: 10px; }
+  .venue-footer { padding: 9px 20px 11px; border-top: 1px solid #f5f3ef; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .venue-location { font-size: 11px; color: #9aacac; text-decoration: none; }
+  .venue-location:hover { color: var(--teal); }
+  .venue-links { display: flex; gap: 12px; }
+  .venue-link { font-size: 11px; font-weight: 600; color: var(--teal); text-decoration: none; }
+  .venue-link:hover { color: var(--jade); }
+  .venue-link.maps { color: var(--ember); }
+  .venue-link.maps:hover { color: #a03010; }
+
+  /* walk card extras */
+  .walk-duration { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--jade); background: #eaf7f3; padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
+
+  /* ── WALK DURATION FILTER ── */
+  .duration-filter { padding: 10px 28px 0; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .duration-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .duration-btn {
+    background: none; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 20px;
+    padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px;
+    font-weight: 600; color: var(--muted); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .duration-btn:hover { border-color: var(--jade); color: var(--jade); }
+  .duration-btn.active { background: var(--jade); border-color: var(--jade); color: #fff; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--teal); color: rgba(255,255,255,0.38); text-align: center; padding: 20px 28px; font-size: 12px; line-height: 1.9; }
+  footer a { color: rgba(255,255,255,0.55); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  @media (max-width: 600px) {
+    .header-inner { padding: 36px 20px 50px; }
+    main { padding: 28px 20px 64px; }
+    .tabs-inner { padding: 0 16px; }
+  }
+
+  /* ── AUTH BUTTON (header) ── */
+  .header-auth-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .auth-btn {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px; padding: 8px 14px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+    color: #fff; display: flex; align-items: center; gap: 7px;
+    transition: background 0.2s; white-space: nowrap;
+  }
+  .auth-btn:hover { background: rgba(255,255,255,0.25); }
+  .auth-avatar {
+    width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4);
+    cursor: pointer; transition: border-color 0.2s; object-fit: cover;
+  }
+  .auth-avatar:hover { border-color: var(--gold); }
+  .auth-avatar-placeholder {
+    width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; transition: border-color 0.2s;
+  }
+  .auth-avatar-placeholder:hover { border-color: var(--gold); }
+
+  /* ── LOGIN MODAL ── */
+  .login-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,30,35,0.65); backdrop-filter: blur(6px);
+    z-index: 2000; align-items: center; justify-content: center;
+  }
+  .login-overlay.open { display: flex; }
+  .login-modal {
+    background: #fff; border-radius: 8px; width: 380px; max-width: 92vw;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3); overflow: hidden;
+    animation: modalSlideUp 0.35s ease;
+  }
+  @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .login-modal-header {
+    background: linear-gradient(135deg, var(--teal), var(--jade));
+    padding: 28px 28px 24px; color: #fff; position: relative;
+  }
+  .login-modal-header h2 {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
+    line-height: 1.2; margin-bottom: 6px;
+  }
+  .login-modal-header p { font-size: 13px; opacity: 0.65; line-height: 1.5; }
+  .login-modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: rgba(255,255,255,0.2); border: none; color: #fff;
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    font-size: 13px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .login-modal-close:hover { background: rgba(255,255,255,0.35); }
+  .login-modal-body { padding: 24px 28px 28px; }
+  .login-provider-btn {
+    width: 100%; border: 1.5px solid #e0ddd7; border-radius: 6px;
+    background: #fff; padding: 13px 16px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    color: #2a3a3a; display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    margin-bottom: 12px;
+  }
+  .login-provider-btn:hover { border-color: var(--teal); box-shadow: 0 2px 12px rgba(11,85,99,0.1); background: #fafbfb; }
+  .login-provider-btn:last-child { margin-bottom: 0; }
+  .login-provider-icon { width: 22px; height: 22px; flex-shrink: 0; }
+  .login-divider {
+    text-align: center; font-size: 11px; color: #bbb;
+    margin: 16px 0; position: relative; letter-spacing: 0.08em;
+  }
+  .login-divider::before, .login-divider::after {
+    content: ''; position: absolute; top: 50%; height: 1px; width: calc(50% - 24px); background: #e8e5df;
+  }
+  .login-divider::before { left: 0; }
+  .login-divider::after { right: 0; }
+  .login-footer-note { font-size: 11px; color: #aaa; line-height: 1.6; text-align: center; margin-top: 18px; }
+
+  /* ── USER DROPDOWN (logged in) ── */
+  .user-dropdown {
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: #fff; border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    min-width: 200px; z-index: 500; overflow: hidden;
+    display: none; animation: fadeUp 0.2s ease;
+  }
+  .user-dropdown.open { display: block; }
+  .user-dropdown-header { padding: 14px 16px; border-bottom: 1px solid #f0eeea; }
+  .user-dropdown-name { font-size: 13px; font-weight: 600; color: #1a2a2a; }
+  .user-dropdown-email { font-size: 11px; color: #9aacac; margin-top: 2px; }
+  .user-dropdown-btn {
+    width: 100%; background: none; border: none; text-align: left;
+    padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 500; color: #4a5a5a; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    transition: background 0.15s;
+  }
+  .user-dropdown-btn:hover { background: #f5f7f7; color: var(--teal); }
+  .user-dropdown-btn.danger { color: var(--ember); }
+  .user-dropdown-btn.danger:hover { background: #fff5f3; }
+
+  /* ── ADD TO PLAN BUTTON (on cards) ── */
+  .add-to-plan-btn {
+    background: none; border: 1.5px solid rgba(11,85,99,0.2);
+    border-radius: 4px; padding: 4px 10px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--teal);
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .add-to-plan-btn:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .add-to-plan-btn.added {
+    background: #e1f5e9; border-color: #1a6b3a; color: #1a6b3a; pointer-events: none;
+  }
+  .add-to-plan-btn.added::before { content: '✓ '; }
+
+  /* ── PLANNER SECTION ── */
+  .planner-empty {
+    text-align: center; padding: 60px 20px; color: #bbb;
+  }
+  .planner-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.7; }
+  .planner-empty p { font-size: 14px; line-height: 1.7; max-width: 360px; margin: 0 auto; }
+  .planner-empty .planner-cta-btn {
+    display: inline-block; margin-top: 20px; background: var(--teal); color: #fff;
+    border: none; border-radius: 4px; padding: 10px 22px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .planner-empty .planner-cta-btn:hover { background: var(--teal2); }
+
+  .planner-login-prompt {
+    text-align: center; padding: 60px 20px;
+  }
+  .planner-login-prompt-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.7; }
+  .planner-login-prompt h3 {
+    font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700;
+    color: var(--teal); margin-bottom: 10px;
+  }
+  .planner-login-prompt p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto 20px; }
+  .planner-login-btn {
+    display: inline-block; background: linear-gradient(135deg, var(--teal), var(--jade));
+    color: #fff; border: none; border-radius: 4px; padding: 12px 28px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    transition: opacity 0.2s; box-shadow: 0 4px 16px rgba(11,85,99,0.25);
+  }
+  .planner-login-btn:hover { opacity: 0.9; }
+
+  /* ── PLAN TIMELINE ── */
+  .plan-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+  }
+  .plan-toolbar h3 {
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--teal);
+  }
+  .plan-toolbar-actions { display: flex; gap: 8px; }
+  .plan-clear-btn {
+    background: none; border: 1.5px solid rgba(196,82,42,0.3); border-radius: 4px;
+    padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600; color: var(--ember);
+    transition: all 0.2s;
+  }
+  .plan-clear-btn:hover { background: var(--ember); color: #fff; border-color: var(--ember); }
+  .plan-share-btn {
+    background: var(--teal); border: none; border-radius: 4px;
+    padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600; color: #fff;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 0.2s;
+  }
+  .plan-share-btn:hover { background: var(--teal2); }
+  .plan-day-section { margin-bottom: 28px; }
+  .plan-day-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 14px; display: flex; align-items: center; gap: 12px;
+  }
+  .plan-day-title .pip { width: 3px; height: 14px; border-radius: 2px; background: var(--gold); flex-shrink: 0; }
+  .plan-day-title .line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(11,85,99,0.2), transparent); }
+  .plan-items { display: flex; flex-direction: column; gap: 10px; }
+  .plan-item {
+    background: #fff; border-radius: 4px; border: 1px solid rgba(0,0,0,0.07);
+    padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px;
+    transition: box-shadow 0.2s; cursor: grab; position: relative;
+  }
+  .plan-item:hover { box-shadow: 0 4px 16px rgba(11,85,99,0.08); }
+  .plan-item.dragging { opacity: 0.5; box-shadow: 0 8px 24px rgba(11,85,99,0.15); }
+  .plan-item-grip {
+    color: #ccc; font-size: 16px; flex-shrink: 0; cursor: grab;
+    user-select: none; line-height: 1; padding-top: 2px;
+  }
+  .plan-item-content { flex: 1; min-width: 0; }
+  .plan-item-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--teal); line-height: 1.25; }
+  .plan-item-meta { font-size: 11.5px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .plan-item-remove {
+    background: none; border: none; color: #ccc; font-size: 16px;
+    cursor: pointer; padding: 2px; flex-shrink: 0; transition: color 0.15s; line-height: 1;
+  }
+  .plan-item-remove:hover { color: var(--ember); }
+  .plan-day-select {
+    background: none; border: 1px solid rgba(0,0,0,0.12); border-radius: 4px;
+    padding: 2px 6px; font-family: 'DM Sans', sans-serif; font-size: 10px;
+    font-weight: 600; color: var(--muted); cursor: pointer;
+  }
+
+  /* ── PLAN ITEM COUNT BADGE ── */
+  .plan-count-badge {
+    background: var(--gold); color: #fff; font-size: 9px; font-weight: 700;
+    width: 16px; height: 16px; border-radius: 50%; display: none;
+    align-items: center; justify-content: center; margin-left: -2px;
+  }
+  .plan-count-badge.visible { display: inline-flex; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1a2a2a; color: #fff; padding: 12px 22px; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); z-index: 3000;
+    opacity: 0; transition: transform 0.35s ease, opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     ✏️  HOW TO UPDATE THIS FILE
+     ════════════════════════════════════
+  1. Find the weekend you want to edit below (look for the WEEKEND comments)
+  2. Copy an existing <div class="card"> block and paste it
+  3. Change the text inside to your new event
+  4. Update LAST_UPDATED at the bottom of the <header> section
+  5. Save the file and push to GitHub — done!
+
+  STRIP COLOURS (pick one for class="card-strip ___"):
+    strip-festival  strip-outdoor  strip-culture  strip-sport
+    strip-food      strip-market   strip-kids     strip-music  strip-other
+
+  BADGE OPTIONS (add inside .card-badges):
+    <span class="badge badge-free">Free</span>
+    <span class="badge badge-ticketed">Ticketed</span>
+    <span class="badge badge-family">Family</span>
+    <span class="badge badge-hot">🔥 Pick</span>
+═══════════════════════════════════════ -->
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-blob"></div>
+  <div class="header-blob2"></div>
+  <div class="header-inner">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div class="eyebrow">Pōneke Wellington · Family Events Guide</div>
+      <div class="header-auth-area">
+        <!-- Logged out: sign in button -->
+        <button class="auth-btn" id="authSignInBtn" onclick="openLoginModal()" style="display:flex;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Sign in
+        </button>
+        <!-- Logged in: avatar -->
+        <div id="authUserArea" style="display:none; position:relative;">
+          <div class="auth-avatar-placeholder" id="authAvatarBtn" onclick="toggleUserDropdown()" title="Account"></div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-name" id="userDropdownName"></div>
+              <div class="user-dropdown-email" id="userDropdownEmail"></div>
+            </div>
+            <button class="user-dropdown-btn" onclick="showSectionFromMenu('planner'); closeUserDropdown();">📋 My Weekend Plan</button>
+            <button class="user-dropdown-btn danger" onclick="signOutUser()">↩ Sign out</button>
+          </div>
+        </div>
+        <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="dropdownPanel" id="hamburgerBtn">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <h1>What's On<br><em>Wellington</em></h1>
+    <p class="header-sub">The best family-friendly events across the Wellington metro — waterfront, suburbs, Kāpiti and beyond.</p>
+    <div class="last-updated">
+      <span class="dot"></span>
+      <!-- ✏️ UPDATE THIS DATE each time you edit -->
+      Updated: 21 February 2026
+    </div>
+  </div>
+  <svg class="header-wave" viewBox="0 0 1440 44" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,22 C360,44 1080,0 1440,22 L1440,44 L0,44 Z" fill="#F7F2EB"/>
+  </svg>
+</header>
+
+<!-- ── DROPDOWN MENU ── -->
+<div class="dropdown-overlay" id="dropdownMenu" onclick="closeMenu()"></div>
+<div class="dropdown-panel" id="dropdownPanel" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="dropdown-header">
+    <span class="dropdown-title">Menu</span>
+    <button class="dropdown-close" onclick="closeMenu()" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="dropdown-nav">
+    <button class="dropdown-nav-btn" onclick="showSection('events', document.querySelector('.main-nav-btn')); closeMenu()"><span>🗓</span> Events</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('food'); closeMenu()"><span>☕</span> Food & Drink</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('walks'); closeMenu()"><span>🌿</span> Walks & Trails</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('planner'); closeMenu()"><span>📋</span> My Weekend</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('about'); closeMenu()"><span>👋</span> About</button>
+  </nav>
+  <div class="dropdown-about">
+    <div class="dropdown-about-title">About this guide</div>
+    <p>Built with love by <strong>Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
+    <p>Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
+    <p>Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
+    <div class="dropdown-made-with">Made with ❤️ in Wellington</div>
+    <div class="dropdown-contact">
+      Spotted something incorrect, want to promote an event, or just have feedback? Drop us a message at <a class="contact-email" href="#" onclick="this.href='mailto:'+atob('aGVsbG9Ad2hhdHNvbndlbGxpbmd0b24uY28ubno=')">hello@whatsonwellington<!-- -->.<wbr>co.nz</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN NAV ── -->
+<nav class="main-nav" aria-label="Main sections">
+  <div class="main-nav-inner" role="tablist">
+    <button class="main-nav-btn active" role="tab" id="tab-events" aria-selected="true"  aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
+    <button class="main-nav-btn"        role="tab" id="tab-food"   aria-selected="false" aria-controls="section-food"   onclick="showSection('food', this)"><span class="nav-icon">☕</span> Food & Drink</button>
+    <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
+    <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
+    <button class="main-nav-btn"        role="tab" id="tab-planner" aria-selected="false" aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> My Weekend <span class="plan-count-badge" id="planCountBadge">0</span></button>
+  </div>
+</nav>
+
+<!-- ── REGION FILTERS — always visible ── -->
+<div class="filter-bar" role="region" aria-label="Filter by area">
+  <div class="filter-inner">
+    <span class="filter-label" id="filter-label">Area:</span>
+    <button class="filter-btn active" aria-pressed="true"  onclick="filterRegion('all', this)">🗺 All regions</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EVENTS SECTION
+═══════════════════════════════════════ -->
+<div class="app-section active" id="section-events" role="tabpanel" aria-labelledby="tab-events">
+<nav class="tabs-bar">
+  <div class="tabs-inner" role="tablist" aria-label="Weekend dates">
+    <!-- ✏️ UPDATE tab labels each weekend -->
+    <button class="tab-btn active" id="wtab-w1" role="tab" aria-selected="true"  aria-controls="w1" onclick="showTab('w1',this)"><span class="tab-live-dot"></span>This Weekend · 21–22 Feb</button>
+    <button class="tab-btn"        id="wtab-w2" role="tab" aria-selected="false" aria-controls="w2" onclick="showTab('w2',this)">28 Feb – 1 Mar</button>
+    <button class="tab-btn"        id="wtab-w3" role="tab" aria-selected="false" aria-controls="w3" onclick="showTab('w3',this)">7–8 March</button>
+    <button class="tab-btn"        id="wtab-w4" role="tab" aria-selected="false" aria-controls="w4" onclick="showTab('w4',this)">28–29 March</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ════════════════════════════════════
+     WEEKEND 1 — 21–22 February 2026
+═══════════════════════════════════════ -->
+<div class="weekend-panel active" id="w1" role="tabpanel" aria-labelledby="wtab-w1">
+
+  <div class="banner">
+    <span class="banner-icon">🧧</span>
+    <div class="banner-text">
+      <h3>Lunar New Year Weekend — Year of the Fire Horse</h3>
+      <p>Waterfront fireworks, dragon dances, the Gypsy Fair, a Phoenix derby and free markets across the region.</p>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="day-label day-sat"><span class="pip"></span>Saturday 21 February<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-music"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#8A1A1A">🧧 Lunar New Year</div>
+            <div class="card-title">Lunar New Year — Courtenay Festival & Fireworks</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>All day · Fireworks at dusk (~9:30 pm)</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Courtenay Place & Wellington Waterfront</div>
+        </div>
+        <div class="card-desc">Dragon dancers, taiko drumming, cultural performances and a spectacular waterfront fireworks finale to ring in the Year of the Fire Horse.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/2026-lunar-new-year-galloping-into-the-new-year/wellington" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🏛 Museum · Evening</div>
+            <div class="card-title">Te Papa Late Night — Lunar New Year Festival</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>From 5:00 pm — late</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Te Papa, 55 Cable St, Te Aro</div>
+        </div>
+        <div class="card-desc">After-hours museum exploring, dragon dance performance and cultural activities — then step outside for the waterfront fireworks. A magical evening for families.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/te-papa-late-night-lunar-new-year-festival/wellington" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="lower-hutt">
+      <div class="card-strip strip-festival"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#C8901A">🎪 Street Fair</div>
+            <div class="card-title">Petone Rotary Fair 2026</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>All day</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Jackson Street, Petone, Lower Hutt</div>
+        </div>
+        <div class="card-desc">Jackson Street transforms into a buzzing street party — food stalls, live music, handcrafted goods and community atmosphere. A Petone tradition for the whole family.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/petone-rotary-fair-2026/wellington-region" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="kapiti">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🌿 Outdoors</div>
+            <div class="card-title">Queen Elizabeth Park Open Day & Artisan Market</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>All day</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Queen Elizabeth Park, Paekakariki, Kāpiti</div>
+        </div>
+        <div class="card-desc">Family activities, beachside artisan stalls, historic tram rides and glorious summer park vibes at one of the region's most loved coastal parks.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/queen-elizabeth-park-open-day/kapiti-coast" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-sport"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#2478A8">⚽ Football</div>
+            <div class="card-title">Wellington Phoenix vs Auckland FC — NZ Derby</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday evening — check site for kick-off</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Sky Stadium, 105 Waterloo Quay, Pipitea</div>
+        </div>
+        <div class="card-desc">The season's final NZ Derby — Sky Stadium comes alive for this cross-harbour showdown. Great atmosphere for families and football fans alike.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://wellingtonphoenix.com/match/a-league-men/wellington-phoenix-vs-auckland-21-02-2026/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="porirua">
+      <div class="card-strip strip-music"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#8A1A1A">🧧 Lunar New Year</div>
+            <div class="card-title">Lunar New Year at Aotea Lagoon, Porirua</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday, daytime</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Aotea Lagoon, Porirua</div>
+        </div>
+        <div class="card-desc">Cultural performances, market stalls, food and free train rides in Porirua. A fantastic free option for families on the Kāpiti Line.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/lunar-new-year2/porirua-mana" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div><!-- /events-grid -->
+
+  <!-- SUNDAY -->
+  <div class="day-label day-sun"><span class="pip"></span>Sunday 22 February<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-music"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#8A1A1A">🧧 Lunar New Year</div>
+            <div class="card-title">Lunar New Year — Waterfront Cultural Day</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday from midday</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Queens Wharf, Wellington Waterfront</div>
+        </div>
+        <div class="card-desc">Cultural performances, Asian market craft stalls, food hall and kids' activities including "Horsing Around" interactive experiences across Queens Wharf.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/2026-lunar-new-year-cultural-entertainment/wellington" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="upper-hutt">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🚛 Show</div>
+            <div class="card-title">Wellington Truck & Transport Show 2026</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday from 9:30 am</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Trentham Memorial Park, Upper Hutt</div>
+          <div class="meta-row"><span class="meta-icon">💰</span>Gold coin entry</div>
+        </div>
+        <div class="card-desc">Hundreds of trucks, trailers and transport history rolling into Trentham. Kids love the big rigs and shiny chrome. Brilliant value for families.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.facebook.com/events/1060129646256093" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="upper-hutt">
+      <div class="card-strip strip-festival"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#C8901A">🎪 Travelling Fair</div>
+            <div class="card-title">The Original Gypsy Fair — Upper Hutt</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free Entry</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sat & Sun, 9:00 am – 4:00 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Riverbank Park, Upper Hutt</div>
+        </div>
+        <div class="card-desc">NZ's beloved travelling fair — live music, artisan makers, rides and heritage house trucks. A classic summer outing for the whole family.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/gypsy-fair/upper-hutt" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wairarapa">
+      <div class="card-strip strip-music"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#7A3B8A">🎶 Live Music</div>
+            <div class="card-title">Avalanche City + Mountain Boy — Live</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Friday 20 Feb — check site for time</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Carterton Events Centre, Carterton</div>
+        </div>
+        <div class="card-desc">Heartfelt indie-folk anthems and storytelling charm from Avalanche City and Mountain Boy, live in the heart of the Wairarapa. A beautiful evening out.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.eventfinda.co.nz/2026/avalanche-city-mountain-boy-wairarapa/carterton" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div><!-- /events-grid Sunday -->
+</div><!-- /w1 -->
+
+
+<!-- ════════════════════════════════════
+     WEEKEND 2 — 28 Feb – 1 March 2026
+═══════════════════════════════════════ -->
+<div class="weekend-panel" id="w2" role="tabpanel" aria-labelledby="wtab-w2">
+
+  <div class="banner">
+    <span class="banner-icon">🩰</span>
+    <div class="banner-text">
+      <h3>RNZB Macbeth World Premiere + Arts Festival</h3>
+      <p>The Royal NZ Ballet opens Macbeth at the St James as part of the Aotearoa NZ Festival of the Arts.</p>
+    </div>
+  </div>
+
+  <div class="day-label day-sat"><span class="pip"></span>Saturday 28 February<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🩰 Ballet · World Premiere</div>
+            <div class="card-title">Royal NZ Ballet — Macbeth</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>25–28 Feb · Evening performances</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>St James Theatre, 77 Courtenay Place</div>
+        </div>
+        <div class="card-desc">Choreographer Alice Topp reimagines Shakespeare's Macbeth as a contemporary political thriller. Bold, electric, gripping — RNZB as you've never seen them. Part of the NZ Festival of the Arts.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.rnzb.org.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🎭 Arts Festival</div>
+            <div class="card-title">PA2026 — The Performance Arcade</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>From 25 Feb · All weekend</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Wellington Waterfront, Cable Street</div>
+        </div>
+        <div class="card-desc">Wellington's beloved outdoor performance festival — interactive art, live performance, children's shows and surprise pop-up events all weekend long. Free to wander.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.theperformancearcade.com" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🎨 Art Show</div>
+            <div class="card-title">The Wellington Art Show</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Fri 27 Feb onwards · All weekend</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Tākina Convention Centre, 50 Cable St</div>
+        </div>
+        <div class="card-desc">Hundreds of original works from NZ artists across painting, sculpture and photography. A beautiful walk-through for art-loving families.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wellingtonartshow.co.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun"><span class="pip"></span>Sunday 1 March<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🚴 MTB Festival</div>
+            <div class="card-title">Wellington MTB Festival — Makara Peak</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sat & Sun · All day</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Makara Peak MTB Park, 424 Karori Rd</div>
+        </div>
+        <div class="card-desc">Skills sessions, guided rides and a festival atmosphere through the native bush. Wellington's mountain biking weekend not to miss.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.makarapeak.org" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🏛 Museum</div>
+            <div class="card-title">Te Papa Tongarewa — Always Open</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Daily 10:00 am – 6:00 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>55 Cable Street, Te Aro</div>
+        </div>
+        <div class="card-desc">NZ's national museum — always free, always brilliant for families. Interactive exhibits covering nature, Pacific culture, Māori taonga and NZ history.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.tepapa.govt.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /w2 -->
+
+
+<!-- ════════════════════════════════════
+     WEEKEND 3 — 7–8 March 2026
+═══════════════════════════════════════ -->
+<div class="weekend-panel" id="w3" role="tabpanel" aria-labelledby="wtab-w3">
+
+  <div class="banner" style="background: linear-gradient(135deg, #5B4A8A, #8A4A7A);">
+    <span class="banner-icon">🌈</span>
+    <div class="banner-text">
+      <h3>Wellington Pride Weekend</h3>
+      <p>The city lights up as the Pride Parade takes over Courtenay Place — a joyful, family-inclusive celebration for all of Wellington's whānau.</p>
+    </div>
+  </div>
+
+  <div class="day-label day-sat"><span class="pip"></span>Saturday 7 March<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip" style="background:linear-gradient(90deg,#e74c8b,#f0a030,#3ab065,#2980b9,#8b4bcc)"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#8b4bcc">🌈 Pride Parade</div>
+            <div class="card-title">Wellington Pride Parade 2026</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday — check site for parade time</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Courtenay Place & Dixon Street, Te Aro</div>
+        </div>
+        <div class="card-desc">Wellington's iconic Pride Parade — music, performers, DJs and a joyful community atmosphere. An inclusive celebration welcoming all whānau to watch or march.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wellingtonprideparade.co.nz/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🏃 Parkrun</div>
+            <div class="card-title">Wellington Waterfront Parkrun</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">All Ages</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 8:00 am start (7:45 am briefing)</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Frank Kitts Park, Wellington Waterfront</div>
+        </div>
+        <div class="card-desc">Free weekly 5km run/walk along Wellington's beautiful waterfront. All paces welcome — register once at parkrun.co.nz and run anywhere in the world forever.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.parkrun.co.nz/wellington/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="kapiti">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🚂 Heritage Trams</div>
+            <div class="card-title">Wellington Tramway Museum — Ride the Trams</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sundays 11:00 am – 4:30 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Queen Elizabeth Park, Paekakariki</div>
+          <div class="meta-row"><span class="meta-icon">💰</span>Small fee</div>
+        </div>
+        <div class="card-desc">Ride historic Wellington trams through beautiful Queen Elizabeth Park to the beach. Kids adore this — a true Wellington treasure delighting families for decades.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wellingtontrams.org.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun"><span class="pip"></span>Sunday 8 March<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🦖 Experience</div>
+            <div class="card-title">Wētā Workshop Unleashed</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Daily 9:00 am – 5:30 pm · Last tour 4:00 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>1 Wētā Way, Miramar</div>
+        </div>
+        <div class="card-desc">Walk-through experiences, prop workshops and jaw-dropping creature effects at the world-famous Wētā Workshop. Book ahead — older kids and teens love this.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wetaworkshop.com/visit-us/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🌊 Beach</div>
+            <div class="card-title">Oriental Bay Beach & Waterfront</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Always open — best in the morning</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Oriental Bay, Wellington Waterfront</div>
+        </div>
+        <div class="card-desc">Wellington's golden city beach — paddling, sandcastles, an outdoor pool and one of the world's most scenic waterfront walks. A classic any-weekend option.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wellingtonnz.com/visit/beaches/oriental-bay-beach/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /w3 -->
+
+
+<!-- ════════════════════════════════════
+     WEEKEND 4 — 28–29 March 2026
+═══════════════════════════════════════ -->
+<div class="weekend-panel" id="w4" role="tabpanel" aria-labelledby="wtab-w4">
+
+  <div class="banner" style="background: linear-gradient(135deg, #8B1A1A, #C95831);">
+    <span class="banner-icon">🎶</span>
+    <div class="banner-text">
+      <h3>CubaDupa 2026 — NZ's Biggest Free Street Festival</h3>
+      <p>Cuba Quarter transforms into a massive outdoor arts festival — 12 music stages, street theatre, kids' activities and food trucks. All free.</p>
+    </div>
+  </div>
+
+  <div class="day-label day-sat"><span class="pip"></span>Saturday 28 & Sunday 29 March<span class="line"></span></div>
+  <div class="events-grid">
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-music"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#8A1A1A">🎪 Street Festival</div>
+            <div class="card-title">CubaDupa 2026 — Free Street Festival</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free</span>
+            <span class="badge badge-family">Family</span>
+            <span class="badge badge-hot">🔥 Pick</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sat 28 & Sun 29 March · All day & evening</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Cuba Street & Cuba Quarter, Wellington CBD</div>
+        </div>
+        <div class="card-desc">NZ's largest outdoor arts and music festival — 12 stages, street theatre, LED dragons, Bollywood dancers, samba drummers, circus, food trucks and pop-up art. Completely free for the whole family.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.cubadupa.co.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-outdoor"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#1A8A6E">🚡 Iconic</div>
+            <div class="card-title">Wellington Cable Car & Botanic Garden</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Daily 7:30 am – 10:00 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>280 Lambton Quay → Kelburn</div>
+          <div class="meta-row"><span class="meta-icon">💰</span>$5–9 cable car · Garden free</div>
+        </div>
+        <div class="card-desc">Take the iconic cable car up to Kelburn, stroll the Botanic Garden and enjoy harbour views. Walk back down for free. A classic Wellington family outing any weekend.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wellingtoncablecar.co.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wellington">
+      <div class="card-strip strip-culture"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#5B4A8A">🦖 Experience</div>
+            <div class="card-title">Wētā Workshop Unleashed</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-ticketed">Ticketed</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Daily 9:00 am – 5:30 pm</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>1 Wētā Way, Miramar</div>
+        </div>
+        <div class="card-desc">Movie magic, creature effects and prop workshops at the world-famous Wētā Workshop. A brilliant rainy day option any weekend — book ahead.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wetaworkshop.com/visit-us/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wairarapa">
+      <div class="card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#7A3B8A">🍷 Day Trip</div>
+            <div class="card-title">Martinborough Village & Wine Trail</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Any day — cellar doors open weekends</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Martinborough Village, Wairarapa</div>
+        </div>
+        <div class="card-desc">Hire bikes and pedal between world-class pinot noir cellar doors around the charming village square. Kids love the ride — parents love the wine. A classic Wairarapa day trip, just over an hour from Wellington.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wairarapanz.com/martinborough" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-region="wairarapa">
+      <div class="card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div>
+            <div class="card-cat" style="color:#7A3B8A">🏘 Village</div>
+            <div class="card-title">Greytown — NZ's Prettiest Victorian Village</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-free">Free to wander</span>
+            <span class="badge badge-family">Family</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><span class="meta-icon">🕐</span>Sat & Sun · shops open both days</div>
+          <div class="meta-row"><span class="meta-icon">📍</span>Main Street, Greytown, Wairarapa</div>
+        </div>
+        <div class="card-desc">Stroll the heritage main street, browse boutique shops, grab a flat white and picnic at Papawai. One of the loveliest day trips from Wellington — just over an hour through the Remutakas.</div>
+      </div>
+      <div class="card-footer">
+        <a class="card-link" href="https://www.wairarapanz.com/greytown" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /w4 -->
+
+</main>
+
+</div><!-- /section-events -->
+
+<!-- ══════════════════════════════════════
+     FOOD & DRINK SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-food" role="tabpanel" aria-labelledby="tab-food">
+<div class="section-intro">
+  <h2>Food & Drink</h2>
+  <p>The best family-friendly cafes and restaurants across the Wellington region — spots where kids are genuinely welcome and parents can actually enjoy their coffee.</p>
+</div>
+<main>
+
+  <div class="banner-sponsored" data-region="all">
+      <span class="banner-sponsored-badge">Sponsored</span>
+      <img class="banner-sponsored-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGcAAAAsCAYAAAB43qZWAAAOg0lEQVR4nNWbebTVVRXHv7/3HsagoogiikaaOeNURmoOlAPY5NKUcCWamWiWZct5KE0prZzSlSxzSAkxs0EzFc3ZNBVErUzUUFpilIIxPX28ez/9sff2nPvzvsd9jwcP91p3/YZzzj7n7Hnv87uF3scAFJLyX01z/IqioAs4m0r4uoWnJ6C8odUS6jABSdWuEgtYW1Jznab2oigWNTC+SVJTd+fvKqyWzMmY0SST2EoH/fpKGixpQ0kflrSlpI0kbSppTUlDJK0haZAPWauTaZf477+S5kj6l6QXJM2UNFvS3KIo3inN36KVyKjVhjnOkCZJRVEU7aW2ZkmbS9pC0laSdpK0o6RNJK2ddV0oI+48Sa/6/VuSFnt7u4yYktQmqSpj3lBJfWRM3VTSMEnre1vAUkl/kfQHSQ8VRfFUaY0tMiZVu7H9utDrzHGmNOcMcfMxQtJeknaXtL2MMWGSKpJekTRXJtWvSHpbRswBMiav4/3Wk9Tfx+V+5A0fU8iY+qaMqfMc71sy5q0paTdJ+/l6BjuOOZJukzRV0mPBlNiPpMqKalOvMSccb5gs1449JX1G0v6StqmzvrclvSgjZrNMa9aSma0BPbzENyW9LOkRSffLzNtcSR+SdICkgyXtIdO41yVNkTSlKIoZ2R6bZWa5W9q0ypnjTFEmacMkHSHpEJm5Cmj3X5OMERFFdYhaJulxX2TXcr9WGVOXKTn4gJD8evCkpFsl3VQUxRxglKSPyzRqB5nve07SJEk3FkWx0PfYLSatMubUYcrHJB0n6QuS1m0ARUVGSCkRsyhdl7sMvz4r6QMy/1VmYPR5VdJjkv4t046Rkj6a9XtK0tUy7Rog0+KhMkYdKGP8JEmXFUXxkvQukxoOHlY6c8LRZ+ZrN0kny5iSw2JZdPSSzEwsU4q8Rkga6P0q6liyG4GQ3hskjZa0gT/Xo0WrpOdlQcAfJc2XtKukY2RMkCzouEnSDEn9ZIHGf7z9GzIhuF7Sd4uimCMZkzqKQFcZeAQT99sDt5Cg4tdZwInA0E7wDAVOBl73Me10H6p+fRW4pLSW5cE9wBhf037AxcDj3rYUuBo4HjgX+A6wG3BGNudZOE2AZkxwO4SVojlAU2a+NpR0usyE9ZFJbsXvfyLpjKIo2oB1ZRHRdjKNWSJzwI8VRfGg4xom6SqZ2WiX1KLuQZsssjtD0hiZYy9rZD1/FfB3SZNlwclgH7e1pPEyTblUFkHuImmWLKgYJ+l4Sf+UdHRRFA/4nlaNFgFFJhlNLkUh7QDLMKmvAkd7v42Aa4D/diKxzwFHxWaA3/r7FdEggMeAg7K14WurAguBO4BLgduA/9UZPx2YCJwDXAgc5leA14Bv+e8PwLeBT2HaB/ALYFC2p5XnYjBnF/cfBx7ONhEbD2J+0/vtSy3zAF72TT+FmZ4crvJx/TGGQeMmKWApMAV40p9PBab5/TskE1QFlgB3AWMx07o/MBWYneGrYMQ/CfglcBlwIHCrt98DfBa4EjOBnwU+hzF/PnBwJtg9yyBqtaUfcL5vEowpsdlgzL3e96O++YBbgD3xqC7DP4YkbQAXZQLQRteYU/Uxt2H2vwIsAL4MvJn1q6eRDwDbApsDR/v457L2N7C9X+LvT/V+b3n7tzHNmoUxcWvgbm/7MWZpeo5B1GrLJ4GnO9lgxX+7AH2AZ/19K3B4hmcj4FjgFCyPiPfnZ7j29Xe/64SYy4MqSaNPATYEvosxK3CGecvhKuArwLWY2f6h7yHgPszUvYxp/3jgb1nbgcCNwFxgHElrb8HNGyvKIJK29AcuIklwri0B0fYPH3No1va1DOdYaiUY4Blga2+/1N894M/hL7rKnAqJOVXg9mwNw0k+rQLcDpyJETvgPuAIzGf9GtOipZhWglmEazHT/ntgsO8DzKp8D9PW7YCBmHnDcTXjWtQdphS4xgC7ZpNWqTUxbdl9SOh1Pv5m7/+042nGws5g6gNYODrFn58B1vCNzHPc6wGbZXOUBaIRiDVO9nX1zfY5McN7IBY6X0kyU3OBrwN/BR7CtD3fK5jGnApsBVyP0SfaZwNfBXbHfGu8PysX/q4wpim7/w61vgUSc2b6ouNdtEcgECbtAlxCSA70ytKcF/j7Hf35l/68C+akAxphTvSZDzyarW8HXOgwqQ3huyjrfyxmek4G3s5w3gSM9f7l4KYMYSp/hpnHeutbAKwppXJIQ4wpiqIKDACmSvqxUt5S5vJUWTVXqs0VFvg1zlUWO+4WWX5TlRQOfyRwhaS/ed+1MeGYJ8tBGl57BoXP0V/So76HeZLGRUnF87Mq0FIUxSmyyvO6kvaRtLGkwyXdpVTLGytpIvCnbF/PSrozm7cqy8uWyfKpQUVRTJDlRudJmi4rtFZ9PVFZWT44UYQ5zciIy74l7t/AfEp79i40Z7zjCc35TSwE07Y2n6MJ+JVL0YPAImA97xuR20DgE37f1YgtYCKparFdaa8RPW2A5SztWAXgSOA0H5MHAnifCvC8jx9PbZAUMIksmPL5BmGRYOQ+y2dOttj1SaFjW50JwynfAXyx9C6Yc6LjCp8zn8SMH3ifQ73PNzPcR/q7jziuh/z58hL+7kIV+J3jzCPQCHoO8X6tmDmP6GshMAH4RwnfAqBf4ANGY+Z5MhbUDMvaulflINnhfqSk8m1StJNDEGgi73WOcb3Z8R6bjbvE320M/AerFGzv7z6GlX+ESfB0HzMSWBtzzpHRdwVaSf6SbPwWuUDmzMLCbeqNAdbCqgQPAzOAszHa9ekirRuP0rKFXeMLKUtoTpRoOwGTpjyPCLMzG8txBmLmr4JpV2TJe5ES0/OAnf13kvcH+Jb3nezPXQmjI6IMiT8Li7rAIsLB1MkzSNZjD6xCEOH+QmDzBojeDLRk1xXOY4IxY0qbm04qfcQ7SIw4Cdi7DuHiPhLIsNtt3naYv/8QlsGXYSawp/c5pw7+5UGsMwTlr5gwXIhp6wygLx3Uuag1d0OAHYEPZgxo8WtBqcrR44CHlKQ85p/ANln7vlgxMMxKMOcKzAwuodbkBCGn+fi+wP3+LkLTa4Hh3t4P2AnLpTbxd4Ppnsbk0J6NfQHTnsP8+YYyI0o0aV7phF8ekOL9/X3RFSfUCOBHwM7e72xvj2ozwAxvuzFrywkDMMH7DAGeyOaI/vdimvUF4PPAcVj2vLjUtzOolq4Lqa0sR1DzCHB69nxA0KAT+oR/WPWMAtbw6w1BcExqYwMzsYx9pxIBgvijgXWwkkb+vur3baTErT8WWpaJ2RF01ZTlfuZyLCosR5GQKtIP+7p6V0PqASl83A74ty/4JSdiREuh/meXNhnFzTex0sonqdWInGAA52Xz7oaV5wNafUz88rypzIAyVHztAe3ZdQIWkk/L3v0rG/cOsKWvafVhECkIGEWKSGJjJ2Pha2jFOCdgOZQNZrwObIJp1yslQuV1uIeBkdkaxgEv1sHXGeShfQjI45izj6pyW9bnBCzpm4j5xiheBuyb06PXgcSYkaRwNggTm/oz5ktmZRspVwnizKSKFSn3wnzLJGo1rD17jux7uK+hP3bGEWa0oySzIw2Jdd/j88/057YM18VYQnkq5svGAvtgNb7NfR29rzkkB7cWFpXlG80JkcM7JWJ05AteADb2eUZip4ZlPMHgBcD3gXW8/y6ksL1c9Y7nRzHzGvlKaFGs505MSyI8X0YyX9djecvPvW14b/KhLvDeKmw9Sa2WCFkPKpj9/iNmOnagfs6wK1bCybP0vNL7GnBa1v883ht0xHz4fFs7sfO22MetjucX2f6iAjzVxz2NmdM16IlEsSeAlP0OxdS7Xmkml9jF2DnL8ViCuiOWdI7Bzi0GYPWygzBTFSWNJ7CDp3MxjWjBIsDvkU4foZZhzwOjfX2jSL6rXnj+JJYCHEI6c4nIEDz4wMxrjmMJdpw80p/jWKP3/Q1e/8HOuMsbz5/bsPPx4Q3gPIHlw1zMIQ8B1sTypyBkG7XF1csd72CSWcyr4tH3cYxBW1Lfz3wJOzS7rs5eZ/nzEh+/8jP9BggZJu0OajN9SFI5Hdg1H0OqFUUloTl7bsG0ZRnpI4zIzMPmB7RifqYPVrrJP+aI0g5YmB1rjQp2ruXBoPu8z2AsmQXTxjC5o3y+mzMGlU3mbTltehWAD5A+Qyo71J/ix7dO9E6liZQnHVXacBnKgjAH+LyPPQ47wwniBeHvJmn6BBLTywy6EjsbGUXyQ3H2chOmQdcCv8nWGHsOX7WVz9Pr2jOE2tJIEDTOX979bqABXFH8G4QdAQQjOoIyk67DtG8zUmkn9x2TSUfb40vEJcN1DHautDv2kUbOoPEY0yaR0oI8WW4HvuFzdPer0p4BzIEvzhYH/lUM3YhcSObn+hLOziAXiheBbR1HRFjtpGDhJ9lccSgX5ik0oBWLCs/BApXpWb83sLrdPOzTpjbMB0awAHBx7L/nKN0NwOzz/zLpiYil4cOiEr4on4/NCNsoBCOXkk5Fz80YGAw6MZvvRH/XlvUDO7kdgZ0+bopFcYH/duy7t5exUk4VO6/ZAzu63ttx955ZIyWg734R4++7xRgfm39zsIiUMEb1IO47+uVm6hTHdXxG+GDCaCwv2Qhz8sGgatbnEkxL4ltlMgZfjvmdOB+6t2eo2kNAcrA3A4/6/QonYSTf83dqYTap0NgoXOg4D6U20luEmayjgGHUmiVIDP4MlnPtTvowsYqZ8k877ljTNqzI2X5PAknKR2Dn+D0S35P8zhQn4ny/3oEJwiLMlC7q5LcQS1CXAac7vrGYeVqA5SSPO2POwWpy0zLcC/33ApZkTsO+6HzO2xc7nuOwrzgXA2f6PL3OnFXxz7b+qv0zbavs+6yu/MEW2bdmrxVFUcE+k2p2PH1l33r1Ufo2LP7xHP8L7SP7B9oA2Z9+JfubYNXxDJS0yMe3F0UR39etHkBvnex1Ed4Pa+wp+D8ELOH3qBLzOwAAAABJRU5ErkJggg==" alt="Ruin Gin">
+      <div class="banner-sponsored-text">
+        <h3>Ruin Gin — Wellington's Finest</h3>
+        <p>Upper Hutt's best small batch distillery. Bold, botanical and dangerously drinkable. The perfect pick-up before your next family BBQ (once the kids are in bed).</p>
+        <a class="banner-sponsored-link" href="https://www.ruindistillery.co.nz/" target="_blank">Order online ↗</a>
+      </div>
+    </div>
+
+  <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
+
+
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">☕ Café · Garden Bar</div>
+        <div class="venue-name">Southern Cross Garden Bar</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kids activities weekends</span>
+          <span class="venue-pill">Free face painting</span>
+          <span class="venue-pill">Highchairs</span>
+        </div>
+        <div class="venue-desc">A true Wellington institution with a sprawling leafy garden. Free face painting Sat & Sun, free parent massages on Thursdays, toys and colouring — one of the most genuinely family-friendly spots in the city.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.0</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d781641-Reviews-Southern_Cross_Garden_Bar_Restaurant-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=39+Abel+Smith+St+Wellington" target="_blank">📍 39 Abel Smith St, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.thesoutherncross.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">☕ Café · Museum</div>
+        <div class="venue-name">Zephyr Café — Tākina / Te Papa</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kids meals</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Central location</span>
+        </div>
+        <div class="venue-desc">Ground floor of Tākina, directly across from Te Papa — perfect before or after a museum visit. Large accessible space, kids menu for breakfast and brunch, wide foyer for little ones to spread out.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d23520975-Reviews-Zephyr_Cafe-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Takina+50+Cable+St+Wellington" target="_blank">📍 50 Cable St, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.takina.co.nz/visit/zephyr" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">☕ Café · Botanic Garden</div>
+        <div class="venue-name">Picnic Café — Botanic Garden</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fenced playground nearby</span>
+          <span class="venue-pill">Kids picnic boxes</span>
+          <span class="venue-pill">Pram paths</span>
+        </div>
+        <div class="venue-desc">Set inside the Wellington Botanic Garden beside the Rose Garden. Sparrows darting around entertain babies, fenced toddler play area nearby, duck pond — and caffeine for parents. Kids picnic boxes to take away.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d2319488-Reviews-Picnic_Cafe-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Picnic+Cafe+Wellington+Botanic+Garden" target="_blank">📍 101 Glenmore St, Thorndon</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wellingtonbotanicgarden.co.nz/visit/picnic-cafe/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🍕 Restaurant · Waterfront</div>
+        <div class="venue-name">One Red Dog — Queens Wharf</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Make your own pizza</span>
+          <span class="venue-pill">Kids menu</span>
+          <span class="venue-pill">Waterfront views</span>
+        </div>
+        <div class="venue-desc">Waterfront pizza and pasta restaurant at Queens Wharf. Kids get to make their own pizza at the table — ingredients brought to them to create their masterpiece. Laid-back, lively and genuinely relaxed about children.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.0</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d791566-Reviews-One_Red_Dog-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=One+Red+Dog+Queens+Wharf+Wellington" target="_blank">📍 Queens Wharf, Jervois Quay</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.onereddog.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">☕ Café · Roastery</div>
+        <div class="venue-name">Caffe L'affare</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kids play area</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Wellington institution</span>
+        </div>
+        <div class="venue-desc">A Wellington legend since 1990 — huge café and coffee roastery with a come-one-come-all vibe. Dedicated kids play area, always busy so little people noises blend right in. Great shopping nearby at Moore Wilson's.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d791629-Reviews-Caffe_L_Affare-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Caffe+L'affare+27+College+St+Wellington" target="_blank">📍 27 College St, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.laffare.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">☕ Café · Beachside</div>
+        <div class="venue-name">Beach Babylon — Oriental Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kids corner</span>
+          <span class="venue-pill">Beach access</span>
+          <span class="venue-pill">Retro vibe</span>
+        </div>
+        <div class="venue-desc">Retro all-day eatery overlooking Oriental Bay. Kids corner with books and toys, kids menu, and steps from the beach and Freyberg playground. The 70s theme is a talking point — there's even cheese fondue on the menu.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.1</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d10071447-Reviews-Beach_Babylon-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Beach+Babylon+Oriental+Parade+Wellington" target="_blank">📍 Oriental Parade, Oriental Bay</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.beachbabylon.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Miramar & Eastern Suburbs<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">☕ Café · Seaside</div>
+        <div class="venue-name">Chocolate Fish Café — Shelly Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Outdoor playground</span>
+          <span class="venue-pill">Ride-ons & trampoline</span>
+          <span class="venue-pill">Harbour views</span>
+        </div>
+        <div class="venue-desc">A Wellington favourite tucked into the old defence buildings at Shelly Bay. Outdoor play area with bikes, trikes, scooters, climbing toys and a trampoline. Harbour views, free parking, baby change — ticks every box.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d2038809-Reviews-Chocolate_Fish_Cafe-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Chocolate+Fish+Cafe+100+Shelly+Bay+Rd+Miramar" target="_blank">📍 100 Shelly Bay Rd, Miramar</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.chocolatefish.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">☕ Café · Airfield</div>
+        <div class="venue-name">Spruce Goose — Lyall Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Plane spotting</span>
+          <span class="venue-pill">Sea views</span>
+          <span class="venue-pill">Coloring for kids</span>
+        </div>
+        <div class="venue-desc">Former airport terminal turned beloved café with sweeping views of Lyall Bay and the airport runway. Kids are mesmerised by the planes. Staff bring colouring paper for little ones. After a walk or swim at Lyall Bay — perfect.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d6455727-Reviews-Spruce_Goose-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Spruce+Goose+Cafe+Lyall+Bay+Wellington" target="_blank">📍 178 Lyall Bay Parade, Lyall Bay</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.spruce-goose.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">☕ Café · Beachside</div>
+        <div class="venue-name">Scorch-O-Rama — Scorching Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Beach directly across road</span>
+          <span class="venue-pill">Kids menu</span>
+          <span class="venue-pill">Pram friendly</span>
+        </div>
+        <div class="venue-desc">Bright and bustling café on the shoreline of Scorching Bay. Excellent brunch menu, dedicated kids menu, great coffee. Get your order to go and picnic on the sandy beach — or paddle in the sea while parents eat in peace.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.6</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d1784808-Reviews-Scorch_O_Rama-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Scorch-O-Rama+Scorching+Bay+Miramar" target="_blank">📍 95 Scorching Bay Parade, Miramar</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.scorchorama.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🍺 Bar · Playground</div>
+        <div class="venue-name">Hey Coastie</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Outdoor playground</span>
+          <span class="venue-pill">Craft beer & cocktails</span>
+          <span class="venue-pill">Relaxed family vibe</span>
+        </div>
+        <div class="venue-desc">Kāpiti's favourite bar with a proper outdoor playground — kids run free while parents enjoy craft beer, cocktails and great food. Relaxed, unpretentious and genuinely welcoming to families. The ideal Coastie afternoon.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255120-d23356789-Reviews-Hey_Coastie-Paraparaumu_Kapiti_Coast_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Hey+Coastie+Paraparaumu" target="_blank">📍 Paraparaumu, Kāpiti Coast</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.heycoastie.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Days Bay & Eastbourne<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🍽 Restaurant · Ferry terminal</div>
+        <div class="venue-name">Days Bay Boatshed Café</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Ferry from Wellington</span>
+          <span class="venue-pill">Beach & lawn</span>
+          <span class="venue-pill">All-day menu</span>
+        </div>
+        <div class="venue-desc">Relaxed all-day eatery across the road from one of Wellington's best beaches. Expansive lawn, toys and games, open until 8pm every day. Combine with a ride on the Days Bay ferry — one of Wellington's best family half-days.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g1765017-d3910578-Reviews-Days_Bay_Boatshed_Cafe-Days_Bay_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Days+Bay+Boatshed+Cafe+Marine+Parade+Eastbourne" target="_blank">📍 Marine Parade, Days Bay</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.eastbourneboatshed.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div><!-- /section-food -->
+
+<!-- ══════════════════════════════════════
+     WALKS & TRAILS SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-walks" role="tabpanel" aria-labelledby="tab-walks">
+<div class="section-intro">
+  <h2>Walks & Trails</h2>
+  <p>The best short walks for families with young kids across the Wellington region — all under an hour, mostly flat or gentle, with something interesting to discover along the way.</p>
+</div>
+
+<div class="duration-filter">
+  <span class="duration-label">⏱ Duration:</span>
+  <button class="duration-btn active" aria-pressed="true"  onclick="filterDuration('all', this)">All walks</button>
+  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under30', this)">Under 30 min</button>
+  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under1', this)">30–60 min</button>
+  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under2', this)">1–2 hours</button>
+  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('over2', this)">2 hours +</button>
+</div>
+
+<main>
+
+  <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Bush Walk</div>
+        <div class="venue-name">Otari-Wilton's Bush — Circular Walk</div>
+        <div class="walk-duration">⏱ 30–45 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Pram friendly (lower section)</span>
+          <span class="venue-pill">Native bush</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">NZ's only botanic garden dedicated solely to native plants. The flat lower section of the Circular Walk is perfect for prams and young kids — ancient trees, ferns, birdsong. A genuine bush experience minutes from the city.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/otari-wiltons-bush-circuit" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Otari+Wiltons+Bush+160+Wilton+Rd+Wellington" target="_blank">📍 160 Wilton Rd, Wilton</a>
+        <a class="venue-link" href="https://wellingtongardens.nz/our-gardens/otari-wiltons-bush/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Garden Walk</div>
+        <div class="venue-name">Wellington Botanic Garden Loop</div>
+        <div class="walk-duration">⏱ 30–60 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fenced toddler playground</span>
+          <span class="venue-pill">Duck pond</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">25 hectares of gardens with pram-friendly paths, a fenced duck pond, native forest section and the beautiful Lady Norwood Rose Garden. Ride the cable car up from Lambton Quay and walk back down. Kids love the sparrows.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/wellington-botanic-garden-loop" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wellington+Botanic+Garden+Glenmore+St" target="_blank">📍 Glenmore St, Thorndon</a>
+        <a class="venue-link" href="https://wellingtongardens.nz/our-gardens/wellington-botanic-garden/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-duration="under30">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4348A,#e870b8)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4348A">🧚 Fairy Trail</div>
+        <div class="venue-name">Fairy Forest Trail — Horoeka Reserve</div>
+        <div class="walk-duration">⏱ 20–40 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Tiny fairy doorways</span>
+          <span class="venue-pill">Magical for little ones</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A trail filled with miniature fairy doorways strategically placed along the path — hours of entertainment for young imaginations. One of Wellington's most unique and delightful family walks. Kids will want to do it twice.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.6</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/horoeka-reserve-fairy-forest-trail" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Horoeka+Reserve+Newlands+Wellington" target="_blank">📍 Horoeka Reserve, Newlands</a>
+        <a class="venue-link" href="https://www.wellingtonnz.com/visit/attractions/horoeka-reserve-fairy-forest-trail/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-duration="under30">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🌊 Waterfront Walk</div>
+        <div class="venue-name">Wellington Waterfront — Te Papa to Frank Kitts</div>
+        <div class="walk-duration">⏱ 20–30 min one way · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Completely flat</span>
+          <span class="venue-pill">Playgrounds en route</span>
+          <span class="venue-pill">Pram perfect</span>
+        </div>
+        <div class="venue-desc">Wellington's iconic flat waterfront promenade — from Te Papa past Waitangi Park playground, the Bucket Fountain, and along to Frank Kitts Park. Completely flat, endlessly interesting, and free. The classic Wellington family stroll.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.7</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/wellington-waterfront-walk" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Te+Papa+Museum+55+Cable+St+Wellington" target="_blank">📍 Start: Te Papa, Cable St</a>
+        <a class="venue-link" href="https://www.wellingtonnz.com/visit/walks/city-waterfront-walk/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Hutt Valley<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="lower-hutt" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Dam Walk</div>
+        <div class="venue-name">Korokoro Dam Loop — Lower Hutt</div>
+        <div class="walk-duration">⏱ 45 min · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Mini waterfall</span>
+          <span class="venue-pill">Native bush</span>
+          <span class="venue-pill">Free parking</span>
+        </div>
+        <div class="venue-desc">A short well-marked loop through the bush to a charming handmade 8m waterfall at Korokoro Dam in Belmont Regional Park. Kids love the waterfall. A little bit of climb at the end keeps it interesting without being hard.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.1</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/korokoro-dam-loop" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Korokoro+Dam+Belmont+Regional+Park+Lower+Hutt" target="_blank">📍 Korokoro Rd, Lower Hutt</a>
+        <a class="venue-link" href="https://www.gw.govt.nz/parks-and-recreation/parks/belmont-regional-park/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🎬 Heritage Walk</div>
+        <div class="venue-name">Kaitoke Regional Park — Rivendell</div>
+        <div class="walk-duration">⏱ 30–45 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Lord of the Rings filming location</span>
+          <span class="venue-pill">River swimming</span>
+          <span class="venue-pill">Picnic area</span>
+        </div>
+        <div class="venue-desc">Walk through the lush rainforest that doubled as Rivendell in Lord of the Rings — info panels show exactly what was filmed where. River access for paddling in summer. Ancient forest, crystal-clear water, Middle-earth magic.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/kaitoke-regional-park-rivendell-walk" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Kaitoke+Regional+Park+Waterworks+Rd+Upper+Hutt" target="_blank">📍 Waterworks Rd, Kaitoke</a>
+        <a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/kaitoke-regional-park/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="kapiti" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌊 Coastal Walk</div>
+        <div class="venue-name">Queen Elizabeth Park — Beach to Bush Loop</div>
+        <div class="walk-duration">⏱ 30–45 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Heritage tram rides</span>
+          <span class="venue-pill">Beach access</span>
+          <span class="venue-pill">Picnic spots</span>
+        </div>
+        <div class="venue-desc">Easy coastal and bush walking through one of the region's most loved parks. Combine with a heritage tram ride to the beach for a full morning out. Flat tracks, open spaces and sea views make it perfect for young children.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/queen-elizabeth-park-kapiti" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Queen+Elizabeth+Park+Paekakariki+Kapiti" target="_blank">📍 Queen Elizabeth Park, Paekakariki</a>
+        <a class="venue-link" href="https://www.gw.govt.nz/parks-and-recreation/parks/queen-elizabeth-park/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wairarapa" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🦎 Nature Walk</div>
+        <div class="venue-name">Putangirua Pinnacles — Short Loop</div>
+        <div class="walk-duration">⏱ 45–60 min · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Lord of the Rings location</span>
+          <span class="venue-pill">Dramatic rock formations</span>
+          <span class="venue-pill">River walk</span>
+        </div>
+        <div class="venue-desc">Jaw-dropping badland rock formations filmed as the Paths of the Dead in Lord of the Rings. The short river loop is manageable for young kids — rocky riverbed walking makes it an adventure. One of NZ's most dramatic short walks.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.8</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/putangirua-pinnacles-loop" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Putangirua+Pinnacles+Cape+Palliser" target="_blank">📍 Putangirua Pinnacles, Cape Palliser</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/aorangi-forest-park/putangirua-pinnacles-scenic-reserve/" target="_blank">Find out more ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wellington City — Longer Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington" data-duration="under2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏔 Hillside Walk</div>
+        <div class="venue-name">Mt Victoria Lookout Loop</div>
+        <div class="walk-duration">⏱ 60–90 min · Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">360° panoramic views</span>
+          <span class="venue-pill">Lord of the Rings filming site</span>
+          <span class="venue-pill">City access</span>
+        </div>
+        <div class="venue-desc">Wellington's most iconic viewpoint — the full loop via the Matairangi summit takes around 90 minutes and rewards with sweeping views over the harbour, city and beyond. The LOTR "Shire" scene was filmed on the lower slopes. Older kids will love it.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.7</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/mount-victoria-lookout-loop" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Mt+Victoria+Lookout+Wellington" target="_blank">📍 Mt Victoria, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/walks-and-runs/town-belt-walks/mt-victoria" target="_blank">Find out more ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-duration="under2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Bush & Coast</div>
+        <div class="venue-name">Makara Walkway</div>
+        <div class="walk-duration">⏱ 60–90 min · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Rugged west coast</span>
+          <span class="venue-pill">Wind turbines</span>
+          <span class="venue-pill">Beach at end</span>
+        </div>
+        <div class="venue-desc">A rolling farm and coastal track out to Wellington's wild west coast — passing the giant wind turbines of the Meridian wind farm and finishing at a dramatic black sand beach. A proper adventure for older kids with good legs.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/makara-walkway" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Makara+Walkway+Wellington" target="_blank">📍 Makara, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/makara-peak-mountain-bike-park/things-to-do/makara-walkway/" target="_blank">Find out more ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Hutt Valley — Half Day Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="upper-hutt" data-duration="over2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🏞 Forest Trail</div>
+        <div class="venue-name">Remutaka Rail Trail — Tunnel Section</div>
+        <div class="walk-duration">⏱ 2.5–3 hr return · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Historic rail tunnel</span>
+          <span class="venue-pill">Fully flat</span>
+          <span class="venue-pill">Bikes welcome</span>
+        </div>
+        <div class="venue-desc">The most spectacular section of the old Remutaka Incline railway — flat, gravel and fully accessible, leading through a 576m tunnel that kids absolutely love (bring a torch!). The trail follows the original 1878 railway through dense forest. A fantastic half-day outing for families with older children or bikes.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.9</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/remutaka-rail-trail" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Remutaka+Rail+Trail+Upper+Hutt" target="_blank">📍 Kaitoke, Upper Hutt</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/remutaka-forest-park/things-to-do/tracks/remutaka-rail-trail/" target="_blank">Find out more ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="kapiti" data-duration="over2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🦜 Wildlife Walk</div>
+        <div class="venue-name">Kāpiti Island Nature Reserve</div>
+        <div class="walk-duration">⏱ 3–4 hr · Moderate (steep sections)</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Rare native birds</span>
+          <span class="venue-pill">Predator-free island</span>
+          <span class="venue-pill">Ferry from Paraparaumu</span>
+        </div>
+        <div class="venue-desc">One of NZ's great wildlife experiences — a predator-free island sanctuary where kiwi roam freely during the day, giant weta hide in the trees and kōkako fill the air. The summit track is steep but worth every step. Booking essential; numbers strictly limited. Best for kids 8+.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.9</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/kapiti-island-wilkinson-track" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Kapiti+Island+Paraparaumu" target="_blank">📍 Kāpiti Island (ferry from Paraparaumu Beach)</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/kapiti-island-nature-reserve/" target="_blank">Book via DOC ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div><!-- /section-walks -->
+
+<!-- ══════════════════════════════════════
+     PLAY PARKS SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-parks" role="tabpanel" aria-labelledby="tab-parks">
+<div class="section-intro">
+  <h2>Play Parks</h2>
+  <p>The best playgrounds and indoor play centres across the Wellington region — from lighthouse slides on the waterfront to fenced toddler havens and rainy-day escapes.</p>
+</div>
+<main>
+
+  <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4348A,#e870b8)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4348A">🛝 Playground · Waterfront</div>
+        <div class="venue-name">Frank Kitts Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Iconic lighthouse slide</span>
+          <span class="venue-pill">All ages</span>
+          <span class="venue-pill">Free</span>
+          <span class="venue-pill">Ice cream van nearby</span>
+        </div>
+        <div class="venue-desc">Wellington's most famous playground — the giant lighthouse slide is an institution. Right on the waterfront with swings, climbing structures, spring ride-ons and usually an ice cream van in summer. The best spot to combine a playground with a harbour walk.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Frank+Kitts+Park+Playground+Wellington+Waterfront" target="_blank">📍 Jervois Quay, Waterfront</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🛝 Playground · Garden</div>
+        <div class="venue-name">Wellington Botanic Garden Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fully fenced</span>
+          <span class="venue-pill">Upgraded 2024</span>
+          <span class="venue-pill">Flying fox · 3 long slides</span>
+          <span class="venue-pill">Shade sails</span>
+        </div>
+        <div class="venue-desc">One of Wellington's best — fully fenced, newly upgraded in 2024 with a dual flying fox, large climbable tower and three long pipe slides through native bush. Shade sails, sandpit and beautiful garden surroundings. Combine with the cable car for a full day out.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wellington+Botanic+Garden+Playground+Glenmore+St" target="_blank">📍 Glenmore St, Thorndon</a>
+        <a class="venue-link" href="https://wellingtongardens.nz/our-gardens/wellington-botanic-garden/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Playground · Adventure</div>
+        <div class="venue-name">Khandallah Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Flying fox</span>
+          <span class="venue-pill">Adventure structure</span>
+          <span class="venue-pill">Harbour views</span>
+          <span class="venue-pill">Toddler area</span>
+        </div>
+        <div class="venue-desc">A hidden gem with incredible panoramic views over Wellington Harbour. Exciting adventure structure with slides, climbing walls and monkey bars, plus a dedicated toddler area. Backs onto native bush — you'll often see kākā from Zealandia. A local favourite.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Khandallah+Park+Playground+Wellington" target="_blank">📍 Khandallah Park, Khandallah</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Playground · Beach</div>
+        <div class="venue-name">Freyberg Beach Playground — Oriental Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Next to the beach</span>
+          <span class="venue-pill">Outdoor pool nearby</span>
+          <span class="venue-pill">Rope climbing frame</span>
+          <span class="venue-pill">Mini sand beach</span>
+        </div>
+        <div class="venue-desc">Right alongside Oriental Bay's sandy beach and outdoor pool — a huge rope climbing frame for 5+, toddler-friendly tunnel slides, and a little sand beach built with Golden Bay sand. The Boat Café (in an actual tugboat) is right next door.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Freyberg+Beach+Playground+Oriental+Bay+Wellington" target="_blank">📍 Oriental Parade, Oriental Bay</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🏴‍☠️ Playground · Seaside</div>
+        <div class="venue-name">Shorland Park — Pirate Ship Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Huge pirate ship slide</span>
+          <span class="venue-pill">Basketball half-court</span>
+          <span class="venue-pill">Wheelchair accessible swing</span>
+        </div>
+        <div class="venue-desc">A huge, well-loved pirate ship slide that kids absolutely go wild for. Basketball hoop for older kids, picnic tables, a wheelchair-accessible liberty swing, and it's steps from the beach at Seatoun. Put on a pirate costume for full effect.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Shorland+Park+Seatoun+Wellington" target="_blank">📍 Marine Parade, Seatoun</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🌿 Nature Play · Mt Victoria</div>
+        <div class="venue-name">Matairangi Nature Trail — Mt Victoria</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Natural play stations</span>
+          <span class="venue-pill">Half km trail</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">Not a traditional playground but a brilliant nature trail along Mt Victoria with activity stations where kids can climb, balance, slide and search. Themed around native wildlife — tuna, wētā and kārearea. A wonderful outdoor experience for little explorers.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Matairangi+Nature+Trail+Mt+Victoria+Wellington" target="_blank">📍 Alexandra Rd, Mt Victoria</a>
+        <a class="venue-link" href="https://totstoteens.co.nz/activities-with-kids/local-activities/aotearoa-region/10-must-visit-playgrounds-in-wellington/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🛝 Playground · Toddler-Focused</div>
+        <div class="venue-name">Wadestown Play Centre — Fenced Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fully fenced</span>
+          <span class="venue-pill">Perfect for under 5s</span>
+          <span class="venue-pill">Sandpit · trampoline</span>
+        </div>
+        <div class="venue-desc">Fully fenced and tailor-made for toddlers — in-ground trampoline, carousel, sandpit under shade sail, inclusive basket swing and mini slides. Open to the public anytime. A sleep-deprived parent's best friend on a sunny morning.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wadestown+Playground+Wellington" target="_blank">📍 Wadestown Rd, Wadestown</a>
+        <a class="venue-link" href="https://roamwithkids.app/blog/wellingtons-best-fenced-playgrounds" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#8A1A1A,#c44040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#8A1A1A">🌧 Indoor Play · Rainy Day</div>
+        <div class="venue-name">Chipmunks Indoor Playground — Lyall Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Rainy day hero</span>
+          <span class="venue-pill">Ball pits · slides</span>
+          <span class="venue-pill">Baby & toddler zone</span>
+        </div>
+        <div class="venue-desc">Wellington's go-to rainy day escape — soft play, slides, ball pits and a dedicated baby/toddler area. The Lyall Bay location is easily accessible from central Wellington. Entry fee applies. Also has a Tawa location for north Wellington.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Chipmunks+Playland+Lyall+Bay+Wellington" target="_blank">📍 Lyall Bay (+ Tawa)</a>
+        <a class="venue-link" href="https://chipmunks.co.nz" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Lower Hutt<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4348A,#e870b8)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4348A">🛝 Mega Playground</div>
+        <div class="venue-name">Avalon Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Best playground in the region</span>
+          <span class="venue-pill">Water play engineering</span>
+          <span class="venue-pill">Super-Mega swing</span>
+          <span class="venue-pill">All ages</span>
+        </div>
+        <div class="venue-desc">Widely regarded as the best playground in the greater Wellington region. Enormous and thoughtfully designed with something for every age — Super-Mega swing, Bird's Nest swing, Amazon Tower slide, water play engineering, flying fox, trampolines and abseiling walls. Plan a full morning here.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Avalon+Park+Playground+Lower+Hutt" target="_blank">📍 Avalon Park, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation/parks-and-reserves/avalon-park" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🛝 Playground · Toddler</div>
+        <div class="venue-name">Petone Playscape</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fully fenced</span>
+          <span class="venue-pill">Water play</span>
+          <span class="venue-pill">Sandpit</span>
+          <span class="venue-pill">Open 7am–7pm</span>
+        </div>
+        <div class="venue-desc">A fantastic fenced playground attached to Petone Salvation Army — sandpits, water play, climbing structures and slides. Open 7am to 7pm, which makes it great for early morning energy burns. Unique water and sand features you rarely find at a public playground.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Petone+Playscape+Lower+Hutt" target="_blank">📍 Petone, Lower Hutt</a>
+        <a class="venue-link" href="https://roamwithkids.app/blog/wellingtons-best-fenced-playgrounds" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Upper Hutt<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🚂 Playground · Railway</div>
+        <div class="venue-name">Harcourt Park — Miniature Railway & Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Miniature railway $1.50</span>
+          <span class="venue-pill">Paddling pool (summer)</span>
+          <span class="venue-pill">Flying fox</span>
+          <span class="venue-pill">Bush walks nearby</span>
+        </div>
+        <div class="venue-desc">A proper family destination — miniature railway rides for $1.50, a paddling pool in summer, flying fox and solid playground equipment. Coffee cart on site. Tunnel and steam engine rides delight kids of all ages, and the surrounding park is stunning.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Harcourt+Park+Upper+Hutt" target="_blank">📍 Harcourt Park, Upper Hutt</a>
+        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds/Harcourt-Park" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🛝 Destination Park</div>
+        <div class="venue-name">Maidstone Park</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Destination playground</span>
+          <span class="venue-pill">Coffee shops nearby</span>
+          <span class="venue-pill">Open space</span>
+          <span class="venue-pill">All ages</span>
+        </div>
+        <div class="venue-desc">One of Upper Hutt's best family destinations — a large destination playground with plenty of open space to run around. Coffee shops are close by for the grown-ups. Worth the drive up the valley for a full family morning out.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Maidstone+Park+Upper+Hutt" target="_blank">📍 Maidstone Park, Upper Hutt</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🛝 Playground · Beachside</div>
+        <div class="venue-name">Maclean Park — Paraparaumu Beach</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Beach access</span>
+          <span class="venue-pill">River play</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Good parking</span>
+        </div>
+        <div class="venue-desc">A relaxed beachside park popular with local families and school groups — river running through it for kids to splash in on warm days, open grass for games, and solid playground equipment. Great parking and public toilets. Easy half-morning outing on the Coast.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Maclean+Park+Paraparaumu+Beach+Kapiti" target="_blank">📍 Maclean Park, Paraparaumu Beach</a>
+        <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div><!-- /section-parks -->
+
+<!-- ══════════════════════════════════════
+     ABOUT SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-about" role="tabpanel">
+<main>
+  <div class="section-intro" style="padding-top:0">
+    <h2>About This Guide</h2>
+    <p>Helping Wellington families find brilliant things to do every weekend.</p>
+  </div>
+  <div style="max-width:640px;margin:28px auto 0;padding:0 28px;">
+    <div style="background:#fff;border-radius:4px;border:1px solid rgba(0,0,0,0.07);padding:28px 24px;">
+      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Built with love by <strong style="color:#1a2a2a">Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
+      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
+      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
+      <p style="font-size:13px;color:#6a7a7a;line-height:1.7;text-align:center;padding-top:16px;border-top:1px solid #f0eeea;">
+        Spotted something incorrect, want to promote an event, or just have feedback?<br>
+        Drop us a message at <a style="color:var(--teal);font-weight:600;text-decoration:none;" href="#" onclick="this.href='mailto:'+atob('aGVsbG9Ad2hhdHNvbndlbGxpbmd0b24uY28ubno=')">hello@whatsonwellington.<wbr>co.nz</a>
+      </p>
+      <p style="font-size:12px;color:#9aacac;text-align:center;margin-top:20px;letter-spacing:0.05em;">Made with ❤️ in Wellington</p>
+    </div>
+  </div>
+</main>
+</div><!-- /section-about -->
+
+<!-- ══════════════════════════════════════
+     PLANNER SECTION (behind login)
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
+<main>
+  <!-- Shown when NOT logged in -->
+  <div id="plannerLoginPrompt" class="planner-login-prompt">
+    <div class="planner-login-prompt-icon">📋</div>
+    <h3>Plan Your Weekend</h3>
+    <p>Sign in to build a personalised weekend plan. Save events, cafés, walks and parks — then view your itinerary all in one place.</p>
+    <button class="planner-login-btn" onclick="openLoginModal()">Sign in to get started</button>
+  </div>
+  <!-- Shown when logged in -->
+  <div id="plannerContent" style="display:none;">
+    <div class="plan-toolbar">
+      <h3>My Weekend Plan</h3>
+      <div class="plan-toolbar-actions">
+        <button class="plan-clear-btn" onclick="clearPlan()">Clear all</button>
+        <button class="plan-share-btn" onclick="sharePlan()">📤 Share</button>
+      </div>
+    </div>
+
+    <div id="plannerTimeline">
+      <!-- Dynamically rendered -->
+    </div>
+
+    <div id="plannerEmpty" class="planner-empty">
+      <div class="planner-empty-icon">🗓</div>
+      <p>Your weekend plan is empty. Browse events, cafés, walks and parks, then tap <strong>+ Add to plan</strong> on anything that catches your eye.</p>
+      <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">Browse events</button>
+    </div>
+  </div>
+</main>
+</div><!-- /section-planner -->
+
+<!-- ── LOGIN MODAL ── -->
+<div class="login-overlay" id="loginOverlay" onclick="if(event.target===this)closeLoginModal()">
+  <div class="login-modal" role="dialog" aria-modal="true" aria-label="Sign in">
+    <div class="login-modal-header">
+      <h2>Sign in to save<br>your weekend plan</h2>
+      <p>Your plan is saved to the cloud and synced across devices.</p>
+      <button class="login-modal-close" onclick="closeLoginModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="login-modal-body">
+      <button class="login-provider-btn" onclick="signInWithGoogle()" id="googleSignInBtn">
+        <svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+      <button class="login-provider-btn" onclick="signInWithMicrosoft()" id="microsoftSignInBtn">
+        <svg class="login-provider-icon" viewBox="0 0 23 23"><rect fill="#f25022" x="1" y="1" width="10" height="10"/><rect fill="#00a4ef" x="1" y="12" width="10" height="10"/><rect fill="#7fba00" x="12" y="1" width="10" height="10"/><rect fill="#ffb900" x="12" y="12" width="10" height="10"/></svg>
+        Continue with Microsoft
+      </button>
+      <div class="login-footer-note">We only use your name and email to save your plan.<br>No spam, ever. You can sign out any time.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST NOTIFICATION ── -->
+<div class="toast" id="toast"></div>
+
+<footer>
+  <p>Wellington Family Events · Sources: <a href="https://www.wellybuzz.co.nz" target="_blank">WellyBuzz</a> · <a href="https://www.eventfinda.co.nz/whatson/events/wellington" target="_blank">Eventfinda</a> · <a href="https://www.wellingtonnz.com/visit/events" target="_blank">WellingtonNZ</a></p>
+  <p>Always verify event details with organisers before heading out.</p>
+</footer>
+
+<script>
+  let currentRegion = 'all';
+  let currentDuration = 'all';
+
+  function filterDuration(duration, btn) {
+    currentDuration = duration;
+    document.querySelectorAll('.duration-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    applyWalkFilters();
+  }
+
+  function applyWalkFilters() {
+    document.querySelectorAll('#section-walks .venue-card').forEach(card => {
+      const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
+      const dur = card.dataset.duration; // under30 | under1 | under2 | over2
+      let durationMatch;
+      if (currentDuration === 'all') {
+        durationMatch = true;
+      } else {
+        durationMatch = (dur === currentDuration);
+      }
+      card.classList.toggle('hidden', !(regionMatch && durationMatch));
+    });
+    // Show/hide section headings when no visible cards remain beneath them
+    document.querySelectorAll('#section-walks .venue-grid').forEach(grid => {
+      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
+      const label = grid.previousElementSibling;
+      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
+      grid.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  // ── CHANGE 3: Focus trap helpers ──
+  const FOCUSABLE = 'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
+
+  function trapFocus(el) {
+    const focusable = [...el.querySelectorAll(FOCUSABLE)];
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    el._trapHandler = function(e) {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+      else            { if (document.activeElement === last)  { e.preventDefault(); first.focus(); } }
+    };
+    el.addEventListener('keydown', el._trapHandler);
+    if (first) first.focus();
+  }
+  function releaseFocus(el) {
+    if (el._trapHandler) el.removeEventListener('keydown', el._trapHandler);
+  }
+
+  function toggleMenu() {
+    const panel = document.getElementById('dropdownPanel');
+    const isOpen = panel.classList.contains('open');
+    isOpen ? closeMenu() : openMenu();
+  }
+  function openMenu() {
+    const btn = document.getElementById('hamburgerBtn');
+    const panel = document.getElementById('dropdownPanel');
+    document.getElementById('dropdownMenu').classList.add('open');
+    panel.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    btn.setAttribute('aria-label', 'Close menu');
+    trapFocus(panel);
+    // Close on Escape
+    panel._escHandler = (e) => { if (e.key === 'Escape') closeMenu(); };
+    document.addEventListener('keydown', panel._escHandler);
+  }
+  function closeMenu() {
+    const btn = document.getElementById('hamburgerBtn');
+    const panel = document.getElementById('dropdownPanel');
+    document.getElementById('dropdownMenu').classList.remove('open');
+    panel.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Open menu');
+    releaseFocus(panel);
+    if (panel._escHandler) document.removeEventListener('keydown', panel._escHandler);
+    btn.focus();
+  }
+
+  function showSectionFromMenu(section) {
+    const btns = document.querySelectorAll('.main-nav-btn');
+    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4 };
+    if (section === 'about') {
+      // About has no tab — just show the section directly
+      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.main-nav-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.getElementById('section-about').classList.add('active');
+      document.querySelector('.tabs-bar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (section === 'planner') {
+      handlePlannerTabClick(btns[map.planner]);
+      return;
+    }
+    const btn = map[section] !== undefined ? btns[map[section]] : null;
+    if (btn) showSection(section, btn);
+  }
+
+  // ── CHANGE 5: URL hash state ──
+  function updateHash(section, region) {
+    try {
+      const params = new URLSearchParams();
+      if (section && section !== 'events') params.set('s', section);
+      if (region && region !== 'all') params.set('r', region);
+      history.replaceState(null, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+    } catch (e) {
+      // Silently ignore — happens when opened as a local file rather than served
+    }
+  }
+
+  function readHash() {
+    const params = new URLSearchParams(window.location.search);
+    const section = params.get('s') || 'events';
+    const region  = params.get('r') || 'all';
+    return { section, region };
+  }
+
+  function showSection(section, btn) {
+    document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+    // ── Change 3: update aria-selected on tabs ──
+    document.querySelectorAll('.main-nav-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById('section-' + section).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.querySelector('.tabs-bar').style.display = section === 'events' ? '' : 'none';
+    applyFilter(currentRegion);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateHash(section, currentRegion);
+  }
+
+  function showTab(id, btn) {
+    document.querySelectorAll('.weekend-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    applyFilter(currentRegion);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function filterRegion(region, btn) {
+    currentRegion = region;
+    // ── Change 3: update aria-pressed on filter buttons ──
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    applyFilter(region);
+    // ── Change 5: update URL ──
+    const activeSection = document.querySelector('.app-section.active')?.id?.replace('section-', '') || 'events';
+    updateHash(activeSection, region);
+  }
+
+  function applyFilter(region) {
+    const activePanel = document.querySelector('.weekend-panel.active');
+    if (activePanel) {
+      activePanel.querySelectorAll('.card').forEach(card => {
+        card.classList.toggle('hidden', region !== 'all' && card.dataset.region !== region);
+      });
+      activePanel.querySelectorAll('.events-grid').forEach(grid => {
+        const existing = grid.nextElementSibling;
+        if (existing && existing.classList.contains('no-results')) existing.remove();
+        if (grid.querySelectorAll('.card:not(.hidden)').length === 0) {
+          const msg = document.createElement('p');
+          msg.className = 'no-results';
+          msg.style.cssText = 'color:#bbb;font-size:13px;padding:12px 0 24px;font-style:italic;';
+          msg.textContent = 'No events in this area for this day.';
+          grid.after(msg);
+        }
+      });
+    }
+    document.querySelectorAll('.venue-card, .banner-sponsored').forEach(card => {
+      // Skip walk cards — handled separately by applyWalkFilters
+      if (card.closest('#section-walks')) return;
+      const alwaysShow = card.dataset.region === 'all';
+      card.classList.toggle('hidden', !alwaysShow && region !== 'all' && card.dataset.region !== region);
+    });
+
+    // Walk cards use combined region + duration filter
+    applyWalkFilters();
+    document.querySelectorAll('#section-food .venue-grid, #section-parks .venue-grid').forEach(grid => {
+      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
+      const label = grid.previousElementSibling;
+      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
+      grid.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  // ── CHANGE 5: Restore state from URL on load ──
+  document.addEventListener('DOMContentLoaded', () => {
+    const { section, region } = readHash();
+
+    // Restore section
+    if (section !== 'events') {
+      const navBtns = document.querySelectorAll('.main-nav-btn');
+      const map = { food: 1, walks: 2, parks: 3, planner: 4 };
+      if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
+    }
+
+    // Restore region
+    if (region !== 'all') {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(region.replace('-', ' ')) ||
+            btn.getAttribute('onclick')?.includes("'" + region + "'")) {
+          filterRegion(region, btn);
+        }
+      });
+    }
+
+    // ── Arrow key navigation for tablists ──
+    document.querySelectorAll('[role="tablist"]').forEach(tablist => {
+      tablist.addEventListener('keydown', (e) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+        const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+        const current = tabs.indexOf(document.activeElement);
+        if (current === -1) return;
+        e.preventDefault();
+        let next;
+        if (e.key === 'ArrowRight') next = (current + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        tabs[next].focus();
+        tabs[next].click();
+      });
+    });
+  });
+</script>
+
+<!-- ── Firebase SDK (compat) ── -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // ═══════════════════════════════════════════════
+  // ✏️ FIREBASE CONFIG — Replace with your own!
+  //
+  // 1. Go to https://console.firebase.google.com
+  // 2. Create a project (or use an existing one)
+  // 3. Enable Authentication → Sign-in methods:
+  //    • Google  (just toggle on)
+  //    • Microsoft (needs Azure AD App Registration — see docs)
+  // 4. Enable Cloud Firestore (start in test mode)
+  // 5. Go to Project Settings → General → Your apps → Web app
+  // 6. Copy your config object and paste below
+  // ═══════════════════════════════════════════════
+  const firebaseConfig = {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT.firebaseapp.com",
+    projectId:         "YOUR_PROJECT",
+    storageBucket:     "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID"
+  };
+
+  // ── Initialise Firebase ──
+  let firebaseReady = false;
+  let db = null;
+  let auth = null;
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db   = firebase.firestore();
+    firebaseReady = true;
+  } catch (e) {
+    console.warn('Firebase not configured — planner will use local storage only.', e);
+  }
+
+  // ═══════════════════════════════════════
+  //  AUTH — Google & Microsoft
+  // ═══════════════════════════════════════
+  let currentUser = null;
+
+  function openLoginModal()  { document.getElementById('loginOverlay').classList.add('open'); }
+  function closeLoginModal() { document.getElementById('loginOverlay').classList.remove('open'); }
+
+  async function signInWithGoogle() {
+    if (!firebaseReady) { showToast('Firebase not configured — see setup guide in source'); return; }
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+      closeLoginModal();
+    } catch (e) {
+      if (e.code !== 'auth/popup-closed-by-user') {
+        console.error('Google sign-in error:', e);
+        showToast('Sign-in failed — check Firebase config');
+      }
+    }
+  }
+
+  async function signInWithMicrosoft() {
+    if (!firebaseReady) { showToast('Firebase not configured — see setup guide in source'); return; }
+    try {
+      const provider = new firebase.auth.OAuthProvider('microsoft.com');
+      provider.setCustomParameters({ prompt: 'select_account' });
+      await auth.signInWithPopup(provider);
+      closeLoginModal();
+    } catch (e) {
+      if (e.code !== 'auth/popup-closed-by-user') {
+        console.error('Microsoft sign-in error:', e);
+        showToast('Sign-in failed — check Firebase config');
+      }
+    }
+  }
+
+  async function signOutUser() {
+    closeUserDropdown();
+    if (firebaseReady) await auth.signOut();
+    currentUser = null;
+    updateAuthUI(null);
+    showToast('Signed out');
+  }
+
+  function updateAuthUI(user) {
+    const signInBtn  = document.getElementById('authSignInBtn');
+    const userArea   = document.getElementById('authUserArea');
+    const avatarBtn  = document.getElementById('authAvatarBtn');
+    const nameEl     = document.getElementById('userDropdownName');
+    const emailEl    = document.getElementById('userDropdownEmail');
+    const prompt     = document.getElementById('plannerLoginPrompt');
+    const content    = document.getElementById('plannerContent');
+
+    if (user) {
+      signInBtn.style.display = 'none';
+      userArea.style.display = 'block';
+      nameEl.textContent  = user.displayName || 'User';
+      emailEl.textContent = user.email || '';
+      if (user.photoURL) {
+        avatarBtn.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = user.photoURL;
+        img.alt = user.displayName || 'User avatar';
+        img.className = 'auth-avatar';
+        img.onclick = toggleUserDropdown;
+        avatarBtn.replaceWith(img);
+        // Update reference
+        document.getElementById('authUserArea').querySelector('img').id = 'authAvatarBtn';
+      } else {
+        avatarBtn.textContent = (user.displayName || 'U').charAt(0).toUpperCase();
+      }
+      prompt.style.display  = 'none';
+      content.style.display = 'block';
+      loadPlan();
+    } else {
+      signInBtn.style.display = 'flex';
+      userArea.style.display  = 'none';
+      prompt.style.display    = 'block';
+      content.style.display   = 'none';
+      planItems = [];
+      renderPlan();
+      updateAddButtons();
+    }
+  }
+
+  // Listen for auth state
+  if (firebaseReady) {
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      updateAuthUI(user);
+    });
+  }
+
+  // ── User dropdown ──
+  function toggleUserDropdown() {
+    document.getElementById('userDropdown').classList.toggle('open');
+  }
+  function closeUserDropdown() {
+    document.getElementById('userDropdown').classList.remove('open');
+  }
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('userDropdown');
+    const area = document.getElementById('authUserArea');
+    if (dd && area && !area.contains(e.target)) dd.classList.remove('open');
+  });
+
+  // ═══════════════════════════════════════
+  //  PLANNER — Data & Persistence
+  // ═══════════════════════════════════════
+  let planItems = []; // Array of { id, title, time, location, category, day, section, region, addedAt }
+
+  function generateItemId(title) {
+    return title.replace(/[^a-z0-9]/gi, '-').toLowerCase().substring(0, 60) + '-' + Date.now().toString(36);
+  }
+
+  function getCardData(cardEl) {
+    const isVenueCard = cardEl.classList.contains('venue-card');
+    let title, time, location, category, region, section;
+
+    if (isVenueCard) {
+      title    = cardEl.querySelector('.venue-name')?.textContent?.trim() || '';
+      time     = cardEl.querySelector('.walk-duration')?.textContent?.trim() || '';
+      location = cardEl.querySelector('.venue-location')?.textContent?.trim()?.replace('📍 ', '') || '';
+      category = cardEl.querySelector('.venue-tag')?.textContent?.trim() || '';
+      region   = cardEl.dataset.region || '';
+      section  = cardEl.closest('#section-food') ? 'food' :
+                 cardEl.closest('#section-walks') ? 'walks' :
+                 cardEl.closest('#section-parks') ? 'parks' : 'other';
+    } else {
+      title    = cardEl.querySelector('.card-title')?.textContent?.trim() || '';
+      time     = '';
+      location = '';
+      category = cardEl.querySelector('.card-cat')?.textContent?.trim() || '';
+      region   = cardEl.dataset.region || '';
+      section  = 'events';
+      // Extract time and location from meta rows
+      cardEl.querySelectorAll('.meta-row').forEach(row => {
+        const text = row.textContent.trim();
+        if (text.includes('🕐')) time = text.replace('🕐', '').trim();
+        if (text.includes('📍')) location = text.replace('📍', '').trim();
+      });
+    }
+
+    return { title, time, location, category, region, section };
+  }
+
+  function addToPlan(cardEl) {
+    if (!currentUser) { openLoginModal(); return; }
+
+    const data = getCardData(cardEl);
+    // Check if already added (by title match)
+    if (planItems.some(item => item.title === data.title)) {
+      showToast('Already in your plan');
+      return;
+    }
+
+    const item = {
+      id: generateItemId(data.title),
+      ...data,
+      day: 'saturday', // default — user can change
+      addedAt: Date.now()
+    };
+
+    planItems.push(item);
+    savePlan();
+    renderPlan();
+    updateAddButtons();
+    showToast('Added to your weekend plan ✓');
+  }
+
+  function removeFromPlan(itemId) {
+    planItems = planItems.filter(i => i.id !== itemId);
+    savePlan();
+    renderPlan();
+    updateAddButtons();
+    showToast('Removed from plan');
+  }
+
+  function changeDay(itemId, newDay) {
+    const item = planItems.find(i => i.id === itemId);
+    if (item) {
+      item.day = newDay;
+      savePlan();
+      renderPlan();
+    }
+  }
+
+  function clearPlan() {
+    if (!confirm('Clear your entire weekend plan?')) return;
+    planItems = [];
+    savePlan();
+    renderPlan();
+    updateAddButtons();
+    showToast('Plan cleared');
+  }
+
+  function movePlanItem(itemId, direction) {
+    const idx = planItems.findIndex(i => i.id === itemId);
+    if (idx === -1) return;
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= planItems.length) return;
+    [planItems[idx], planItems[newIdx]] = [planItems[newIdx], planItems[idx]];
+    savePlan();
+    renderPlan();
+  }
+
+  // ── Persist to Firestore (or localStorage fallback) ──
+  async function savePlan() {
+    updatePlanBadge();
+    if (firebaseReady && currentUser) {
+      try {
+        await db.collection('plans').doc(currentUser.uid).set({
+          items: planItems,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.warn('Firestore save failed, using localStorage', e);
+        localStorage.setItem('wow_plan', JSON.stringify(planItems));
+      }
+    } else {
+      localStorage.setItem('wow_plan', JSON.stringify(planItems));
+    }
+  }
+
+  async function loadPlan() {
+    if (firebaseReady && currentUser) {
+      try {
+        const doc = await db.collection('plans').doc(currentUser.uid).get();
+        if (doc.exists && doc.data().items) {
+          planItems = doc.data().items;
+        } else {
+          // Check localStorage for items added before sign-in
+          const local = localStorage.getItem('wow_plan');
+          if (local) {
+            planItems = JSON.parse(local);
+            await savePlan(); // migrate to Firestore
+            localStorage.removeItem('wow_plan');
+          }
+        }
+      } catch (e) {
+        console.warn('Firestore load failed', e);
+        const local = localStorage.getItem('wow_plan');
+        planItems = local ? JSON.parse(local) : [];
+      }
+    } else {
+      const local = localStorage.getItem('wow_plan');
+      planItems = local ? JSON.parse(local) : [];
+    }
+    renderPlan();
+    updateAddButtons();
+  }
+
+  // ── Render plan timeline ──
+  function renderPlan() {
+    const container = document.getElementById('plannerTimeline');
+    const emptyEl   = document.getElementById('plannerEmpty');
+
+    if (planItems.length === 0) {
+      container.innerHTML = '';
+      emptyEl.style.display = 'block';
+      updatePlanBadge();
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    const saturday = planItems.filter(i => i.day === 'saturday');
+    const sunday   = planItems.filter(i => i.day === 'sunday');
+
+    let html = '';
+
+    if (saturday.length > 0) {
+      html += renderDaySection('Saturday', saturday);
+    }
+    if (sunday.length > 0) {
+      html += renderDaySection('Sunday', sunday);
+    }
+
+    container.innerHTML = html;
+    updatePlanBadge();
+  }
+
+  function renderDaySection(dayLabel, items) {
+    const dayValue = dayLabel.toLowerCase();
+    const otherDay = dayValue === 'saturday' ? 'sunday' : 'saturday';
+    const otherLabel = dayValue === 'saturday' ? 'Sun' : 'Sat';
+
+    let html = `<div class="plan-day-section">
+      <div class="plan-day-title"><span class="pip"></span>${dayLabel}<span class="line"></span></div>
+      <div class="plan-items">`;
+
+    items.forEach((item, idx) => {
+      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', other: '📌' }[item.section] || '📌';
+      html += `
+        <div class="plan-item" draggable="true" data-item-id="${item.id}">
+          <div class="plan-item-grip" title="Drag to reorder">⠿</div>
+          <div class="plan-item-content">
+            <div class="plan-item-title">${escapeHtml(item.title)}</div>
+            <div class="plan-item-meta">
+              <span>${sectionIcon} ${escapeHtml(item.category)}</span>
+              ${item.time ? '<span>🕐 ' + escapeHtml(item.time) + '</span>' : ''}
+              ${item.location ? '<span>📍 ' + escapeHtml(item.location) + '</span>' : ''}
+            </div>
+          </div>
+          <select class="plan-day-select" onchange="changeDay('${item.id}', this.value)" title="Move to another day">
+            <option value="saturday" ${dayValue === 'saturday' ? 'selected' : ''}>Sat</option>
+            <option value="sunday" ${dayValue === 'sunday' ? 'selected' : ''}>Sun</option>
+          </select>
+          <button class="plan-item-remove" onclick="removeFromPlan('${item.id}')" title="Remove">✕</button>
+        </div>`;
+    });
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ── Plan badge count ──
+  function updatePlanBadge() {
+    const badge = document.getElementById('planCountBadge');
+    if (!badge) return;
+    const count = planItems.length;
+    badge.textContent = count;
+    badge.classList.toggle('visible', count > 0);
+  }
+
+  // ── Share plan ──
+  function sharePlan() {
+    if (planItems.length === 0) { showToast('Nothing to share yet'); return; }
+    let text = '🗓 My Wellington Weekend Plan\n\n';
+    const saturday = planItems.filter(i => i.day === 'saturday');
+    const sunday   = planItems.filter(i => i.day === 'sunday');
+    if (saturday.length) {
+      text += '📅 SATURDAY\n';
+      saturday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
+      text += '\n';
+    }
+    if (sunday.length) {
+      text += '📅 SUNDAY\n';
+      sunday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
+    }
+    text += '\nPlanned on whatsonwellington.co.nz';
+
+    if (navigator.share) {
+      navigator.share({ title: 'My Wellington Weekend', text }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => showToast('Plan copied to clipboard'));
+    }
+  }
+
+  // ═══════════════════════════════════════
+  //  ADD-TO-PLAN BUTTONS — Injected on cards
+  // ═══════════════════════════════════════
+  function injectAddButtons() {
+    // Event cards
+    document.querySelectorAll('.card-footer').forEach(footer => {
+      if (footer.querySelector('.add-to-plan-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'add-to-plan-btn';
+      btn.textContent = '+ Plan';
+      btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.card')); };
+      footer.prepend(btn);
+    });
+    // Venue cards (food, walks, parks)
+    document.querySelectorAll('.venue-footer').forEach(footer => {
+      if (footer.querySelector('.add-to-plan-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'add-to-plan-btn';
+      btn.textContent = '+ Plan';
+      btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.venue-card')); };
+      footer.prepend(btn);
+    });
+  }
+
+  function updateAddButtons() {
+    const addedTitles = new Set(planItems.map(i => i.title));
+
+    document.querySelectorAll('.add-to-plan-btn').forEach(btn => {
+      const card = btn.closest('.card') || btn.closest('.venue-card');
+      if (!card) return;
+      const title = card.querySelector('.card-title')?.textContent?.trim() ||
+                    card.querySelector('.venue-name')?.textContent?.trim() || '';
+      if (addedTitles.has(title)) {
+        btn.classList.add('added');
+        btn.textContent = 'In plan';
+      } else {
+        btn.classList.remove('added');
+        btn.textContent = '+ Plan';
+      }
+    });
+  }
+
+  // ── Planner tab click handler ──
+  function handlePlannerTabClick(btn) {
+    if (!currentUser) {
+      // Show section with login prompt
+      showSection('planner', btn);
+      return;
+    }
+    showSection('planner', btn);
+  }
+
+  // ── Toast notification ──
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  // ── Drag and drop for plan items ──
+  document.addEventListener('dragstart', (e) => {
+    const item = e.target.closest('.plan-item');
+    if (!item) return;
+    item.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', item.dataset.itemId);
+  });
+  document.addEventListener('dragend', (e) => {
+    const item = e.target.closest('.plan-item');
+    if (item) item.classList.remove('dragging');
+  });
+  document.addEventListener('dragover', (e) => {
+    const target = e.target.closest('.plan-item');
+    if (!target || target.classList.contains('dragging')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const container = target.closest('.plan-items');
+    const dragging = container?.querySelector('.dragging');
+    if (!dragging || !container) return;
+    const siblings = [...container.querySelectorAll('.plan-item:not(.dragging)')];
+    const next = siblings.find(s => {
+      const rect = s.getBoundingClientRect();
+      return e.clientY < rect.top + rect.height / 2;
+    });
+    container.insertBefore(dragging, next || null);
+  });
+  document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
+    // Rebuild order from DOM
+    const newOrder = [];
+    document.querySelectorAll('.plan-item').forEach(el => {
+      const id = el.dataset.itemId;
+      const item = planItems.find(i => i.id === id);
+      if (item) newOrder.push(item);
+    });
+    if (newOrder.length === planItems.length) {
+      planItems = newOrder;
+      savePlan();
+    }
+  });
+
+  // ── Inject buttons on load ──
+  document.addEventListener('DOMContentLoaded', () => {
+    injectAddButtons();
+  });
+</script>
+</body>
+</html>
+   
