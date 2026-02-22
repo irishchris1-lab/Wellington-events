@@ -1,7 +1,7 @@
 /* ── Admin portal — What's On Wellington ── */
 
 // ✏️  Add your Google account email here
-const ADMIN_EMAILS = ['your-email@gmail.com'];
+const ADMIN_EMAILS = ['whatsonwelly@gmail.com', 'irishchris1@gmail.com'];
 
 // Firebase config (same project as the main site)
 const FIREBASE_CONFIG = {
