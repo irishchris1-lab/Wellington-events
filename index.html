@@ -31,6 +31,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="What's On Welly">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -121,6 +122,7 @@
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('planner'); closeMenu()"><span>📋</span> My Weekend</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('about'); closeMenu()"><span>👋</span> About</button>
+    <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none" onclick="handleInstallClick(); closeMenu()"><span>📲</span> Add to Home Screen</button>
   </nav>
   <div class="dropdown-about">
     <div class="dropdown-about-title">About this guide</div>
@@ -3055,6 +3057,36 @@
 <!-- ── TOAST NOTIFICATION ── -->
 <div class="toast" id="toast"></div>
 
+<!-- ── INSTALL BANNER (Android / Chrome) ── -->
+<div id="installBanner" class="install-banner" role="complementary" aria-label="Add to Home Screen">
+  <img src="icons/icon-192.png" class="install-banner-icon" alt="">
+  <div class="install-banner-text">
+    <strong>What's On Wellington</strong>
+    <span>Add to your home screen</span>
+  </div>
+  <button class="install-banner-btn" onclick="triggerInstall()">Install</button>
+  <button class="install-banner-close" onclick="dismissInstall()" aria-label="Dismiss">✕</button>
+</div>
+
+<!-- ── IOS INSTALL MODAL ── -->
+<div id="iosInstallOverlay" class="ios-install-overlay" onclick="if(event.target===this)closeIOSModal()" style="display:none">
+  <div class="ios-install-modal" role="dialog" aria-modal="true" aria-label="Add to Home Screen">
+    <div class="ios-install-header">
+      <img src="icons/apple-touch-icon.png" class="ios-install-icon" alt="">
+      <div>
+        <div class="ios-install-title">Add to Home Screen</div>
+        <div class="ios-install-sub">Get quick access to Wellington events</div>
+      </div>
+    </div>
+    <ol class="ios-install-steps">
+      <li><span class="ios-step-num">1</span>Tap the <strong>Share</strong> <span class="ios-share-icon">⬆</span> button in Safari's toolbar</li>
+      <li><span class="ios-step-num">2</span>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+      <li><span class="ios-step-num">3</span>Tap <strong>"Add"</strong> in the top-right corner</li>
+    </ol>
+    <button class="ios-install-done-btn" onclick="closeIOSModal()">Got it</button>
+  </div>
+</div>
+
 <footer>
   <p>Wellington Family Events · Sources: <a href="https://www.wellybuzz.co.nz" target="_blank">WellyBuzz</a> · <a href="https://www.eventfinda.co.nz/whatson/events/wellington" target="_blank">Eventfinda</a> · <a href="https://www.wellingtonnz.com/visit/events" target="_blank">WellingtonNZ</a></p>
   <p>Always verify event details with organisers before heading out.</p>
@@ -3067,6 +3099,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script src="js/script.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
    

@@ -1,25 +1,83 @@
-// PWA manifest — references real icon files
-  const _manifest = JSON.stringify({
-    "name": "What's On Wellington",
-    "short_name": "Welly Events",
-    "description": "Family-friendly events, cafés, walks and playgrounds across Wellington every weekend.",
-    "start_url": "/Wellington-events/",
-    "display": "standalone",
-    "background_color": "#F7F2EB",
-    "theme_color": "#0B5563",
-    "orientation": "portrait-primary",
-    "icons": [
-      { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-      { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-    ],
-    "categories": ["lifestyle", "entertainment", "travel"],
-    "lang": "en-NZ"
+// ── INSTALL PROMPT ──
+  let deferredInstallPrompt = null;
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  }
+  function isIOS() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  }
+
+  // Android / Chrome: capture the native prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if (!isStandalone() && !localStorage.getItem('installDismissed')) {
+      setTimeout(showInstallBanner, 4000);
+    }
+    const btn = document.getElementById('installMenuBtn');
+    if (btn) btn.style.display = '';
   });
-  const _blob = new Blob([_manifest], {type: 'application/manifest+json'});
-  document.querySelector('link[rel="manifest"]') && document.querySelector('link[rel="manifest"]').remove();
-  const _mlink = document.createElement('link');
-  _mlink.rel = 'manifest'; _mlink.href = URL.createObjectURL(_blob);
-  document.head.appendChild(_mlink);
+
+  window.addEventListener('appinstalled', () => {
+    hideInstallBanner();
+    deferredInstallPrompt = null;
+    const btn = document.getElementById('installMenuBtn');
+    if (btn) btn.style.display = 'none';
+    showToast('App installed — find it on your home screen 🎉');
+  });
+
+  function showInstallBanner() {
+    if (isStandalone()) return;
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.classList.add('visible');
+  }
+  function hideInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.classList.remove('visible');
+  }
+  async function triggerInstall() {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    if (outcome === 'accepted') deferredInstallPrompt = null;
+    hideInstallBanner();
+  }
+  function dismissInstall() {
+    hideInstallBanner();
+    localStorage.setItem('installDismissed', '1');
+  }
+
+  // iOS: show manual instructions modal
+  function showIOSModal() {
+    const el = document.getElementById('iosInstallOverlay');
+    if (el) el.style.display = 'flex';
+  }
+  function closeIOSModal() {
+    const el = document.getElementById('iosInstallOverlay');
+    if (el) el.style.display = 'none';
+    localStorage.setItem('installDismissed', '1');
+  }
+
+  // Entry point for menu button — handles both Android and iOS
+  function handleInstallClick() {
+    if (isIOS()) {
+      showIOSModal();
+    } else if (deferredInstallPrompt) {
+      triggerInstall();
+    } else {
+      showToast('Open this site in Chrome or Safari to install it');
+    }
+  }
+
+  // On load: show iOS hint to Safari users who haven't dismissed
+  document.addEventListener('DOMContentLoaded', () => {
+    if (isIOS() && !isStandalone() && !localStorage.getItem('installDismissed')) {
+      setTimeout(showIOSModal, 5000);
+      const btn = document.getElementById('installMenuBtn');
+      if (btn) btn.style.display = '';
+    }
+  });
 
 let currentRegion = 'all';
   let currentDuration = 'all';

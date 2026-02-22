@@ -630,6 +630,76 @@
   }
   .plan-count-badge.visible { display: inline-flex; }
 
+  /* ── INSTALL BANNER (Android / Chrome) ── */
+  .install-banner {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120px);
+    width: calc(100% - 32px); max-width: 480px;
+    background: #fff; border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 2500;
+    opacity: 0; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .install-banner.visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+  .install-banner-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; }
+  .install-banner-text { flex: 1; min-width: 0; }
+  .install-banner-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #1a2a2a; }
+  .install-banner-text span { font-size: 11.5px; color: var(--muted); }
+  .install-banner-btn {
+    background: var(--teal); color: #fff; border: none; border-radius: 8px;
+    padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 700; cursor: pointer; flex-shrink: 0; transition: background 0.15s;
+  }
+  .install-banner-btn:hover { background: var(--teal2); }
+  .install-banner-close {
+    background: none; border: none; color: #ccc; font-size: 16px;
+    cursor: pointer; padding: 4px; flex-shrink: 0; transition: color 0.15s; line-height: 1;
+  }
+  .install-banner-close:hover { color: #888; }
+
+  /* ── IOS INSTALL MODAL ── */
+  .ios-install-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 3100; display: flex; align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .ios-install-modal {
+    background: #fff; width: 100%; max-width: 520px;
+    border-radius: 20px 20px 0 0; padding: 28px 24px 40px;
+    animation: slideUpSheet 0.35s cubic-bezier(0.34,1.2,0.64,1);
+  }
+  @keyframes slideUpSheet {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .ios-install-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .ios-install-icon { width: 56px; height: 56px; border-radius: 13px; flex-shrink: 0; }
+  .ios-install-title { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 700; color: var(--teal); }
+  .ios-install-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .ios-install-steps {
+    list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;
+  }
+  .ios-install-steps li {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: #1a2a2a; line-height: 1.5;
+  }
+  .ios-step-num {
+    background: var(--teal); color: #fff; font-size: 11px; font-weight: 700;
+    width: 22px; height: 22px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ios-share-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #007AFF; color: #fff; width: 22px; height: 22px;
+    border-radius: 5px; font-size: 12px; font-weight: 700; margin: 0 2px;
+  }
+  .ios-install-done-btn {
+    width: 100%; background: var(--teal); color: #fff; border: none;
+    border-radius: 10px; padding: 14px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s;
+  }
+  .ios-install-done-btn:hover { background: var(--teal2); }
+
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
