@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — What's On Wellington</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../icons/icon-192.png" type="image/png">
+</head>
+<body>
+
+  <!-- ── LOGIN SCREEN ── -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img src="../icons/icon-192.png" alt="Welly Events" class="login-logo">
+      <h1 class="login-title">What's On Wellington</h1>
+      <p class="login-sub">Admin Portal</p>
+      <button class="login-btn" onclick="signIn()">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.615 24 12.255 24z"/><path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 000 10.76l3.98-3.09z"/><path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.64 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Sign in with Google
+      </button>
+      <p class="login-note">Access is restricted to authorised administrators.</p>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="dashboard" class="dashboard hidden">
+
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <img src="../icons/icon-192.png" alt="" class="admin-logo">
+        <div>
+          <span class="admin-title">Admin</span>
+          <span class="admin-sitename">What's On Wellington</span>
+        </div>
+      </div>
+      <div class="admin-header-right">
+        <span id="adminEmail" class="admin-email"></span>
+        <button class="signout-btn" onclick="signOut()">Sign out</button>
+      </div>
+    </header>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-num" id="statTotal">0</span>
+        <span class="stat-label">Total events</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="statActive">0</span>
+        <span class="stat-label">Active</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="statDraft">0</span>
+        <span class="stat-label">Drafts</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="statWeekends">0</span>
+        <span class="stat-label">Weekends</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-filters">
+        <input type="search" id="searchInput" class="filter-input" placeholder="Search events…" oninput="applyFilters()">
+        <select id="weekendFilter" class="filter-select" onchange="applyFilters()">
+          <option value="">All weekends</option>
+        </select>
+        <select id="regionFilter" class="filter-select" onchange="applyFilters()">
+          <option value="">All regions</option>
+          <option value="central">Central</option>
+          <option value="north">North</option>
+          <option value="east">East</option>
+          <option value="south">South</option>
+          <option value="hutt">Hutt Valley</option>
+          <option value="kapiti">Kāpiti</option>
+        </select>
+        <select id="statusFilter" class="filter-select" onchange="applyFilters()">
+          <option value="">All status</option>
+          <option value="active">Active</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+      <button class="add-btn" onclick="openModal()">+ Add Event</button>
+    </div>
+
+    <!-- Event table -->
+    <div class="table-wrap">
+      <table class="event-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Weekend</th>
+            <th>Region</th>
+            <th>Status</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="eventTableBody">
+          <tr class="table-empty"><td colspan="6">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /dashboard -->
+
+  <!-- ── ADD / EDIT MODAL ── -->
+  <div id="modalOverlay" class="modal-overlay hidden" onclick="handleOverlayClick(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle" class="modal-title">Add Event</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+      </div>
+      <form id="eventForm" class="event-form" onsubmit="handleFormSubmit(event)">
+
+        <div class="form-row">
+          <label class="form-label" for="fTitle">Title *</label>
+          <input class="form-input" id="fTitle" type="text" required placeholder="e.g. Wellington Night Market">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="fDesc">Description</label>
+          <textarea class="form-textarea" id="fDesc" rows="3" placeholder="Short description shown on the card…"></textarea>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label class="form-label" for="fCategory">Category *</label>
+            <select class="form-select" id="fCategory" required>
+              <option value="">Select…</option>
+              <option value="events">Event</option>
+              <option value="food">Food & Café</option>
+              <option value="walks">Walk</option>
+              <option value="parks">Park / Playground</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="fWeekend">Weekend (Saturday date) *</label>
+            <input class="form-input" id="fWeekend" type="date" required>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label class="form-label" for="fRegion">Region *</label>
+            <select class="form-select" id="fRegion" required>
+              <option value="">Select…</option>
+              <option value="central">Central</option>
+              <option value="north">North</option>
+              <option value="east">East</option>
+              <option value="south">South</option>
+              <option value="hutt">Hutt Valley</option>
+              <option value="kapiti">Kāpiti</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="fTags">Tags (comma-separated)</label>
+            <input class="form-input" id="fTags" type="text" placeholder="e.g. free, family, outdoor">
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label class="form-label" for="fVenue">Venue / Location</label>
+            <input class="form-input" id="fVenue" type="text" placeholder="e.g. Frank Kitts Park">
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="fTime">Time</label>
+            <input class="form-input" id="fTime" type="text" placeholder="e.g. 10am–4pm">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="fUrl">Event URL</label>
+          <input class="form-input" id="fUrl" type="url" placeholder="https://…">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="fImg">Image URL</label>
+          <input class="form-input" id="fImg" type="url" placeholder="https://…">
+        </div>
+
+        <div class="form-row form-row-check">
+          <label class="check-label">
+            <input type="checkbox" id="fActive" checked>
+            <span>Active (visible on the public site)</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Save Event</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ── DELETE CONFIRM ── -->
+  <div id="deleteOverlay" class="modal-overlay hidden" onclick="handleDeleteOverlayClick(event)">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Event</h2>
+        <button class="modal-close" onclick="closeDeleteModal()" aria-label="Close">✕</button>
+      </div>
+      <p class="delete-msg">Are you sure you want to delete <strong id="deleteEventName"></strong>? This cannot be undone.</p>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="adminToast" class="admin-toast" role="status" aria-live="polite"></div>
+
+  <!-- Firebase compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
