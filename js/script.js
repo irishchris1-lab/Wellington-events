@@ -395,9 +395,82 @@ let currentRegion = 'all';
       auth = firebase.auth();
       db   = firebase.firestore();
       firebaseReady = true;
+      loadFirestoreEvents();
     }
   } catch (e) {
     console.warn('Firebase init failed:', e);
+  }
+
+  // ═══════════════════════════════════════
+  //  FIRESTORE EVENTS — live injection
+  // ═══════════════════════════════════════
+
+  const EVENT_TYPE_MAP = {
+    festival: { strip: 'strip-festival', label: '🎪 Festival' },
+    culture:  { strip: 'strip-culture',  label: '🎨 Arts & Culture' },
+    market:   { strip: 'strip-market',   label: '🛒 Market' },
+    music:    { strip: 'strip-music',    label: '🎵 Music' },
+    outdoor:  { strip: 'strip-outdoor',  label: '🏃 Outdoor' },
+    kids:     { strip: 'strip-kids',     label: '👨‍👩‍👧 Family / Kids' },
+  };
+
+  function buildEventCardHTML(ev) {
+    const tm   = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '📅 Event' };
+    const region = ev.region || 'all';
+    const meta = [
+      ev.time  ? `<div class="meta-row"><span class="meta-icon">🕐</span>${escHtml(ev.time)}</div>`  : '',
+      ev.venue ? `<div class="meta-row"><span class="meta-icon">📍</span>${escHtml(ev.venue)}</div>` : '',
+    ].join('');
+    const footer = [
+      ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener">Find out more ↗</a>` : '',
+      `<button class="add-to-plan-btn" onclick="addToPlan(this)">+ Plan</button>`,
+    ].join('');
+    return `
+      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}">
+        <div class="card-strip ${tm.strip}"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <div>
+              <div class="card-cat">${tm.label}</div>
+              <div class="card-title">${escHtml(ev.title)}</div>
+            </div>
+          </div>
+          ${meta ? `<div class="card-meta">${meta}</div>` : ''}
+          ${ev.description ? `<div class="card-desc">${escHtml(ev.description)}</div>` : ''}
+        </div>
+        <div class="card-footer">${footer}</div>
+      </div>`;
+  }
+
+  function escHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function injectEventCard(ev) {
+    const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
+    if (!panel) return;
+    const grids = panel.querySelectorAll('.events-grid');
+    const grid  = (ev.day === 'sun' && grids.length > 1) ? grids[1] : grids[0];
+    if (!grid) return;
+    grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
+  }
+
+  function loadFirestoreEvents() {
+    if (!firebaseReady) return;
+    db.collection('events')
+      .where('active',   '==', true)
+      .where('category', '==', 'events')
+      .onSnapshot(snapshot => {
+        // Remove previously injected cards
+        document.querySelectorAll('.card[data-firestore]').forEach(el => el.remove());
+        snapshot.docs.forEach(doc => injectEventCard({ id: doc.id, ...doc.data() }));
+        applyFilter(currentRegion);
+        updateAddButtons();
+      }, err => console.warn('Firestore events error:', err));
   }
 
   // ═══════════════════════════════════════

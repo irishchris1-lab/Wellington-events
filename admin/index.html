@@ -70,12 +70,12 @@
         </select>
         <select id="regionFilter" class="filter-select" onchange="applyFilters()">
           <option value="">All regions</option>
-          <option value="central">Central</option>
-          <option value="north">North</option>
-          <option value="east">East</option>
-          <option value="south">South</option>
-          <option value="hutt">Hutt Valley</option>
-          <option value="kapiti">Kāpiti</option>
+          <option value="wellington">Wellington City</option>
+          <option value="lower-hutt">Lower Hutt</option>
+          <option value="upper-hutt">Upper Hutt</option>
+          <option value="kapiti">Kāpiti Coast</option>
+          <option value="porirua">Porirua</option>
+          <option value="wairarapa">Wairarapa</option>
         </select>
         <select id="statusFilter" class="filter-select" onchange="applyFilters()">
           <option value="">All status</option>
@@ -92,7 +92,7 @@
         <thead>
           <tr>
             <th>Title</th>
-            <th>Category</th>
+            <th>Type</th>
             <th>Weekend</th>
             <th>Region</th>
             <th>Status</th>
@@ -128,38 +128,50 @@
 
         <div class="form-grid">
           <div class="form-row">
-            <label class="form-label" for="fCategory">Category *</label>
-            <select class="form-select" id="fCategory" required>
+            <label class="form-label" for="fType">Type *</label>
+            <select class="form-select" id="fType" required>
               <option value="">Select…</option>
-              <option value="events">Event</option>
-              <option value="food">Food & Café</option>
-              <option value="walks">Walk</option>
-              <option value="parks">Park / Playground</option>
+              <option value="festival">🎪 Festival</option>
+              <option value="culture">🎨 Arts & Culture</option>
+              <option value="market">🛒 Market</option>
+              <option value="music">🎵 Music</option>
+              <option value="outdoor">🏃 Outdoor / Sport</option>
+              <option value="kids">👨‍👩‍👧 Family / Kids</option>
+              <option value="other">📅 General Event</option>
             </select>
           </div>
           <div class="form-row">
-            <label class="form-label" for="fWeekend">Weekend (Saturday date) *</label>
-            <input class="form-input" id="fWeekend" type="date" required>
+            <label class="form-label" for="fDay">Day *</label>
+            <select class="form-select" id="fDay" required>
+              <option value="">Select…</option>
+              <option value="sat">Saturday</option>
+              <option value="sun">Sunday</option>
+            </select>
           </div>
         </div>
 
         <div class="form-grid">
           <div class="form-row">
+            <label class="form-label" for="fWeekend">Weekend (Saturday date) *</label>
+            <input class="form-input" id="fWeekend" type="date" required>
+          </div>
+          <div class="form-row">
             <label class="form-label" for="fRegion">Region *</label>
             <select class="form-select" id="fRegion" required>
               <option value="">Select…</option>
-              <option value="central">Central</option>
-              <option value="north">North</option>
-              <option value="east">East</option>
-              <option value="south">South</option>
-              <option value="hutt">Hutt Valley</option>
-              <option value="kapiti">Kāpiti</option>
+              <option value="wellington">Wellington City</option>
+              <option value="lower-hutt">Lower Hutt</option>
+              <option value="upper-hutt">Upper Hutt</option>
+              <option value="kapiti">Kāpiti Coast</option>
+              <option value="porirua">Porirua</option>
+              <option value="wairarapa">Wairarapa</option>
             </select>
           </div>
-          <div class="form-row">
-            <label class="form-label" for="fTags">Tags (comma-separated)</label>
-            <input class="form-input" id="fTags" type="text" placeholder="e.g. free, family, outdoor">
-          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="fTags">Tags (comma-separated)</label>
+          <input class="form-input" id="fTags" type="text" placeholder="e.g. free, family, outdoor">
         </div>
 
         <div class="form-grid">

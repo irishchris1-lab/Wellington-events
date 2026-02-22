@@ -141,7 +141,7 @@ function renderTable() {
   tbody.innerHTML = filteredEvents.map(ev => `
     <tr>
       <td><strong>${esc(ev.title)}</strong>${ev.venue ? `<br><small style="color:#888">${esc(ev.venue)}</small>` : ''}</td>
-      <td><span class="badge-cat">${esc(ev.category || '—')}</span></td>
+      <td><span class="badge-cat">${esc(ev.type || ev.category || '—')}</span></td>
       <td>${ev.weekend ? formatWeekend(ev.weekend) : '—'}</td>
       <td>${esc(ev.region || '—')}</td>
       <td><span class="badge ${ev.active ? 'badge-active' : 'badge-draft'}">${ev.active ? 'Active' : 'Draft'}</span></td>
@@ -168,7 +168,8 @@ function openModal(docId) {
     btn.textContent    = 'Save Changes';
     document.getElementById('fTitle').value    = ev.title    || '';
     document.getElementById('fDesc').value     = ev.description || '';
-    document.getElementById('fCategory').value = ev.category || '';
+    document.getElementById('fType').value     = ev.type     || '';
+    document.getElementById('fDay').value      = ev.day      || 'sat';
     document.getElementById('fWeekend').value  = ev.weekend  || '';
     document.getElementById('fRegion').value   = ev.region   || '';
     document.getElementById('fTags').value     = (ev.tags || []).join(', ');
@@ -205,7 +206,9 @@ async function handleFormSubmit(e) {
   const data = {
     title:       document.getElementById('fTitle').value.trim(),
     description: document.getElementById('fDesc').value.trim(),
-    category:    document.getElementById('fCategory').value,
+    category:    'events',
+    type:        document.getElementById('fType').value,
+    day:         document.getElementById('fDay').value,
     weekend:     document.getElementById('fWeekend').value,
     region:      document.getElementById('fRegion').value,
     tags,
