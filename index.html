@@ -1132,6 +1132,11 @@
   <button class="duration-btn active" aria-pressed="true"  onclick="filterFood('all', this)">All</button>
   <button class="duration-btn"        aria-pressed="false" onclick="filterFood('top', this)">Top rated 4.5+</button>
 </div>
+<div class="duration-filter" style="margin-top:8px">
+  <span class="duration-label">👶 Kids:</span>
+  <button class="duration-btn active" aria-pressed="true"  onclick="filterKidFriendly('all', this)">All</button>
+  <button class="duration-btn"        aria-pressed="false" onclick="filterKidFriendly('yes', this)">Kid friendly</button>
+</div>
 <main>
 
   <div class="banner-sponsored" data-region="all">
@@ -1149,7 +1154,7 @@
 
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.0" data-region="wellington">
+    <div class="venue-card" data-rating="4.0" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">☕ Café · Garden Bar</div>
@@ -1168,7 +1173,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.2" data-region="wellington">
+    <div class="venue-card" data-rating="4.2" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#0B5563">☕ Café · Museum</div>
@@ -1187,7 +1192,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.5" data-region="wellington">
+    <div class="venue-card" data-rating="4.5" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">☕ Café · Botanic Garden</div>
@@ -1206,7 +1211,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.0" data-region="wellington">
+    <div class="venue-card" data-rating="4.0" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">🍕 Restaurant · Waterfront</div>
@@ -1225,7 +1230,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.3" data-region="wellington">
+    <div class="venue-card" data-rating="4.3" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#5B4A8A">☕ Café · Roastery</div>
@@ -1244,7 +1249,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.1" data-region="wellington">
+    <div class="venue-card" data-rating="4.1" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#2478A8">☕ Café · Beachside</div>
@@ -1265,10 +1270,68 @@
 
   </div>
 
+
+    <div class="venue-card" data-rating="4.2" data-region="wellington" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">☕ Café · City Gallery</div>
+        <div class="venue-name">Nikau Café — City Gallery Wellington</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Pram accessible</span>
+          <span class="venue-pill">Civic Square location</span>
+          <span class="venue-pill">Kids menu</span>
+        </div>
+        <div class="venue-desc">A Wellington institution tucked inside City Gallery on Civic Square. Excellent coffee, cabinet food and light meals in an airy, open space. Right next to the main library and across from the waterfront — a great base for a city family day.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d782070-Reviews-Nikau_Cafe-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Nikau+Cafe+City+Gallery+Wellington+Civic+Square" target="_blank">📍 101 Wakefield St, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.nikaucafe.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.1" data-region="wellington" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🍔 Diner · Cuba St</div>
+        <div class="venue-name">Sweet Mother's Kitchen — Cuba St</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Crayons & colouring sheets</span>
+          <span class="venue-pill">Kids menu</span>
+          <span class="venue-pill">Big booths</span>
+        </div>
+        <div class="venue-desc">American-style comfort food diner on the famous Cuba St strip. Colouring sheets and crayons arrive with the menus, big booths perfect for families, and a kids menu loaded with crowd-pleasers. Milkshakes are a serious hit. Lively, loud and very tolerant of small humans.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.1</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d2005834-Reviews-Sweet_Mother_s_Kitchen-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Sweet+Mothers+Kitchen+Cuba+St+Wellington" target="_blank">📍 5 Courtenay Pl, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.sweetmotherskitchen.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.4" data-region="wellington" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">☕ Café · Courtyard</div>
+        <div class="venue-name">Prefab Coffee — Wakefield St</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large open courtyard</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Highchairs</span>
+        </div>
+        <div class="venue-desc">One of Wellington's most loved specialty coffee spots — a spacious converted factory interior with a sunny courtyard. Plenty of room for prams, highchairs on hand, and a relaxed atmosphere that suits families well. Exceptional coffee and a solid brunch menu.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g255115-d6914963-Reviews-Prefab_Coffee-Wellington_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Prefab+Coffee+14+Jessie+St+Wellington" target="_blank">📍 14 Jessie St, Te Aro</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.prefab.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Miramar & Eastern Suburbs<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.5" data-region="wellington">
+    <div class="venue-card" data-rating="4.5" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">☕ Café · Seaside</div>
@@ -1287,7 +1350,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.2" data-region="wellington">
+    <div class="venue-card" data-rating="4.2" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">☕ Café · Airfield</div>
@@ -1306,7 +1369,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.6" data-region="wellington">
+    <div class="venue-card" data-rating="4.6" data-region="wellington" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">☕ Café · Beachside</div>
@@ -1327,10 +1390,54 @@
 
   </div>
 
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Porirua<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.1" data-region="porirua" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">☕ Café · Museum</div>
+        <div class="venue-name">Pataka Café — Porirua</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Next to Pataka Museum</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Outdoor seating</span>
+        </div>
+        <div class="venue-desc">A welcoming café attached to Pataka Art + Museum in central Porirua. Good coffee, cabinet food and light meals, with a lovely outdoor terrace and a pram-friendly layout. Combine with the free gallery inside — Pataka has excellent interactive displays that kids genuinely enjoy.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.1</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurants-g255119-Porirua_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Pataka+Museum+Porirua" target="_blank">📍 17 Parumoana St, Porirua</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.pataka.org.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.3" data-region="porirua" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">☕ Café · Beachside</div>
+        <div class="venue-name">Titahi Bay Surf Club Café</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Beachfront views</span>
+          <span class="venue-pill">Kids meals</span>
+          <span class="venue-pill">Beach access</span>
+        </div>
+        <div class="venue-desc">Perched right above one of the region's best family beaches, the Titahi Bay Surf Club café is a relaxed, unpretentious spot for brunch or lunch. Kids can head straight to the sand while parents finish their coffee. Outdoor seating, easy parking, and a real local vibe.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurants-g255119-Porirua_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Titahi+Bay+Beach+Porirua" target="_blank">📍 Titahi Bay, Porirua</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.3" data-region="kapiti">
+    <div class="venue-card" data-rating="4.3" data-region="kapiti" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🍺 Bar · Playground</div>
@@ -1349,12 +1456,32 @@
       </div>
     </div>
 
+
+    <div class="venue-card" data-rating="4.2" data-region="kapiti" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">☕ Café · Gallery</div>
+        <div class="venue-name">Mahara Gallery Café — Waikanae</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Gallery activities for kids</span>
+          <span class="venue-pill">Peaceful garden setting</span>
+          <span class="venue-pill">Good coffee</span>
+        </div>
+        <div class="venue-desc">A serene café inside the Mahara Gallery in Waikanae. Beautiful garden setting, relaxed atmosphere and quality food. The gallery has free entry and regularly features interactive exhibits that children enjoy. A lovely, unhurried stop on any Kāpiti Coast visit.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurants-g255120-Kapiti_Coast_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Mahara+Gallery+Waikanae" target="_blank">📍 12 Te Moana Rd, Waikanae</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.mahara.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Days Bay & Eastbourne<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.2" data-region="lower-hutt">
+    <div class="venue-card" data-rating="4.2" data-region="lower-hutt" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#2478A8">🍽 Restaurant · Ferry terminal</div>
@@ -1378,7 +1505,7 @@
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Lower Hutt<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.1" data-region="lower-hutt">
+    <div class="venue-card" data-rating="4.1" data-region="lower-hutt" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">☕ Café · Riverside</div>
@@ -1397,7 +1524,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.2" data-region="lower-hutt">
+    <div class="venue-card" data-rating="4.2" data-region="lower-hutt" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">🍕 Pizza & Pasta</div>
@@ -1418,10 +1545,30 @@
 
   </div>
 
+
+    <div class="venue-card" data-rating="4.4" data-region="lower-hutt" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">☕ Café · Village</div>
+        <div class="venue-name">Eastbourne Village Cafés</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kids meals</span>
+          <span class="venue-pill">Beach minutes away</span>
+          <span class="venue-pill">Highchairs</span>
+        </div>
+        <div class="venue-desc">Eastbourne's charming village strip has several excellent cafés ideal for families — all within a few minutes walk of the beach. Kids meals, highchairs, and a relaxed pace make for a lovely Lower Hutt brunch. Walk to the beach afterwards for an unbeatable family morning.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurants-g255116-Lower_Hutt_Greater_Wellington_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Eastbourne+Village+Lower+Hutt" target="_blank">📍 Eastbourne Village, Lower Hutt</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.huttcity.govt.nz" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Upper Hutt<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.6" data-region="upper-hutt">
+    <div class="venue-card" data-rating="4.6" data-region="upper-hutt" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#8A1A1A,#c44040)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#8A1A1A">🍺 Brewery · Taproom</div>
@@ -1446,7 +1593,7 @@
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.3" data-region="wairarapa">
+    <div class="venue-card" data-rating="4.3" data-region="wairarapa" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#7A3B8A">☕ Café · Town Square</div>
@@ -1465,7 +1612,27 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.8" data-region="wairarapa">
+
+    <div class="venue-card" data-rating="4.7" data-region="wairarapa" data-kidfriendly="true">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🥐 Bakery · Road trip stop</div>
+        <div class="venue-name">Clareville Bakery</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">World-class pastries</span>
+          <span class="venue-pill">Kids go wild</span>
+          <span class="venue-pill">Road trip essential</span>
+        </div>
+        <div class="venue-desc">Quite possibly the best bakery in New Zealand — an essential stop on the road to Martinborough. Exceptional sourdough, pastries, pies and cabinet food that disappear fast on weekends. Kids absolutely love it. Arrive early or miss out on the good stuff. One of Wellington's most special food destinations.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.7</span><a class="rating-link" href="https://www.tripadvisor.co.nz/Restaurant_Review-g608546-d8668052-Reviews-Clareville_Bakery-Carterton_Wairarapa_North_Island.html" target="_blank">TripAdvisor reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Clareville+Bakery+Wairarapa" target="_blank">📍 3436 SH2, Clareville, Carterton</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.clarevillebakery.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.8" data-region="wairarapa" data-kidfriendly="true">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">🍦 Café · Ice cream</div>
@@ -1514,7 +1681,7 @@
   <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.2" data-region="wellington" data-duration="under1">
+    <div class="venue-card" data-rating="4.2" data-region="wellington" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🌿 Bush Walk</div>
@@ -1599,7 +1766,7 @@
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Hutt Valley<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.1" data-region="lower-hutt" data-duration="under1">
+    <div class="venue-card" data-rating="4.1" data-region="lower-hutt" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🌿 Dam Walk</div>
@@ -1644,7 +1811,7 @@
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.2" data-region="kapiti" data-duration="under1">
+    <div class="venue-card" data-rating="4.2" data-region="kapiti" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🌊 Coastal Walk</div>
@@ -1669,7 +1836,7 @@
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.8" data-region="wairarapa" data-duration="under1">
+    <div class="venue-card" data-rating="4.8" data-region="wairarapa" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#7A3B8A">🦎 Nature Walk</div>
@@ -1694,7 +1861,7 @@
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wellington City — Longer Walks<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.7" data-region="wellington" data-duration="under2">
+    <div class="venue-card" data-rating="4.7" data-region="wellington" data-kidfriendly="true" data-duration="under2">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#0B5563">🏔 Hillside Walk</div>
@@ -1714,7 +1881,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.3" data-region="wellington" data-duration="under2">
+    <div class="venue-card" data-rating="4.3" data-region="wellington" data-kidfriendly="true" data-duration="under2">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🌿 Bush & Coast</div>
@@ -1739,7 +1906,7 @@
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Hutt Valley — Half Day Walks<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.9" data-region="upper-hutt" data-duration="over2">
+    <div class="venue-card" data-rating="4.9" data-region="upper-hutt" data-kidfriendly="true" data-duration="over2">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">🏞 Forest Trail</div>
@@ -1759,7 +1926,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.9" data-region="kapiti" data-duration="over2">
+    <div class="venue-card" data-rating="4.9" data-region="kapiti" data-kidfriendly="true" data-duration="over2">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">🦜 Wildlife Walk</div>
@@ -1784,7 +1951,7 @@
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wellington City — More Short Walks<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.4" data-region="wellington" data-duration="under30">
+    <div class="venue-card" data-rating="4.4" data-region="wellington" data-kidfriendly="true" data-duration="under30">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#0B5563">🌊 Coastal Walk</div>
@@ -1804,7 +1971,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.2" data-region="wellington" data-duration="under1">
+    <div class="venue-card" data-rating="4.2" data-region="wellington" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#5B4A8A">🏛 Heritage Walk</div>
@@ -1829,7 +1996,7 @@
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Hutt Valley — Short Walks<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.3" data-region="lower-hutt" data-duration="under30">
+    <div class="venue-card" data-rating="4.3" data-region="lower-hutt" data-kidfriendly="true" data-duration="under30">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🌿 Riverside Walk</div>
@@ -1849,7 +2016,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.6" data-region="upper-hutt" data-duration="under1">
+    <div class="venue-card" data-rating="4.6" data-region="upper-hutt" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">🌿 Bush Walk</div>
@@ -1874,7 +2041,7 @@
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-rating="4.6" data-region="wairarapa" data-duration="under1">
+    <div class="venue-card" data-rating="4.6" data-region="wairarapa" data-kidfriendly="true" data-duration="under1">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#7A3B8A">🌿 Town Walk</div>
@@ -1894,7 +2061,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-rating="4.7" data-region="wairarapa" data-duration="under2">
+    <div class="venue-card" data-rating="4.7" data-region="wairarapa" data-kidfriendly="true" data-duration="under2">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">🏖 Coastal Walk</div>
@@ -2082,6 +2249,106 @@
 
   </div>
 
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Playground · Waterfront</div>
+        <div class="venue-name">Waitangi Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Near Te Papa</span>
+          <span class="venue-pill">Water play feature</span>
+          <span class="venue-pill">Skate park adjacent</span>
+          <span class="venue-pill">Open grass</span>
+        </div>
+        <div class="venue-desc">A well-appointed waterfront playground right next to Te Papa and the Events Centre. Water play features, solid climbing structures, and the skate park for older kids is right alongside. The grassed areas are perfect for a kick-about. Combine with a Te Papa visit for a full day out.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Waitangi+Park+Wellington+Waterfront" target="_blank">📍 Cable St, Te Aro</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4348A,#e870b8)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4348A">🛝 Playground · Community</div>
+        <div class="venue-name">Newtown Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Big open grass</span>
+          <span class="venue-pill">All ages</span>
+          <span class="venue-pill">Zoo nearby</span>
+        </div>
+        <div class="venue-desc">A solid community playground in the heart of Newtown — big open grassed areas, a great range of equipment for all ages, and conveniently close to Wellington Zoo for a double outing. A well-loved neighbourhood spot with good sun and natural shelter.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Newtown+Park+Wellington" target="_blank">📍 Mein St, Newtown</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Nature Play · Native Bush</div>
+        <div class="venue-name">Otari-Wilton's Bush Nature Play</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">NZ's only native botanic garden</span>
+          <span class="venue-pill">Nature play equipment</span>
+          <span class="venue-pill">Bush tracks</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">New Zealand's only native botanic garden — and a brilliant free day out for families. Nature play equipment sits alongside stunning original bush, a stream and easy short walking tracks. Tūī, kererū and kākā are regulars. One of Wellington's most underrated family destinations.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Otari-Wiltons+Bush+Wellington" target="_blank">📍 160 Wilton Rd, Wilton</a>
+        <a class="venue-link" href="https://wellingtongardens.nz/our-gardens/otari-wiltons-bush/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Porirua<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="porirua">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Playground · Beach</div>
+        <div class="venue-name">Titahi Bay Beach Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Beside the beach</span>
+          <span class="venue-pill">Great swimming</span>
+          <span class="venue-pill">Picnic tables</span>
+        </div>
+        <div class="venue-desc">A well-maintained playground right alongside one of Wellington's most popular family beaches. After playground time, kids can splash straight into the surf at Titahi Bay — one of the best swimming beaches in the region. Public toilets and picnic tables on site, easy parking.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Titahi+Bay+Beach+Porirua" target="_blank">📍 Titahi Bay, Porirua</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="porirua">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Botanical Park · Nature Walk</div>
+        <div class="venue-name">Spicer Botanical Park</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Gorgeous mature gardens</span>
+          <span class="venue-pill">Easy family walks</span>
+          <span class="venue-pill">Native birds</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A beautiful botanical park on the hills above Porirua with easy walking tracks through magnificent mature trees. Picnic spots and regular sightings of native birds throughout. A peaceful and underrated green escape — bring a picnic and spend a relaxed morning exploring with the kids.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Spicer+Botanical+Park+Porirua" target="_blank">📍 Spicer Rd, Porirua</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
   <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Lower Hutt<span class="line"></span></div>
   <div class="venue-grid">
 
@@ -2124,6 +2391,25 @@
     </div>
 
   </div>
+
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Playground · Riverside</div>
+        <div class="venue-name">Hutt Central Riverside Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">River walk access</span>
+          <span class="venue-pill">Large play structure</span>
+          <span class="venue-pill">Open green space</span>
+        </div>
+        <div class="venue-desc">A well-equipped riverside playground in central Lower Hutt — large climbing structures, open grassy areas, and direct access to the Hutt River walk. Great starting point for a leisurely riverside stroll. Easy parking and central location make it a reliable family go-to.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Riverside+Park+Lower+Hutt" target="_blank">📍 Riverside Drive, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation/parks-and-reserves" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Upper Hutt<span class="line"></span></div>
   <div class="venue-grid">
@@ -2187,6 +2473,67 @@
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Maclean+Park+Paraparaumu+Beach+Kapiti" target="_blank">📍 Maclean Park, Paraparaumu Beach</a>
         <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Playground · Beachside</div>
+        <div class="venue-name">Raumati Beach Reserve & Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Steps from the beach</span>
+          <span class="venue-pill">Great surf beach</span>
+          <span class="venue-pill">Picnic areas</span>
+        </div>
+        <div class="venue-desc">A lovely reserve playground sitting on the edge of beautiful Raumati Beach — one of the best beaches on the Kāpiti Coast. Kids can alternate between the playground and the beach effortlessly. Picnic areas, flat access and good parking make it a brilliant easy Coast day out.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Raumati+Beach+Reserve+Kapiti" target="_blank">📍 Marine Parade, Raumati Beach</a>
+        <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wairarapa">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🛝 Destination Park · Masterton</div>
+        <div class="venue-name">Queen Elizabeth Park — Masterton</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Miniature railway</span>
+          <span class="venue-pill">Deer park & aviary</span>
+          <span class="venue-pill">Large playground</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">Masterton's crown jewel — a large free park with a miniature railway, deer enclosure, aviary, duck pond and a great playground. Kids can spend hours here without it costing a cent. The perfect anchor for a Wairarapa family day trip, right in the heart of Masterton.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Queen+Elizabeth+Park+Masterton+Wairarapa" target="_blank">📍 Dixon St, Masterton</a>
+        <a class="venue-link" href="https://www.mstn.govt.nz/our-environment/parks-and-reserves/queen-elizabeth-park/" target="_blank">Find out more ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wairarapa">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🌿 Park · Greytown</div>
+        <div class="venue-name">Greytown Domain</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Playground & open grass</span>
+          <span class="venue-pill">Near main street cafés</span>
+          <span class="venue-pill">Quiet & spacious</span>
+        </div>
+        <div class="venue-desc">A large, peaceful domain in the heart of Greytown — open grassed areas, a solid playground and big old trees for shade. Five minutes walk from Greytown's charming café-lined main street. A great place to let kids run free while you plan the next café stop.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Greytown+Domain+Wairarapa" target="_blank">📍 Greytown, Wairarapa</a>
+        <a class="venue-link" href="https://www.sdc.govt.nz/parks-and-reserves" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
