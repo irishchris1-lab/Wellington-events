@@ -320,12 +320,12 @@ let currentRegion = 'all';
   //  5. Paste your config values below and deploy
   // ═══════════════════════════════════════════════════════
   const firebaseConfig = {
-    apiKey:            "YOUR_API_KEY",
-    authDomain:        "YOUR_PROJECT.firebaseapp.com",
-    projectId:         "YOUR_PROJECT",
-    storageBucket:     "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId:             "YOUR_APP_ID"
+    apiKey:            "AIzaSyCql0Pc_sSFcQSo8NDTWO29lLcXqFKFFgg",
+    authDomain:        "whatsonwellington-4b7a7.firebaseapp.com",
+    projectId:         "whatsonwellington-4b7a7",
+    storageBucket:     "whatsonwellington-4b7a7.firebasestorage.app",
+    messagingSenderId: "51704787462",
+    appId:             "1:51704787462:web:b2cedc8d4c46602b814987"
   };
 
   // ── Initialise Firebase (silently skipped if not configured) ──
