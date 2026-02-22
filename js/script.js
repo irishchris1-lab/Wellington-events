@@ -448,7 +448,43 @@ let currentRegion = 'all';
   // ═══════════════════════════════════════
   //  PLANNER — Data & Persistence
   // ═══════════════════════════════════════
-  let planItems = []; // Array of { id, title, time, location, category, day, section, region, addedAt }
+  let planItems = []; // Array of { id, title, time, location, category, day, weekendStart, section, region, addedAt }
+  let currentPlanWeekend = null; // YYYY-MM-DD of the Saturday for the selected weekend
+
+  // ── Weekend helpers ──
+  function getUpcomingWeekends(count) {
+    count = count || 4;
+    const weekends = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dayOfWeek = today.getDay(); // 0=Sun, 6=Sat
+    const daysToSat = dayOfWeek === 6 ? 0 : dayOfWeek === 0 ? 6 : (6 - dayOfWeek);
+    const firstSat = new Date(today);
+    firstSat.setDate(today.getDate() + daysToSat);
+    for (let i = 0; i < count; i++) {
+      const sat = new Date(firstSat);
+      sat.setDate(firstSat.getDate() + i * 7);
+      const sun = new Date(sat);
+      sun.setDate(sat.getDate() + 1);
+      const key = sat.toISOString().split('T')[0];
+      weekends.push({ key, sat, sun, label: formatWeekendLabel(sat, sun) });
+    }
+    return weekends;
+  }
+
+  function formatWeekendLabel(sat, sun) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const satStr = sat.getDate() + ' ' + months[sat.getMonth()];
+    const sunStr = sun.getMonth() === sat.getMonth()
+      ? sun.getDate() + ''
+      : sun.getDate() + ' ' + months[sun.getMonth()];
+    return satStr + '–' + sunStr;
+  }
+
+  function selectPlanWeekend(key) {
+    currentPlanWeekend = key;
+    renderPlan();
+  }
 
   function generateItemId(title) {
     return title.replace(/[^a-z0-9]/gi, '-').toLowerCase().substring(0, 60) + '-' + Date.now().toString(36);
@@ -493,10 +529,12 @@ let currentRegion = 'all';
       return;
     }
 
+    if (!currentPlanWeekend) currentPlanWeekend = getUpcomingWeekends(1)[0].key;
     const item = {
       id: generateItemId(data.title),
       ...data,
       day: 'saturday', // default — user can change
+      weekendStart: currentPlanWeekend,
       addedAt: Date.now()
     };
 
@@ -595,31 +633,100 @@ let currentRegion = 'all';
     const emptyEl   = document.getElementById('plannerEmpty');
     const nudge     = document.getElementById('plannerSyncNudge');
 
+    const upcomingWeekends = getUpcomingWeekends(4);
+    if (!currentPlanWeekend) currentPlanWeekend = upcomingWeekends[0].key;
+
+    // Migrate legacy items without weekendStart
+    planItems.forEach(item => { if (!item.weekendStart) item.weekendStart = upcomingWeekends[0].key; });
+
     // Show sign-in nudge for guests who have items
     if (nudge) nudge.style.display = (!currentUser && planItems.length > 0) ? 'flex' : 'none';
 
+    const weekendItems = planItems.filter(i => i.weekendStart === currentPlanWeekend);
+
     if (planItems.length === 0) {
-      container.innerHTML = '';
+      container.innerHTML = renderWeekendPicker(upcomingWeekends);
       emptyEl.style.display = 'block';
       updatePlanBadge();
       return;
     }
     emptyEl.style.display = 'none';
 
-    const saturday = planItems.filter(i => i.day === 'saturday');
-    const sunday   = planItems.filter(i => i.day === 'sunday');
+    const saturday = weekendItems.filter(i => i.day === 'saturday');
+    const sunday   = weekendItems.filter(i => i.day === 'sunday');
 
-    let html = '';
+    let html = renderWeekendPicker(upcomingWeekends);
 
-    if (saturday.length > 0) {
-      html += renderDaySection('Saturday', saturday);
+    if (weekendItems.length === 0) {
+      html += '<p class="plan-weekend-empty">Nothing planned for this weekend yet — browse and tap <strong>+ Plan</strong> to add something.</p>';
+    } else {
+      if (saturday.length > 0) html += renderDaySection('Saturday', saturday);
+      if (sunday.length > 0)   html += renderDaySection('Sunday', sunday);
     }
-    if (sunday.length > 0) {
-      html += renderDaySection('Sunday', sunday);
-    }
+
+    html += renderSuggestions(weekendItems);
 
     container.innerHTML = html;
     updatePlanBadge();
+  }
+
+  function renderWeekendPicker(weekends) {
+    let html = '<div class="weekend-picker"><span class="weekend-picker-label">📅 Weekend:</span>';
+    weekends.forEach((w, idx) => {
+      const isActive = w.key === currentPlanWeekend;
+      const count = planItems.filter(i => i.weekendStart === w.key).length;
+      const badge = count > 0 ? '<span class="weekend-chip-badge">' + count + '</span>' : '';
+      const label = idx === 0 ? 'This weekend' : idx === 1 ? 'Next weekend' : w.label;
+      html += '<button class="weekend-chip' + (isActive ? ' active' : '') + '" onclick="selectPlanWeekend(\'' + w.key + '\')">' + label + badge + '</button>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderSuggestions(weekendItems) {
+    if (weekendItems.length === 0) return '';
+    const planRegions = [...new Set(weekendItems.map(i => i.region).filter(Boolean))];
+    if (planRegions.length === 0) return '';
+    const plannedTitles = new Set(planItems.map(i => i.title));
+    const suggestions = [];
+    document.querySelectorAll('.venue-card, .card').forEach(card => {
+      const region = card.dataset.region;
+      if (!region || region === 'all' || !planRegions.includes(region)) return;
+      const title = (card.querySelector('.venue-name, .card-title') || {}).textContent;
+      if (!title) return;
+      const t = title.trim();
+      if (plannedTitles.has(t) || suggestions.some(s => s.title === t)) return;
+      const category = ((card.querySelector('.venue-tag, .card-cat') || {}).textContent || '').trim();
+      const section = card.closest('#section-food') ? 'food' :
+                      card.closest('#section-walks') ? 'walks' :
+                      card.closest('#section-parks') ? 'parks' :
+                      card.closest('[id^="panel-"]') ? 'events' : null;
+      if (!section) return;
+      suggestions.push({ title: t, category, region, section });
+    });
+    if (suggestions.length === 0) return '';
+    const shown = suggestions.slice(0, 4);
+    const regionLabels = { 'wellington': 'Wellington City', 'lower-hutt': 'Lower Hutt', 'upper-hutt': 'Upper Hutt', 'kapiti': 'Kāpiti', 'porirua': 'Porirua', 'wairarapa': 'Wairarapa' };
+    const regionNames = planRegions.map(r => regionLabels[r] || r).join(' & ');
+    const icons = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝' };
+    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Based on your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
+    shown.forEach(s => {
+      html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" onclick="addToPlanByTitle(this, ' + JSON.stringify(escapeHtml(s.title)) + ')">+ Plan</button></div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function addToPlanByTitle(btn, title) {
+    const card = [...document.querySelectorAll('.venue-card, .card')].find(c => {
+      const el = c.querySelector('.venue-name, .card-title');
+      return el && escapeHtml(el.textContent.trim()) === title;
+    });
+    if (card) {
+      addToPlan(card);
+      btn.textContent = 'In plan';
+      btn.classList.add('added');
+    }
   }
 
   function renderDaySection(dayLabel, items) {
@@ -675,12 +782,30 @@ let currentRegion = 'all';
   function sharePlan() {
     if (planItems.length === 0) { showToast('Nothing to share yet'); return; }
     let text = '🗓 My Wellington Weekend Plan\n\n';
-    const saturday = planItems.filter(i => i.day === 'saturday');
-    const sunday   = planItems.filter(i => i.day === 'sunday');
+    // Group by weekend
+    const weekendKeys = [...new Set(planItems.map(i => i.weekendStart))].sort();
+    const upcomingWeekends = getUpcomingWeekends(4);
+    weekendKeys.forEach(key => {
+      const wInfo = upcomingWeekends.find(w => w.key === key);
+      if (wInfo) text += '🗓 ' + wInfo.label + '\n';
+      const saturday = planItems.filter(i => i.weekendStart === key && i.day === 'saturday');
+      const sunday   = planItems.filter(i => i.weekendStart === key && i.day === 'sunday');
+      if (saturday.length) {
+        text += '📅 SATURDAY\n';
+        saturday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
+        text += '\n';
+      }
+      if (sunday.length) {
+        text += '📅 SUNDAY\n';
+        sunday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
+        text += '\n';
+      }
+    });
+    const saturday = planItems.filter(i => !i.weekendStart && i.day === 'saturday');
+    const sunday   = planItems.filter(i => !i.weekendStart && i.day === 'sunday');
     if (saturday.length) {
       text += '📅 SATURDAY\n';
       saturday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
-      text += '\n';
     }
     if (sunday.length) {
       text += '📅 SUNDAY\n';
