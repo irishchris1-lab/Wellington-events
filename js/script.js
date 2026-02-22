@@ -208,13 +208,12 @@ let currentRegion = 'all';
 
   function filterRegion(region, btn) {
     currentRegion = region;
-    // ── Change 3: update aria-pressed on filter buttons ──
-    document.querySelectorAll('.filter-btn').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed', 'false');
+    // Sync all region buttons (global filter-btn + in-section duration-btn)
+    document.querySelectorAll('[data-filter-region]').forEach(b => {
+      const isActive = b.dataset.filterRegion === region;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
     applyFilter(region);
     // ── Change 5: update URL ──
     const activeSection = document.querySelector('.app-section.active')?.id?.replace('section-', '') || 'events';
@@ -270,13 +269,8 @@ let currentRegion = 'all';
 
     // Restore region
     if (region !== 'all') {
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      filterBtns.forEach(btn => {
-        if (btn.textContent.toLowerCase().includes(region.replace('-', ' ')) ||
-            btn.getAttribute('onclick')?.includes("'" + region + "'")) {
-          filterRegion(region, btn);
-        }
-      });
+      const btn = document.querySelector('.filter-btn[data-filter-region="' + region + '"]');
+      if (btn) filterRegion(region, btn);
     }
 
     // ── Arrow key navigation for tablists ──

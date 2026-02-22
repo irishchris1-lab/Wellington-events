@@ -327,6 +327,7 @@
   }
   .duration-btn:hover { border-color: var(--jade); color: var(--jade); }
   .duration-btn.active { background: var(--jade); border-color: var(--jade); color: #fff; }
+  .duration-btn .region-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
 
   /* ── FOOTER ── */
   footer { background: var(--teal); color: rgba(255,255,255,0.38); text-align: center; padding: 20px 28px; font-size: 12px; line-height: 1.9; }

@@ -146,13 +146,13 @@
 <div class="filter-bar" role="region" aria-label="Filter by area">
   <div class="filter-inner">
     <span class="filter-label" id="filter-label">Area:</span>
-    <button class="filter-btn active" aria-pressed="true"  onclick="filterRegion('all', this)">🗺 All regions</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
-    <button class="filter-btn"        aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">🗺 All regions</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
   </div>
 </div>
 
@@ -171,6 +171,16 @@
   </div>
 </nav>
 
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+  <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+  <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
 <main>
 
 <!-- ════════════════════════════════════
@@ -1127,6 +1137,16 @@
   <p>The best family-friendly cafes and restaurants across the Wellington region — spots where whānau are genuinely welcome and everyone can actually enjoy their time.</p>
 </div>
 
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+  <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+  <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
 <div class="duration-filter">
   <span class="duration-label">⭐ Rating:</span>
   <button class="duration-btn active" aria-pressed="true"  onclick="filterFood('all', this)">All</button>
@@ -1686,6 +1706,16 @@
   <p>The best short walks for families with young kids across the Wellington region — all under an hour, mostly flat or gentle, with something interesting to discover along the way.</p>
 </div>
 
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+  <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+  <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
 <div class="duration-filter">
   <span class="duration-label">⏱ Duration:</span>
   <button class="duration-btn active" aria-pressed="true"  onclick="filterDuration('all', this)">All walks</button>
@@ -2114,6 +2144,16 @@
 <div class="section-intro">
   <h2>Play Parks</h2>
   <p>The best playgrounds and indoor play centres across the Wellington region — from lighthouse slides on the waterfront to fenced toddler havens and rainy-day escapes.</p>
+</div>
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+  <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+  <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
 </div>
 <main>
 
