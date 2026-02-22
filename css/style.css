@@ -253,7 +253,7 @@
   .meta-icon { opacity: 0.5; flex-shrink: 0; }
 
   /* ── STAR RATINGS ── */
-  .venue-rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .venue-rating { display: flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 8px; }
   .stars { color: #f5a623; font-size: 13px; letter-spacing: 1px; }
   .rating-score { font-size: 12px; font-weight: 700; color: #333; }
   .rating-link { font-size: 10.5px; color: var(--teal); text-decoration: none; font-weight: 600; }
@@ -297,7 +297,7 @@
   .venue-card-strip {
     height: 6px; flex-shrink: 0;
   }
-  .venue-card-body { padding: 18px 20px 14px; flex: 1; }
+  .venue-card-body { padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; }
   .venue-tag { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
   .venue-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--teal); line-height: 1.25; margin-bottom: 10px; }
   .venue-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
