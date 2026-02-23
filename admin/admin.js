@@ -68,16 +68,23 @@ function showDashboard(user) {
 function subscribeToEvents() {
   if (unsubscribeSnap) unsubscribeSnap();
   unsubscribeSnap = db.collection('events')
-    .orderBy('weekend', 'asc')
     .onSnapshot(snapshot => {
       allEvents = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        .sort((a, b) => {
+          const w = (a.weekend || '').localeCompare(b.weekend || '');
+          return w !== 0 ? w : (a.title || '').localeCompare(b.title || '');
+        });
       updateStats();
       populateWeekendFilter();
       applyFilters();
     }, err => {
-      showToast('Firestore error: ' + err.message);
+      console.error('Firestore error:', err);
+      document.getElementById('eventTableBody').innerHTML =
+        `<tr class="table-empty"><td colspan="6" style="color:#c00">
+          Firestore error: ${err.message}<br>
+          <small>Check browser console and Firebase security rules.</small>
+        </td></tr>`;
     });
 }
 
