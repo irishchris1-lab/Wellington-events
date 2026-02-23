@@ -680,7 +680,8 @@ let currentRegion = 'all';
       sat.setDate(firstSat.getDate() + i * 7);
       const sun = new Date(sat);
       sun.setDate(sat.getDate() + 1);
-      const key = sat.toISOString().split('T')[0];
+      const pad = n => String(n).padStart(2, '0');
+      const key = `${sat.getFullYear()}-${pad(sat.getMonth() + 1)}-${pad(sat.getDate())}`;
       weekends.push({ key, sat, sun, label: formatWeekendLabel(sat, sun) });
     }
     return weekends;
