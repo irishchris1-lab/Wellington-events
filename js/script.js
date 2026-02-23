@@ -740,10 +740,9 @@ let currentRegion = 'all';
       if (cardEl.dataset.day) {
         day = cardEl.dataset.day === 'sun' ? 'sunday' : 'saturday';
       } else {
-        const grid  = cardEl.closest('.events-grid');
-        const panel = grid?.closest('.weekend-panel');
-        const grids = panel ? [...panel.querySelectorAll('.events-grid')] : [];
-        day = grids.indexOf(grid) === 1 ? 'sunday' : 'saturday';
+        const grid = cardEl.closest('.events-grid');
+        const prevLabel = grid?.previousElementSibling;
+        day = prevLabel?.classList.contains('day-sun') ? 'sunday' : 'saturday';
       }
     }
 
