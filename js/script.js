@@ -80,6 +80,7 @@
   });
 
 let currentRegion = 'all';
+  let currentTypeFilter = 'all';
   let currentDuration = 'all';
   let walkTopRatedOnly = false;
   let foodRatingFilter = 'all';
@@ -293,11 +294,32 @@ let currentRegion = 'all';
     updateHash(activeSection, region);
   }
 
+  function getCardType(card) {
+    const strip = card.querySelector('.card-strip');
+    if (!strip) return 'other';
+    for (const cls of strip.classList) {
+      if (cls.startsWith('strip-') && cls !== 'strip-other') return cls.slice(6);
+    }
+    return 'other';
+  }
+
+  function filterType(type, btn) {
+    currentTypeFilter = type;
+    document.querySelectorAll('[data-filter-type]').forEach(b => {
+      const active = b.dataset.filterType === type;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    applyFilter(currentRegion);
+  }
+
   function applyFilter(region) {
     const activePanel = document.querySelector('.weekend-panel.active');
     if (activePanel) {
       activePanel.querySelectorAll('.card').forEach(card => {
-        card.classList.toggle('hidden', region !== 'all' && card.dataset.region !== region);
+        const regionHide = region !== 'all' && card.dataset.region !== region;
+        const typeHide   = currentTypeFilter !== 'all' && getCardType(card) !== currentTypeFilter;
+        card.classList.toggle('hidden', regionHide || typeHide);
       });
       activePanel.querySelectorAll('.events-grid').forEach(grid => {
         const existing = grid.nextElementSibling;
@@ -306,7 +328,7 @@ let currentRegion = 'all';
           const msg = document.createElement('p');
           msg.className = 'no-results';
           msg.style.cssText = 'color:#bbb;font-size:13px;padding:12px 0 24px;font-style:italic;';
-          msg.textContent = 'No events in this area for this day.';
+          msg.textContent = 'No events match the current filters.';
           grid.after(msg);
         }
       });
