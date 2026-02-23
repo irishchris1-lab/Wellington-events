@@ -760,7 +760,7 @@ let currentRegion = 'all';
 
     // Use the event's own weekend date; fall back to selected planner weekend or next upcoming
     const weekendStart = data.weekendStart || currentPlanWeekend || getUpcomingWeekends(1)[0].key;
-    if (!currentPlanWeekend) currentPlanWeekend = weekendStart;
+    currentPlanWeekend = weekendStart;
     const item = {
       id: generateItemId(data.title),
       ...data,
@@ -1095,6 +1095,7 @@ let currentRegion = 'all';
   // ── Planner tab click handler ──
   function handlePlannerTabClick(btn) {
     showSection('planner', btn);
+    renderPlan();
   }
 
   // ── Toast notification ──
