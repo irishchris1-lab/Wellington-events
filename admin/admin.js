@@ -25,6 +25,24 @@ let editingDocId    = null;
 let deletingDocId   = null;
 let deletingTitle   = '';
 let unsubscribeSnap = null;
+let showPast        = false;
+
+// True from Monday 00:00 after the weekend
+function weekendIsPast(satDateStr) {
+  if (!satDateStr) return false;
+  const monday = new Date(satDateStr + 'T00:00:00');
+  monday.setDate(monday.getDate() + 2);
+  monday.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today >= monday;
+}
+
+function toggleShowPast(btn) {
+  showPast = !showPast;
+  btn.textContent = showPast ? 'Hide past' : 'Show past';
+  applyFilters();
+}
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 auth.onAuthStateChanged(user => {
@@ -129,6 +147,7 @@ function applyFilters() {
   const status  = document.getElementById('statusFilter').value;
 
   filteredEvents = allEvents.filter(ev => {
+    if (!showPast && weekendIsPast(ev.weekend)) return false;
     if (weekend && ev.weekend !== weekend) return false;
     if (region  && ev.region  !== region)  return false;
     if (status === 'active' && !ev.active)  return false;
@@ -150,7 +169,7 @@ function renderTable() {
     <tr>
       <td><strong>${esc(ev.title)}</strong>${ev.venue ? `<br><small style="color:#888">${esc(ev.venue)}</small>` : ''}</td>
       <td><span class="badge-cat">${esc(ev.type || ev.category || '—')}</span></td>
-      <td>${ev.weekend ? formatWeekend(ev.weekend) : '—'}</td>
+      <td>${ev.weekend ? formatWeekend(ev.weekend) : '—'}${weekendIsPast(ev.weekend) ? ' <span class="badge badge-past">Past</span>' : ''}</td>
       <td>${esc(ev.region || '—')}</td>
       <td><span class="badge ${ev.active ? 'badge-active' : 'badge-draft'}">${ev.active ? 'Active' : 'Draft'}</span></td>
       <td class="col-actions">

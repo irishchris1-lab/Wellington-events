@@ -227,6 +227,19 @@ body {
 .filter-input:focus,
 .filter-select:focus { border-color: var(--teal); }
 
+.show-past-btn {
+  background: #fff;
+  color: var(--muted);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: .6rem 1rem;
+  font-size: .9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.show-past-btn:hover { background: var(--sand); color: var(--text); }
+
 .add-btn {
   background: var(--teal);
   color: #fff;
@@ -300,6 +313,7 @@ body {
 
 .badge-active  { background: #d4edda; color: #155724; }
 .badge-draft   { background: #fff3cd; color: #856404; }
+.badge-past    { background: #e9ecef; color: #6c757d; }
 
 /* Category badge */
 .badge-cat {

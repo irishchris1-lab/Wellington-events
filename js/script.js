@@ -472,7 +472,45 @@ let currentRegion = 'all';
       .replace(/"/g, '&quot;');
   }
 
+  // Returns true from Monday 00:00 onwards after a weekend
+  function weekendIsPast(satDateStr) {
+    if (!satDateStr) return false;
+    const monday = new Date(satDateStr + 'T00:00:00');
+    monday.setDate(monday.getDate() + 2);
+    monday.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today >= monday;
+  }
+
+  // Hide tabs and panels for weekends that have already passed
+  function hidePastWeekendTabs() {
+    let firstVisible = null;
+    document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
+      if (weekendIsPast(panel.dataset.weekend)) {
+        panel.style.display = 'none';
+        const btn = document.getElementById('wtab-' + panel.id);
+        if (btn) btn.style.display = 'none';
+      } else if (!firstVisible) {
+        firstVisible = panel;
+      }
+    });
+    // If the currently-active panel is now hidden, activate the first visible one
+    const active = document.querySelector('.weekend-panel.active');
+    if (active && active.style.display === 'none' && firstVisible) {
+      active.classList.remove('active');
+      firstVisible.classList.add('active');
+      document.querySelectorAll('.tab-btn[aria-selected]').forEach(b => {
+        b.setAttribute('aria-selected', 'false');
+        b.classList.remove('active');
+      });
+      const newBtn = document.getElementById('wtab-' + firstVisible.id);
+      if (newBtn) { newBtn.classList.add('active'); newBtn.setAttribute('aria-selected', 'true'); }
+    }
+  }
+
   function injectEventCard(ev) {
+    if (weekendIsPast(ev.weekend)) return; // skip past events
     const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
     if (!panel) return;
     const grids = panel.querySelectorAll('.events-grid');
@@ -1074,6 +1112,7 @@ let currentRegion = 'all';
 
   // ── Inject buttons and load guest plan on startup ──
   document.addEventListener('DOMContentLoaded', () => {
+    hidePastWeekendTabs();
     injectAddButtons();
     // If Firebase is not configured, load from localStorage immediately
     // If Firebase IS configured, onAuthStateChanged handles it after sign-in
