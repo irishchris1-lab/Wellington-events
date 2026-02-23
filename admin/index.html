@@ -134,6 +134,25 @@
       </div>
     </div>
 
+    <!-- JSON Paste Import Panel -->
+    <div class="about-panel">
+      <button class="about-panel-toggle" onclick="toggleJsonPanel(this)" aria-expanded="false">
+        <span>📋 Paste JSON Event</span>
+        <span class="about-chevron">▼</span>
+      </button>
+      <div class="about-panel-body hidden" id="jsonPanelBody">
+        <p class="about-panel-hint">Paste a single JSON object or an array of objects. Accepted fields: <code>title</code> (required), <code>date</code> YYYY-MM-DD (required), <code>time</code>, <code>location</code>, <code>description</code>. Events are saved as drafts with type <em>General Event</em> and region <em>Wellington City</em> — edit afterwards to refine.</p>
+        <div class="form-row">
+          <label class="form-label" for="jsonInput">JSON</label>
+          <textarea class="form-textarea" id="jsonInput" rows="8" placeholder='{"title": "My Event", "date": "2026-03-07", "time": "10am–4pm", "location": "Frank Kitts Park", "description": "..."}'></textarea>
+        </div>
+        <div class="form-actions">
+          <div id="jsonImportResult" class="json-import-result"></div>
+          <button class="btn-primary" id="jsonImportBtn" onclick="importFromJSON()">Create Draft</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /dashboard -->
 
   <!-- ── ADD / EDIT MODAL ── -->

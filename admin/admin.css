@@ -608,6 +608,17 @@ body {
   padding-top: .75rem;
 }
 
+/* ── JSON import result ── */
+.json-import-result {
+  font-size: .9rem;
+  flex: 1;
+  padding: .35rem 0;
+  line-height: 1.4;
+}
+
+.json-import-success { color: #155724; }
+.json-import-error   { color: var(--rust); }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .admin-header { padding: .65rem 1rem; }

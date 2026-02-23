@@ -576,6 +576,111 @@ async function bulkImportDraftEvents() {
   }
 }
 
+// ── JSON paste import ──────────────────────────────────────────────────────────
+function toggleJsonPanel(btn) {
+  const body = document.getElementById('jsonPanelBody');
+  const nowHidden = body.classList.toggle('hidden');
+  btn.setAttribute('aria-expanded', nowHidden ? 'false' : 'true');
+}
+
+// Given a YYYY-MM-DD date string, return the Saturday `weekend` key and `day`
+function dateToWeekend(dateStr) {
+  const d   = new Date(dateStr + 'T12:00:00'); // noon avoids DST edge cases
+  const dow = d.getDay(); // 0=Sun, 6=Sat
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = dt => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+  if (dow === 6) {
+    return { weekend: dateStr, day: 'sat' };
+  } else if (dow === 0) {
+    const sat = new Date(d);
+    sat.setDate(sat.getDate() - 1);
+    return { weekend: fmt(sat), day: 'sun' };
+  } else {
+    // Weekday — map to the coming Saturday of the same week
+    const sat = new Date(d);
+    sat.setDate(sat.getDate() + (6 - dow));
+    return { weekend: fmt(sat), day: 'sat' };
+  }
+}
+
+async function importFromJSON() {
+  const btn      = document.getElementById('jsonImportBtn');
+  const resultEl = document.getElementById('jsonImportResult');
+  const raw      = document.getElementById('jsonInput').value.trim();
+
+  resultEl.textContent = '';
+  resultEl.className   = 'json-import-result';
+
+  if (!raw) {
+    resultEl.textContent = 'Paste some JSON first.';
+    resultEl.classList.add('json-import-error');
+    return;
+  }
+
+  // Parse
+  let events;
+  try {
+    const parsed = JSON.parse(raw);
+    events = Array.isArray(parsed) ? parsed : [parsed];
+  } catch (err) {
+    resultEl.textContent = 'Invalid JSON: ' + err.message;
+    resultEl.classList.add('json-import-error');
+    return;
+  }
+
+  // Validate required fields
+  for (let i = 0; i < events.length; i++) {
+    const ev = events[i];
+    if (!ev.title || typeof ev.title !== 'string' || !ev.title.trim()) {
+      resultEl.textContent = `Event ${i + 1}: missing or invalid "title".`;
+      resultEl.classList.add('json-import-error');
+      return;
+    }
+    if (!ev.date || !/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+      resultEl.textContent = `Event ${i + 1}: "date" must be YYYY-MM-DD (got "${ev.date}").`;
+      resultEl.classList.add('json-import-error');
+      return;
+    }
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Creating…';
+
+  let created = 0;
+  try {
+    for (const ev of events) {
+      const { weekend, day } = dateToWeekend(ev.date);
+      await db.collection('events').add({
+        title:       String(ev.title).trim(),
+        description: String(ev.description || '').trim(),
+        category:    'events',
+        type:        'other',
+        day,
+        weekend,
+        region:      'wellington',
+        venue:       String(ev.location || '').trim(),
+        time:        String(ev.time || '').trim(),
+        url:         '',
+        img:         '',
+        tags:        [],
+        active:      false,
+        createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      created++;
+    }
+    resultEl.textContent = `✓ ${created} draft event${created !== 1 ? 's' : ''} created. Edit in the table above to set type and region.`;
+    resultEl.classList.add('json-import-success');
+    document.getElementById('jsonInput').value = '';
+  } catch (err) {
+    resultEl.textContent = 'Save failed: ' + err.message;
+    resultEl.classList.add('json-import-error');
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Create Draft';
+  }
+}
+
 // ── About section editor ───────────────────────────────────────────────────────
 function toggleAboutPanel(btn) {
   const body = document.getElementById('aboutPanelBody');
