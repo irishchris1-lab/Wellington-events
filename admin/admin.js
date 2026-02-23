@@ -80,6 +80,32 @@ function showDashboard(user) {
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('adminEmail').textContent = user.email;
   subscribeToEvents();
+  openFromUrlParams();
+}
+
+// ── Pre-filled modal from URL params (?new=1&title=...&type=...etc) ───────────
+function openFromUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.get('new')) return;
+  // Wait for dashboard to render then open modal
+  setTimeout(() => {
+    openModal();
+    const set = (id, val) => { if (val !== null) { const el = document.getElementById(id); if (el) el.value = decodeURIComponent(val); } };
+    set('fTitle',   p.get('title'));
+    set('fDesc',    p.get('description'));
+    set('fType',    p.get('type'));
+    set('fDay',     p.get('day'));
+    set('fWeekend', p.get('weekend'));
+    set('fRegion',  p.get('region'));
+    set('fVenue',   p.get('venue'));
+    set('fTime',    p.get('time'));
+    set('fUrl',     p.get('url'));
+    // Always open as draft when coming from a link
+    const activeEl = document.getElementById('fActive');
+    if (activeEl) activeEl.checked = false;
+    // Clean URL so refreshing doesn't re-open the modal
+    window.history.replaceState({}, '', window.location.pathname);
+  }, 300);
 }
 
 // ── Firestore real-time listener ───────────────────────────────────────────────
