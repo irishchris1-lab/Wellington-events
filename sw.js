@@ -1,4 +1,4 @@
-const CACHE = 'wow-v1';
+const CACHE = 'wow-v2';
 const SHELL = ['/', '/css/style.css', '/js/script.js', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
