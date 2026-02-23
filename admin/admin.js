@@ -69,9 +69,10 @@ function subscribeToEvents() {
   if (unsubscribeSnap) unsubscribeSnap();
   unsubscribeSnap = db.collection('events')
     .orderBy('weekend', 'asc')
-    .orderBy('title',   'asc')
     .onSnapshot(snapshot => {
-      allEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      allEvents = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
       updateStats();
       populateWeekendFilter();
       applyFilters();
