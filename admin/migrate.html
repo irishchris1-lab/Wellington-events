@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migrate Events — Admin</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; background: #F7F2EB; color: #1a1a1a; }
+    h1 { color: #0B5563; }
+    p { line-height: 1.6; color: #555; }
+    button { background: #0B5563; color: #fff; border: none; padding: 14px 28px; font-size: 1.1rem; font-weight: 700; border-radius: 10px; cursor: pointer; margin-top: 16px; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    #log { margin-top: 24px; background: #fff; border-radius: 10px; padding: 16px; font-family: monospace; font-size: .9rem; line-height: 1.8; min-height: 60px; border: 1px solid #d4cdc4; white-space: pre-wrap; }
+    .ok  { color: #155724; }
+    .err { color: #c00; }
+    .warn { color: #856404; }
+  </style>
+</head>
+<body>
+  <h1>Event Migration Tool</h1>
+  <p>This will add all 34 hardcoded events into Firestore so they appear in the admin portal and can be managed without touching code.</p>
+  <p><strong>Safe to run once.</strong> If you run it again it will add duplicates — only click the button one time.</p>
+  <button id="migrateBtn" onclick="runMigration()">Migrate 34 Events to Firestore</button>
+  <div id="log">Ready. Click the button above to start.</div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey:            "AIzaSyCql0Pc_sSFcQSo8NDTWO29lLcXqFKFFgg",
+      authDomain:        "whatsonwellington-4b7a7.firebaseapp.com",
+      projectId:         "whatsonwellington-4b7a7",
+      storageBucket:     "whatsonwellington-4b7a7.firebasestorage.app",
+      messagingSenderId: "51704787462",
+      appId:             "1:51704787462:web:b2cedc8d4c46602b814987"
+    });
+    const db   = firebase.firestore();
+    const auth = firebase.auth();
+
+    function log(msg, cls) {
+      var el = document.getElementById("log");
+      el.innerHTML += "<span class='" + (cls||"") + "'>" + msg + "</span>\n";
+    }
+
+    var EVENTS = [
+      {title:"Wellington Art Show 2026",type:"culture",day:"sat",weekend:"2026-02-28",region:"wellington",time:"Sat 10am-8pm (runs 27 Feb-1 Mar)",venue:"Takina Convention Centre, 50 Cable St",url:"https://www.wellingtonartshow.co.nz"},
+      {title:"20 Summers Fest - Home Alone Records",type:"music",day:"sat",weekend:"2026-02-28",region:"wellington",time:"Doors 1pm, gig from 1:15pm",venue:"Central Wellington (venue TBA)",url:"https://www.eventfinda.co.nz/whatson/events/wellington"},
+      {title:"Wellington Underground Market",type:"market",day:"sat",weekend:"2026-02-28",region:"wellington",time:"Saturday 10am-4pm",venue:"Frank Kitts Underground Carpark, Jervois Quay",url:"https://www.wellingtonundergroundmarket.co.nz"},
+      {title:"Hill Street Farmers Market",type:"outdoor",day:"sat",weekend:"2026-02-28",region:"wellington",time:"Saturday 8:30am-12:30pm",venue:"St Pauls Cathedral carpark, Hill Street, Thorndon",url:"https://www.wellingtonnz.com/visit/see-and-do/hill-street-farmers-market"},
+      {title:"Harbourside Market",type:"market",day:"sun",weekend:"2026-02-28",region:"wellington",time:"Sunday 7:30am-2pm",venue:"Cable Street, beside Te Papa",url:"https://www.harboursidemarket.co.nz"},
+      {title:"Wellington Art Show - Final Day",type:"culture",day:"sun",weekend:"2026-02-28",region:"wellington",time:"Sunday 10am-5pm",venue:"Takina Convention Centre, 50 Cable St",url:"https://www.wellingtonartshow.co.nz"},
+      {title:"City Market - Atrium on the Waterfront",type:"market",day:"sun",weekend:"2026-02-28",region:"wellington",time:"Sunday 8:30am-12:30pm",venue:"Chaffers Dock Building, 1 Herd St, Waterfront",url:"https://www.citymarket.co.nz"},
+      {title:"NZ Fringe Festival 2026",type:"festival",day:"sun",weekend:"2026-02-28",region:"wellington",time:"Running until 7 March, various times",venue:"Multiple venues across Wellington",url:"https://www.fringe.co.nz"},
+      {title:"Martinborough Fair 2026",type:"festival",day:"sat",weekend:"2026-03-07",region:"wairarapa",time:"Saturday 8am-4pm",venue:"Martinborough Square, Martinborough",url:"https://www.eventfinda.co.nz/2026/martinborough-fair/martinborough"},
+      {title:"Wellington Pride Parade 2026",type:"festival",day:"sat",weekend:"2026-03-07",region:"wellington",time:"Saturday 5:30pm-7pm",venue:"Courtenay Place and Dixon Street, Te Aro",url:"https://www.wellingtonpridefestival.com"},
+      {title:"Wellington Underground Market",type:"market",day:"sat",weekend:"2026-03-07",region:"wellington",time:"Saturday 10am-4pm",venue:"Frank Kitts Underground Carpark, Jervois Quay",url:"https://www.wellingtonundergroundmarket.co.nz"},
+      {title:"Harbourside Market",type:"market",day:"sun",weekend:"2026-03-07",region:"wellington",time:"Sunday 7:30am-2pm",venue:"Cable Street, beside Te Papa",url:"https://www.harboursidemarket.co.nz"},
+      {title:"Te Papa Tongarewa - Always Open",type:"culture",day:"sun",weekend:"2026-03-07",region:"wellington",time:"Daily 10am-6pm",venue:"55 Cable Street, Te Aro",url:"https://www.tepapa.govt.nz"},
+      {title:"Wellington Tramway Museum - Ride the Trams",type:"outdoor",day:"sun",weekend:"2026-03-07",region:"kapiti",time:"Sundays 11am-4:30pm",venue:"Queen Elizabeth Park, Paekakariki",url:"https://www.wellingtontrams.org.nz"},
+      {title:"Wellington Waterfront Parkrun",type:"outdoor",day:"sat",weekend:"2026-03-14",region:"wellington",time:"Saturday 8am (briefing 7:45am)",venue:"Frank Kitts Park, Wellington Waterfront",url:"https://www.parkrun.co.nz/wellington/"},
+      {title:"Wellington Underground Market",type:"market",day:"sat",weekend:"2026-03-14",region:"wellington",time:"Saturday 10am-4pm",venue:"Frank Kitts Underground Carpark, Jervois Quay",url:"https://www.wellingtonundergroundmarket.co.nz"},
+      {title:"Weta Workshop Unleashed",type:"culture",day:"sat",weekend:"2026-03-14",region:"wellington",time:"Daily 9am-5:30pm, last tour 4pm",venue:"1 Weta Way, Miramar",url:"https://www.wetaworkshop.com/visit-us/"},
+      {title:"Out in the City - Pride Family Fair",type:"festival",day:"sun",weekend:"2026-03-14",region:"wellington",time:"Sunday all day",venue:"Odlins Plaza, Wellington Waterfront",url:"https://www.wellingtonpridefestival.com"},
+      {title:"Wellington Tramway Museum - Ride the Trams",type:"outdoor",day:"sun",weekend:"2026-03-14",region:"kapiti",time:"Sundays 11am-4:30pm",venue:"Queen Elizabeth Park, Paekakariki",url:"https://www.wellingtontrams.org.nz"},
+      {title:"Harbourside Market",type:"market",day:"sun",weekend:"2026-03-14",region:"wellington",time:"Sunday 7:30am-2pm",venue:"Cable Street, beside Te Papa",url:"https://www.harboursidemarket.co.nz"},
+      {title:"Wellington Waterfront Parkrun",type:"outdoor",day:"sat",weekend:"2026-03-21",region:"wellington",time:"Saturday 8am start (7:45am briefing)",venue:"Frank Kitts Park, Wellington Waterfront",url:"https://www.parkrun.co.nz/wellington/"},
+      {title:"Wellington Underground Market",type:"market",day:"sat",weekend:"2026-03-21",region:"wellington",time:"Saturday 10am-3pm",venue:"San Fran, Cuba St, Wellington",url:"https://www.wellingtonundergroundmarket.co.nz"},
+      {title:"Hutt City Autumn Festival",type:"festival",day:"sat",weekend:"2026-03-21",region:"lower-hutt",time:"Saturday 10am-4pm",venue:"Riddiford Gardens, Lower Hutt",url:"https://www.lowerhutt.govt.nz/parks-recreation"},
+      {title:"Wellington Tramway Museum - Ride the Trams",type:"outdoor",day:"sat",weekend:"2026-03-21",region:"kapiti",time:"Sundays 11am-4:30pm",venue:"Queen Elizabeth Park, Paekakariki",url:"https://www.wellingtontrams.org.nz"},
+      {title:"St Patricks Day Parade and Festival",type:"festival",day:"sun",weekend:"2026-03-21",region:"wellington",time:"Sunday 1pm-4:30pm",venue:"Queens Wharf, Wellington Waterfront",url:"https://www.eventfinda.co.nz/2026/st-patricks-day-parade-festival/wellington"},
+      {title:"Te Papa - Free Entry Always",type:"culture",day:"sun",weekend:"2026-03-21",region:"wellington",time:"Daily 10am-6pm",venue:"55 Cable St, Wellington Waterfront",url:"https://www.tepapa.govt.nz"},
+      {title:"Zealandia - Eco Sanctuary",type:"outdoor",day:"sun",weekend:"2026-03-21",region:"wellington",time:"Daily 9am-5pm (last entry 4pm)",venue:"53 Waiapu Rd, Karori",url:"https://www.visitzealandia.com"},
+      {title:"Martinborough Village and Farmers Market",type:"market",day:"sun",weekend:"2026-03-21",region:"wairarapa",time:"Sunday market 9:30am-1pm",venue:"The Square, Martinborough",url:"https://www.wairarapanz.com/places/martinborough"},
+      {title:"Boneface Brewing - Sunday Session",type:"outdoor",day:"sun",weekend:"2026-03-21",region:"upper-hutt",time:"Sunday from 12pm",venue:"Boneface Brewing, Upper Hutt",url:"https://www.bonefacebrewing.co.nz"},
+      {title:"CubaDupa 2026 - Free Street Festival",type:"festival",day:"sat",weekend:"2026-03-28",region:"wellington",time:"Sat 28 and Sun 29 March, all day",venue:"Cuba Street and Cuba Quarter, Wellington CBD",url:"https://www.cubadupa.co.nz"},
+      {title:"Wellington Cable Car and Botanic Garden",type:"outdoor",day:"sat",weekend:"2026-03-28",region:"wellington",time:"Daily 7:30am-10pm",venue:"280 Lambton Quay to Kelburn",url:"https://www.wellingtoncablecar.co.nz"},
+      {title:"Weta Workshop Unleashed",type:"culture",day:"sat",weekend:"2026-03-28",region:"wellington",time:"Daily 9am-5:30pm",venue:"1 Weta Way, Miramar",url:"https://www.wetaworkshop.com/visit-us/"},
+      {title:"Martinborough Village and Wine Trail",type:"outdoor",day:"sat",weekend:"2026-03-28",region:"wairarapa",time:"Any day, cellar doors open weekends",venue:"Martinborough Village, Wairarapa",url:"https://www.wairarapanz.com/martinborough"},
+      {title:"Greytown - NZs Prettiest Victorian Village",type:"outdoor",day:"sat",weekend:"2026-03-28",region:"wairarapa",time:"Sat and Sun, shops open both days",venue:"Main Street, Greytown, Wairarapa",url:"https://www.wairarapanz.com/greytown"}
+    ];
+
+    function runMigration() {
+      var btn = document.getElementById("migrateBtn");
+      btn.disabled = true;
+      btn.textContent = "Signing in...";
+      document.getElementById("log").textContent = "";
+
+      var provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then(function() {
+        log("Signed in. Starting migration...", "ok");
+        btn.textContent = "Migrating...";
+        var batch = db.batch();
+        var ts = firebase.firestore.FieldValue.serverTimestamp();
+        EVENTS.forEach(function(ev) {
+          var ref = db.collection("events").doc();
+          batch.set(ref, Object.assign({}, ev, { category: "events", active: true, createdAt: ts, updatedAt: ts }));
+        });
+        return batch.commit();
+      }).then(function() {
+        log("Done! Migrated " + EVENTS.length + " events to Firestore.", "ok");
+        log("You can now close this page and go to /admin to see all events.", "ok");
+        btn.textContent = "Migration complete";
+      }).catch(function(err) {
+        log("Error: " + err.message, "err");
+        btn.disabled = false;
+        btn.textContent = "Migrate 34 Events to Firestore";
+      });
+    }
+  </script>
+</body>
+</html>
