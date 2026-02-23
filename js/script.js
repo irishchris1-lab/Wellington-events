@@ -15,15 +15,15 @@
     if (!isStandalone() && !localStorage.getItem('installDismissed')) {
       setTimeout(showInstallBanner, 4000);
     }
-    const btn = document.getElementById('installMenuBtn');
-    if (btn) btn.style.display = '';
   });
 
   window.addEventListener('appinstalled', () => {
     hideInstallBanner();
     deferredInstallPrompt = null;
-    const btn = document.getElementById('installMenuBtn');
-    if (btn) btn.style.display = 'none';
+    ['installMenuBtn', 'headerInstallBtn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
     showToast('App installed — find it on your home screen 🎉');
   });
 
@@ -70,12 +70,16 @@
     }
   }
 
-  // On load: show iOS hint to Safari users who haven't dismissed
+  // On load: show install buttons for any non-standalone user
   document.addEventListener('DOMContentLoaded', () => {
+    if (!isStandalone()) {
+      ['installMenuBtn', 'headerInstallBtn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    }
     if (isIOS() && !isStandalone() && !localStorage.getItem('installDismissed')) {
       setTimeout(showIOSModal, 5000);
-      const btn = document.getElementById('installMenuBtn');
-      if (btn) btn.style.display = '';
     }
   });
 
@@ -318,7 +322,8 @@ let currentRegion = 'all';
     if (activePanel) {
       activePanel.querySelectorAll('.card').forEach(card => {
         const regionHide = region !== 'all' && card.dataset.region !== region;
-        const typeHide   = currentTypeFilter !== 'all' && getCardType(card) !== currentTypeFilter;
+        const isFamilyCard = currentTypeFilter === 'whanau' && card.querySelector('.badge-family');
+        const typeHide   = currentTypeFilter !== 'all' && getCardType(card) !== currentTypeFilter && !isFamilyCard;
         card.classList.toggle('hidden', regionHide || typeHide);
       });
       activePanel.querySelectorAll('.events-grid').forEach(grid => {
@@ -418,6 +423,7 @@ let currentRegion = 'all';
       db   = firebase.firestore();
       firebaseReady = true;
       loadFirestoreEvents();
+      loadAboutContent();
     }
   } catch (e) {
     console.warn('Firebase init failed:', e);
@@ -433,7 +439,7 @@ let currentRegion = 'all';
     market:   { strip: 'strip-market',   label: '🛒 Market' },
     music:    { strip: 'strip-music',    label: '🎵 Music' },
     outdoor:  { strip: 'strip-outdoor',  label: '🏃 Outdoor' },
-    kids:     { strip: 'strip-kids',     label: '👨‍👩‍👧 Family / Kids' },
+    whanau:   { strip: 'strip-whanau',   label: '👨‍👩‍👧 Whānau' },
   };
 
   function buildEventCardHTML(ev) {
@@ -445,10 +451,10 @@ let currentRegion = 'all';
     ].join('');
     const footer = [
       ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener">Find out more ↗</a>` : '',
-      `<button class="add-to-plan-btn" onclick="addToPlan(this)">+ Plan</button>`,
+      `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
     return `
-      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}">
+      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}">
         <div class="card-strip ${tm.strip}"></div>
         <div class="card-body">
           <div class="card-top">
@@ -531,6 +537,23 @@ let currentRegion = 'all';
         applyFilter(currentRegion);
         updateAddButtons();
       }, err => console.warn('Firestore events error:', err));
+  }
+
+  function loadAboutContent() {
+    if (!firebaseReady) return;
+    db.collection('siteConfig').doc('about').get().then(doc => {
+      if (!doc.exists) return;
+      const d = doc.data();
+      [['para1', 'aboutPara1', 'dropAboutPara1'],
+       ['para2', 'aboutPara2', 'dropAboutPara2'],
+       ['para3', 'aboutPara3', 'dropAboutPara3']].forEach(([field, mainId, dropId]) => {
+        if (!d[field]) return;
+        [mainId, dropId].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = d[field];
+        });
+      });
+    }).catch(e => console.warn('Could not load about content:', e));
   }
 
   // ═══════════════════════════════════════
@@ -683,17 +706,19 @@ let currentRegion = 'all';
 
   function getCardData(cardEl) {
     const isVenueCard = cardEl.classList.contains('venue-card');
-    let title, time, location, category, region, section;
+    let title, time, location, category, region, section, weekendStart, day;
 
     if (isVenueCard) {
-      title    = cardEl.querySelector('.venue-name')?.textContent?.trim() || '';
-      time     = cardEl.querySelector('.walk-duration')?.textContent?.trim() || '';
-      location = cardEl.querySelector('.venue-location')?.textContent?.trim()?.replace('📍 ', '') || '';
-      category = cardEl.querySelector('.venue-tag')?.textContent?.trim() || '';
-      region   = cardEl.dataset.region || '';
-      section  = cardEl.closest('#section-food') ? 'food' :
-                 cardEl.closest('#section-walks') ? 'walks' :
-                 cardEl.closest('#section-parks') ? 'parks' : 'other';
+      title        = cardEl.querySelector('.venue-name')?.textContent?.trim() || '';
+      time         = cardEl.querySelector('.walk-duration')?.textContent?.trim() || '';
+      location     = cardEl.querySelector('.venue-location')?.textContent?.trim()?.replace('📍 ', '') || '';
+      category     = cardEl.querySelector('.venue-tag')?.textContent?.trim() || '';
+      region       = cardEl.dataset.region || '';
+      section      = cardEl.closest('#section-food') ? 'food' :
+                     cardEl.closest('#section-walks') ? 'walks' :
+                     cardEl.closest('#section-parks') ? 'parks' : 'other';
+      weekendStart = null;
+      day          = 'saturday';
     } else {
       title    = cardEl.querySelector('.card-title')?.textContent?.trim() || '';
       time     = '';
@@ -707,9 +732,21 @@ let currentRegion = 'all';
         if (text.includes('🕐')) time = text.replace('🕐', '').trim();
         if (text.includes('📍')) location = text.replace('📍', '').trim();
       });
+      // Weekend: from data-weekend attribute (Firestore cards) or parent panel (hardcoded cards)
+      weekendStart = cardEl.dataset.weekend ||
+                     cardEl.closest('.weekend-panel')?.dataset?.weekend || '';
+      // Day: from data-day attribute (Firestore cards) or by grid position (hardcoded cards)
+      if (cardEl.dataset.day) {
+        day = cardEl.dataset.day === 'sun' ? 'sunday' : 'saturday';
+      } else {
+        const grid  = cardEl.closest('.events-grid');
+        const panel = grid?.closest('.weekend-panel');
+        const grids = panel ? [...panel.querySelectorAll('.events-grid')] : [];
+        day = grids.indexOf(grid) === 1 ? 'sunday' : 'saturday';
+      }
     }
 
-    return { title, time, location, category, region, section };
+    return { title, time, location, category, region, section, weekendStart, day };
   }
 
   function addToPlan(cardEl) {
@@ -720,12 +757,13 @@ let currentRegion = 'all';
       return;
     }
 
-    if (!currentPlanWeekend) currentPlanWeekend = getUpcomingWeekends(1)[0].key;
+    // Use the event's own weekend date; fall back to selected planner weekend or next upcoming
+    const weekendStart = data.weekendStart || currentPlanWeekend || getUpcomingWeekends(1)[0].key;
+    if (!currentPlanWeekend) currentPlanWeekend = weekendStart;
     const item = {
       id: generateItemId(data.title),
       ...data,
-      day: 'saturday', // default — user can change
-      weekendStart: currentPlanWeekend,
+      weekendStart,
       addedAt: Date.now()
     };
 
@@ -867,7 +905,7 @@ let currentRegion = 'all';
       const isActive = w.key === currentPlanWeekend;
       const count = planItems.filter(i => i.weekendStart === w.key).length;
       const badge = count > 0 ? '<span class="weekend-chip-badge">' + count + '</span>' : '';
-      const label = idx === 0 ? 'This weekend' : idx === 1 ? 'Next weekend' : w.label;
+      const label = w.label;
       html += '<button class="weekend-chip' + (isActive ? ' active' : '') + '" onclick="selectPlanWeekend(\'' + w.key + '\')">' + label + badge + '</button>';
     });
     html += '</div>';

@@ -56,7 +56,7 @@
 
   STRIP COLOURS (pick one for class="card-strip ___"):
     strip-festival  strip-outdoor  strip-culture  strip-sport
-    strip-food      strip-market   strip-kids     strip-music  strip-other
+    strip-food      strip-market   strip-whanau   strip-music  strip-other
 
   BADGE OPTIONS (add inside .card-badges):
     <span class="badge badge-free">Free</span>
@@ -90,6 +90,9 @@
             <button class="user-dropdown-btn danger" onclick="signOutUser()">↩ Sign out</button>
           </div>
         </div>
+        <button class="header-install-btn" id="headerInstallBtn" onclick="handleInstallClick()" aria-label="Add to Home Screen" style="display:none">
+          📲 <span>Save app</span>
+        </button>
         <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="dropdownPanel" id="hamburgerBtn">
           <span></span><span></span><span></span>
         </button>
@@ -126,9 +129,9 @@
   </nav>
   <div class="dropdown-about">
     <div class="dropdown-about-title">About this guide</div>
-    <p>Built with love by <strong>Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
-    <p>Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
-    <p>Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
+    <p id="dropAboutPara1">Built with love by <strong>Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
+    <p id="dropAboutPara2">Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
+    <p id="dropAboutPara3">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
     <div class="dropdown-made-with">Made with ❤️ in Wellington</div>
     <div class="dropdown-contact">
       Spotted something incorrect, want to promote an event, or just have feedback? Drop us a message at <a class="contact-email" href="#" onclick="this.href='mailto:'+atob('aGVsbG9Ad2hhdHNvbndlbGxpbmd0b24uY28ubno=')">hello@whatsonwellington<!-- -->.<wbr>co.nz</a>
@@ -184,7 +187,7 @@
   <button class="duration-btn" data-filter-type="market" aria-pressed="false" onclick="filterType('market', this)">🛒 Market</button>
   <button class="duration-btn" data-filter-type="music" aria-pressed="false" onclick="filterType('music', this)">🎵 Music</button>
   <button class="duration-btn" data-filter-type="outdoor" aria-pressed="false" onclick="filterType('outdoor', this)">🏃 Outdoor</button>
-  <button class="duration-btn" data-filter-type="kids" aria-pressed="false" onclick="filterType('kids', this)">👨‍👩‍👧 Kids</button>
+  <button class="duration-btn" data-filter-type="whanau" aria-pressed="false" onclick="filterType('whanau', this)">👨‍👩‍👧 Whānau</button>
 </div>
 <main>
 
@@ -2145,6 +2148,392 @@
 
   </div>
 
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Wellington City — Coastal &amp; Hillside<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.6" data-region="wellington" data-kidfriendly="true" data-duration="under2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🦭 Coastal Walk</div>
+        <div class="venue-name">Red Rocks Reserve — Seal Colony</div>
+        <div class="walk-duration">⏱ 1.5–2 hr return · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Wild fur seals on the rocks</span>
+          <span class="venue-pill">Red volcanic rocks</span>
+          <span class="venue-pill">Dramatic south coast</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">One of Wellington's most rewarding coastal walks — a gravel and rocky path along the wild south coast to a fur seal colony resting on ancient red volcanic rocks. Keep 10m from the seals. The rugged scenery and wildlife make this a genuinely memorable family outing. Windproof layers essential on this exposed coast.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.6</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/red-rocks-reserve-walk" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Red+Rocks+Reserve+Owhiro+Bay+Wellington" target="_blank">📍 Owhiro Bay, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/walks-and-runs/coastal-walks/red-rocks-walk" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.4" data-region="wellington" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🏰 Heritage Walk</div>
+        <div class="venue-name">Wrights Hill Fortress — WW2 Gun Emplacements</div>
+        <div class="walk-duration">⏱ 45–60 min · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">WW2 tunnels &amp; gun emplacements</span>
+          <span class="venue-pill">360° harbour views</span>
+          <span class="venue-pill">Native bush</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A hidden Wellington gem — the remains of a massive WWII coastal gun battery with concrete bunkers, tunnels and emplacements you can explore for free. The hilltop gives sweeping views over the harbour and Cook Strait. Kids love the military history and the sense of discovery. A great short adventure above Karori.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/wrights-hill-fortress" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wrights+Hill+Fortress+Karori+Wellington" target="_blank">📍 Karori, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/walks-and-runs/town-belt-walks/wrights-hill" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.3" data-region="wellington" data-kidfriendly="true" data-duration="under30">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Gorge Walk</div>
+        <div class="venue-name">Ngaio Gorge — Stream &amp; Bush Walk</div>
+        <div class="walk-duration">⏱ 20–30 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Beautiful stream gorge</span>
+          <span class="venue-pill">Native bush</span>
+          <span class="venue-pill">Pram accessible lower section</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A lovely short walk through a leafy stream gorge hidden in the Ngaio suburb — native bush, the sound of running water and a real sense of bush escape minutes from the city. The lower section is accessible with a pram. A perfect quick outing for young families in the northern suburbs.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/ngaio-gorge" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Ngaio+Gorge+Keith+Road+Ngaio+Wellington" target="_blank">📍 Keith Rd, Ngaio, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/walks-and-runs/town-belt-walks" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.5" data-region="wellington" data-kidfriendly="false" data-duration="under2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏔 Ridgeline Walk</div>
+        <div class="venue-name">Skyline Walkway — Johnsonville to Karori</div>
+        <div class="walk-duration">⏱ 60–90 min section · Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">City &amp; Kāpiti views</span>
+          <span class="venue-pill">One of Wellington's great walks</span>
+          <span class="venue-pill">Do any section you like</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">The Skyline Walkway runs along the ridge above Wellington with spectacular panoramic views over the city, harbour and Kāpiti Coast. Walk any section you like — the Johnsonville to Karori stretch is a favourite. A proper Wellington ridge experience for older kids and families who want a real hill walk. Best on a clear day.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/skyline-walkway" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Skyline+Walkway+Wellington" target="_blank">📍 Multiple access points, Wellington</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/walks-and-runs/town-belt-walks/skyline-walkway" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Porirua<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.2" data-region="porirua" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🌊 Coastal Walk</div>
+        <div class="venue-name">Porirua Coastal Walkway — Harbour Track</div>
+        <div class="walk-duration">⏱ 30–60 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Harbour views</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Birdlife</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A flat and easy walk along Porirua Harbour's foreshore — great harbour views, shorebird spotting, and the relaxed pace of a waterfront stroll. Connects the city centre to Te Rauparaha Arena and beyond. Simple, flat and genuinely lovely on a calm day. A great entry-level coastal walk for the whole family.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.2</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/porirua-harbour-walkway" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Porirua+Harbour+Walkway+Porirua" target="_blank">📍 Porirua Waterfront</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.5" data-region="porirua" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Pa &amp; Bush Walk</div>
+        <div class="venue-name">Taupo Pa Track — Taupo Reserve</div>
+        <div class="walk-duration">⏱ 30–45 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Historic Maori pa site</span>
+          <span class="venue-pill">Native bush</span>
+          <span class="venue-pill">Harbour views</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A short bush walk in Porirua to the site of the historic Taupo Pa — a traditional fortified Maori village on a ridge with outstanding views over Porirua Harbour. The track is well maintained and suitable for school-age children. A lovely way to connect with the history of this part of Wellington while getting into the bush.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/taupo-pa-track-porirua" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Taupo+Reserve+Porirua" target="_blank">📍 Taupo Reserve, Porirua</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast — More Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.8" data-region="kapiti" data-kidfriendly="false" data-duration="over2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🏔 Ridge Walk</div>
+        <div class="venue-name">Paekakariki Escarpment Track</div>
+        <div class="walk-duration">⏱ 3–4 hr one way · Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Spectacular Kapiti Island views</span>
+          <span class="venue-pill">One of the region's best walks</span>
+          <span class="venue-pill">Arrange transport each end</span>
+        </div>
+        <div class="venue-desc">One of the best day walks accessible from Wellington — a dramatic ridge track high above the Kāpiti Coast with jaw-dropping views of Kāpiti Island, the Tasman Sea and the Remutaka Ranges. Best done one way with transport arranged. For older kids (10+) with good fitness. The views at the top are absolutely worth every step of the climb.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.8</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/paekakariki-escarpment-track" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Paekakariki+Escarpment+Track+Kapiti" target="_blank">📍 Paekakariki, Kāpiti</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/queen-elizabeth-park/things-to-do/tracks/paekakariki-escarpment-track/" target="_blank">DOC info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.3" data-region="kapiti" data-kidfriendly="true" data-duration="under30">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦅 Estuary Walk</div>
+        <div class="venue-name">Waikanae Estuary Nature Reserve</div>
+        <div class="walk-duration">⏱ 20–40 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">200+ bird species recorded</span>
+          <span class="venue-pill">Boardwalk &amp; viewing platforms</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A flat and peaceful walk around one of the most important bird sanctuaries on the Kāpiti Coast — the Waikanae River estuary, where over 200 bird species have been recorded. Raised boardwalk and viewing platforms give a great view of the birdlife. An easy, rewarding nature experience for kids who love spotting wildlife.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/waikanae-estuary-nature-reserve" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Waikanae+Estuary+Nature+Reserve+Kapiti" target="_blank">📍 Waikanae, Kāpiti</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/environment/coastline-and-waterways/" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.5" data-region="kapiti" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🦜 Sanctuary Walk</div>
+        <div class="venue-name">Nga Manu Nature Reserve</div>
+        <div class="walk-duration">⏱ 30–60 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Kiwi in nocturnal house</span>
+          <span class="venue-pill">Native bird aviaries</span>
+          <span class="venue-pill">Eels in stream</span>
+          <span class="venue-pill">Kids love it</span>
+        </div>
+        <div class="venue-desc">A small entry-fee nature sanctuary in Waikanae with easy bush tracks through native forest — kiwi in the nocturnal house, eels in the stream, native bird aviaries and open bush walks. One of the most family-friendly wildlife experiences on the Kāpiti Coast. Excellent for children of any age and a genuine highlight of any Coast trip.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/nga-manu-nature-reserve" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Nga+Manu+Nature+Reserve+Waikanae" target="_blank">📍 Ngarara Rd, Waikanae</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.ngamanu.co.nz" target="_blank">Nga Manu info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.4" data-region="kapiti" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🏔 Gorge Walk</div>
+        <div class="venue-name">Otaki Gorge Walk</div>
+        <div class="walk-duration">⏱ 30–60 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Crystal-clear river pools</span>
+          <span class="venue-pill">Native forest</span>
+          <span class="venue-pill">Swimming holes (summer)</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A beautiful easy walk into the Otaki Gorge — crystal-clear river pools perfect for swimming on a hot day, dense native forest and dramatic rocky scenery. A classic Kāpiti Coast escape that feels much more remote than it is. Drive to the end of Otaki Gorge Road and explore as far as you like. One of the region's best-kept secrets.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/otaki-gorge-walk" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Otaki+Gorge+Kapiti" target="_blank">📍 Otaki Gorge Rd, Otaki</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/tararua-forest-park/things-to-do/tracks/otaki-forks-walks/" target="_blank">DOC info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Lower Hutt — More Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.5" data-region="lower-hutt" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🌊 Harbour Walk</div>
+        <div class="venue-name">Days Bay to Eastbourne — Harbour Walk</div>
+        <div class="walk-duration">⏱ 40–60 min one way · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Harbour views</span>
+          <span class="venue-pill">Ferry from Queens Wharf</span>
+          <span class="venue-pill">Beach cafes at end</span>
+          <span class="venue-pill">Flat sealed path</span>
+        </div>
+        <div class="venue-desc">Take the ferry to Days Bay and walk along the flat harbour-edge path to Eastbourne village — one of the most picturesque easy walks in the greater Wellington region. Rocky shoreline, harbour views and a lovely cafe at the end. The ferry ride makes it feel like a proper little adventure for kids. Absolutely gorgeous on a calm sunny day.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.5</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/days-bay-to-eastbourne" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Days+Bay+Lower+Hutt+Wellington" target="_blank">📍 Days Bay, Lower Hutt (ferry from Queens Wharf)</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.eastbyferry.co.nz" target="_blank">Ferry info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.4" data-region="lower-hutt" data-kidfriendly="true" data-duration="under30">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🌊 Foreshore Walk</div>
+        <div class="venue-name">Petone Foreshore — Esplanade Walk</div>
+        <div class="walk-duration">⏱ 20–40 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Historic first European landing site</span>
+          <span class="venue-pill">Beach &amp; harbour views</span>
+          <span class="venue-pill">Pram perfect</span>
+          <span class="venue-pill">Jackson St cafes nearby</span>
+        </div>
+        <div class="venue-desc">A flat foreshore walk along the iconic Petone Esplanade — where the first European settlers landed in New Zealand. A paved beachfront path with harbour views, a historic settlers memorial, and brilliant Jackson St cafe strip nearby for refuelling. One of the easiest and most satisfying walks in the Hutt Valley and completely pram friendly.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/petone-foreshore-esplanade" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Petone+Esplanade+Lower+Hutt" target="_blank">📍 The Esplanade, Petone</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Upper Hutt — More Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.4" data-region="upper-hutt" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🌿 Bush Walk</div>
+        <div class="venue-name">Birchville Bush Reserve</div>
+        <div class="walk-duration">⏱ 30–50 min · Easy</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Tall native bush</span>
+          <span class="venue-pill">Stream crossings</span>
+          <span class="venue-pill">Quiet &amp; peaceful</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A lovely quiet native bush reserve in Birchville with easy tracks through tall forest and small stream crossings that kids love. Less known than the main Upper Hutt parks but genuinely beautiful — tall rimu and kahikatea, tūī, and that peaceful deep-bush feeling. A great short walk before heading to Harcourt Park for the miniature railway.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/birchville-bush-reserve" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Birchville+Bush+Reserve+Upper+Hutt" target="_blank">📍 Birchville, Upper Hutt</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.6" data-region="upper-hutt" data-kidfriendly="true" data-duration="under2">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🏞 Forest Walk</div>
+        <div class="venue-name">Akatarawa Valley Forest Walk</div>
+        <div class="walk-duration">⏱ 60–90 min · Easy–Moderate</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Old-growth native forest</span>
+          <span class="venue-pill">River swimming (summer)</span>
+          <span class="venue-pill">Remote feel close to the city</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">Drive up the scenic Akatarawa Valley to reach tracks into some of the Wellington region's most impressive native forest — ancient trees, ferns, moss-covered logs and an otherworldly quiet. A great family half-day walking destination for those ready to go beyond the usual tracks. Kids who like real forest will absolutely love it here.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.6</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wellington/akatarawa-forest-walk" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Akatarawa+Valley+Upper+Hutt" target="_blank">📍 Akatarawa Valley, Upper Hutt</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/remutaka-forest-park/" target="_blank">DOC info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wairarapa — More Walks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-rating="4.7" data-region="wairarapa" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🦜 Wildlife Walk</div>
+        <div class="venue-name">Pukaha National Wildlife Centre</div>
+        <div class="walk-duration">⏱ 45–75 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">White kiwi Manukura</span>
+          <span class="venue-pill">Tuatara &amp; kokako</span>
+          <span class="venue-pill">Free-flying native birds</span>
+          <span class="venue-pill">Entry fee applies</span>
+        </div>
+        <div class="venue-desc">Home of Manukura — the famous white kiwi — plus tuatara, kokako and one of NZ's most successful pest-free forest sanctuaries. A short entry fee covers a full day walking through genuine old-growth native forest with free-flying native birds. An incredible wildlife experience well worth the drive to Mount Bruce in the Wairarapa.</div>
+        <div class="venue-rating"><span class="stars">★★★★★</span><span class="rating-score">4.7</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wairarapa/pukaha-wildlife-sanctuary" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Pukaha+National+Wildlife+Centre+Mount+Bruce+Wairarapa" target="_blank">📍 Mount Bruce, Wairarapa</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.pukaha.org.nz" target="_blank">Pukaha info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.4" data-region="wairarapa" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦅 Wetland Walk</div>
+        <div class="venue-name">Lake Wairarapa Wetlands — Boggy Pond Track</div>
+        <div class="walk-duration">⏱ 30–45 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Spoonbills, bitterns &amp; wading birds</span>
+          <span class="venue-pill">Boardwalk</span>
+          <span class="venue-pill">Pram accessible</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A flat easy boardwalk through the wetlands on the edge of Lake Wairarapa — one of NZ's best wetland bird habitats. Spoonbills, bitterns, pukeko and a wide range of waterfowl can be spotted year-round. A peaceful and genuinely special nature experience just outside Martinborough. Bring binoculars for the best experience.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.4</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wairarapa/lake-wairarapa-wetlands" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Lake+Wairarapa+Wetlands+Martinborough" target="_blank">📍 Lake Ferry Rd, Martinborough area</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wairarapanz.com/places/lake-wairarapa" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-rating="4.3" data-region="wairarapa" data-kidfriendly="true" data-duration="under1">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🌿 River Walk</div>
+        <div class="venue-name">Ruamahanga River Track — Masterton</div>
+        <div class="walk-duration">⏱ 30–60 min · Easy · Flat</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Flat riverside path</span>
+          <span class="venue-pill">Pram friendly</span>
+          <span class="venue-pill">Birdlife</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A flat, easy riverside walk along the Ruamahanga River through Masterton — willows, open farmland views and a relaxed Wairarapa pace. A great way to stretch legs before or after Queen Elizabeth Park nearby. Simple and gentle, perfect for younger children or anyone wanting a peaceful stroll in Wairarapa's main town.</div>
+        <div class="venue-rating"><span class="stars">★★★★☆</span><span class="rating-score">4.3</span><a class="rating-link" href="https://www.alltrails.com/trail/new-zealand/wairarapa/ruamahanga-river-walk-masterton" target="_blank">AllTrails reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Ruamahanga+River+Masterton+Wairarapa" target="_blank">📍 Masterton, Wairarapa</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.mstn.govt.nz/our-environment/parks-and-reserves" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
 </main>
 </div><!-- /section-walks -->
 
@@ -2972,6 +3361,430 @@
 
   </div>
 
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Wellington City — Northern Suburbs<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4348A,#e870b8)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4348A">🛝 Playground · Suburb</div>
+        <div class="venue-name">Churton Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Modern play equipment</span>
+          <span class="venue-pill">Large structure</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Popular family suburb</span>
+        </div>
+        <div class="venue-desc">One of Wellington's most popular northern suburb playgrounds — large modern equipment, open grassy areas and a welcoming family atmosphere. Churton Park is one of Wellington's fastest-growing suburbs and its playground reflects that investment. A great easy playground stop coming from the motorway.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Churton+Park+Playground+Wellington" target="_blank">📍 Churton Park, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🌿 Community Park</div>
+        <div class="venue-name">Johnsonville Park — Raroa Reserve</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Playground</span>
+          <span class="venue-pill">Sports grounds</span>
+          <span class="venue-pill">Near train station</span>
+          <span class="venue-pill">Bush edges</span>
+        </div>
+        <div class="venue-desc">A well-loved community park in central Johnsonville with a playground, sports fields and easy access from the train station. A great combination with a trip on the Johnsonville train line, which kids absolutely love. Stop at Johnsonville, play in the park, ride back — a brilliant simple day out for small children.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Raroa+Reserve+Johnsonville+Wellington" target="_blank">📍 Raroa Rd, Johnsonville</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦆 Suburb Domain</div>
+        <div class="venue-name">Ngaio Domain &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Quiet leafy suburb</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Stream nearby</span>
+          <span class="venue-pill">Big old trees</span>
+        </div>
+        <div class="venue-desc">A lovely quiet suburban domain in Ngaio — one of Wellington's most beautiful leafy suburbs. Mature trees, a pleasant playground and a relaxed community atmosphere. Combine with a walk into Ngaio Gorge just nearby for a brilliant morning. A hidden gem of northern Wellington that locals quietly treasure.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Ngaio+Domain+Ngaio+Wellington" target="_blank">📍 Ottawa Rd, Ngaio, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Suburb Playground</div>
+        <div class="venue-name">Crofton Downs Park &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Fully fenced section</span>
+          <span class="venue-pill">Good climbing structures</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Quiet neighbourhood</span>
+        </div>
+        <div class="venue-desc">A solid and well-maintained playground in the Crofton Downs neighbourhood — a partially fenced section with climbing structures and a sandpit alongside open grassy areas. One of Wellington's quieter northern suburb parks. A reliable local option for families in the Wadestown and Ngaio belt.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Crofton+Downs+Park+Wellington" target="_blank">📍 Crofton Downs, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Wellington City — Southern &amp; Eastern Suburbs<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Playground · Hataitai</div>
+        <div class="venue-name">Hataitai Park Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large modern structure</span>
+          <span class="venue-pill">All ages</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Near Mt Victoria</span>
+        </div>
+        <div class="venue-desc">A fantastic playground in the heart of Hataitai — large and modern with exciting structures for all ages, excellent open grass for sport and play, and an easy feel that makes it a go-to for families on the eastern bays side of town. Close to Mt Victoria for a combined park and hill walk morning.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Hataitai+Park+Wellington" target="_blank">📍 Ruapehu St, Hataitai, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Playground · Miramar Peninsula</div>
+        <div class="venue-name">Miramar Park &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large flat domain</span>
+          <span class="venue-pill">Flying fox</span>
+          <span class="venue-pill">Sports fields</span>
+          <span class="venue-pill">Weta Workshop nearby</span>
+        </div>
+        <div class="venue-desc">A large, flat park and playground in the heart of Miramar — flying fox, good climbing structure, wide grassy playing fields and an open community feel. Easily combined with a visit to the Weta Workshop just down the road, or a drive around the Miramar Peninsula coastline for a brilliant full Miramar family day.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Miramar+Park+Wellington" target="_blank">📍 Park Rd, Miramar, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🌳 Hilltop Domain</div>
+        <div class="venue-name">Brooklyn Domain &amp; Wind Turbine</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Wellington's iconic wind turbine</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Views over city &amp; harbour</span>
+          <span class="venue-pill">Dog friendly</span>
+        </div>
+        <div class="venue-desc">A hilltop domain in Brooklyn overlooking Wellington's famous wind turbine — kids love getting close to it, it's enormous in person. Good playground, sweeping city and harbour views, and wide grass for picnics. Great for a windy Wellington adventure combined with the neighbourhood's lovely cafes just below on the main street.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Brooklyn+Domain+Wellington+Wind+Turbine" target="_blank">📍 Harrison St, Brooklyn, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Western Suburbs Park</div>
+        <div class="venue-name">Karori Park — Open Space &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large park</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Sports fields</span>
+          <span class="venue-pill">Near Zealandia</span>
+        </div>
+        <div class="venue-desc">A large community park in the heart of Karori — wide grassed areas for running and sport, a solid playground and easy access from the western suburbs. Right near the Zealandia eco-sanctuary, making it a natural pairing for a full day out in Wellington's green western belt. Popular with local families year-round.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Karori+Park+Wellington" target="_blank">📍 South Karori Rd, Karori, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/outdoors/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🛝 Playground · Island Bay</div>
+        <div class="venue-name">Island Bay Reserve Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Near rock pools &amp; marine reserve</span>
+          <span class="venue-pill">Good climbing equipment</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Dairy for ice cream</span>
+        </div>
+        <div class="venue-desc">A solid community playground in Island Bay, Wellington's southern seaside suburb. Combine a play with a walk to the rock pools at low tide — the Island Bay marine reserve is one of Wellington's best for spotting fish and sea creatures. The local dairy for ice cream is a reliable post-playground tradition for south city families.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Island+Bay+Reserve+Wellington" target="_blank">📍 The Parade, Island Bay, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🌿 Suburb Park · Aro Valley</div>
+        <div class="venue-name">Aro Park — Aro Valley</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Central city access</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Historic suburb</span>
+          <span class="venue-pill">Near cafes</span>
+        </div>
+        <div class="venue-desc">A well-loved little neighbourhood park tucked into the bottom of the Aro Valley — one of Wellington's most characterful inner suburbs. A compact playground, open grass and that classic Wellington hillside-suburb feel. Easy walking distance from the city and the Aro St shops and cafes. A great inner-city green escape for young families.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Aro+Park+Wellington" target="_blank">📍 Aro St, Aro Valley, Wellington</a>
+        <a class="venue-link" href="https://wellington.govt.nz/recreation/activities-for-kids/play-areas" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Lower Hutt — More Parks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🏖 Beach Playground</div>
+        <div class="venue-name">Days Bay Playground &amp; Beach</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Right on the harbour beach</span>
+          <span class="venue-pill">Ferry from Queens Wharf</span>
+          <span class="venue-pill">Rock pools</span>
+          <span class="venue-pill">Cafe on site</span>
+        </div>
+        <div class="venue-desc">A wonderful playground on the sand at Days Bay — one of the most scenic playground settings in the Wellington region, right on the harbour beach. Arrive by ferry from Queens Wharf for the full adventure experience. Rock pools, shallow swimming and a cafe make this a brilliant family destination. Absolutely magical on a calm summer day.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Days+Bay+Playground+Lower+Hutt" target="_blank">📍 Marine Dr, Days Bay, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Valley Domain</div>
+        <div class="venue-name">Stokes Valley Domain &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Good playground</span>
+          <span class="venue-pill">Open grass fields</span>
+          <span class="venue-pill">Bush edges</span>
+          <span class="venue-pill">Community feel</span>
+        </div>
+        <div class="venue-desc">A solid community domain serving the Stokes Valley neighbourhood — good playground, wide grass sports fields and a quiet valley atmosphere. Backed by native bush edges and a relaxed local feel. A reliable neighbourhood park for families in this part of Lower Hutt, with a friendly community vibe.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Stokes+Valley+Domain+Lower+Hutt" target="_blank">📍 Stokes Valley, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Suburb Playground</div>
+        <div class="venue-name">Boulcott Reserve &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Playground</span>
+          <span class="venue-pill">Open green space</span>
+          <span class="venue-pill">Quiet neighbourhood</span>
+          <span class="venue-pill">Easy parking</span>
+        </div>
+        <div class="venue-desc">A relaxed suburban reserve in Boulcott, central Lower Hutt — a well-kept playground in a quiet, family-friendly area. Clean, safe and consistently well maintained, it's a solid choice for local families wanting a nearby playground without making a big day of it. Good open grass for kids who just want to run.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Boulcott+Reserve+Lower+Hutt" target="_blank">📍 Boulcott, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🌳 Riverside Reserve</div>
+        <div class="venue-name">Maungaraki Reserve — Harbour Views</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Views over harbour</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Open space</span>
+          <span class="venue-pill">Quiet suburb</span>
+        </div>
+        <div class="venue-desc">A pleasant reserve on the hillside above Petone with views across the harbour toward Wellington. A good playground, relaxed open grass and a quiet neighbourhood feel make it a solid local pick for Lower Hutt families wanting something away from the busy main parks. Elevated views add a nice bonus on clear days.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Maungaraki+Reserve+Lower+Hutt" target="_blank">📍 Maungaraki, Lower Hutt</a>
+        <a class="venue-link" href="https://www.huttcity.govt.nz/parks-and-recreation/parks-and-reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sun" style="margin-top:40px"><span class="pip"></span>Upper Hutt — More Parks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Village Playground</div>
+        <div class="venue-name">Brown Owl Reserve &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Playground</span>
+          <span class="venue-pill">Open grass</span>
+          <span class="venue-pill">Near river</span>
+          <span class="venue-pill">Quiet valley setting</span>
+        </div>
+        <div class="venue-desc">A quiet and well-kept reserve in the Brown Owl area of Upper Hutt — solid playground, open grass and a peaceful valley atmosphere beside the Hutt River. A local favourite for families in the northern Upper Hutt suburbs. Combine with a river walk or a short drive to Birchville Bush for a fuller morning out in the upper valley.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Brown+Owl+Reserve+Upper+Hutt" target="_blank">📍 Brown Owl, Upper Hutt</a>
+        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">💧 Lakeside Reserve</div>
+        <div class="venue-name">Te Marua Lakes &amp; Reserve</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Scenic lake setting</span>
+          <span class="venue-pill">Open space</span>
+          <span class="venue-pill">Waterfowl on the lake</span>
+          <span class="venue-pill">Picnic spots</span>
+        </div>
+        <div class="venue-desc">The Te Marua area at the top of the Hutt Valley has a beautiful lake reserve setting — peaceful open spaces, scenic views and the feeling of being deep in the valley. A quiet and lovely spot for a picnic and a wander, especially in the warmer months. Often has waterfowl on the lake and a genuinely relaxed atmosphere.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Te+Marua+Lakes+Upper+Hutt" target="_blank">📍 Te Marua, Upper Hutt</a>
+        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛝 Neighbourhood Playground</div>
+        <div class="venue-name">Pinehaven Reserve &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Bush-backed playground</span>
+          <span class="venue-pill">Stream nearby</span>
+          <span class="venue-pill">Quiet family suburb</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A lovely neighbourhood playground in the bush-backed suburb of Pinehaven — a quiet, green suburb at the edge of the Remutaka Forest Park. The reserve feels peaceful and slightly removed from the bustle of main Upper Hutt. A solid local park with a nice natural setting that families in the eastern Hutt Valley enjoy year-round.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Pinehaven+Reserve+Upper+Hutt" target="_blank">📍 Pinehaven, Upper Hutt</a>
+        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast — More Parks<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🛝 Village Playground</div>
+        <div class="venue-name">Paekakariki Domain &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Charming village setting</span>
+          <span class="venue-pill">Near train station</span>
+          <span class="venue-pill">Beach walk nearby</span>
+          <span class="venue-pill">Tram rides close by</span>
+        </div>
+        <div class="venue-desc">A lovely playground in the centre of Paekakariki — one of the Kāpiti Coast's most charming villages, served directly by the Kāpiti train line. A brilliant little package: arrive by train, play in the park, walk to the beach, catch a tram ride at Queen Elizabeth Park, and head home by train. All in one morning, no car needed.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Paekakariki+Domain+Kapiti" target="_blank">📍 Paekakariki, Kāpiti</a>
+        <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🌿 Town Domain</div>
+        <div class="venue-name">Waikanae Park &amp; Town Domain</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large open domain</span>
+          <span class="venue-pill">Playground</span>
+          <span class="venue-pill">Cafe strip nearby</span>
+          <span class="venue-pill">Sports grounds</span>
+        </div>
+        <div class="venue-desc">Waikanae's central town domain — a generous open space with a playground, sports fields and the relaxed feel of a Coast town at the weekend. Waikanae itself has great cafes, the Nga Manu Nature Reserve and easy beach access nearby. A good base for a full Waikanae family day exploring the town and its surroundings.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Waikanae+Park+Kapiti" target="_blank">📍 Waikanae, Kāpiti</a>
+        <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🛝 Beachside Playground</div>
+        <div class="venue-name">Peka Peka Beach Reserve</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Quiet surf beach</span>
+          <span class="venue-pill">Open dunes &amp; grass</span>
+          <span class="venue-pill">Good for older kids</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">A beautiful and uncrowded stretch of Kāpiti Coast beach at Peka Peka — wide open dunes, clean surf and a peaceful reserve where kids can roam freely. Less busy than Paraparaumu Beach, it has a real wild beach feel. Excellent for older kids who want to explore the dunes, fly a kite or just have massive amounts of space to run.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Peka+Peka+Beach+Kapiti" target="_blank">📍 Peka Peka, Kāpiti</a>
+        <a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/parks-and-reserves/" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🛝 Town Playground</div>
+        <div class="venue-name">Levin Domain &amp; Playground</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Large well-equipped playground</span>
+          <span class="venue-pill">Open domain</span>
+          <span class="venue-pill">Skate park</span>
+          <span class="venue-pill">Free</span>
+        </div>
+        <div class="venue-desc">Levin's large central domain has a well-equipped playground, open grass, a skate park and a relaxed community atmosphere. Worth stopping if you're heading north — Levin is the natural rest stop on any road trip toward the Manawatu. More to offer than the motorway bypass suggests.</div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Levin+Domain+Horowhenua" target="_blank">📍 Oxford St, Levin</a>
+        <a class="venue-link" href="https://www.horowhenua.govt.nz/Explore/Parks-and-Reserves" target="_blank">Info ↗</a>
+      </div>
+    </div>
+
+  </div>
+
 </main>
 </div><!-- /section-parks -->
 
@@ -2986,9 +3799,9 @@
   </div>
   <div style="max-width:640px;margin:28px auto 0;padding:0 28px;">
     <div style="background:#fff;border-radius:4px;border:1px solid rgba(0,0,0,0.07);padding:28px 24px;">
-      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Built with love by <strong style="color:#1a2a2a">Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
-      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
-      <p style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
+      <p id="aboutPara1" style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Built with love by <strong style="color:#1a2a2a">Chris, Ash and their family</strong> — a Wellington whānau who know how hard it can be to find great things to do with young kids on the weekend.</p>
+      <p id="aboutPara2" style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Our mission is simple: help families across the Wellington region discover brilliant experiences for their tamariki, whether that's a waterfront festival, a hidden fairy trail, or just a great café with a playground out back.</p>
+      <p id="aboutPara3" style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
       <p style="font-size:13px;color:#6a7a7a;line-height:1.7;text-align:center;padding-top:16px;border-top:1px solid #f0eeea;">
         Spotted something incorrect, want to promote an event, or just have feedback?<br>
         Drop us a message at <a style="color:var(--teal);font-weight:600;text-decoration:none;" href="#" onclick="this.href='mailto:'+atob('aGVsbG9Ad2hhdHNvbndlbGxpbmd0b24uY28ubno=')">hello@whatsonwellington.<wbr>co.nz</a>

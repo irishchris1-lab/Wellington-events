@@ -21,6 +21,18 @@
   .hamburger-btn:hover { background: rgba(255,255,255,0.25); }
   .hamburger-btn span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; }
 
+  /* ── HEADER INSTALL BUTTON ── */
+  .header-install-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 20px; color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 700; padding: 6px 12px; cursor: pointer;
+    white-space: nowrap; transition: background 0.15s; flex-shrink: 0;
+  }
+  .header-install-btn:hover { background: rgba(255,255,255,0.28); }
+  .header-install-btn span { display: none; }
+  @media (min-width: 380px) { .header-install-btn span { display: inline; } }
+
   /* ── DROPDOWN OVERLAY ── */
   .dropdown-overlay {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
@@ -270,7 +282,7 @@
   .strip-sport    { background: linear-gradient(90deg, #2478A8, #44a8e0); }
   .strip-food     { background: linear-gradient(90deg, #C4522A, #e87a55); }
   .strip-market   { background: linear-gradient(90deg, #0B5563, #148090); }
-  .strip-kids     { background: linear-gradient(90deg, #C4348A, #e870b8); }
+  .strip-whanau   { background: linear-gradient(90deg, #C4348A, #e870b8); }
   .strip-music    { background: linear-gradient(90deg, #8A1A1A, #c44040); }
   .strip-other    { background: linear-gradient(90deg, #888,    #bbb);    }
 

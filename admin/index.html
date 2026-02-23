@@ -84,6 +84,7 @@
         </select>
       </div>
       <button class="show-past-btn" onclick="toggleShowPast(this)">Show past</button>
+      <button class="import-btn" id="importBtn" onclick="bulkImportDraftEvents()">⬇ Import drafts</button>
       <button class="add-btn" onclick="openModal()">+ Add Event</button>
     </div>
 
@@ -104,6 +105,33 @@
           <tr class="table-empty"><td colspan="6">Loading…</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- About Section Editor -->
+    <div class="about-panel">
+      <button class="about-panel-toggle" onclick="toggleAboutPanel(this)" aria-expanded="false">
+        <span>✏️ Edit About Section</span>
+        <span class="about-chevron">▼</span>
+      </button>
+      <div class="about-panel-body hidden" id="aboutPanelBody">
+        <p class="about-panel-hint">Changes are saved to Firestore and appear on the public site immediately.</p>
+        <div class="form-row">
+          <label class="form-label" for="aPara1">Paragraph 1</label>
+          <textarea class="form-textarea" id="aPara1" rows="3" placeholder="e.g. Built with love by Chris, Ash and their family…"></textarea>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="aPara2">Paragraph 2</label>
+          <textarea class="form-textarea" id="aPara2" rows="3" placeholder="e.g. Our mission is simple…"></textarea>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="aPara3">Paragraph 3</label>
+          <textarea class="form-textarea" id="aPara3" rows="2" placeholder="e.g. Updated regularly…"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" onclick="loadAbout()">Reset</button>
+          <button class="btn-primary" id="saveAboutBtn" onclick="saveAbout()">Save About</button>
+        </div>
+      </div>
     </div>
 
   </div><!-- /dashboard -->
@@ -137,7 +165,7 @@
               <option value="market">🛒 Market</option>
               <option value="music">🎵 Music</option>
               <option value="outdoor">🏃 Outdoor / Sport</option>
-              <option value="kids">👨‍👩‍👧 Family / Kids</option>
+              <option value="whanau">👨‍👩‍👧 Whānau</option>
               <option value="other">📅 General Event</option>
             </select>
           </div>

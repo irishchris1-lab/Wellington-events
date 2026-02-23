@@ -80,6 +80,7 @@ function showDashboard(user) {
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('adminEmail').textContent = user.email;
   subscribeToEvents();
+  loadAbout();
   openFromUrlParams();
 }
 
@@ -352,4 +353,267 @@ function esc(str) {
 
 function escAttr(str) {
   return String(str ?? '').replace(/'/g, "\\'");
+}
+
+// ── Bulk import ───────────────────────────────────────────────────────────────
+const DRAFT_EVENTS = [
+  {
+    title: 'The Performance Arcade',
+    description: 'Wellington\'s acclaimed live art festival returns to the waterfront behind Te Papa, with artists presenting works in iconic shipping container installations spanning performance art, theatre, dance, circus, and live music. Free and ticketed events — runs all weekend attracting tens of thousands of visitors.',
+    type: 'culture', day: 'sat', weekend: '2026-02-28', region: 'wellington',
+    venue: 'Wellington Waterfront (behind Te Papa)', time: 'All day',
+    url: 'https://www.theperformancearcade.com',
+  },
+  {
+    title: 'Wellington Dragon Boat Festival',
+    description: 'Teams from across NZ and the world compete in dragon boat racing on Wellington Harbour, with youth team finals on Sunday. A spectacular waterfront event that\'s great for families to watch from the shore.',
+    type: 'outdoor', day: 'sun', weekend: '2026-02-28', region: 'wellington',
+    venue: 'Wellington Waterfront, Jervois Quay', time: 'All day',
+    url: 'https://www.dragonboatfestival.org.nz',
+  },
+  {
+    title: 'Wellington MTB Festival – Matairangi Day',
+    description: 'The free Wellington Mountain Bike Festival activates Matairangi (Mt Victoria) with guided rides, demos, kids\' activities, live music and food trucks. Guest riders include world-class slopestyle athlete Brett Rheeder.',
+    type: 'outdoor', day: 'sat', weekend: '2026-02-28', region: 'wellington',
+    venue: 'Matairangi / Mount Victoria Trails', time: 'All day',
+    url: 'https://www.wellingtonmtbfestival.nz',
+  },
+  {
+    title: 'Aotearoa New Zealand Festival of the Arts',
+    description: 'Celebrating its 40th anniversary, this prestigious biennial festival runs 24 Feb–15 Mar with music, theatre, dance, visual arts, and literature across Wellington venues. Includes free and ticketed events with family-friendly options throughout.',
+    type: 'culture', day: 'sat', weekend: '2026-02-28', region: 'wellington',
+    venue: 'Various venues across Wellington', time: 'Various times',
+    url: 'https://www.festival.nz',
+  },
+  {
+    title: 'NZ Fringe Festival – Final Weekend',
+    description: 'The final weekend of the New Zealand Fringe Festival (13 Feb–7 Mar) with 178 events across 30+ venues — comedy, dance, theatre, circus, and outdoor spectacle. Family highlights include aerial circus shows and Shakespeare in the Innermost Gardens.',
+    type: 'culture', day: 'sat', weekend: '2026-02-28', region: 'wellington',
+    venue: 'Various venues across Wellington', time: 'Various times',
+    url: 'https://www.fringe.co.nz',
+  },
+  {
+    title: 'Wellington Pride Parade',
+    description: 'Wellington\'s Pride Parade winds through Courtenay Place and Dixon Street to the Cuba Street Rainbow Crossing. Street celebrations begin at 4pm with live performances, food and craft stalls lining Lower Cuba Street — a joyful community spectacle.',
+    type: 'festival', day: 'sat', weekend: '2026-03-07', region: 'wellington',
+    venue: 'Courtenay Place → Cuba Street', time: '4:00pm–8:00pm',
+    url: 'https://www.wellingtonpridefestival.com',
+  },
+  {
+    title: 'Newtown Festival',
+    description: 'The beloved free annual Newtown street festival celebrates its 32nd anniversary with live music across multiple stages, food and drink stalls, fairground rides, and a dedicated Tamariki programme for kids. Performers include King Kapisi and Ria Hall.',
+    type: 'festival', day: 'sun', weekend: '2026-03-07', region: 'wellington',
+    venue: 'Newtown streets, Wellington', time: 'All day',
+    url: 'https://www.newtownfestival.org.nz',
+  },
+  {
+    title: 'Hutt Sounds 2026',
+    description: 'The fourth annual Hutt Sounds music festival at Brewtown features Fun Lovin\' Criminals and When The Cats Away alongside local acts. Gourmet food trucks, craft beer and non-alcoholic options throughout — easily accessible by train from Wellington.',
+    type: 'music', day: 'sun', weekend: '2026-03-07', region: 'upper-hutt',
+    venue: 'Brewtown, 11 Miro Street, Upper Hutt', time: 'All day',
+    url: 'https://www.huttsounds.co.nz',
+  },
+  {
+    title: 'Kāpiti Tattoo & Arts Festival',
+    description: 'A fusion of ink, art and live entertainment at Paraparaumu Memorial Hall featuring over 40 tattoo artists and visual art creators including painters, sculptors, illustrators and craftspeople. Showcases the best of local and regional artistic talent.',
+    type: 'culture', day: 'sat', weekend: '2026-03-07', region: 'kapiti',
+    venue: 'Paraparaumu Memorial Hall, Kāpiti Coast', time: 'All day',
+    url: 'https://www.kapiticoast.govt.nz',
+  },
+  {
+    title: 'Pātaka Art + Museum',
+    description: 'Pātaka Art + Museum in Porirua is free to visit, with exhibitions through March 2026 connected to Ngāti Toa Rangatira waterways. The museum hosts regular weekend community programmes — an accessible family outing in the northern Wellington region.',
+    type: 'culture', day: 'sat', weekend: '2026-03-07', region: 'porirua',
+    venue: 'Pātaka Art + Museum, Norrie Street, Porirua', time: 'Open daily',
+    url: 'https://pataka.org.nz',
+  },
+  {
+    title: 'Zealandia – Twilight Wildlife Tour',
+    description: 'Guided 2.5-hour evening tours of the world\'s first fully-fenced urban ecosanctuary, where families can spot tuatara, kiwi, and native birds in their natural habitat as night falls. The 225-hectare sanctuary has reintroduced 18 species of native wildlife to Wellington.',
+    type: 'outdoor', day: 'sat', weekend: '2026-03-07', region: 'wellington',
+    venue: 'Zealandia Te Māra a Tāne, Waiapu Rd, Karori', time: 'From dusk',
+    url: 'https://www.visitzealandia.com/events',
+  },
+  {
+    title: 'Te Matapihi – Central Library Opening Weekend',
+    description: 'Wellington\'s long-awaited central library reopens after a $217.6 million redevelopment with a public celebration weekend. Features a ground-floor café, creative spaces, and a community exhibition created by Wellingtonians. Free entry.',
+    type: 'culture', day: 'sat', weekend: '2026-03-14', region: 'wellington',
+    venue: '65 Victoria Street (Te Ngākau Civic Precinct)', time: '10:00am–5:00pm',
+    url: 'https://wellington.govt.nz',
+  },
+  {
+    title: 'Ōtaki International Kite Festival',
+    description: 'A spectacular free family event as world-class kites fill the skies along the Ōtaki coastline, with NZ and international kite flyers participating. Features all-day stage entertainment, kids\' bouncy castles and slides, market stalls and food vendors.',
+    type: 'outdoor', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
+    venue: 'Marine Parade, Ōtaki Beach', time: 'All day',
+    url: 'https://www.eventfinda.co.nz',
+  },
+  {
+    title: 'Ōtaki International Kite Festival',
+    description: 'A spectacular free family event as world-class kites fill the skies along the Ōtaki coastline, with NZ and international kite flyers participating. Features all-day stage entertainment, kids\' bouncy castles and slides, market stalls and food vendors.',
+    type: 'outdoor', day: 'sun', weekend: '2026-03-14', region: 'kapiti',
+    venue: 'Marine Parade, Ōtaki Beach', time: 'All day',
+    url: 'https://www.eventfinda.co.nz',
+  },
+  {
+    title: 'Kāpiti Classic 2026',
+    description: 'A live music day in the outdoor amphitheatre at Southward Car Museum, with Th\' Dudes, Anika Moa, The Warratahs, and Automatic 80\'s. Bring a picnic blanket and enjoy the sunshine among over 400 classic cars in a uniquely scenic setting.',
+    type: 'music', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
+    venue: 'Southward Car Museum, Paraparaumu', time: '11:00am onwards',
+    url: 'https://www.eventbrite.co.nz',
+  },
+  {
+    title: 'Out in the City – Wellington Pride',
+    description: 'The flagship community event of Wellington Pride Festival — a free all-day family-friendly fair at Odlin\'s Plaza with 70+ stalls, food and drink, and a packed stage programme. Marks 40 years since Wellington\'s first Gay & Lesbian Fair.',
+    type: 'festival', day: 'sun', weekend: '2026-03-14', region: 'wellington',
+    venue: "Odlin's Plaza, Wellington", time: '10:00am–4:00pm',
+    url: 'https://www.wellingtonpridefestival.com',
+  },
+  {
+    title: 'Wellington Zoo – Family Visit',
+    description: 'Te Nukuao Wellington Zoo is open year-round with daily animal talks, feeding times, and Close Encounter experiences with Red Pandas, Lions, Cheetahs, Giraffes and more. Wild Explorer experiences take families through Dinosaur Evolution or Dolphins of the Reef.',
+    type: 'whanau', day: 'sat', weekend: '2026-03-14', region: 'wellington',
+    venue: 'Te Nukuao Wellington Zoo, 200 Daniell Street, Newtown', time: '9:30am–5:00pm',
+    url: 'https://wellingtonzoo.com',
+  },
+  {
+    title: 'Mangaroa Farms Harvest Festival',
+    description: 'A harvest celebration at Mangaroa Farms to launch Upper Hutt Food Week, featuring fresh local produce, regenerative farm tours, kai tastings, nature play for tamariki, and a Pumpkin Competition. An immersive outing on a real working farm.',
+    type: 'outdoor', day: 'sat', weekend: '2026-03-21', region: 'upper-hutt',
+    venue: 'Mangaroa Farms, 98 Whitemans Valley Road, Upper Hutt', time: '10:00am–3:00pm',
+    url: 'https://mangaroa.org',
+  },
+  {
+    title: 'Wellington Pride Picnic',
+    description: 'A relaxed outdoor celebration to close the Wellington Pride Festival, inviting the community to gather, share food, and enjoy each other\'s company in a welcoming open-air setting. A casual and family-inclusive finale to Aotearoa\'s longest-running Pride festival.',
+    type: 'whanau', day: 'sun', weekend: '2026-03-21', region: 'wellington',
+    venue: 'TBC, Wellington', time: 'TBC',
+    url: 'https://www.wellingtonpridefestival.com',
+  },
+  {
+    title: 'CubaDupa',
+    description: 'Wellington\'s biggest free street festival transforms the Cuba Precinct into a kaleidoscope of music, performance, kai and colour. Over 210 acts, 220 performances and 70 food vendors across the Cuba Quarter — a true community celebration for all ages, runs all weekend.',
+    type: 'festival', day: 'sat', weekend: '2026-03-28', region: 'wellington',
+    venue: 'Cuba Precinct, Cuba Street, Wellington', time: 'All day',
+    url: 'https://www.cubadupa.co.nz',
+  },
+  {
+    title: 'CubaDupa',
+    description: 'Wellington\'s biggest free street festival transforms the Cuba Precinct into a kaleidoscope of music, performance, kai and colour. Over 210 acts, 220 performances and 70 food vendors across the Cuba Quarter — a true community celebration for all ages, runs all weekend.',
+    type: 'festival', day: 'sun', weekend: '2026-03-28', region: 'wellington',
+    venue: 'Cuba Precinct, Cuba Street, Wellington', time: 'All day',
+    url: 'https://www.cubadupa.co.nz',
+  },
+  {
+    title: 'Wellington Night Market',
+    description: 'A popular Saturday night market on Lower Cuba Street offering authentic Asian cuisine from Japanese, Malay, Indonesian, Indian and Moroccan traditions, plus live entertainment. Running every Friday and Saturday — a great evening out in the Cuba Quarter.',
+    type: 'market', day: 'sat', weekend: '2026-03-28', region: 'wellington',
+    venue: 'Lower Cuba Street, Wellington', time: '5:00pm–11:00pm',
+    url: 'https://www.wellingtonnightmarket.co.nz',
+  },
+  {
+    title: 'Harbourside Market',
+    description: 'Wellington\'s most popular Sunday waterfront market adjacent to Te Papa, drawing up to 25,000 visitors. Fresh fruit, vegetables, artisan produce, 30+ food trucks and live music — a perfect Sunday morning family outing in the fresh harbour air.',
+    type: 'market', day: 'sun', weekend: '2026-03-28', region: 'wellington',
+    venue: 'Cable Street & Barnett Street, Wellington Waterfront', time: '7:30am–2:00pm',
+    url: 'https://www.wellingtonnz.com/visit/see-and-do/harbourside-market',
+  },
+];
+
+async function bulkImportDraftEvents() {
+  const btn = document.getElementById('importBtn');
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+
+  try {
+    // Fetch existing titles to skip duplicates
+    const existing = await db.collection('events').get();
+    const existingTitles = new Set(
+      existing.docs.map(d => (d.data().title || '').trim().toLowerCase())
+    );
+
+    let created = 0;
+    let skipped = 0;
+
+    for (const ev of DRAFT_EVENTS) {
+      const key = ev.title.trim().toLowerCase();
+      // Skip if a doc with same title + weekend + day already exists
+      const isDupe = existing.docs.some(d => {
+        const data = d.data();
+        return (data.title || '').trim().toLowerCase() === key &&
+               data.weekend === ev.weekend &&
+               data.day === ev.day;
+      });
+
+      if (isDupe) { skipped++; continue; }
+
+      await db.collection('events').add({
+        title:       ev.title,
+        description: ev.description,
+        category:    'events',
+        type:        ev.type,
+        day:         ev.day,
+        weekend:     ev.weekend,
+        region:      ev.region,
+        venue:       ev.venue,
+        time:        ev.time,
+        url:         ev.url,
+        tags:        [],
+        img:         '',
+        active:      false,
+        createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      created++;
+    }
+
+    btn.textContent = '✓ Done';
+    showToast(`${created} draft event${created !== 1 ? 's' : ''} imported${skipped ? `, ${skipped} skipped (already exist)` : ''}.`);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '⬇ Import drafts';
+    showToast('Import failed: ' + err.message);
+  }
+}
+
+// ── About section editor ───────────────────────────────────────────────────────
+function toggleAboutPanel(btn) {
+  const body = document.getElementById('aboutPanelBody');
+  const nowHidden = body.classList.toggle('hidden');
+  btn.setAttribute('aria-expanded', nowHidden ? 'false' : 'true');
+}
+
+function loadAbout() {
+  db.collection('siteConfig').doc('about').get().then(doc => {
+    if (!doc.exists) return;
+    const d = doc.data();
+    if (d.para1) document.getElementById('aPara1').value = d.para1;
+    if (d.para2) document.getElementById('aPara2').value = d.para2;
+    if (d.para3) document.getElementById('aPara3').value = d.para3;
+  }).catch(err => showToast('Could not load about: ' + err.message));
+}
+
+async function saveAbout() {
+  const btn = document.getElementById('saveAboutBtn');
+  const data = {
+    para1: document.getElementById('aPara1').value.trim(),
+    para2: document.getElementById('aPara2').value.trim(),
+    para3: document.getElementById('aPara3').value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  if (!data.para1 && !data.para2 && !data.para3) {
+    showToast('Nothing to save — fill in at least one paragraph.');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    await db.collection('siteConfig').doc('about').set(data, { merge: true });
+    showToast('About section updated.');
+  } catch (err) {
+    showToast('Save failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save About';
+  }
 }
