@@ -922,39 +922,48 @@ let currentRegion = 'all';
     const planRegions = [...new Set(weekendItems.map(i => i.region).filter(Boolean))];
     if (planRegions.length === 0) return '';
     const plannedTitles = new Set(planItems.map(i => i.title));
-    const suggestions = [];
-    document.querySelectorAll('.venue-card, .card').forEach(card => {
+    const food = [], walks = [];
+    document.querySelectorAll('.venue-card').forEach(card => {
       const region = card.dataset.region;
       if (!region || region === 'all' || !planRegions.includes(region)) return;
-      const title = (card.querySelector('.venue-name, .card-title') || {}).textContent;
-      if (!title) return;
-      const t = title.trim();
-      if (plannedTitles.has(t) || suggestions.some(s => s.title === t)) return;
-      const category = ((card.querySelector('.venue-tag, .card-cat') || {}).textContent || '').trim();
-      const section = card.closest('#section-food') ? 'food' :
-                      card.closest('#section-walks') ? 'walks' :
-                      card.closest('#section-parks') ? 'parks' :
-                      card.closest('[id^="panel-"]') ? 'events' : null;
-      if (!section) return;
-      suggestions.push({ title: t, category, region, section });
+      const titleEl = card.querySelector('.venue-name');
+      if (!titleEl) return;
+      const t = titleEl.textContent.trim();
+      if (plannedTitles.has(t)) return;
+      const category = (card.querySelector('.venue-tag')?.textContent || '').trim();
+      if (card.closest('#section-food') && food.every(s => s.title !== t)) {
+        food.push({ title: t, category, section: 'food' });
+      } else if (card.closest('#section-walks') && walks.every(s => s.title !== t)) {
+        walks.push({ title: t, category, section: 'walks' });
+      }
     });
-    if (suggestions.length === 0) return '';
-    const shown = suggestions.slice(0, 4);
+    // Interleave: up to 2 cafés + 2 walks
+    const shown = [];
+    const maxEach = 2;
+    for (let i = 0; i < maxEach; i++) {
+      if (food[i])  shown.push(food[i]);
+      if (walks[i]) shown.push(walks[i]);
+    }
+    if (shown.length === 0) return '';
     const regionLabels = { 'wellington': 'Wellington City', 'lower-hutt': 'Lower Hutt', 'upper-hutt': 'Upper Hutt', 'kapiti': 'Kāpiti', 'porirua': 'Porirua', 'wairarapa': 'Wairarapa' };
     const regionNames = planRegions.map(r => regionLabels[r] || r).join(' & ');
-    const icons = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝' };
-    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Based on your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
+    const icons = { food: '☕', walks: '🌿' };
+    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Cafés & walks near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
     shown.forEach(s => {
-      html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" onclick="addToPlanByTitle(this, ' + JSON.stringify(escapeHtml(s.title)) + ')">+ Plan</button></div>';
+      // Store title in data-title to avoid quote conflicts in onclick attribute
+      html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" data-title="' + escapeHtml(s.title) + '" onclick="addToPlanByTitle(this)">+ Plan</button></div>';
     });
     html += '</div></div>';
     return html;
   }
 
-  function addToPlanByTitle(btn, title) {
-    const card = [...document.querySelectorAll('.venue-card, .card')].find(c => {
-      const el = c.querySelector('.venue-name, .card-title');
-      return el && escapeHtml(el.textContent.trim()) === title;
+  function addToPlanByTitle(btn) {
+    // data-title stores HTML-encoded text; dataset.title auto-decodes to raw text
+    const title = btn.dataset.title;
+    if (!title) return;
+    const card = [...document.querySelectorAll('.venue-card')].find(c => {
+      const el = c.querySelector('.venue-name');
+      return el && el.textContent.trim() === title;
     });
     if (card) {
       addToPlan(card);
