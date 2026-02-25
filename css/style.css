@@ -590,14 +590,20 @@
 
   /* ── WEEKEND PICKER ── */
   .weekend-picker {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    margin-bottom: 24px; padding-bottom: 20px;
+    margin-bottom: 24px; padding: 0 0 20px;
     border-bottom: 1px solid rgba(0,0,0,0.07);
+    max-height: 220px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.12) transparent;
   }
-  .weekend-picker-label {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--muted); margin-right: 4px; white-space: nowrap;
+  .weekend-picker::-webkit-scrollbar { width: 3px; }
+  .weekend-picker::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+  .weekend-month-group { margin-bottom: 14px; }
+  .weekend-month-group:last-child { margin-bottom: 0; }
+  .weekend-month-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 7px; padding: 0 1px;
   }
+  .weekend-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .weekend-chip {
     background: none; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 20px;
     padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px;

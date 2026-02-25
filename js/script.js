@@ -701,6 +701,25 @@ let currentRegion = 'all';
     return satStr + '–' + sunStr;
   }
 
+  // Returns all non-past weekends sourced directly from the DOM panels
+  // (includes both hardcoded and dynamically generated panels)
+  function getAllWeekends() {
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .map(p => {
+        const satStr = p.dataset.weekend;
+        const [y, m, d] = satStr.split('-').map(Number);
+        const sat = new Date(y, m - 1, d);
+        const sun = new Date(y, m - 1, d + 1);
+        const label = sun.getMonth() === sat.getMonth()
+          ? `${sat.getDate()}–${sun.getDate()} ${MONTHS[sat.getMonth()]}`
+          : `${sat.getDate()} ${MONTHS[sat.getMonth()]}–${sun.getDate()} ${MONTHS[sun.getMonth()]}`;
+        return { key: satStr, sat, sun, label };
+      })
+      .filter(w => !weekendIsPast(w.key))
+      .sort((a, b) => a.key.localeCompare(b.key));
+  }
+
   function selectPlanWeekend(key) {
     currentPlanWeekend = key;
     renderPlan();
@@ -866,17 +885,17 @@ let currentRegion = 'all';
     const container = document.getElementById('plannerTimeline');
     const emptyEl   = document.getElementById('plannerEmpty');
 
-    const upcomingWeekends = getUpcomingWeekends(4);
-    if (!currentPlanWeekend) currentPlanWeekend = upcomingWeekends[0].key;
+    const allWeekends = getAllWeekends();
+    if (!currentPlanWeekend && allWeekends.length) currentPlanWeekend = allWeekends[0].key;
 
     // Migrate legacy items without weekendStart
-    planItems.forEach(item => { if (!item.weekendStart) item.weekendStart = upcomingWeekends[0].key; });
+    planItems.forEach(item => { if (!item.weekendStart && allWeekends.length) item.weekendStart = allWeekends[0].key; });
 
     const weekendItems = planItems.filter(i => i.weekendStart === currentPlanWeekend);
 
     const exportWrap = document.getElementById('calExportWrap');
     if (planItems.length === 0) {
-      container.innerHTML = renderWeekendPicker(upcomingWeekends);
+      container.innerHTML = renderWeekendPicker(allWeekends);
       emptyEl.style.display = 'block';
       if (exportWrap) exportWrap.style.display = 'none';
       updatePlanBadge();
@@ -888,7 +907,7 @@ let currentRegion = 'all';
     const saturday = weekendItems.filter(i => i.day === 'saturday');
     const sunday   = weekendItems.filter(i => i.day === 'sunday');
 
-    let html = renderWeekendPicker(upcomingWeekends);
+    let html = renderWeekendPicker(allWeekends);
 
     if (weekendItems.length === 0) {
       html += '<p class="plan-weekend-empty">Nothing planned for this weekend yet — browse and tap <strong>+ Plan</strong> to add something.</p>';
@@ -901,16 +920,48 @@ let currentRegion = 'all';
 
     container.innerHTML = html;
     updatePlanBadge();
+
+    // Scroll picker to show the active weekend chip without moving the page
+    requestAnimationFrame(() => {
+      const picker = container.querySelector('.weekend-picker');
+      const activeChip = picker?.querySelector('.weekend-chip.active');
+      if (picker && activeChip) {
+        const group = activeChip.closest('.weekend-month-group');
+        if (group) {
+          const groupRect  = group.getBoundingClientRect();
+          const pickerRect = picker.getBoundingClientRect();
+          picker.scrollTop += groupRect.top - pickerRect.top - 4;
+        }
+      }
+    });
   }
 
   function renderWeekendPicker(weekends) {
-    let html = '<div class="weekend-picker"><span class="weekend-picker-label">📅 Weekend:</span>';
-    weekends.forEach((w, idx) => {
-      const isActive = w.key === currentPlanWeekend;
-      const count = planItems.filter(i => i.weekendStart === w.key).length;
-      const badge = count > 0 ? '<span class="weekend-chip-badge">' + count + '</span>' : '';
-      const label = w.label;
-      html += '<button class="weekend-chip' + (isActive ? ' active' : '') + '" onclick="selectPlanWeekend(\'' + w.key + '\')">' + label + badge + '</button>';
+    const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    // Group by year-month
+    const groups = [];
+    weekends.forEach(w => {
+      const groupKey = `${w.sat.getFullYear()}-${w.sat.getMonth()}`;
+      let group = groups.find(g => g.key === groupKey);
+      if (!group) {
+        group = { key: groupKey, label: MONTHS_FULL[w.sat.getMonth()] + ' ' + w.sat.getFullYear(), weekends: [] };
+        groups.push(group);
+      }
+      group.weekends.push(w);
+    });
+
+    let html = '<div class="weekend-picker">';
+    groups.forEach(group => {
+      html += '<div class="weekend-month-group">';
+      html += '<div class="weekend-month-label">' + group.label + '</div>';
+      html += '<div class="weekend-chips">';
+      group.weekends.forEach(w => {
+        const isActive = w.key === currentPlanWeekend;
+        const count = planItems.filter(i => i.weekendStart === w.key).length;
+        const badge = count > 0 ? '<span class="weekend-chip-badge">' + count + '</span>' : '';
+        html += '<button class="weekend-chip' + (isActive ? ' active' : '') + '" onclick="selectPlanWeekend(\'' + w.key + '\')">' + w.label + badge + '</button>';
+      });
+      html += '</div></div>';
     });
     html += '</div>';
     return html;
@@ -1043,9 +1094,9 @@ let currentRegion = 'all';
     let text = '🗓 My Wellington Weekend Plan\n\n';
     // Group by weekend
     const weekendKeys = [...new Set(planItems.map(i => i.weekendStart))].sort();
-    const upcomingWeekends = getUpcomingWeekends(4);
+    const allWeekends = getAllWeekends();
     weekendKeys.forEach(key => {
-      const wInfo = upcomingWeekends.find(w => w.key === key);
+      const wInfo = allWeekends.find(w => w.key === key);
       if (wInfo) text += '🗓 ' + wInfo.label + '\n';
       const saturday = planItems.filter(i => i.weekendStart === key && i.day === 'saturday');
       const sunday   = planItems.filter(i => i.weekendStart === key && i.day === 'sunday');
