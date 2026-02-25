@@ -220,7 +220,7 @@ let currentRegion = 'all';
 
   function showSectionFromMenu(section) {
     const btns = document.querySelectorAll('.main-nav-btn');
-    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4 };
+    const map = { planner: 0, events: 1, food: 2, walks: 3, parks: 4 };
     if (section === 'about') {
       // About has no tab — just show the section directly
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -245,7 +245,7 @@ let currentRegion = 'all';
   function updateHash(section, region) {
     try {
       const params = new URLSearchParams();
-      if (section && section !== 'events') params.set('s', section);
+      if (section && section !== 'planner') params.set('s', section);
       if (region && region !== 'all') params.set('r', region);
       history.replaceState(null, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
     } catch (e) {
@@ -255,7 +255,7 @@ let currentRegion = 'all';
 
   function readHash() {
     const params = new URLSearchParams(window.location.search);
-    const section = params.get('s') || 'events';
+    const section = params.get('s') || 'planner';
     const region  = params.get('r') || 'all';
     return { section, region };
   }
@@ -366,10 +366,12 @@ let currentRegion = 'all';
     const { section, region } = readHash();
 
     // Restore section
-    if (section !== 'events') {
-      const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { food: 1, walks: 2, parks: 3, planner: 4 };
+    const navBtns = document.querySelectorAll('.main-nav-btn');
+    const map = { planner: 0, events: 1, food: 2, walks: 3, parks: 4 };
+    if (section !== 'planner') {
       if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
+    } else {
+      renderPlan();
     }
 
     // Restore region

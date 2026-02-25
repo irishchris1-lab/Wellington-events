@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- ── SEO ── -->
-<title>What's On Wellington — Family Events, Cafés & Walks</title>
-<meta name="description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington, Hutt Valley, Kāpiti and Wairarapa. Updated every weekend by a local family.">
+<title>Plan Your Wellington Weekend | What's On Wellington</title>
+<meta name="description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place. Updated every weekend by a local family.">
 <meta name="keywords" content="Wellington family events, Wellington kids activities, Wellington cafes kids, Wellington walks children, Hutt Valley family, Kāpiti family events">
 <meta name="author" content="What's On Wellington">
 <link rel="canonical" href="https://irishchris1-lab.github.io/Wellington-events/">
@@ -14,16 +14,16 @@
 <!-- ── Open Graph (Facebook, WhatsApp) ── -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://irishchris1-lab.github.io/Wellington-events/">
-<meta property="og:title" content="What's On Wellington — Family Events, Cafés & Walks">
-<meta property="og:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend. Updated weekly by a local family.">
+<meta property="og:title" content="Plan Your Wellington Weekend | What's On Wellington">
+<meta property="og:description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.">
 <meta property="og:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
 <meta property="og:locale" content="en_NZ">
 <meta property="og:site_name" content="What's On Wellington">
 
 <!-- ── Twitter / X card ── -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What's On Wellington — Family Events, Cafés & Walks">
-<meta name="twitter:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend.">
+<meta name="twitter:title" content="Plan Your Wellington Weekend | What's On Wellington">
+<meta name="twitter:description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.">
 <meta name="twitter:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
 
 <!-- ── PWA & theme ── -->
@@ -98,8 +98,8 @@
         </button>
       </div>
     </div>
-    <h1>What's On<br><em>Wellington</em></h1>
-    <p class="header-sub">The best family-friendly events across the Wellington metro — waterfront, suburbs, Kāpiti and beyond.</p>
+    <h1>Plan Your Wellington<br><em>Weekend</em></h1>
+    <p class="header-sub">Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.</p>
     <div class="last-updated">
       <span class="dot"></span>
       <!-- ✏️ UPDATE THIS DATE each time you edit -->
@@ -119,7 +119,7 @@
     <button class="dropdown-close" onclick="closeMenu()" aria-label="Close menu">✕</button>
   </div>
   <nav class="dropdown-nav">
-    <button class="dropdown-nav-btn" onclick="showSection('events', document.querySelector('.main-nav-btn')); closeMenu()"><span>🗓</span> Events</button>
+    <button class="dropdown-nav-btn" onclick="showSection('events', document.getElementById('tab-events')); closeMenu()"><span>🗓</span> Events</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('food'); closeMenu()"><span>☕</span> Food & Drink</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('walks'); closeMenu()"><span>🌿</span> Walks & Trails</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
@@ -142,11 +142,11 @@
 <!-- ── MAIN NAV ── -->
 <nav class="main-nav" aria-label="Main sections">
   <div class="main-nav-inner" role="tablist">
-    <button class="main-nav-btn active" role="tab" id="tab-events" aria-selected="true"  aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
+    <button class="main-nav-btn active" role="tab" id="tab-planner" aria-selected="true"  aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> Plan <span class="plan-count-badge" id="planCountBadge">0</span></button>
+    <button class="main-nav-btn"        role="tab" id="tab-events" aria-selected="false" aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
     <button class="main-nav-btn"        role="tab" id="tab-food"   aria-selected="false" aria-controls="section-food"   onclick="showSection('food', this)"><span class="nav-icon">☕</span> Food & Drink</button>
     <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
     <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
-    <button class="main-nav-btn"        role="tab" id="tab-planner" aria-selected="false" aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> My Weekend <span class="plan-count-badge" id="planCountBadge">0</span></button>
   </div>
 </nav>
 
@@ -167,7 +167,7 @@
 <!-- ══════════════════════════════════════
      EVENTS SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section active" id="section-events" role="tabpanel" aria-labelledby="tab-events">
+<div class="app-section" id="section-events" role="tabpanel" aria-labelledby="tab-events">
 <nav class="tabs-bar">
   <div class="tabs-inner" role="tablist" aria-label="Weekend dates">
     <!-- ✏️ UPDATE tab labels each weekend -->
@@ -3381,7 +3381,7 @@
 <!-- ══════════════════════════════════════
      PLANNER SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
+<div class="app-section active" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
 <main>
   <!-- Soft sign-in nudge — only shown when guest and plan has items -->
   <div id="plannerSyncNudge" class="planner-sync-nudge" style="display:none;">
@@ -3404,8 +3404,12 @@
 
     <div id="plannerEmpty" class="planner-empty">
       <div class="planner-empty-icon">🗓</div>
-      <p>Your weekend plan is empty. Browse events, cafés, walks and parks, then tap <strong>+ Plan</strong> on anything that catches your eye.</p>
-      <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">Browse events</button>
+      <p>Your weekend starts here. Browse events, cafés, walks and parks — then tap <strong>+ Plan</strong> to build your day.</p>
+      <div class="planner-empty-actions">
+        <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">🗓 Browse events</button>
+        <button class="planner-cta-btn" onclick="showSection('food', document.getElementById('tab-food'))">☕ Find a café</button>
+        <button class="planner-cta-btn" onclick="showSection('walks', document.getElementById('tab-walks'))">🌿 Find a walk</button>
+      </div>
     </div>
   </div>
 </main>
