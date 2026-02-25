@@ -878,13 +878,16 @@ let currentRegion = 'all';
 
     const weekendItems = planItems.filter(i => i.weekendStart === currentPlanWeekend);
 
+    const exportWrap = document.getElementById('calExportWrap');
     if (planItems.length === 0) {
       container.innerHTML = renderWeekendPicker(upcomingWeekends);
       emptyEl.style.display = 'block';
+      if (exportWrap) exportWrap.style.display = 'none';
       updatePlanBadge();
       return;
     }
     emptyEl.style.display = 'none';
+    if (exportWrap) exportWrap.style.display = '';
 
     const saturday = weekendItems.filter(i => i.day === 'saturday');
     const sunday   = weekendItems.filter(i => i.day === 'sunday');
@@ -1062,6 +1065,145 @@ let currentRegion = 'all';
     } else {
       navigator.clipboard.writeText(text).then(() => showToast('Plan copied to clipboard'));
     }
+  }
+
+  // ═══════════════════════════════════════
+  //  CALENDAR EXPORT
+  // ═══════════════════════════════════════
+
+  function toggleCalendarExport(e) {
+    e.stopPropagation();
+    document.getElementById('calExportDropdown')?.classList.toggle('open');
+  }
+
+  // Close calendar dropdown on outside click
+  document.addEventListener('click', () => {
+    document.getElementById('calExportDropdown')?.classList.remove('open');
+  });
+
+  // Parse a time string like "10am", "10:30am–12pm", "2.00pm" into {startH,startM,endH,endM}
+  function parseTimeRange(timeStr) {
+    if (!timeStr) return { startH: 10, startM: 0, endH: 12, endM: 0 };
+    const s = timeStr.toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[–—]/g, '-')
+      .replace(/\./g, ':')
+      .replace(/^from/, '');
+    const parts = s.split('-');
+    function parseOne(t) {
+      const m = t.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)$/);
+      if (!m) return null;
+      let h = parseInt(m[1]);
+      const min = parseInt(m[2] || '0');
+      if (m[3] === 'pm' && h !== 12) h += 12;
+      if (m[3] === 'am' && h === 12) h = 0;
+      return { h, m: min };
+    }
+    const start = parseOne(parts[0]);
+    if (!start) return { startH: 10, startM: 0, endH: 12, endM: 0 };
+    const end = parts[1] ? parseOne(parts[1]) : null;
+    return {
+      startH: start.h, startM: start.m,
+      endH: end ? end.h : Math.min(start.h + 2, 23),
+      endM: end ? end.m : start.m
+    };
+  }
+
+  // Returns plain date/time objects for calendar formatting (avoids timezone pitfalls)
+  function getItemDateParts(item) {
+    if (!item.weekendStart) return null;
+    const [y, mo, d] = item.weekendStart.split('-').map(Number);
+    let year = y, month = mo, day = d;
+    if (item.day === 'sunday') {
+      const dt = new Date(year, month - 1, day + 1); // handles month boundary
+      year = dt.getFullYear(); month = dt.getMonth() + 1; day = dt.getDate();
+    }
+    const t = parseTimeRange(item.time);
+    return {
+      year, month, day,
+      startH: t.startH, startM: t.startM,
+      endH:   t.endH,   endM:   t.endM
+    };
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function calDateStr(p, useEnd) {
+    const h = useEnd ? p.endH   : p.startH;
+    const m = useEnd ? p.endM   : p.startM;
+    return `${p.year}${pad2(p.month)}${pad2(p.day)}T${pad2(h)}${pad2(m)}00`;
+  }
+
+  function buildGCalUrl(item) {
+    const p = getItemDateParts(item);
+    if (!p) return null;
+    const details = [item.category, item.location].filter(Boolean).join(' · ');
+    const params = new URLSearchParams({
+      action:   'TEMPLATE',
+      text:     item.title,
+      dates:    calDateStr(p, false) + '/' + calDateStr(p, true),
+      details:  details,
+      location: item.location || ''
+    });
+    return 'https://calendar.google.com/calendar/render?' + params.toString();
+  }
+
+  function openAllGCal() {
+    document.getElementById('calExportDropdown')?.classList.remove('open');
+    const items = planItems.filter(i => i.weekendStart);
+    if (items.length === 0) { showToast('No items with dates to export'); return; }
+    items.forEach(item => {
+      const url = buildGCalUrl(item);
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+  }
+
+  function escapeICS(str) {
+    return String(str || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\n/g, '\\n');
+  }
+
+  function downloadICS() {
+    document.getElementById('calExportDropdown')?.classList.remove('open');
+    const items = planItems.filter(i => i.weekendStart);
+    if (items.length === 0) { showToast('No items with dates to export'); return; }
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//What\'s On Wellington//Wellington Weekend Planner//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH'
+    ];
+    items.forEach(item => {
+      const p = getItemDateParts(item);
+      if (!p) return;
+      const desc = [item.category, item.location].filter(Boolean).join(' · ');
+      const uid = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2) + '@whatsonwellington.co.nz';
+      const event = [
+        'BEGIN:VEVENT',
+        'UID:' + uid,
+        'SUMMARY:' + escapeICS(item.title),
+        'DTSTART:' + calDateStr(p, false),
+        'DTEND:'   + calDateStr(p, true),
+        'DESCRIPTION:' + escapeICS(desc),
+        item.location ? 'LOCATION:' + escapeICS(item.location) : '',
+        'END:VEVENT'
+      ].filter(Boolean);
+      lines.push(...event);
+    });
+    lines.push('END:VCALENDAR');
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'wellington-weekend.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Calendar file downloaded');
   }
 
   // ═══════════════════════════════════════

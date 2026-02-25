@@ -3394,6 +3394,13 @@
       <h3>My Weekend Plan</h3>
       <div class="plan-toolbar-actions">
         <button class="plan-clear-btn" onclick="clearPlan()">Clear all</button>
+        <div class="plan-export-wrap" id="calExportWrap" style="display:none">
+          <button class="plan-export-btn" id="calExportBtn" onclick="toggleCalendarExport(event)">📅 Export</button>
+          <div class="cal-export-dropdown" id="calExportDropdown">
+            <button class="cal-export-item" onclick="openAllGCal()">📅 Add to Google Calendar</button>
+            <button class="cal-export-item" onclick="downloadICS()">⬇️ Download .ics file</button>
+          </div>
+        </div>
         <button class="plan-share-btn" onclick="sharePlan()">📤 Share</button>
       </div>
     </div>
