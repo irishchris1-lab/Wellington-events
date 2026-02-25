@@ -1306,8 +1306,69 @@ let currentRegion = 'all';
     }
   });
 
+  // ── Generate weekend tabs + panels for all remaining Saturdays in 2026 ──
+  function generateRemainingWeekends() {
+    const existingPanels = [...document.querySelectorAll('.weekend-panel[data-weekend]')];
+    if (existingPanels.length === 0) return;
+
+    const tabsInner = document.querySelector('.tabs-inner');
+    const mainEl    = document.querySelector('#section-events main');
+    if (!tabsInner || !mainEl) return;
+
+    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    // Start one week after the last existing hardcoded panel
+    const lastSat = existingPanels[existingPanels.length - 1].dataset.weekend;
+    const [ly, lm, ld] = lastSat.split('-').map(Number);
+    let sat = new Date(ly, lm - 1, ld + 7);
+
+    let idx = existingPanels.length + 1; // w6, w7, …
+
+    while (sat.getFullYear() === 2026) {
+      const sun = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 1);
+      const id  = 'w' + idx;
+      const fmt = d => String(d).padStart(2, '0');
+      const satStr = `${sat.getFullYear()}-${fmt(sat.getMonth() + 1)}-${fmt(sat.getDate())}`;
+
+      // Tab label
+      const tabLabel = sun.getMonth() === sat.getMonth()
+        ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
+        : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
+
+      // Tab button
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn';
+      btn.id = 'wtab-' + id;
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', 'false');
+      btn.setAttribute('aria-controls', id);
+      btn.textContent = tabLabel;
+      btn.addEventListener('click', function() { showTab(id, this); });
+      tabsInner.appendChild(btn);
+
+      // Weekend panel with empty Saturday + Sunday grids
+      const panel = document.createElement('div');
+      panel.className = 'weekend-panel';
+      panel.id = id;
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', 'wtab-' + id);
+      panel.setAttribute('data-weekend', satStr);
+      panel.innerHTML =
+        `<div class="day-label day-sat"><span class="pip"></span>Saturday ${sat.getDate()} ${MONTHS_FULL[sat.getMonth()]}<span class="line"></span></div>` +
+        `<div class="events-grid"></div>` +
+        `<div class="day-label day-sun"><span class="pip"></span>Sunday ${sun.getDate()} ${MONTHS_FULL[sun.getMonth()]}<span class="line"></span></div>` +
+        `<div class="events-grid"></div>`;
+      mainEl.appendChild(panel);
+
+      sat = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 7);
+      idx++;
+    }
+  }
+
   // ── Inject buttons and load guest plan on startup ──
   document.addEventListener('DOMContentLoaded', () => {
+    generateRemainingWeekends();
     hidePastWeekendTabs();
     injectAddButtons();
     // If Firebase is not configured, load from localStorage immediately
