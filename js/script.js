@@ -429,6 +429,7 @@ let currentRegion = 'all';
       firebaseReady = true;
       loadFirestoreEvents();
       loadAboutContent();
+      loadVenueOverrides();
     }
   } catch (e) {
     console.warn('Firebase init failed:', e);
@@ -562,6 +563,67 @@ let currentRegion = 'all';
   }
 
   // ═══════════════════════════════════════
+  //  VENUE OVERRIDES — apply admin edits
+  // ═══════════════════════════════════════
+
+  // Must match venueSlug() in admin/admin.js exactly
+  function venueSlug(name) {
+    return name.toLowerCase()
+      .replace(/[āáàä]/g, 'a').replace(/[ōóò]/g, 'o')
+      .replace(/[ūúù]/g, 'u').replace(/[īíì]/g, 'i').replace(/[ēé]/g, 'e')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      .substring(0, 60);
+  }
+
+  function loadVenueOverrides() {
+    if (!firebaseReady) return;
+    db.collection('venues').onSnapshot(snapshot => {
+      const overrides = {};
+      snapshot.docs.forEach(doc => { overrides[doc.id] = doc.data(); });
+      ['food', 'walks', 'parks'].forEach(sectionId => {
+        document.querySelectorAll(`#section-${sectionId} .venue-card`).forEach(card => {
+          const nameEl = card.querySelector('.venue-name');
+          if (!nameEl) return;
+          const slug = venueSlug(nameEl.textContent.trim());
+          const ov = overrides[slug];
+          if (!ov) return;
+
+          // Name
+          if (ov.name) nameEl.textContent = ov.name;
+
+          // Description
+          const descEl = card.querySelector('.venue-desc');
+          if (descEl && ov.description !== undefined) descEl.textContent = ov.description;
+
+          // Location
+          const locEl = card.querySelector('.venue-location');
+          if (locEl && ov.location !== undefined) locEl.textContent = '📍 ' + ov.location;
+
+          // Rating
+          const ratingEl = card.querySelector('.rating-score');
+          if (ratingEl && ov.rating !== undefined) ratingEl.textContent = ov.rating.toFixed(1);
+
+          // Region
+          if (ov.region) card.dataset.region = ov.region;
+
+          // Duration (walks)
+          if (ov.duration) card.dataset.duration = ov.duration;
+
+          // Link
+          const linkEl = card.querySelector('.rating-link');
+          if (linkEl) {
+            if (ov.linkUrl)   linkEl.href        = ov.linkUrl;
+            if (ov.linkLabel) linkEl.textContent = ov.linkLabel;
+          }
+        });
+      });
+      // Re-apply region/walk/food filters now that data may have changed
+      applyFoodFilters();
+      applyWalkFilters();
+    }, err => console.warn('Venue overrides error:', err));
+  }
+
+  // ═══════════════════════════════════════
   //  AUTH STATE
   // ═══════════════════════════════════════
   let currentUser = null;
@@ -628,8 +690,6 @@ let currentRegion = 'all';
       } else {
         avatarBtn.textContent = initial;
       }
-      // Hide sync nudge once signed in
-      document.getElementById('plannerSyncNudge').style.display = 'none';
     } else {
       signInBtn.style.display = 'flex';
       userArea.style.display  = 'none';

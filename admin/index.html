@@ -61,8 +61,16 @@
       </div>
     </div>
 
+    <!-- Section tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('events', this)">📅 Events</button>
+      <button class="admin-tab" onclick="switchTab('food', this)">☕ Food & Drink</button>
+      <button class="admin-tab" onclick="switchTab('walks', this)">🌿 Walks & Trails</button>
+      <button class="admin-tab" onclick="switchTab('parks', this)">🛝 Play Parks</button>
+    </div>
+
     <!-- Toolbar -->
-    <div class="toolbar">
+    <div class="toolbar events-only">
       <div class="toolbar-filters">
         <input type="search" id="searchInput" class="filter-input" placeholder="Search events…" oninput="applyFilters()">
         <select id="weekendFilter" class="filter-select" onchange="applyFilters()">
@@ -89,7 +97,7 @@
     </div>
 
     <!-- Event table -->
-    <div class="table-wrap">
+    <div class="table-wrap events-only">
       <table class="event-table">
         <thead>
           <tr>
@@ -108,7 +116,7 @@
     </div>
 
     <!-- About Section Editor -->
-    <div class="about-panel">
+    <div class="about-panel events-only">
       <button class="about-panel-toggle" onclick="toggleAboutPanel(this)" aria-expanded="false">
         <span>✏️ Edit About Section</span>
         <span class="about-chevron">▼</span>
@@ -135,7 +143,7 @@
     </div>
 
     <!-- JSON Paste Import Panel -->
-    <div class="about-panel">
+    <div class="about-panel events-only">
       <button class="about-panel-toggle" onclick="toggleJsonPanel(this)" aria-expanded="false">
         <span>📋 Paste JSON Event</span>
         <span class="about-chevron">▼</span>
@@ -151,6 +159,31 @@
           <button class="btn-primary" id="jsonImportBtn" onclick="importFromJSON()">Create Draft</button>
         </div>
       </div>
+    </div>
+
+    <!-- ── VENUE EDITOR SECTIONS ── -->
+    <div id="admin-section-food" class="hidden venue-section">
+      <div class="venue-section-header">
+        <h2 class="venue-section-title">☕ Food & Drink</h2>
+        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
+      </div>
+      <div class="venue-list" id="food-list"><p class="venue-status-msg">Loading…</p></div>
+    </div>
+
+    <div id="admin-section-walks" class="hidden venue-section">
+      <div class="venue-section-header">
+        <h2 class="venue-section-title">🌿 Walks & Trails</h2>
+        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
+      </div>
+      <div class="venue-list" id="walks-list"><p class="venue-status-msg">Loading…</p></div>
+    </div>
+
+    <div id="admin-section-parks" class="hidden venue-section">
+      <div class="venue-section-header">
+        <h2 class="venue-section-title">🛝 Play Parks</h2>
+        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
+      </div>
+      <div class="venue-list" id="parks-list"><p class="venue-status-msg">Loading…</p></div>
     </div>
 
   </div><!-- /dashboard -->

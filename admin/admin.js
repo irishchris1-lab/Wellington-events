@@ -722,3 +722,223 @@ async function saveAbout() {
     btn.textContent = 'Save About';
   }
 }
+
+// ── VENUE EDITOR ──────────────────────────────────────────────────────────────
+// Architecture: admin fetches index.html, parses venue cards, stores overrides
+// in Firestore `venues` collection. Main site applies overrides on load.
+
+let venueData = { food: null, walks: null, parks: null };
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('active', b === btn));
+  // Show/hide events-specific content
+  document.querySelectorAll('.events-only').forEach(el => {
+    el.style.display = tab === 'events' ? '' : 'none';
+  });
+  // Show/hide venue sections
+  ['food', 'walks', 'parks'].forEach(s => {
+    const el = document.getElementById('admin-section-' + s);
+    if (el) el.classList.toggle('hidden', s !== tab);
+  });
+  // Lazy-load venue data on first visit
+  if (tab !== 'events' && !venueData[tab]) loadVenueSection(tab);
+}
+
+// Produce a stable slug used as the Firestore document ID
+function venueSlug(name) {
+  return name.toLowerCase()
+    .replace(/[āáàä]/g, 'a').replace(/[ōóò]/g, 'o')
+    .replace(/[ūúù]/g, 'u').replace(/[īíì]/g, 'i').replace(/[ēé]/g, 'e')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    .substring(0, 60);
+}
+
+async function loadVenueSection(section) {
+  const listEl = document.getElementById(section + '-list');
+  listEl.innerHTML = '<p class="venue-status-msg">Loading venues from main site…</p>';
+  try {
+    // Parse venue cards from the live main site HTML
+    const res  = await fetch('../index.html');
+    const html = await res.text();
+    const doc  = new DOMParser().parseFromString(html, 'text/html');
+    const sectionEl = doc.getElementById('section-' + section);
+    if (!sectionEl) throw new Error('Section not found in main site');
+    const cards = [...sectionEl.querySelectorAll('.venue-card')];
+    if (!cards.length) throw new Error('No venue cards found');
+
+    // Fetch existing Firestore overrides for this section
+    const snap = await db.collection('venues').where('section', '==', section).get();
+    const overrides = {};
+    snap.docs.forEach(d => { overrides[d.id] = d.data(); });
+
+    // Build venue list, applying any saved overrides
+    const venues = cards.map(card => {
+      const rawName = (card.querySelector('.venue-name')?.textContent || '').trim();
+      const slug    = venueSlug(rawName);
+      const ov      = overrides[slug] || {};
+      const locRaw  = (card.querySelector('.venue-location')?.textContent || '').trim();
+      return {
+        slug,
+        name:        ov.name        ?? rawName,
+        description: ov.description ?? (card.querySelector('.venue-desc')?.textContent || '').trim(),
+        location:    ov.location    ?? locRaw.replace(/^\s*📍\s*/, ''),
+        rating:      ov.rating      ?? parseFloat((card.querySelector('.rating-score')?.textContent || '0')),
+        linkUrl:     ov.linkUrl     ?? (card.querySelector('.rating-link')?.getAttribute('href') || ''),
+        linkLabel:   ov.linkLabel   ?? (card.querySelector('.rating-link')?.textContent || '').trim(),
+        region:      ov.region      ?? (card.dataset.region || 'wellington'),
+        duration:    ov.duration    ?? (card.dataset.duration || ''),
+        section,
+        hasOverride: !!overrides[slug],
+      };
+    });
+
+    venueData[section] = venues;
+    renderVenueList(section, venues);
+  } catch (err) {
+    listEl.innerHTML = '<p class="venue-status-msg" style="color:var(--rust)">Error: ' + esc(err.message) + '</p>';
+  }
+}
+
+function renderVenueList(section, venues) {
+  const listEl = document.getElementById(section + '-list');
+  if (!venues || !venues.length) {
+    listEl.innerHTML = '<p class="venue-status-msg">No venues found.</p>';
+    return;
+  }
+  listEl.innerHTML = venues.map((v, i) => {
+    const rating = typeof v.rating === 'number' ? v.rating.toFixed(1) : v.rating;
+    const meta   = [v.region, section === 'walks' && v.duration ? v.duration : '', '⭐ ' + rating]
+                     .filter(Boolean).join(' · ');
+    return `<div class="venue-admin-card${v.hasOverride ? ' has-override' : ''}" id="vcard-${section}-${i}">
+      <div class="venue-admin-header">
+        <div class="venue-admin-info">
+          <span class="venue-admin-name">${esc(v.name)}</span>
+          <span class="venue-admin-meta">${esc(meta)}</span>
+        </div>
+        <div class="venue-admin-actions">
+          ${v.hasOverride ? '<span class="badge-override">Edited</span>' : ''}
+          <button class="action-btn edit" onclick="toggleVenueEdit('${section}',${i})">Edit</button>
+          ${v.hasOverride ? `<button class="action-btn delete" onclick="revertVenue('${section}',${i},'${v.slug}')">Revert</button>` : ''}
+        </div>
+      </div>
+      <div class="venue-edit-form hidden" id="vedit-${section}-${i}">
+        ${buildVenueForm(section, v, i)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildVenueForm(section, v, i) {
+  const sel = (val, opts) => opts.map(([k, label]) =>
+    `<option value="${k}"${v[val] === k ? ' selected' : ''}>${label}</option>`).join('');
+
+  const regionOpts = sel('region', [
+    ['wellington','Wellington City'],['lower-hutt','Lower Hutt'],
+    ['upper-hutt','Upper Hutt'],['kapiti','Kāpiti Coast'],
+    ['porirua','Porirua'],['wairarapa','Wairarapa'],
+  ]);
+  const durOpts = sel('duration', [
+    ['under30','Under 30 min'],['under1','Under 1 hour'],
+    ['under2','Under 2 hours'],['over2','Over 2 hours'],
+  ]);
+
+  return `
+    <div class="venue-form-grid">
+      <div class="form-row">
+        <label class="form-label">Venue name</label>
+        <input class="form-input" id="vf-name-${section}-${i}" type="text" value="${escAttr(v.name)}">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Region</label>
+        <select class="form-select" id="vf-region-${section}-${i}">${regionOpts}</select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="vf-desc-${section}-${i}" rows="3">${esc(v.description)}</textarea>
+    </div>
+    <div class="venue-form-grid">
+      <div class="form-row">
+        <label class="form-label">📍 Location text</label>
+        <input class="form-input" id="vf-location-${section}-${i}" type="text" value="${escAttr(v.location)}">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Rating (0–5)</label>
+        <input class="form-input" id="vf-rating-${section}-${i}" type="number" min="0" max="5" step="0.1" value="${v.rating}">
+      </div>
+    </div>
+    <div class="venue-form-grid">
+      <div class="form-row">
+        <label class="form-label">External link URL</label>
+        <input class="form-input" id="vf-linkUrl-${section}-${i}" type="url" value="${escAttr(v.linkUrl)}" placeholder="https://…">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Link label</label>
+        <input class="form-input" id="vf-linkLabel-${section}-${i}" type="text" value="${escAttr(v.linkLabel)}" placeholder="TripAdvisor reviews ↗">
+      </div>
+    </div>
+    ${section === 'walks' ? `<div class="form-row">
+      <label class="form-label">Duration</label>
+      <select class="form-select" id="vf-duration-${section}-${i}">${durOpts}</select>
+    </div>` : ''}
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" onclick="toggleVenueEdit('${section}',${i})">Cancel</button>
+      <button type="button" class="btn-primary" onclick="saveVenueEdit('${section}',${i},'${v.slug}')">Save changes</button>
+    </div>`;
+}
+
+function toggleVenueEdit(section, idx) {
+  document.getElementById('vedit-' + section + '-' + idx)?.classList.toggle('hidden');
+}
+
+async function saveVenueEdit(section, idx, slug) {
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const pre  = `vf-${section}-${idx}-` .replace(/(\w+)-(\w+)-(\d+)/, 'vf-$1-$2-$3');
+
+  // Helper to build the field id
+  const fid = f => `vf-${f}-${section}-${idx}`;
+
+  const data = {
+    section,
+    name:        val(fid('name')),
+    description: val(fid('desc')),
+    location:    val(fid('location')),
+    rating:      Math.round(parseFloat(val(fid('rating')) || 0) * 10) / 10,
+    linkUrl:     val(fid('linkUrl')),
+    linkLabel:   val(fid('linkLabel')),
+    region:      val(fid('region')),
+    updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  if (section === 'walks') data.duration = val(fid('duration'));
+
+  try {
+    await db.collection('venues').doc(slug).set(data, { merge: true });
+
+    // Update local state and re-render list
+    if (venueData[section]?.[idx]) {
+      Object.assign(venueData[section][idx], { ...data, hasOverride: true });
+    }
+    renderVenueList(section, venueData[section]);
+
+    // Flash the saved card green
+    requestAnimationFrame(() => {
+      const card = document.getElementById('vcard-' + section + '-' + idx);
+      if (card) { card.classList.add('save-flash'); setTimeout(() => card.classList.remove('save-flash'), 1800); }
+    });
+    showToast('Venue saved.');
+  } catch (err) {
+    showToast('Save failed: ' + err.message);
+  }
+}
+
+async function revertVenue(section, idx, slug) {
+  if (!confirm('Revert to the original values from the main site?')) return;
+  try {
+    await db.collection('venues').doc(slug).delete();
+    venueData[section] = null;
+    await loadVenueSection(section);
+    showToast('Venue reverted to original.');
+  } catch (err) {
+    showToast('Revert failed: ' + err.message);
+  }
+}

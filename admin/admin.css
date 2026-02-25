@@ -619,6 +619,151 @@ body {
 .json-import-success { color: #155724; }
 .json-import-error   { color: var(--rust); }
 
+/* ── Admin tabs ── */
+.admin-tabs {
+  display: flex;
+  gap: .4rem;
+  padding: .75rem 1.5rem 0;
+  background: var(--sand);
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: .55rem 1.1rem;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+}
+
+.admin-tab:hover { color: var(--teal); background: rgba(255,255,255,.6); }
+.admin-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* ── Venue editor sections ── */
+.venue-section {
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+.venue-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.venue-section-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--teal);
+  margin-bottom: .25rem;
+}
+
+.venue-section-hint {
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+.venue-status-msg {
+  padding: 2rem 0;
+  color: var(--muted);
+  font-style: italic;
+  font-size: .9rem;
+}
+
+/* ── Venue card list ── */
+.venue-list {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.venue-admin-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: border-color .2s;
+}
+
+.venue-admin-card.has-override {
+  border-color: #c3dafe;
+}
+
+.venue-admin-card.save-flash {
+  border-color: #34d399;
+  transition: border-color .1s;
+}
+
+.venue-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem 1.1rem;
+  flex-wrap: wrap;
+}
+
+.venue-admin-info {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  min-width: 0;
+}
+
+.venue-admin-name {
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--text);
+}
+
+.venue-admin-meta {
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.venue-admin-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.badge-override {
+  display: inline-block;
+  padding: .15rem .55rem;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ── Venue inline edit form ── */
+.venue-edit-form {
+  padding: 1rem 1.1rem 1.25rem;
+  border-top: 1px solid var(--sand);
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+.venue-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) { .venue-form-grid { grid-template-columns: 1fr; } }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .admin-header { padding: .65rem 1rem; }
@@ -627,4 +772,6 @@ body {
   .table-wrap   { padding: 0 1rem 2rem; }
   .admin-email  { display: none; }
   .stat-num     { font-size: 1.4rem; }
+  .admin-tabs   { padding: .6rem 1rem 0; }
+  .venue-section { padding: 1rem 1rem 3rem; }
 }
