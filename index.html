@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- ── SEO ── -->
-<title>What's On Wellington — Family Events, Cafés & Walks</title>
-<meta name="description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington, Hutt Valley, Kāpiti and Wairarapa. Updated every weekend by a local family.">
+<title>Plan Your Wellington Weekend | What's On Wellington</title>
+<meta name="description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.">
 <meta name="keywords" content="Wellington family events, Wellington kids activities, Wellington cafes kids, Wellington walks children, Hutt Valley family, Kāpiti family events">
 <meta name="author" content="What's On Wellington">
 <link rel="canonical" href="https://irishchris1-lab.github.io/Wellington-events/">
@@ -14,16 +14,16 @@
 <!-- ── Open Graph (Facebook, WhatsApp) ── -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://irishchris1-lab.github.io/Wellington-events/">
-<meta property="og:title" content="What's On Wellington — Family Events, Cafés & Walks">
-<meta property="og:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend. Updated weekly by a local family.">
+<meta property="og:title" content="Plan Your Wellington Weekend | What's On Wellington">
+<meta property="og:description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.">
 <meta property="og:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
 <meta property="og:locale" content="en_NZ">
 <meta property="og:site_name" content="What's On Wellington">
 
 <!-- ── Twitter / X card ── -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What's On Wellington — Family Events, Cafés & Walks">
-<meta name="twitter:description" content="The best family-friendly events, cafés, walks and playgrounds across Wellington this weekend.">
+<meta name="twitter:title" content="Plan Your Wellington Weekend | What's On Wellington">
+<meta name="twitter:description" content="Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.">
 <meta name="twitter:image" content="https://irishchris1-lab.github.io/Wellington-events/preview.png">
 
 <!-- ── PWA & theme ── -->
@@ -98,8 +98,8 @@
         </button>
       </div>
     </div>
-    <h1>What's On<br><em>Wellington</em></h1>
-    <p class="header-sub">The best family-friendly events across the Wellington metro — waterfront, suburbs, Kāpiti and beyond.</p>
+    <h1>Plan Your Wellington<br><em>Weekend</em></h1>
+    <p class="header-sub">Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.</p>
     <div class="last-updated">
       <span class="dot"></span>
       <!-- ✏️ UPDATE THIS DATE each time you edit -->
@@ -119,11 +119,11 @@
     <button class="dropdown-close" onclick="closeMenu()" aria-label="Close menu">✕</button>
   </div>
   <nav class="dropdown-nav">
-    <button class="dropdown-nav-btn" onclick="showSection('events', document.querySelector('.main-nav-btn')); closeMenu()"><span>🗓</span> Events</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('planner'); closeMenu()"><span>📋</span> Plan</button>
+    <button class="dropdown-nav-btn" onclick="showSection('events', document.getElementById('tab-events')); closeMenu()"><span>🗓</span> Events</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('food'); closeMenu()"><span>☕</span> Food & Drink</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('walks'); closeMenu()"><span>🌿</span> Walks & Trails</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('planner'); closeMenu()"><span>📋</span> My Weekend</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('about'); closeMenu()"><span>👋</span> About</button>
     <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none" onclick="handleInstallClick(); closeMenu()"><span>📲</span> Add to Home Screen</button>
   </nav>
@@ -142,11 +142,11 @@
 <!-- ── MAIN NAV ── -->
 <nav class="main-nav" aria-label="Main sections">
   <div class="main-nav-inner" role="tablist">
-    <button class="main-nav-btn active" role="tab" id="tab-events" aria-selected="true"  aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
+    <button class="main-nav-btn active" role="tab" id="tab-planner" aria-selected="true"  aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> Plan <span class="plan-count-badge" id="planCountBadge">0</span></button>
+    <button class="main-nav-btn"        role="tab" id="tab-events" aria-selected="false" aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
     <button class="main-nav-btn"        role="tab" id="tab-food"   aria-selected="false" aria-controls="section-food"   onclick="showSection('food', this)"><span class="nav-icon">☕</span> Food & Drink</button>
     <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
     <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
-    <button class="main-nav-btn"        role="tab" id="tab-planner" aria-selected="false" aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> My Weekend <span class="plan-count-badge" id="planCountBadge">0</span></button>
   </div>
 </nav>
 
@@ -167,7 +167,7 @@
 <!-- ══════════════════════════════════════
      EVENTS SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section active" id="section-events" role="tabpanel" aria-labelledby="tab-events">
+<div class="app-section" id="section-events" role="tabpanel" aria-labelledby="tab-events">
 <nav class="tabs-bar">
   <div class="tabs-inner" role="tablist" aria-label="Weekend dates">
     <!-- ✏️ UPDATE tab labels each weekend -->
@@ -1368,7 +1368,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Horoeka+Reserve+Newlands+Wellington" target="_blank">📍 Horoeka Reserve, Newlands</a>
-        <a class="venue-link" href="https://www.wellingtonnz.com/visit/attractions/horoeka-reserve-fairy-forest-trail/" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.wellingtonnz.com/visit/trails/horoeka-reserve-trail" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -1388,7 +1388,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Te+Papa+Museum+55+Cable+St+Wellington" target="_blank">📍 Start: Te Papa, Cable St</a>
-        <a class="venue-link" href="https://www.wellingtonnz.com/visit/walks/city-waterfront-walk/" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.wellingtonnz.com/visit/trails/city-to-sea-walkway" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -1433,7 +1433,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Kaitoke+Regional+Park+Waterworks+Rd+Upper+Hutt" target="_blank">📍 Waterworks Rd, Kaitoke</a>
-        <a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/kaitoke-regional-park/" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.gw.govt.nz/parks/kaitoke-regional-park/" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -1483,7 +1483,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Putangirua+Pinnacles+Cape+Palliser" target="_blank">📍 Putangirua Pinnacles, Cape Palliser</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/aorangi-forest-park/putangirua-pinnacles-scenic-reserve/" target="_blank">Find out more ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wairarapa/places/putangirua-pinnacles-scenic-reserve/" target="_blank">Find out more ↗</a></div>
       </div>
     </div>
 
@@ -1528,7 +1528,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Makara+Walkway+Wellington" target="_blank">📍 Makara, Wellington</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/makara-peak-mountain-bike-park/things-to-do/makara-walkway/" target="_blank">Find out more ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/makara-beach-area/things-to-do/makara-walkway/" target="_blank">Find out more ↗</a></div>
       </div>
     </div>
 
@@ -1663,7 +1663,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Pakuratahi+Forks+Upper+Hutt" target="_blank">📍 Pakuratahi, Upper Hutt</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/remutaka-forest-park/things-to-do/tracks/pakuratahi-forks-walk/" target="_blank">DOC info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.gw.govt.nz/parks/pakuratahi-forest/" target="_blank">DOC info ↗</a></div>
       </div>
     </div>
 
@@ -1708,7 +1708,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Cape+Palliser+Lighthouse+Wairarapa" target="_blank">📍 Cape Palliser Rd, Wairarapa</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.wairarapanz.com/places/cape-palliser" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.wairarapanz.com/cape-palliser" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -1823,7 +1823,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Porirua+Harbour+Walkway+Porirua" target="_blank">📍 Porirua Waterfront</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -1844,7 +1844,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Taupo+Reserve+Porirua" target="_blank">📍 Taupo Reserve, Porirua</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -1869,7 +1869,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Paekakariki+Escarpment+Track+Kapiti" target="_blank">📍 Paekakariki, Kāpiti</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/queen-elizabeth-park/things-to-do/tracks/paekakariki-escarpment-track/" target="_blank">DOC info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.visitkapiti.co.nz/see-and-do/tracks-and-trails/paekakariki-escarpment-track/" target="_blank">DOC info ↗</a></div>
       </div>
     </div>
 
@@ -1890,7 +1890,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Waikanae+Estuary+Nature+Reserve+Kapiti" target="_blank">📍 Waikanae, Kāpiti</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.kapiticoast.govt.nz/our-district/environment/coastline-and-waterways/" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.kapiticoast.govt.nz/environment/coastal-adaptation/" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -1932,7 +1932,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Otaki+Gorge+Kapiti" target="_blank">📍 Otaki Gorge Rd, Otaki</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/tararua-forest-park/things-to-do/tracks/otaki-forks-walks/" target="_blank">DOC info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.doc.govt.nz/parks-and-recreation/places-to-go/wellington-kapiti/places/tararua-forest-park/otaki-forks-area/" target="_blank">DOC info ↗</a></div>
       </div>
     </div>
 
@@ -2005,7 +2005,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Birchville+Bush+Reserve+Upper+Hutt" target="_blank">📍 Birchville, Upper Hutt</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -2073,7 +2073,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Lake+Wairarapa+Wetlands+Martinborough" target="_blank">📍 Lake Ferry Rd, Martinborough area</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.wairarapanz.com/places/lake-wairarapa" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://wairarapanz.com/products/lake-wairarapa-wairarapa-moana" target="_blank">Info ↗</a></div>
       </div>
     </div>
 
@@ -2428,7 +2428,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Titahi+Bay+Beach+Porirua" target="_blank">📍 Titahi Bay, Porirua</a>
-        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -2447,7 +2447,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Spicer+Botanical+Park+Porirua" target="_blank">📍 Spicer Rd, Porirua</a>
-        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -2467,7 +2467,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Elsdon+Park+Porirua" target="_blank">📍 Parumoana St, Elsdon, Porirua</a>
-        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -2485,7 +2485,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Whitby+Reserve+Playground+Porirua" target="_blank">📍 Whitby, Porirua</a>
-        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -2504,7 +2504,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Onepoto+Domain+Porirua+Harbour" target="_blank">📍 Onepoto, Porirua</a>
-        <a class="venue-link" href="https://www.poriruacity.govt.nz/recreation/parks-reserves" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.poriruacity.govt.nz/discover-porirua/parks-and-reserves/our-parks-and-reserves/" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -2648,7 +2648,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Harcourt+Park+Upper+Hutt" target="_blank">📍 Harcourt Park, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds/Harcourt-Park" target="_blank">Find out more ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory/Harcourt-Park" target="_blank">Find out more ↗</a>
       </div>
     </div>
 
@@ -2667,7 +2667,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Maidstone+Park+Upper+Hutt" target="_blank">📍 Maidstone Park, Upper Hutt</a>
-        <div class="venue-links"><a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a></div>
+        <div class="venue-links"><a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a></div>
       </div>
     </div>
     <div class="venue-card" data-region="upper-hutt">
@@ -2685,7 +2685,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Trentham+Memorial+Park+Upper+Hutt" target="_blank">📍 Military Rd, Trentham, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -2703,7 +2703,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Silverstream+Reserve+Upper+Hutt" target="_blank">📍 Silverstream, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -2722,7 +2722,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Totara+Park+Upper+Hutt" target="_blank">📍 Mangaroa, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds/Totara-Park" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory/Totara-Park" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -3226,7 +3226,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Brown+Owl+Reserve+Upper+Hutt" target="_blank">📍 Brown Owl, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -3245,7 +3245,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Te+Marua+Lakes+Upper+Hutt" target="_blank">📍 Te Marua, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -3264,7 +3264,7 @@
       </div>
       <div class="venue-footer">
         <a class="venue-location" href="https://maps.google.com/?q=Pinehaven+Reserve+Upper+Hutt" target="_blank">📍 Pinehaven, Upper Hutt</a>
-        <a class="venue-link" href="https://www.upperhuttcity.com/Explore/Parks-and-playgrounds" target="_blank">Info ↗</a>
+        <a class="venue-link" href="https://www.upperhutt.govt.nz/Community/Sport-and-recreation/Parks-and-reserves-directory" target="_blank">Info ↗</a>
       </div>
     </div>
 
@@ -3381,7 +3381,7 @@
 <!-- ══════════════════════════════════════
      PLANNER SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
+<div class="app-section active" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
 <main>
   <!-- Soft sign-in nudge — only shown when guest and plan has items -->
   <div id="plannerSyncNudge" class="planner-sync-nudge" style="display:none;">
@@ -3403,9 +3403,13 @@
     </div>
 
     <div id="plannerEmpty" class="planner-empty">
-      <div class="planner-empty-icon">🗓</div>
-      <p>Your weekend plan is empty. Browse events, cafés, walks and parks, then tap <strong>+ Plan</strong> on anything that catches your eye.</p>
-      <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">Browse events</button>
+      <div class="planner-empty-icon">📋</div>
+      <p>Your weekend starts here. Browse events, cafés, walks and parks — then tap <strong>+ Plan</strong> to build your day.</p>
+      <div class="planner-empty-actions">
+        <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">🗓 Browse events</button>
+        <button class="planner-cta-btn" onclick="showSection('food', document.getElementById('tab-food'))">☕ Find a café</button>
+        <button class="planner-cta-btn" onclick="showSection('walks', document.getElementById('tab-walks'))">🌿 Find a walk</button>
+      </div>
     </div>
   </div>
 </main>

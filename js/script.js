@@ -365,10 +365,10 @@ let currentRegion = 'all';
   document.addEventListener('DOMContentLoaded', () => {
     const { section, region } = readHash();
 
-    // Restore section
-    if (section !== 'events') {
+    // Restore section (default is now planner)
+    if (section !== 'planner') {
       const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { food: 1, walks: 2, parks: 3, planner: 4 };
+      const map = { events: 1, food: 2, walks: 3, parks: 4 };
       if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
     }
 
