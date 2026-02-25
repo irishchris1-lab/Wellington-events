@@ -922,7 +922,7 @@ let currentRegion = 'all';
     const planRegions = [...new Set(weekendItems.map(i => i.region).filter(Boolean))];
     if (planRegions.length === 0) return '';
     const plannedTitles = new Set(planItems.map(i => i.title));
-    const food = [], walks = [];
+    const food = [], walks = [], parks = [];
     document.querySelectorAll('.venue-card').forEach(card => {
       const region = card.dataset.region;
       if (!region || region === 'all' || !planRegions.includes(region)) return;
@@ -935,20 +935,21 @@ let currentRegion = 'all';
         food.push({ title: t, category, section: 'food' });
       } else if (card.closest('#section-walks') && walks.every(s => s.title !== t)) {
         walks.push({ title: t, category, section: 'walks' });
+      } else if (card.closest('#section-parks') && parks.every(s => s.title !== t)) {
+        parks.push({ title: t, category, section: 'parks' });
       }
     });
-    // Interleave: up to 2 cafés + 2 walks
+    // Interleave: up to 2 cafés + 1 walk + 1 park
     const shown = [];
-    const maxEach = 2;
-    for (let i = 0; i < maxEach; i++) {
-      if (food[i])  shown.push(food[i]);
-      if (walks[i]) shown.push(walks[i]);
-    }
+    if (food[0])  shown.push(food[0]);
+    if (walks[0]) shown.push(walks[0]);
+    if (food[1])  shown.push(food[1]);
+    if (parks[0]) shown.push(parks[0]);
     if (shown.length === 0) return '';
     const regionLabels = { 'wellington': 'Wellington City', 'lower-hutt': 'Lower Hutt', 'upper-hutt': 'Upper Hutt', 'kapiti': 'Kāpiti', 'porirua': 'Porirua', 'wairarapa': 'Wairarapa' };
     const regionNames = planRegions.map(r => regionLabels[r] || r).join(' & ');
-    const icons = { food: '☕', walks: '🌿' };
-    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Cafés & walks near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
+    const icons = { food: '☕', walks: '🌿', parks: '🛝' };
+    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Cafés, walks & parks near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
     shown.forEach(s => {
       // Store title in data-title to avoid quote conflicts in onclick attribute
       html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" data-title="' + escapeHtml(s.title) + '" onclick="addToPlanByTitle(this)">+ Plan</button></div>';
