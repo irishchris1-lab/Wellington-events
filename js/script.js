@@ -865,16 +865,12 @@ let currentRegion = 'all';
   function renderPlan() {
     const container = document.getElementById('plannerTimeline');
     const emptyEl   = document.getElementById('plannerEmpty');
-    const nudge     = document.getElementById('plannerSyncNudge');
 
     const upcomingWeekends = getUpcomingWeekends(4);
     if (!currentPlanWeekend) currentPlanWeekend = upcomingWeekends[0].key;
 
     // Migrate legacy items without weekendStart
     planItems.forEach(item => { if (!item.weekendStart) item.weekendStart = upcomingWeekends[0].key; });
-
-    // Show sign-in nudge for guests who have items
-    if (nudge) nudge.style.display = (!currentUser && planItems.length > 0) ? 'flex' : 'none';
 
     const weekendItems = planItems.filter(i => i.weekendStart === currentPlanWeekend);
 
@@ -1023,6 +1019,22 @@ let currentRegion = 'all';
     const count = planItems.length;
     badge.textContent = count;
     badge.classList.toggle('visible', count > 0);
+  }
+
+  // ── Share intercept — show sign-in prompt for guests ──
+  function handleShareClick() {
+    if (currentUser) {
+      sharePlan();
+    } else {
+      document.getElementById('shareModalOverlay').classList.add('open');
+    }
+  }
+  function closeShareModal() {
+    document.getElementById('shareModalOverlay').classList.remove('open');
+  }
+  function shareWithoutSignIn() {
+    closeShareModal();
+    sharePlan();
   }
 
   // ── Share plan ──

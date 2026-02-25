@@ -432,17 +432,6 @@
   .login-guest-btn { color: #888 !important; border-color: rgba(0,0,0,0.08) !important; }
   .login-guest-btn:hover { border-color: rgba(0,0,0,0.2) !important; color: #555 !important; }
 
-  /* Sync nudge banner */
-  .planner-sync-nudge {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    background: #eaf7f3; border: 1px solid rgba(26,138,110,0.2);
-    border-radius: 10px; padding: 10px 16px; margin: 16px 20px 0; font-size: 13px; color: var(--teal);
-  }
-  .planner-sync-nudge button {
-    background: var(--teal); color: #fff; border: none; border-radius: 6px;
-    padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
-    font-family: 'DM Sans', sans-serif;
-  }
 
   /* ── USER DROPDOWN (logged in) ── */
   .user-dropdown {
