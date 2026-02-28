@@ -248,7 +248,7 @@ let currentRegion = 'all';
 
   function showSectionFromMenu(section) {
     const btns = document.querySelectorAll('.main-nav-btn');
-    const map = { planner: 0, events: 1, markets: 2, food: 3, walks: 4, parks: 5, activities: 6 };
+    const map = { planner: 0, events: 1, activities: 2, markets: 3, food: 4, walks: 5, parks: 6 };
     if (section === 'about') {
       // About has no tab — just show the section directly
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -399,7 +399,7 @@ let currentRegion = 'all';
     // Restore section (default is now planner)
     if (section !== 'planner') {
       const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { events: 1, markets: 2, food: 3, walks: 4, parks: 5, activities: 6 };
+      const map = { events: 1, activities: 2, markets: 3, food: 4, walks: 5, parks: 6 };
       if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
     }
 
