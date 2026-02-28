@@ -67,6 +67,7 @@
       <button class="admin-tab" onclick="switchTab('food', this)">☕ Food & Drink</button>
       <button class="admin-tab" onclick="switchTab('walks', this)">🌿 Walks & Trails</button>
       <button class="admin-tab" onclick="switchTab('parks', this)">🛝 Play Parks</button>
+      <button class="admin-tab" onclick="switchTab('activities', this)">🎯 Activities</button>
     </div>
 
     <!-- Toolbar -->
@@ -184,6 +185,14 @@
         <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
       </div>
       <div class="venue-list" id="parks-list"><p class="venue-status-msg">Loading…</p></div>
+    </div>
+
+    <div id="admin-section-activities" class="hidden venue-section">
+      <div class="venue-section-header">
+        <h2 class="venue-section-title">🎯 Activities</h2>
+        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
+      </div>
+      <div class="venue-list" id="activities-list"><p class="venue-status-msg">Loading…</p></div>
     </div>
 
   </div><!-- /dashboard -->

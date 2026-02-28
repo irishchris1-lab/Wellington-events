@@ -147,6 +147,7 @@
     <button class="main-nav-btn"        role="tab" id="tab-food"   aria-selected="false" aria-controls="section-food"   onclick="showSection('food', this)"><span class="nav-icon">☕</span> Food & Drink</button>
     <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
     <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
+    <button class="main-nav-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities" onclick="showSection('activities', this)"><span class="nav-icon">🎯</span> Activities</button>
   </div>
 </nav>
 
@@ -3737,6 +3738,275 @@
 
 </main>
 </div><!-- /section-parks -->
+
+<!-- ══════════════════════════════════════
+     ACTIVITIES SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-activities" role="tabpanel" aria-labelledby="tab-activities">
+<div class="section-intro">
+  <h2>Activities</h2>
+  <p>The best day-out attractions across the Wellington region — wildlife parks, sanctuaries, museums, workshops and hands-on experiences for the whole whānau.</p>
+</div>
+
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+  <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+  <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
+
+<main>
+
+  <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦁 Wildlife Park</div>
+        <div class="venue-name">Wellington Zoo</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">125+ species</span>
+          <span class="venue-pill">Free Flight aviary</span>
+          <span class="venue-pill">African savannah</span>
+          <span class="venue-pill">Zoo hospital</span>
+        </div>
+        <div class="venue-desc">One of the Southern Hemisphere's finest zoos — home to cheetahs, red pandas, giraffes, meerkats, orangutans and a spectacular Free Flight aviary where native birds swoop overhead. The Sun Bear enclosure and Africa zone are family favourites. An absolute Wellington institution that never gets old, however many times you visit.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Wellington+Zoo" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wellington+Zoo+Newtown" target="_blank">📍 200 Daniell St, Newtown · Daily 9:30am–5pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wellingtonzoo.com" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🦜 Wildlife Sanctuary</div>
+        <div class="venue-name">Zealandia — Te Māra a Tāne</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">World-first urban sanctuary</span>
+          <span class="venue-pill">Free-roaming kiwi</span>
+          <span class="venue-pill">Guided night tours</span>
+          <span class="venue-pill">Kākā · tuatara</span>
+        </div>
+        <div class="venue-desc">The world's first fully fenced urban ecosanctuary — 500 acres of restored native bush just 2km from the CBD. See tuatara up close, spot kākā landing in the trees, and join a twilight kiwi tour for something truly unforgettable. One of the most extraordinary wildlife experiences in New Zealand, right in Wellington's backyard.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Zealandia+Te+Māra+a+Tāne" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Zealandia+Sanctuary+Karori+Wellington" target="_blank">📍 53 Waiapu Rd, Karori · Daily 9am–5pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.visitzealandia.com" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#8A1A1A,#c44040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#8A1A1A">🎬 Workshop Experience</div>
+        <div class="venue-name">Wētā Workshop Unleashed</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">World-famous effects studio</span>
+          <span class="venue-pill">Immersive galleries</span>
+          <span class="venue-pill">Prop workshops</span>
+          <span class="venue-pill">Must-book ahead</span>
+        </div>
+        <div class="venue-desc">Step inside the imagination of the world's most celebrated special effects studio — the team behind Lord of the Rings, Avatar and countless iconic films. Immersive galleries, creature halls and hands-on prop workshops make this one of Wellington's most unique experiences. Older kids and teens go absolutely wild for it.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Weta+Workshop+Unleashed" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Weta+Workshop+Unleashed+Miramar+Wellington" target="_blank">📍 1 Wētā Way, Miramar · Booking required</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wetaworkshop.com/tours/wellington" target="_blank">Book tickets ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🚠 Iconic Ride</div>
+        <div class="venue-name">Wellington Cable Car</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">City icon since 1902</span>
+          <span class="venue-pill">Botanic Garden at top</span>
+          <span class="venue-pill">Stunning city views</span>
+          <span class="venue-pill">Cable Car Museum free</span>
+        </div>
+        <div class="venue-desc">Wellington's most iconic ride — hop on the historic cable car from Lambton Quay up to the stunning Botanic Garden, where the children's playground, Duck Pond walk and spectacular harbour views await. A truly classic Wellington experience combining a ride, a garden, a playground and the best views in the city.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Wellington+Cable+Car" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wellington+Cable+Car+Lambton+Quay" target="_blank">📍 280 Lambton Quay, CBD · Mon–Fri 7am–10pm, Weekends 8:30am–10pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wellingtoncablecar.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🌟 Planetarium</div>
+        <div class="venue-name">Carter Observatory</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">NZ's national observatory</span>
+          <span class="venue-pill">Planetarium shows</span>
+          <span class="venue-pill">Evening stargazing</span>
+          <span class="venue-pill">Botanic Garden location</span>
+        </div>
+        <div class="venue-desc">New Zealand's national observatory, sitting at the top of the Botanic Garden with a magnificent planetarium and interactive space exhibits. Daytime shows are ideal for families; the evening telescope sessions on clear nights are genuinely breathtaking. A brilliant add-on to a cable car + garden morning — or a magical standalone evening out.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Carter+Observatory+Wellington" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Carter+Observatory+Botanic+Garden+Wellington" target="_blank">📍 40 Salamanca Rd, Kelburn (top of Botanic Garden)</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.carterobservatory.org" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">🏛 Museum · Free</div>
+        <div class="venue-name">Wellington Museum</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Free entry</span>
+          <span class="venue-pill">Wellington history</span>
+          <span class="venue-pill">Interactive exhibits</span>
+          <span class="venue-pill">Bond Store heritage building</span>
+        </div>
+        <div class="venue-desc">Housed in Wellington's original Bond Store on the waterfront, this free museum tells the story of the city and its people through compelling interactive exhibits. The Attic — a hands-on discovery space — is fantastic for children. Close to Te Papa, the waterfront and Waitangi Park for an easy full day out. Completely free, always worthwhile.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Wellington+Museum" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Wellington+Museum+Bond+Store+Queens+Wharf" target="_blank">📍 3 Jervois Quay, Queens Wharf · Daily 10am–5pm · Free</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.museumswellington.org.nz/wellington-museum/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Upper Hutt<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦌 Wildlife Reserve</div>
+        <div class="venue-name">Staglands Wildlife Reserve</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Free-roaming animals</span>
+          <span class="venue-pill">Hand-feed deer &amp; wallabies</span>
+          <span class="venue-pill">Native birds</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">An absolute gem in the Upper Hutt hills — a relaxed wildlife reserve where deer, wallabies, kune kune pigs and native birds wander freely among the trees and you can hand-feed them all. The bush setting is genuinely beautiful and the café serves good food. A truly special, unhurried experience that kids remember for years. One of the Wellington region's best-kept family secrets.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Staglands+Wildlife+Reserve" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Staglands+Wildlife+Reserve+Upper+Hutt" target="_blank">📍 2968 Akatarawa Rd, Upper Hutt · Daily 10am–4pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.staglands.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🚂 Miniature Railway</div>
+        <div class="venue-name">Harcourt Park Miniature Railway</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">1.6km rail loop</span>
+          <span class="venue-pill">Weekends &amp; holidays</span>
+          <span class="venue-pill">Rose garden &amp; BBQs</span>
+          <span class="venue-pill">Free park entry</span>
+        </div>
+        <div class="venue-desc">Kids lose their minds for this miniature railway winding through the beautiful Harcourt Park grounds — a 1.6km loop through the rose gardens and along the Hutt River. The park itself is lovely with BBQ areas, playgrounds and open grass. A perfect Upper Hutt family outing combining the railway ride with a picnic and a play. Small fee for the train.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Harcourt+Park+Upper+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Harcourt+Park+Upper+Hutt" target="_blank">📍 Harcourt Park, Upper Hutt · Weekends &amp; public holidays</a>
+        <div class="venue-links"><a class="venue-link" href="https://upperhutt.govt.nz" target="_blank">Info ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Lower Hutt<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="lower-hutt">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#2478A8">⛴ Harbour Ferry</div>
+        <div class="venue-name">Days Bay — East by West Ferry</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Ferry across the harbour</span>
+          <span class="venue-pill">Eastbourne beach</span>
+          <span class="venue-pill">Café at wharf</span>
+          <span class="venue-pill">20-min crossing</span>
+        </div>
+        <div class="venue-desc">One of Wellington's most magical family adventures — a 20-minute ferry ride across the harbour from Queens Wharf to the idyllic beach village of Days Bay in Eastbourne. Kids love the boat trip, the beach is excellent for swimming and there's a fantastic café right on the wharf. The Bay Culture Boutique Motel and the waterfront walk complete a perfect day. Brilliant in summer.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Days+Bay+Wharf+Lower+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Queens+Wharf+Wellington+Ferry" target="_blank">📍 Departs Queens Wharf, Wellington CBD</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.eastbywest.co.nz" target="_blank">Book ferry ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="kapiti">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#5B4A8A">🚗 Car Museum</div>
+        <div class="venue-name">Southward Car Museum</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Southern Hemisphere's largest</span>
+          <span class="venue-pill">400+ vehicles</span>
+          <span class="venue-pill">Al Capone's Cadillac</span>
+          <span class="venue-pill">Motorcycles &amp; caravans</span>
+        </div>
+        <div class="venue-desc">One of the Southern Hemisphere's largest private vehicle collections — over 400 cars, motorcycles, caravans and aircraft in a huge purpose-built museum in Paraparaumu. Highlights include Al Capone's Cadillac, a Bugatti, an RMS Titanic deck chair and row after row of extraordinary machines. Kids who love vehicles will be wide-eyed for hours. A truly unique and surprisingly brilliant Kāpiti Coast day out.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Southward+Car+Museum" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Southward+Car+Museum+Paraparaumu" target="_blank">📍 Otaihanga Rd, Paraparaumu · Daily 9am–4:30pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.southward.org.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wairarapa">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🦤 Wildlife Centre</div>
+        <div class="venue-name">Pukaha National Wildlife Centre</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Manukura — white kiwi</span>
+          <span class="venue-pill">Tuatara &amp; kokako</span>
+          <span class="venue-pill">Old-growth forest</span>
+          <span class="venue-pill">Free-flying native birds</span>
+        </div>
+        <div class="venue-desc">Home of Manukura — NZ's famous white kiwi — and one of the country's most successful wildlife sanctuaries. Walk through genuine old-growth native forest with free-flying kōkako, tuatara in their enclosures and the extraordinary experience of seeing kiwi in the nocturnal house. One of NZ's finest wildlife experiences and well worth the hour's drive to Mount Bruce. Unforgettable for the whole family.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Pukaha+National+Wildlife+Centre" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Pukaha+National+Wildlife+Centre+Mount+Bruce+Wairarapa" target="_blank">📍 85 SH2, Mount Bruce, Wairarapa · Daily 9am–4:30pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.pukaha.org.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div><!-- /section-activities -->
 
 <!-- ══════════════════════════════════════
      ABOUT SECTION

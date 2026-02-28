@@ -353,11 +353,13 @@ let currentRegion = 'all';
     // Food and walk cards use combined region + rating/duration filters
     applyFoodFilters();
     applyWalkFilters();
-    document.querySelectorAll('#section-parks .venue-grid').forEach(grid => {
-      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
-      const label = grid.previousElementSibling;
-      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
-      grid.style.display = hasVisible ? '' : 'none';
+    ['section-parks', 'section-activities'].forEach(sectionId => {
+      document.querySelectorAll('#' + sectionId + ' .venue-grid').forEach(grid => {
+        const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
+        const label = grid.previousElementSibling;
+        if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
+        grid.style.display = hasVisible ? '' : 'none';
+      });
     });
   }
 
@@ -368,7 +370,7 @@ let currentRegion = 'all';
     // Restore section (default is now planner)
     if (section !== 'planner') {
       const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { events: 1, food: 2, walks: 3, parks: 4 };
+      const map = { events: 1, food: 2, walks: 3, parks: 4, activities: 5 };
       if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
     }
 
@@ -580,7 +582,7 @@ let currentRegion = 'all';
     db.collection('venues').onSnapshot(snapshot => {
       const overrides = {};
       snapshot.docs.forEach(doc => { overrides[doc.id] = doc.data(); });
-      ['food', 'walks', 'parks'].forEach(sectionId => {
+      ['food', 'walks', 'parks', 'activities'].forEach(sectionId => {
         document.querySelectorAll(`#section-${sectionId} .venue-card`).forEach(card => {
           const nameEl = card.querySelector('.venue-name');
           if (!nameEl) return;
@@ -801,7 +803,8 @@ let currentRegion = 'all';
       region       = cardEl.dataset.region || '';
       section      = cardEl.closest('#section-food') ? 'food' :
                      cardEl.closest('#section-walks') ? 'walks' :
-                     cardEl.closest('#section-parks') ? 'parks' : 'other';
+                     cardEl.closest('#section-parks') ? 'parks' :
+                     cardEl.closest('#section-activities') ? 'activities' : 'other';
       weekendStart = null;
       day          = 'saturday';
     } else {
