@@ -220,7 +220,7 @@ let currentRegion = 'all';
 
   function showSectionFromMenu(section) {
     const btns = document.querySelectorAll('.main-nav-btn');
-    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4 };
+    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4, activities: 5 };
     if (section === 'about') {
       // About has no tab — just show the section directly
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -1035,7 +1035,7 @@ let currentRegion = 'all';
     const planRegions = [...new Set(weekendItems.map(i => i.region).filter(Boolean))];
     if (planRegions.length === 0) return '';
     const plannedTitles = new Set(planItems.map(i => i.title));
-    const food = [], walks = [], parks = [];
+    const food = [], walks = [], parks = [], activities = [];
     document.querySelectorAll('.venue-card').forEach(card => {
       const region = card.dataset.region;
       if (!region || region === 'all' || !planRegions.includes(region)) return;
@@ -1050,19 +1050,22 @@ let currentRegion = 'all';
         walks.push({ title: t, category, section: 'walks' });
       } else if (card.closest('#section-parks') && parks.every(s => s.title !== t)) {
         parks.push({ title: t, category, section: 'parks' });
+      } else if (card.closest('#section-activities') && activities.every(s => s.title !== t)) {
+        activities.push({ title: t, category, section: 'activities' });
       }
     });
-    // Interleave: up to 2 cafés + 1 walk + 1 park
+    // Interleave: 1 café + 1 activity + 1 walk + 1 park + extra café
     const shown = [];
-    if (food[0])  shown.push(food[0]);
-    if (walks[0]) shown.push(walks[0]);
-    if (food[1])  shown.push(food[1]);
-    if (parks[0]) shown.push(parks[0]);
+    if (food[0])       shown.push(food[0]);
+    if (activities[0]) shown.push(activities[0]);
+    if (walks[0])      shown.push(walks[0]);
+    if (parks[0])      shown.push(parks[0]);
+    if (food[1])       shown.push(food[1]);
     if (shown.length === 0) return '';
     const regionLabels = { 'wellington': 'Wellington City', 'lower-hutt': 'Lower Hutt', 'upper-hutt': 'Upper Hutt', 'kapiti': 'Kāpiti', 'porirua': 'Porirua', 'wairarapa': 'Wairarapa' };
     const regionNames = planRegions.map(r => regionLabels[r] || r).join(' & ');
-    const icons = { food: '☕', walks: '🌿', parks: '🛝' };
-    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Cafés, walks & parks near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
+    const icons = { food: '☕', walks: '🌿', parks: '🛝', activities: '🎯' };
+    let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Things to do near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
     shown.forEach(s => {
       // Store title in data-title to avoid quote conflicts in onclick attribute
       html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" data-title="' + escapeHtml(s.title) + '" onclick="addToPlanByTitle(this)">+ Plan</button></div>';
@@ -1096,7 +1099,7 @@ let currentRegion = 'all';
       <div class="plan-items">`;
 
     items.forEach((item, idx) => {
-      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', other: '📌' }[item.section] || '📌';
+      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', activities: '🎯', other: '📌' }[item.section] || '📌';
       html += `
         <div class="plan-item" draggable="true" data-item-id="${item.id}">
           <div class="plan-item-grip" title="Drag to reorder">⠿</div>
