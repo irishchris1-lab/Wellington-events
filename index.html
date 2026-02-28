@@ -3589,7 +3589,14 @@
   <button class="duration-btn" data-filter-region="lower-hutt" aria-pressed="false" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
   <button class="duration-btn" data-filter-region="upper-hutt" aria-pressed="false" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
   <button class="duration-btn" data-filter-region="kapiti" aria-pressed="false" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti</button>
+  <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#C4522A"></span>Porirua</button>
   <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
+<div class="duration-filter" style="padding-top:6px;padding-bottom:4px">
+  <span class="duration-label">☁️ Weather:</span>
+  <button class="duration-btn active" aria-pressed="true" onclick="filterActivityWeather('all', this)">All</button>
+  <button class="duration-btn" aria-pressed="false" onclick="filterActivityWeather('sunny', this)">☀️ Sunny day</button>
+  <button class="duration-btn" aria-pressed="false" onclick="filterActivityWeather('rainy', this)">🌧 Rainy day</button>
 </div>
 
 <main>
@@ -3597,7 +3604,7 @@
   <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🦁 Wildlife Park</div>
@@ -3617,7 +3624,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#0B5563">🦜 Wildlife Sanctuary</div>
@@ -3637,7 +3644,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#8A1A1A,#c44040)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#8A1A1A">🎬 Workshop Experience</div>
@@ -3657,7 +3664,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="both">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C4522A">🚠 Iconic Ride</div>
@@ -3677,7 +3684,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#5B4A8A">🌟 Planetarium</div>
@@ -3697,7 +3704,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="wellington">
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#2478A8">🏛 Museum · Free</div>
@@ -3717,12 +3724,72 @@
       </div>
     </div>
 
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🪂 Indoor Play</div>
+        <div class="venue-name">Chipmunks Playland & Cafe — Lyall Bay</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Ages 0–11</span>
+          <span class="venue-pill">Toddler zone</span>
+          <span class="venue-pill">Multi-level climbing</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">Large indoor playground with multi-level climbing structures, big slides and a dedicated toddler and baby area — a proper rainy-day saviour for families. An on-site café keeps grown-ups fed and caffeinated while the kids wear themselves out. Close to Wellington Airport, making it handy for Lyall Bay, Miramar and Newtown families. Birthday party packages available.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Chipmunks+Playland+Lyall+Bay" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=113+Tirangi+Road+Lyall+Bay+Wellington" target="_blank">📍 113 Tirangi Rd, Lyall Bay · Daily 9:30am–5pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://chipmunksplayland.co.nz/lyall-bay/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A6A8A,#2a9cbf)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A6A8A">🤸 Trampoline Park</div>
+        <div class="venue-name">Jumperama — Newtown</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">City-based</span>
+          <span class="venue-pill">Jump courts</span>
+          <span class="venue-pill">Foam pit</span>
+          <span class="venue-pill">Basketball hoops</span>
+        </div>
+        <div class="venue-desc">Wellington city's trampoline park — jump courts, foam pit, dodgeball and basketball hoops all under one roof. A brilliant energy-burner for kids on a wet weekend day. Check minimum age and height requirements on the website before visiting with very young tamariki. Weekends get busy, so book ahead or arrive early.</div>
+        <div class="venue-rating"><span class="platform-badge">Popular Wellington venue</span><a class="rating-link" href="https://www.google.com/maps/place/Jumperama+Newtown+Wellington" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=52+Hall+Street+Newtown+Wellington" target="_blank">📍 52 Hall Street, Newtown · Sat–Sun 9am–6pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.jumperama.co.nz/newtown/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏊 Indoor Pool</div>
+        <div class="venue-name">Wellington Regional Aquatic Centre</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">50m lane pool</span>
+          <span class="venue-pill">Heated toddler pool</span>
+          <span class="venue-pill">Hydroslide</span>
+          <span class="venue-pill">Spa & sauna</span>
+        </div>
+        <div class="venue-desc">Wellington's premier public aquatic centre in Kilbirnie — a 50m heated lane pool, a warm toddler pool with water toys and spray play (30–32°C), diving pool, spa, sauna and a café. The toddler pool is one of the best in the region for babies and young children. Toddler Time sessions run regularly — check the timetable online before heading in.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Wellington+Regional+Aquatic+Centre+Kilbirnie" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=63+Kilbirnie+Crescent+Kilbirnie+Wellington" target="_blank">📍 63 Kilbirnie Crescent, Kilbirnie · Daily 6am–9pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://wellington.govt.nz/recreation/facilities-and-centres/swimming-pools/wrac" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Upper Hutt<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-region="upper-hutt">
+    <div class="venue-card" data-region="upper-hutt" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🦌 Wildlife Reserve</div>
@@ -3742,7 +3809,7 @@
       </div>
     </div>
 
-    <div class="venue-card" data-region="upper-hutt">
+    <div class="venue-card" data-region="upper-hutt" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e0ad40)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#C8901A">🚂 Miniature Railway</div>
@@ -3762,12 +3829,52 @@
       </div>
     </div>
 
+    <div class="venue-card" data-region="upper-hutt" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#8A1A1A,#c44040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#8A1A1A">🎳 Adventure Park</div>
+        <div class="venue-name">Daytona Adventure Park — Brewtown</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Multiple activities</span>
+          <span class="venue-pill">Ice skating</span>
+          <span class="venue-pill">10-pin bowling</span>
+          <span class="venue-pill">Trampoline park</span>
+        </div>
+        <div class="venue-desc">Wellington's largest indoor entertainment complex right in the heart of Brewtown — trampoline park, ice skating rink, 5-lane ten-pin bowling, indoor go-karts, archery tag and a food court all under one roof. Bowling and trampolining are the most family-friendly for younger kids; ice skating is brilliant for families. Check minimum age and height rules per activity. Best for kids aged 5+.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Daytona+Adventure+Park+Upper+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=25+Blenheim+Street+Maidstone+Upper+Hutt" target="_blank">📍 25 Blenheim St, Brewtown, Upper Hutt · Sat–Sun 10am–8pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.daytonaadventurepark.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="upper-hutt" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏊 Indoor Pool</div>
+        <div class="venue-name">H2O Xtream — Upper Hutt</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Wave pool</span>
+          <span class="venue-pill">Hydroslides</span>
+          <span class="venue-pill">Junior leisure area</span>
+          <span class="venue-pill">Lane pool</span>
+        </div>
+        <div class="venue-desc">Fully upgraded aquatic centre with something for every age — a wave pool, two hydroslides, a junior leisure area purpose-built for young children, a lane pool and modern changing facilities. An excellent rainy-day option for Upper Hutt and eastern Hutt Valley families. Learn to Swim programmes available for early childhood. Birthday parties and school holiday programmes also on offer.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/H2O+Xtream+Upper+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=830+Fergusson+Drive+Upper+Hutt" target="_blank">📍 830–834 Fergusson Drive, Upper Hutt · Daily 8am–7pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.h2oxtream.com" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Lower Hutt<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-region="lower-hutt">
+    <div class="venue-card" data-region="lower-hutt" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#2478A8,#44a8e0)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#2478A8">⛴ Harbour Ferry</div>
@@ -3787,12 +3894,72 @@
       </div>
     </div>
 
+    <div class="venue-card" data-region="lower-hutt" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🪂 Indoor Play</div>
+        <div class="venue-name">Junglerama — Hutt Park</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Timed sessions</span>
+          <span class="venue-pill">Climbing structures</span>
+          <span class="venue-pill">Toddler area</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">A huge indoor adventure play centre at Hutt Park with multi-level climbing structures, inflatable slides, obstacle courses and ball pits — plus a dedicated, gentler toddler zone for the littlest ones. Sessions are timed so it never gets too crowded. Located right beside Jumperama trampoline park, making it easy to combine both for a full rainy-day out in Lower Hutt.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Junglerama+Lower+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=93+Hutt+Park+Road+Moera+Lower+Hutt" target="_blank">📍 93 Hutt Park Rd, Moera · Daily 9:30am–5:30pm (timed sessions)</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.junglerama.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🎠 Indoor Playland</div>
+        <div class="venue-name">Laughalots Playland — Alicetown</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Heated in winter</span>
+          <span class="venue-pill">Giant climbing frame</span>
+          <span class="venue-pill">Free rides & carousel</span>
+          <span class="venue-pill">Toddler bouncy castle</span>
+        </div>
+        <div class="venue-desc">A climate-controlled indoor play centre (heated in winter, air-conditioned in summer) with a giant multi-level climbing frame, inflatable slide, free amusement rides and carousel, and a dedicated toddler area with its own bouncy castle. Very well priced at around $10.90 per child — one of the best-value family options in Lower Hutt. On-site café for grown-ups. Brilliant for toddlers through primary-age kids.</div>
+        <div class="venue-rating"><span class="platform-badge">Lower Hutt favourite</span><a class="rating-link" href="https://www.google.com/maps/place/Laughalots+Playland+Lower+Hutt" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=499+Hutt+Road+Alicetown+Lower+Hutt" target="_blank">📍 499 Hutt Road, Alicetown · Sat 9:30am–6pm · Sun 10am–4pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.playland.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="lower-hutt" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏊 Indoor Pool</div>
+        <div class="venue-name">Te Ngaengae Pool — Naenae</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Brand new facility</span>
+          <span class="venue-pill">Hydroslides (Zoom Tubes)</span>
+          <span class="venue-pill">50m pool</span>
+          <span class="venue-pill">Leisure pool</span>
+        </div>
+        <div class="venue-desc">Brand-new aquatic centre that opened in late 2024, replacing the former Naenae Olympic Pool — and it's a genuine step up. NZ's first 5 Green Star-rated pool, with a 50m lane pool, two hydroslides (Zoom Tubes open weekends 11am–5:30pm), and a family-friendly leisure pool with flat accessible entry. A strong rainy-day choice for the whole Hutt Valley.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Te+Ngaengae+Pool+Naenae" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=12+Everest+Avenue+Naenae+Lower+Hutt" target="_blank">📍 12 Everest Avenue, Naenae · Sat–Sun 8am–6pm (Zoom Tubes 11am–5:30pm)</a>
+        <div class="venue-links"><a class="venue-link" href="https://pools.huttcity.govt.nz/our-pools/te-ngaengae-pool" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Kāpiti Coast<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-region="kapiti">
+    <div class="venue-card" data-region="kapiti" data-weather="rainy">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#5B4A8A,#8b70d4)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#5B4A8A">🚗 Car Museum</div>
@@ -3812,12 +3979,77 @@
       </div>
     </div>
 
+    <div class="venue-card" data-region="kapiti" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏊 Indoor Pool</div>
+        <div class="venue-name">Coastlands Aquatic Centre — Paraparaumu</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Warm toddler pool</span>
+          <span class="venue-pill">Hydroslide</span>
+          <span class="venue-pill">Water features</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">Kāpiti Coast's community aquatic centre with an excellent heated toddler pool (32°C, 1.2m deep) featuring water features and a waterfall wall — one of the best for babies and under-eights in the region. Plus a 25m lane pool, hydroslide and programmes pool. Swim nappies required for under-4s. Plunge Café on site. An easy Paraparaumu stop on a wet Kāpiti weekend.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Coastlands+Aquatic+Centre+Paraparaumu" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=10+Brett+Ambler+Way+Paraparaumu" target="_blank">📍 10 Brett Ambler Way, Paraparaumu · Daily 8am–8pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.kapiticoastaquatics.co.nz/our-pools/coastlands-aquatic-centre/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Porirua<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="porirua" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#0B5563,#148090)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#0B5563">🏊 Indoor Pool</div>
+        <div class="venue-name">Te Rauparaha Arena Aquatic Centre</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Wave pool</span>
+          <span class="venue-pill">Lazy river</span>
+          <span class="venue-pill">Hydroslide</span>
+          <span class="venue-pill">Toddler pool</span>
+        </div>
+        <div class="venue-desc">Porirua's full-service aquatic centre with a fantastic mix of family-friendly features — a freeform wave/leisure pool, dedicated toddlers' pool, lazy river, hydroslide, spa pools, sauna and steam room. One of the most comprehensive aquatic facilities in the region. Dash Swim School runs lessons for all ages. Children under 5 must have a caregiver within arm's reach. Aqua nappies required for non-toilet-trained children.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Te+Rauparaha+Arena+Porirua" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=17+Parumoana+Street+Porirua" target="_blank">📍 17 Parumoana Street, Porirua · Daily 8am–7pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://terauparaha-arena.co.nz/aquatics/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="porirua" data-weather="rainy">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C4522A,#e87a55)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C4522A">🪂 Indoor Play</div>
+        <div class="venue-name">Chipmunks Playland & Cafe — Tawa</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Ages 0–11</span>
+          <span class="venue-pill">Toddler zone</span>
+          <span class="venue-pill">Multi-level climbing</span>
+          <span class="venue-pill">Café on site</span>
+        </div>
+        <div class="venue-desc">Indoor playground with multi-level climbing structures, slides and a dedicated toddler and baby zone — ideal for families in Tawa, Porirua and the northern suburbs. On-site café with food and coffee. The same great Chipmunks format as Lyall Bay but more convenient for north Wellington families. Birthday party packages available.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Chipmunks+Playland+Tawa" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=24+Main+Road+Tawa+Wellington" target="_blank">📍 24 Main Road, Tawa · Daily 9:30am–5pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://chipmunksplayland.co.nz/tawa/" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="day-label day-sat" style="margin-top:40px"><span class="pip"></span>Wairarapa<span class="line"></span></div>
   <div class="venue-grid">
 
-    <div class="venue-card" data-region="wairarapa">
+    <div class="venue-card" data-region="wairarapa" data-weather="sunny">
       <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
       <div class="venue-card-body">
         <div class="venue-tag" style="color:#1A8A6E">🦤 Wildlife Centre</div>

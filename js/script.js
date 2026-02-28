@@ -94,6 +94,7 @@ let currentRegion = 'all';
   let walkTopRatedOnly = false;
   let foodRatingFilter = 'all';
   let kidFriendlyFilter = 'all';
+  let activityWeatherFilter = 'all';
 
   // ── FOOD: top-rated filter ──
   function filterFood(rating, btn) {
@@ -164,6 +165,33 @@ let currentRegion = 'all';
       card.classList.toggle('hidden', !(regionMatch && durationMatch && ratingMatch));
     });
     document.querySelectorAll('#section-walks .venue-grid').forEach(grid => {
+      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
+      const label = grid.previousElementSibling;
+      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
+      grid.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  // ── ACTIVITIES: weather filter ──
+  function filterActivityWeather(weather, btn) {
+    activityWeatherFilter = weather;
+    document.querySelectorAll('.duration-filter button[onclick*="filterActivityWeather"]').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    applyActivityFilters();
+  }
+
+  function applyActivityFilters() {
+    document.querySelectorAll('#section-activities .venue-card').forEach(card => {
+      const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
+      const w = card.dataset.weather;
+      const weatherMatch = activityWeatherFilter === 'all' || w === activityWeatherFilter || w === 'both';
+      card.classList.toggle('hidden', !(regionMatch && weatherMatch));
+    });
+    document.querySelectorAll('#section-activities .venue-grid').forEach(grid => {
       const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
       const label = grid.previousElementSibling;
       if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
@@ -353,7 +381,8 @@ let currentRegion = 'all';
     // Food and walk cards use combined region + rating/duration filters
     applyFoodFilters();
     applyWalkFilters();
-    ['section-parks', 'section-activities', 'section-markets'].forEach(sectionId => {
+    applyActivityFilters();
+    ['section-parks', 'section-markets'].forEach(sectionId => {
       document.querySelectorAll('#' + sectionId + ' .venue-grid').forEach(grid => {
         const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
         const label = grid.previousElementSibling;
@@ -619,9 +648,10 @@ let currentRegion = 'all';
           }
         });
       });
-      // Re-apply region/walk/food filters now that data may have changed
+      // Re-apply region/walk/food/activity filters now that data may have changed
       applyFoodFilters();
       applyWalkFilters();
+      applyActivityFilters();
     }, err => console.warn('Venue overrides error:', err));
   }
 
