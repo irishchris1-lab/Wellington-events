@@ -167,6 +167,7 @@
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('walks'); closeMenu()"><span>🌿</span> Walks & Trails</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('activities'); closeMenu()"><span>🎯</span> Activities</button>
+    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('markets'); closeMenu()"><span>🛒</span> Markets</button>
     <button class="dropdown-nav-btn" onclick="showSectionFromMenu('about'); closeMenu()"><span>👋</span> About</button>
     <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none" onclick="handleInstallClick(); closeMenu()"><span>📲</span> Add to Home Screen</button>
   </nav>
@@ -191,6 +192,7 @@
     <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
     <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
     <button class="main-nav-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities" onclick="showSection('activities', this)"><span class="nav-icon">🎯</span> Activities</button>
+    <button class="main-nav-btn"        role="tab" id="tab-markets"    aria-selected="false" aria-controls="section-markets"    onclick="showSection('markets', this)"><span class="nav-icon">🛒</span> Markets</button>
   </div>
 </nav>
 
@@ -303,53 +305,7 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🛍 Market</div>
-            <div class="card-title">Wellington Underground Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free entry</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 10:00 am – 4:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Frank Kitts Underground Carpark, Jervois Quay</div>
-        </div>
-        <div class="card-desc">Wellington's beloved weekly market — locally made gifts, street food, live music and handcrafted goods. Free to browse; budget for the excellent food stalls.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wellingtonundergroundmarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-outdoor"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#1A8A6E">🥦 Farmers Market</div>
-            <div class="card-title">Hill Street Farmers Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 8:30 am – 12:30 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>St Paul's Cathedral carpark, Hill Street, Thorndon</div>
-        </div>
-        <div class="card-desc">Fresh local produce, organic goods, natural skincare, coffee, sourdough and pastries. A great Saturday morning ritual for families — pick up the weekend's kai.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wellingtonnz.com/visit/see-and-do/hill-street-farmers-market" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -382,30 +338,6 @@
   <div class="day-label day-sun"><span class="pip"></span>Sunday 1 March<span class="line"></span></div>
   <div class="events-grid">
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🌊 Market</div>
-            <div class="card-title">Harbourside Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-            <span class="badge badge-hot">🔥 Pick</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday 7:30 am – 2:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Cable Street, beside Te Papa</div>
-        </div>
-        <div class="card-desc">Up to 25,000 visitors each Sunday — fresh fruit and veg, 30+ food trucks, live music and a beautiful waterfront setting. Wellington's best Sunday morning tradition.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.harboursidemarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -432,29 +364,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-culture"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🍳 City Market</div>
-            <div class="card-title">City Market — Atrium on the Waterfront</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday 8:30 am – 12:30 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Chaffers Dock Building, 1 Herd St, Waterfront</div>
-        </div>
-        <div class="card-desc">Local food and beverage producers, chef demonstrations and a relaxed waterfront atmosphere. Pick up artisan cheese, local wine and freshly baked bread.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.citymarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -550,29 +459,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🛍 Market</div>
-            <div class="card-title">Wellington Underground Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free entry</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 10:00 am – 4:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Frank Kitts Underground Carpark, Jervois Quay</div>
-        </div>
-        <div class="card-desc">Wellington's beloved weekly market — locally made gifts, street food, live music and handcrafted goods. Free to browse; budget for the excellent food stalls.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wellingtonundergroundmarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -604,29 +490,6 @@
   <div class="day-label day-sun"><span class="pip"></span>Sunday 8 March<span class="line"></span></div>
   <div class="events-grid">
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🌊 Market</div>
-            <div class="card-title">Harbourside Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday 7:30 am – 2:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Cable Street, beside Te Papa</div>
-        </div>
-        <div class="card-desc">Up to 25,000 visitors each Sunday — fresh produce, 30+ food trucks and live music on the waterfront. Wellington's best Sunday morning tradition.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.harboursidemarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -745,29 +608,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🛍 Market</div>
-            <div class="card-title">Wellington Underground Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free entry</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 10:00 am – 4:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Frank Kitts Underground Carpark, Jervois Quay</div>
-        </div>
-        <div class="card-desc">Wellington's beloved weekly market — locally made gifts, street food, live music and handcrafted goods. Free to browse; budget for the excellent food stalls.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wellingtonundergroundmarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="wellington">
       <div class="card-strip strip-culture"></div>
@@ -872,29 +712,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🌊 Market</div>
-            <div class="card-title">Harbourside Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday 7:30 am – 2:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>Cable Street, beside Te Papa</div>
-        </div>
-        <div class="card-desc">Up to 25,000 visitors each Sunday — fresh produce, 30+ food trucks and live music on the waterfront. Wellington's best Sunday morning tradition.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.harboursidemarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
   </div>
 </div><!-- /w3 -->
@@ -940,29 +757,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wellington">
-      <div class="card-strip strip-market"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#C8901A">🛍 Market</div>
-            <div class="card-title">Wellington Underground Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free entry</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Saturday 10:00 am – 3:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>San Fran, Cuba St, Wellington</div>
-        </div>
-        <div class="card-desc">Wellington's coolest indoor market — local makers, vintage finds, street food and live music under one roof. A great rainy-day option that the whole family can enjoy. Free to browse; budget for delicious food.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wellingtonundergroundmarket.co.nz" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="lower-hutt">
       <div class="card-strip strip-outdoor"></div>
@@ -1092,29 +886,6 @@
       </div>
     </div>
 
-    <div class="card" data-region="wairarapa">
-      <div class="card-strip strip-outdoor"></div>
-      <div class="card-body">
-        <div class="card-top">
-          <div>
-            <div class="card-cat" style="color:#7A3B8A">🚗 Day Trip</div>
-            <div class="card-title">Martinborough Village & Farmers Market</div>
-          </div>
-          <div class="card-badges">
-            <span class="badge badge-free">Free</span>
-            <span class="badge badge-family">Family</span>
-          </div>
-        </div>
-        <div class="card-meta">
-          <div class="meta-row"><span class="meta-icon">🕐</span>Sunday market 9:30 am – 1:00 pm</div>
-          <div class="meta-row"><span class="meta-icon">📍</span>The Square, Martinborough</div>
-        </div>
-        <div class="card-desc">One of the best Sunday day trips from Wellington — a charming village square, a great farmers market with local produce and street food, and the renowned Martinborough wine trail on the doorstep. An hour over the hill and well worth the drive.</div>
-      </div>
-      <div class="card-footer">
-        <a class="card-link" href="https://www.wairarapanz.com/martinborough" target="_blank">Find out more ↗</a>
-      </div>
-    </div>
 
     <div class="card" data-region="upper-hutt">
       <div class="card-strip strip-outdoor"></div>
@@ -4070,6 +3841,137 @@
 
 </main>
 </div><!-- /section-activities -->
+
+<!-- ══════════════════════════════════════
+     MARKETS SECTION
+═══════════════════════════════════════ -->
+<div class="app-section" id="section-markets" role="tabpanel" aria-labelledby="tab-markets">
+<div class="section-intro">
+  <h2>Markets</h2>
+  <p>Wellington's best weekly markets — fresh produce, street food, local makers and live music, rain or shine.</p>
+</div>
+
+<div class="duration-filter" style="padding-bottom:4px">
+  <span class="duration-label">📍 Area:</span>
+  <button class="duration-btn active" data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">All regions</button>
+  <button class="duration-btn" data-filter-region="wellington" aria-pressed="false" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington</button>
+  <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+</div>
+
+<main>
+
+  <div class="day-label day-sat" style="margin-top:0"><span class="pip"></span>Wellington City<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e6b040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🌊 Waterfront Market</div>
+        <div class="venue-name">Harbourside Market</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Every Sunday</span>
+          <span class="venue-pill">25,000+ visitors</span>
+          <span class="venue-pill">30+ food trucks</span>
+          <span class="venue-pill">Free entry</span>
+        </div>
+        <div class="venue-desc">Wellington's most beloved Sunday tradition — up to 25,000 visitors each week browsing fresh fruit and veg, 30+ food trucks, live music and local artisan stalls on the beautiful waterfront beside Te Papa. Arrive early for the best produce and a peaceful wander before the crowds build. An essential Wellington experience for the whole family.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/Harbourside+Market+Wellington" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Harbourside+Market+Cable+Street+Wellington" target="_blank">📍 Cable Street, beside Te Papa · Sundays 7:30am–2pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.harboursidemarket.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e6b040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🛍 Indoor Market</div>
+        <div class="venue-name">Wellington Underground Market</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Every Saturday</span>
+          <span class="venue-pill">Local makers</span>
+          <span class="venue-pill">Street food</span>
+          <span class="venue-pill">Live music</span>
+        </div>
+        <div class="venue-desc">Wellington's beloved weekly market returns every Saturday — locally made gifts, handcrafted jewellery, vintage finds, street food and live music all under one roof. Usually held at Frank Kitts Underground Carpark (10am–4pm); occasionally moves to San Fran on Cuba St. Free to browse — budget for the excellent food stalls. A great rainy-day outing the whole family can enjoy.</div>
+        <div class="venue-rating"><span class="platform-badge">Wellington institution</span><a class="rating-link" href="https://www.google.com/maps/place/Wellington+Underground+Market" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Frank+Kitts+Underground+Carpark+Jervois+Quay+Wellington" target="_blank">📍 Frank Kitts Underground Carpark, Jervois Quay · Saturdays 10am–4pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wellingtonundergroundmarket.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#1A8A6E,#2dc49a)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#1A8A6E">🥦 Farmers Market</div>
+        <div class="venue-name">Hill Street Farmers Market</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Every Saturday</span>
+          <span class="venue-pill">Organic produce</span>
+          <span class="venue-pill">Artisan bakers</span>
+          <span class="venue-pill">Free entry</span>
+        </div>
+        <div class="venue-desc">Fresh local produce, organic goods, natural skincare, coffee, sourdough and pastries in the carpark of St Paul's Cathedral in Thorndon. A wonderful Saturday morning ritual for families — pick up the weekend's kai and grab a coffee while the kids run around. One of Wellington's most community-spirited markets.</div>
+        <div class="venue-rating"><span class="platform-badge">Community favourite</span><a class="rating-link" href="https://www.google.com/maps/place/Hill+Street+Farmers+Market+Wellington" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=St+Pauls+Cathedral+Hill+Street+Thorndon+Wellington" target="_blank">📍 St Paul's Cathedral carpark, Hill Street, Thorndon · Saturdays 8:30am–12:30pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wellingtonnz.com/visit/see-and-do/hill-street-farmers-market" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+    <div class="venue-card" data-region="wellington">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#C8901A,#e6b040)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#C8901A">🍳 Food Market</div>
+        <div class="venue-name">City Market — Atrium on the Waterfront</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Every Sunday</span>
+          <span class="venue-pill">Artisan producers</span>
+          <span class="venue-pill">Chef demos</span>
+          <span class="venue-pill">Free entry</span>
+        </div>
+        <div class="venue-desc">Local food and beverage producers, chef demonstrations and a relaxed waterfront atmosphere in the beautiful Chaffers Dock atrium. Pick up artisan cheese, local wine, freshly baked bread and specialty coffee. A more intimate market experience than Harbourside — perfect for foodies who want to meet the makers.</div>
+        <div class="venue-rating"><span class="platform-badge">Highly rated on Google</span><a class="rating-link" href="https://www.google.com/maps/place/City+Market+Wellington" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Chaffers+Dock+1+Herd+Street+Wellington" target="_blank">📍 Chaffers Dock Building, 1 Herd St, Waterfront · Sundays 8:30am–12:30pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.citymarket.co.nz" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="day-label day-sat"><span class="pip"></span>Wairarapa<span class="line"></span></div>
+  <div class="venue-grid">
+
+    <div class="venue-card" data-region="wairarapa">
+      <div class="venue-card-strip" style="background:linear-gradient(90deg,#7A3B8A,#b06acc)"></div>
+      <div class="venue-card-body">
+        <div class="venue-tag" style="color:#7A3B8A">🥕 Farmers Market</div>
+        <div class="venue-name">Martinborough Village Farmers Market</div>
+        <div class="venue-pills">
+          <span class="venue-pill highlight">Every Sunday</span>
+          <span class="venue-pill">Local produce</span>
+          <span class="venue-pill">Street food</span>
+          <span class="venue-pill">Free entry</span>
+        </div>
+        <div class="venue-desc">One of the best Sunday day trips from Wellington — a charming village square filled with local produce, street food stalls and artisan goods, with the renowned Martinborough wine trail right on the doorstep. An hour over the Remutaka Hill and well worth the drive. Combine with a bike ride between cellar doors for the perfect Wairarapa Sunday.</div>
+        <div class="venue-rating"><span class="platform-badge">Wairarapa favourite</span><a class="rating-link" href="https://www.google.com/maps/place/Martinborough+Square" target="_blank">Read latest reviews ↗</a></div>
+      </div>
+      <div class="venue-footer">
+        <a class="venue-location" href="https://maps.google.com/?q=Martinborough+Square+Martinborough+Wairarapa" target="_blank">📍 The Square, Martinborough · Sundays 9:30am–1pm</a>
+        <div class="venue-links"><a class="venue-link" href="https://www.wairarapanz.com/martinborough" target="_blank">Website ↗</a></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div><!-- /section-markets -->
 
 <!-- ══════════════════════════════════════
      ABOUT SECTION

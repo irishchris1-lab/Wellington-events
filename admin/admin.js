@@ -727,7 +727,7 @@ async function saveAbout() {
 // Architecture: admin fetches index.html, parses venue cards, stores overrides
 // in Firestore `venues` collection. Main site applies overrides on load.
 
-let venueData = { food: null, walks: null, parks: null, activities: null };
+let venueData = { food: null, walks: null, parks: null, activities: null, markets: null };
 
 function switchTab(tab, btn) {
   document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('active', b === btn));
@@ -736,7 +736,7 @@ function switchTab(tab, btn) {
     el.style.display = tab === 'events' ? '' : 'none';
   });
   // Show/hide venue sections
-  ['food', 'walks', 'parks', 'activities'].forEach(s => {
+  ['food', 'walks', 'parks', 'activities', 'markets'].forEach(s => {
     const el = document.getElementById('admin-section-' + s);
     if (el) el.classList.toggle('hidden', s !== tab);
   });

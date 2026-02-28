@@ -220,7 +220,7 @@ let currentRegion = 'all';
 
   function showSectionFromMenu(section) {
     const btns = document.querySelectorAll('.main-nav-btn');
-    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4, activities: 5 };
+    const map = { events: 0, food: 1, walks: 2, parks: 3, planner: 4, activities: 5, markets: 6 };
     if (section === 'about') {
       // About has no tab — just show the section directly
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -353,7 +353,7 @@ let currentRegion = 'all';
     // Food and walk cards use combined region + rating/duration filters
     applyFoodFilters();
     applyWalkFilters();
-    ['section-parks', 'section-activities'].forEach(sectionId => {
+    ['section-parks', 'section-activities', 'section-markets'].forEach(sectionId => {
       document.querySelectorAll('#' + sectionId + ' .venue-grid').forEach(grid => {
         const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
         const label = grid.previousElementSibling;
@@ -370,7 +370,7 @@ let currentRegion = 'all';
     // Restore section (default is now planner)
     if (section !== 'planner') {
       const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { events: 1, food: 2, walks: 3, parks: 4, activities: 5 };
+      const map = { events: 1, food: 2, walks: 3, parks: 4, activities: 5, markets: 6 };
       if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
     }
 
@@ -582,7 +582,7 @@ let currentRegion = 'all';
     db.collection('venues').onSnapshot(snapshot => {
       const overrides = {};
       snapshot.docs.forEach(doc => { overrides[doc.id] = doc.data(); });
-      ['food', 'walks', 'parks', 'activities'].forEach(sectionId => {
+      ['food', 'walks', 'parks', 'activities', 'markets'].forEach(sectionId => {
         document.querySelectorAll(`#section-${sectionId} .venue-card`).forEach(card => {
           const nameEl = card.querySelector('.venue-name');
           if (!nameEl) return;
@@ -804,7 +804,8 @@ let currentRegion = 'all';
       section      = cardEl.closest('#section-food') ? 'food' :
                      cardEl.closest('#section-walks') ? 'walks' :
                      cardEl.closest('#section-parks') ? 'parks' :
-                     cardEl.closest('#section-activities') ? 'activities' : 'other';
+                     cardEl.closest('#section-activities') ? 'activities' :
+                     cardEl.closest('#section-markets') ? 'markets' : 'other';
       weekendStart = null;
       day          = 'saturday';
     } else {
@@ -1035,7 +1036,7 @@ let currentRegion = 'all';
     const planRegions = [...new Set(weekendItems.map(i => i.region).filter(Boolean))];
     if (planRegions.length === 0) return '';
     const plannedTitles = new Set(planItems.map(i => i.title));
-    const food = [], walks = [], parks = [], activities = [];
+    const food = [], walks = [], parks = [], activities = [], markets = [];
     document.querySelectorAll('.venue-card').forEach(card => {
       const region = card.dataset.region;
       if (!region || region === 'all' || !planRegions.includes(region)) return;
@@ -1052,19 +1053,21 @@ let currentRegion = 'all';
         parks.push({ title: t, category, section: 'parks' });
       } else if (card.closest('#section-activities') && activities.every(s => s.title !== t)) {
         activities.push({ title: t, category, section: 'activities' });
+      } else if (card.closest('#section-markets') && markets.every(s => s.title !== t)) {
+        markets.push({ title: t, category, section: 'markets' });
       }
     });
-    // Interleave: 1 café + 1 activity + 1 walk + 1 park + extra café
+    // Interleave: 1 café + 1 activity + 1 walk + 1 park + 1 market + extra café
     const shown = [];
     if (food[0])       shown.push(food[0]);
     if (activities[0]) shown.push(activities[0]);
     if (walks[0])      shown.push(walks[0]);
     if (parks[0])      shown.push(parks[0]);
-    if (food[1])       shown.push(food[1]);
+    if (markets[0])    shown.push(markets[0]);
     if (shown.length === 0) return '';
     const regionLabels = { 'wellington': 'Wellington City', 'lower-hutt': 'Lower Hutt', 'upper-hutt': 'Upper Hutt', 'kapiti': 'Kāpiti', 'porirua': 'Porirua', 'wairarapa': 'Wairarapa' };
     const regionNames = planRegions.map(r => regionLabels[r] || r).join(' & ');
-    const icons = { food: '☕', walks: '🌿', parks: '🛝', activities: '🎯' };
+    const icons = { food: '☕', walks: '🌿', parks: '🛝', activities: '🎯', markets: '🛒' };
     let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Things to do near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
     shown.forEach(s => {
       // Store title in data-title to avoid quote conflicts in onclick attribute
@@ -1099,7 +1102,7 @@ let currentRegion = 'all';
       <div class="plan-items">`;
 
     items.forEach((item, idx) => {
-      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', activities: '🎯', other: '📌' }[item.section] || '📌';
+      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', activities: '🎯', markets: '🛒', other: '📌' }[item.section] || '📌';
       html += `
         <div class="plan-item" draggable="true" data-item-id="${item.id}">
           <div class="plan-item-grip" title="Drag to reorder">⠿</div>
