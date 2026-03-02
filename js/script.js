@@ -97,6 +97,27 @@ let currentRegion = 'all';
   let activityWeatherFilter = 'all';
   const loadedSections = new Set(['events', 'planner']);
 
+  // ── imgix ──
+  // Set IMGIX_HOST once your subdomain is configured (e.g. 'wow.imgix.net').
+  // Leave empty to serve images directly (works fine; just no auto-WebP or resizing).
+  const IMGIX_HOST = '';
+
+  function imgixSrc(url, w) {
+    if (!url) return '';
+    if (!IMGIX_HOST) return url;
+    return `https://${IMGIX_HOST}/${encodeURIComponent(url)}?auto=format,compress&fit=crop&ar=16:9&w=${w}`;
+  }
+
+  function cardImgHTML(url, alt) {
+    if (!url) return '';
+    const esc = url.replace(/"/g, '&quot;');
+    const altEsc = (alt || '').replace(/"/g, '&quot;');
+    const srcset = IMGIX_HOST
+      ? ` srcset="${imgixSrc(url,400)} 400w,${imgixSrc(url,700)} 700w,${imgixSrc(url,1000)} 1000w" sizes="(max-width:640px) calc(100vw - 32px), 400px"`
+      : '';
+    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcset} loading="lazy" decoding="async" alt="${altEsc}"></div>`;
+  }
+
   // ── FOOD: top-rated filter ──
   function filterFood(rating, btn) {
     foodRatingFilter = rating;
@@ -508,8 +529,9 @@ let currentRegion = 'all';
       `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
     return `
-      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}">
+      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}>
         <div class="card-strip ${tm.strip}"></div>
+        ${cardImgHTML(ev.img, ev.title)}
         <div class="card-body">
           <div class="card-top">
             <div>

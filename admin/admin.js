@@ -101,6 +101,7 @@ function openFromUrlParams() {
     set('fVenue',   p.get('venue'));
     set('fTime',    p.get('time'));
     set('fUrl',     p.get('url'));
+    set('fImg',     p.get('img'));
     // Always open as draft when coming from a link
     const activeEl = document.getElementById('fActive');
     if (activeEl) activeEl.checked = false;

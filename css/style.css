@@ -249,6 +249,24 @@
   .card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(11,85,99,0.12); }
   .card.card-featured { background: #fffbf2; border: 2px solid var(--gold); }
   .card-strip { height: 4px; flex-shrink: 0; }
+
+  /* ── Card hero image ── */
+  .card-img-wrap {
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #eceae6;
+    flex-shrink: 0;
+  }
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+  .card:hover .card-img { transform: scale(1.04); }
+  .card:not([data-img]) .card-img-wrap,
+  .card[data-img=""] .card-img-wrap { display: none; }
   .card-body { padding: 16px 18px 12px; flex: 1; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
   .card-cat { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 5px; }
