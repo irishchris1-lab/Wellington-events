@@ -267,6 +267,9 @@
   .card:hover .card-img { transform: scale(1.04); }
   .card:not([data-img]) .card-img-wrap,
   .card[data-img=""] .card-img-wrap { display: none; }
+  .venue-card:hover .card-img { transform: scale(1.04); }
+  .venue-card:not([data-img]) .card-img-wrap,
+  .venue-card[data-img=""] .card-img-wrap { display: none; }
   .card-body { padding: 16px 18px 12px; flex: 1; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
   .card-cat { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 5px; }

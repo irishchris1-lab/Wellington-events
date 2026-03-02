@@ -788,6 +788,7 @@ async function loadVenueSection(section) {
         linkLabel:   ov.linkLabel   ?? (card.querySelector('.rating-link')?.textContent || '').trim(),
         region:      ov.region      ?? (card.dataset.region || 'wellington'),
         duration:    ov.duration    ?? (card.dataset.duration || ''),
+        img:         ov.img         ?? (card.dataset.img || ''),
         section,
         hasOverride: !!overrides[slug],
       };
@@ -882,6 +883,10 @@ function buildVenueForm(section, v, i) {
       <label class="form-label">Duration</label>
       <select class="form-select" id="vf-duration-${section}-${i}">${durOpts}</select>
     </div>` : ''}
+    <div class="form-row">
+      <label class="form-label">Image URL</label>
+      <input class="form-input" id="vf-img-${section}-${i}" type="url" value="${escAttr(v.img || '')}" placeholder="https://upload.wikimedia.org/…">
+    </div>
     <div class="form-actions">
       <button type="button" class="btn-secondary" onclick="toggleVenueEdit('${section}',${i})">Cancel</button>
       <button type="button" class="btn-primary" onclick="saveVenueEdit('${section}',${i},'${v.slug}')">Save changes</button>
@@ -908,6 +913,7 @@ async function saveVenueEdit(section, idx, slug) {
     linkUrl:     val(fid('linkUrl')),
     linkLabel:   val(fid('linkLabel')),
     region:      val(fid('region')),
+    img:         val(fid('img')),
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
   if (section === 'walks') data.duration = val(fid('duration'));

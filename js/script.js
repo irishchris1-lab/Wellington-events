@@ -685,6 +685,22 @@ let currentRegion = 'all';
             if (ov.linkUrl)   linkEl.href        = ov.linkUrl;
             if (ov.linkLabel) linkEl.textContent = ov.linkLabel;
           }
+
+          // Image
+          if (ov.img !== undefined) {
+            card.dataset.img = ov.img;
+            const wrap = card.querySelector('.card-img-wrap');
+            if (ov.img) {
+              const html = cardImgHTML(ov.img, ov.name || nameEl.textContent.trim());
+              if (wrap) wrap.outerHTML = html;
+              else {
+                const strip = card.querySelector('.venue-card-strip');
+                if (strip) strip.insertAdjacentHTML('afterend', html);
+              }
+            } else if (wrap) {
+              wrap.remove();
+            }
+          }
         });
       });
       // Re-apply region/walk/food/activity filters now that data may have changed
