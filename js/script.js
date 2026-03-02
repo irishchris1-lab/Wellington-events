@@ -529,7 +529,7 @@ let currentRegion = 'all';
       `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
     return `
-      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}>
+      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}>
         <div class="card-strip ${tm.strip}"></div>
         ${cardImgHTML(ev.img, ev.title)}
         <div class="card-body">
@@ -544,6 +544,80 @@ let currentRegion = 'all';
         </div>
         <div class="card-footer">${footer}</div>
       </div>`;
+  }
+
+  function buildHighlightsRow() {
+    const track   = document.getElementById('highlightsTrack');
+    const section = document.getElementById('highlights-section');
+    if (!track || !section) return;
+
+    // First non-past weekend panel = "this weekend"
+    const panel = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .find(p => p.style.display !== 'none')
+      || document.querySelector('.weekend-panel');
+    if (!panel) { section.style.display = 'none'; return; }
+
+    const picks = [...panel.querySelectorAll('.card')]
+      .filter(c => c.querySelector('.badge-hot') || c.dataset.pick === '1');
+
+    track.innerHTML = '';
+    if (!picks.length) { section.style.display = 'none'; return; }
+    section.style.display = '';
+
+    picks.forEach(card => {
+      const title     = card.querySelector('.card-title')?.textContent.trim() || '';
+      const img       = card.dataset.img || '';
+      const metaRows  = [...card.querySelectorAll('.meta-row')];
+      const timeText  = metaRows[0]?.textContent.trim() || '';
+      const venueText = metaRows[1]?.textContent.trim() || '';
+      const el        = document.createElement('div');
+      el.className    = 'highlight-card';
+      el.innerHTML    = `
+        ${img ? `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" loading="lazy" alt="${escHtml(title)}"></div>` : '<div class="highlight-card-img"></div>'}
+        <div class="highlight-card-body">
+          <div class="highlight-card-title">${escHtml(title)}</div>
+          <div class="highlight-card-meta">
+            ${timeText  ? `<span>${escHtml(timeText)}</span>`  : ''}
+            ${venueText ? `<span>${escHtml(venueText)}</span>` : ''}
+          </div>
+        </div>`;
+      el.onclick = () => scrollToPickCard(card);
+      track.appendChild(el);
+    });
+  }
+
+  function scrollToPickCard(card) {
+    const eventsSection = document.getElementById('section-events');
+    // Switch to Events section without the scroll-to-top that showSection() applies
+    if (!eventsSection.classList.contains('active')) {
+      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.main-nav-btn').forEach(b => {
+        b.classList.remove('active'); b.setAttribute('aria-selected', 'false');
+      });
+      eventsSection.classList.add('active');
+      const tabBtn = document.getElementById('tab-events');
+      if (tabBtn) { tabBtn.classList.add('active'); tabBtn.setAttribute('aria-selected', 'true'); }
+      document.querySelector('.tabs-bar').style.display = '';
+      applyFilter(currentRegion);
+      updateHash('events', currentRegion);
+    }
+    // Ensure card's weekend panel is active
+    const cardPanel = card.closest('.weekend-panel');
+    if (cardPanel && !cardPanel.classList.contains('active')) {
+      document.querySelectorAll('.weekend-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active'); b.setAttribute('aria-selected', 'false');
+      });
+      cardPanel.classList.add('active');
+      const panelBtn = document.getElementById('wtab-' + cardPanel.id);
+      if (panelBtn) { panelBtn.classList.add('active'); panelBtn.setAttribute('aria-selected', 'true'); }
+      applyFilter(currentRegion);
+    }
+    requestAnimationFrame(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('card-flash');
+      card.addEventListener('animationend', () => card.classList.remove('card-flash'), { once: true });
+    });
   }
 
   function escHtml(str) {
@@ -612,6 +686,7 @@ let currentRegion = 'all';
         snapshot.docs.forEach(doc => injectEventCard({ id: doc.id, ...doc.data() }));
         applyFilter(currentRegion);
         updateAddButtons();
+        buildHighlightsRow();
       }, err => console.warn('Firestore events error:', err));
   }
 
@@ -1587,6 +1662,7 @@ let currentRegion = 'all';
   document.addEventListener('DOMContentLoaded', () => {
     generateRemainingWeekends();
     hidePastWeekendTabs();
+    buildHighlightsRow();
     injectAddButtons();
     // If Firebase is not configured, load from localStorage immediately
     // If Firebase IS configured, onAuthStateChanged handles it after sign-in

@@ -148,6 +148,50 @@
   .dot { width: 7px; height: 7px; border-radius: 50%; background: #4fc58f; animation: pulse 2.5s infinite; }
   .header-wave { display: block; width: 100%; height: 44px; }
 
+  /* ── Weekend Highlights row ── */
+  .highlights-section { background: #F7F2EB; padding: 0 0 24px; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .highlights-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 14px; }
+  .highlights-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); }
+  .highlights-see-all { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; font-family: inherit; }
+  .highlights-track {
+    display: flex; gap: 12px; overflow-x: auto;
+    padding: 0 20px 8px; scroll-snap-type: x mandatory;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .highlights-track::-webkit-scrollbar { display: none; }
+  .highlight-card {
+    flex-shrink: 0; width: 160px; border-radius: 8px; background: #fff;
+    overflow: hidden; border: 1px solid rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer;
+    scroll-snap-align: start; transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .highlight-card:active { transform: scale(0.97); }
+  @media (hover: hover) {
+    .highlight-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11,85,99,0.1); }
+  }
+  .highlight-card-img { aspect-ratio: 16/9; overflow: hidden; background: #e8e4dc; }
+  .highlight-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .highlight-card-body { padding: 10px 11px 12px; }
+  .highlight-card-title {
+    font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700;
+    color: var(--teal); line-height: 1.25; margin-bottom: 5px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .highlight-card-meta { display: flex; flex-direction: column; gap: 2px; }
+  .highlight-card-meta span { font-size: 10.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (min-width: 640px) {
+    .highlights-header { padding: 16px 28px 14px; }
+    .highlights-track { padding: 0 28px 8px; }
+    .highlight-card { width: 200px; }
+  }
+  /* Card flash — triggered when scrolling to a picked event */
+  @keyframes card-flash {
+    0%, 30% { box-shadow: 0 0 0 3px rgba(200,144,26,0.8), 0 12px 36px rgba(11,85,99,0.12); }
+    100%     { box-shadow: none; }
+  }
+  .card-flash { animation: card-flash 1.5s ease-out forwards; }
+
   /* ── WEEKEND TABS ── */
   .tabs-bar { background: #0A4750; border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
   .tabs-inner { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; overflow-x: auto; scrollbar-width: none; }

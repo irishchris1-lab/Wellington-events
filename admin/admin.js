@@ -233,6 +233,7 @@ function openModal(docId) {
     document.getElementById('fUrl').value      = ev.url      || '';
     document.getElementById('fImg').value      = ev.img      || '';
     document.getElementById('fActive').checked = ev.active !== false;
+    document.getElementById('fPick').checked  = ev.pick  || false;
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
@@ -272,6 +273,7 @@ async function handleFormSubmit(e) {
     url:         document.getElementById('fUrl').value.trim(),
     img:         document.getElementById('fImg').value.trim(),
     active:      document.getElementById('fActive').checked,
+    pick:        document.getElementById('fPick').checked,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
 
