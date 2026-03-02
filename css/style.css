@@ -314,6 +314,26 @@
   .venue-card:hover .card-img { transform: scale(1.04); }
   .venue-card:not([data-img]) .card-img-wrap,
   .venue-card[data-img=""] .card-img-wrap { display: none; }
+
+  /* ── Card placeholder (no real image — animated icon) ── */
+  .card-img-placeholder {
+    aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
+    font-size: 64px; line-height: 1; flex-shrink: 0;
+    background: linear-gradient(135deg, #f0ece4, #e8e4dc);
+  }
+  .card-img-placeholder span { display: inline-block; animation: icon-float 3s ease-in-out infinite; }
+  @keyframes icon-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%       { transform: translateY(-9px) rotate(6deg); }
+  }
+  /* Gradient backgrounds matched to strip colour per event type */
+  .card-strip.strip-festival + .card-img-placeholder { background: linear-gradient(135deg, #f8edcc, #fef6e2); }
+  .card-strip.strip-outdoor  + .card-img-placeholder { background: linear-gradient(135deg, #d8f0e8, #eaf8f2); }
+  .card-strip.strip-culture  + .card-img-placeholder { background: linear-gradient(135deg, #e4dcf4, #ede8f8); }
+  .card-strip.strip-sport    + .card-img-placeholder { background: linear-gradient(135deg, #d4eaf6, #e6f3fb); }
+  .card-strip.strip-music    + .card-img-placeholder { background: linear-gradient(135deg, #f2d8d8, #f8e8e8); }
+  .card-strip.strip-whanau   + .card-img-placeholder { background: linear-gradient(135deg, #f6d8ec, #fce8f4); }
+  .card-strip.strip-market   + .card-img-placeholder { background: linear-gradient(135deg, #d0e8ec, #e4f4f6); }
   .card-body { padding: 16px 18px 12px; flex: 1; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
   .card-cat { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 5px; }

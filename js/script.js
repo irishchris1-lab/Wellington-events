@@ -108,6 +108,15 @@ let currentRegion = 'all';
     return `https://${IMGIX_HOST}/${encodeURIComponent(url)}?auto=format,compress&fit=crop&ar=16:9&w=${w}`;
   }
 
+  const PLACEHOLDER_ICONS = {
+    festival: '🎪', culture: '🎭', music: '🎶', outdoor: '🌿',
+    market: '🛒', sport: '🏆', whanau: '👨‍👩‍👧',
+  };
+  function cardPlaceholderHTML(type) {
+    const icon = PLACEHOLDER_ICONS[type] || '📅';
+    return `<div class="card-img-placeholder"><span>${icon}</span></div>`;
+  }
+
   function cardImgHTML(url, alt) {
     if (!url) return '';
     const esc = url.replace(/"/g, '&quot;');
@@ -531,7 +540,7 @@ let currentRegion = 'all';
     return `
       <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}>
         <div class="card-strip ${tm.strip}"></div>
-        ${cardImgHTML(ev.img, ev.title)}
+        ${ev.img ? cardImgHTML(ev.img, ev.title) : cardPlaceholderHTML(ev.type)}
         <div class="card-body">
           <div class="card-top">
             <div>
