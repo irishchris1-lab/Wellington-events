@@ -1,5 +1,11 @@
-const CACHE = 'wow-v2';
-const SHELL = ['/', '/css/style.css', '/js/script.js', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
+const CACHE = 'wow-v3';
+const SHELL = [
+  '/', '/css/style.css', '/js/script.js',
+  '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png',
+  '/icons/ruin-gin.png',
+  '/sections/food.html', '/sections/walks.html', '/sections/parks.html',
+  '/sections/activities.html', '/sections/markets.html'
+];
 
 self.addEventListener('install', e => {
   self.skipWaiting();

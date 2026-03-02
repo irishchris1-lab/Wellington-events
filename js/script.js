@@ -95,6 +95,7 @@ let currentRegion = 'all';
   let foodRatingFilter = 'all';
   let kidFriendlyFilter = 'all';
   let activityWeatherFilter = 'all';
+  const loadedSections = new Set(['events', 'planner']);
 
   // ── FOOD: top-rated filter ──
   function filterFood(rating, btn) {
@@ -288,20 +289,36 @@ let currentRegion = 'all';
     return { section, region };
   }
 
+  async function fetchSection(name) {
+    if (loadedSections.has(name)) return;
+    loadedSections.add(name);
+    const main = document.querySelector('#section-' + name + ' main');
+    if (!main) return;
+    try {
+      const res = await fetch('sections/' + name + '.html');
+      main.innerHTML = await res.text();
+    } catch (e) {
+      main.innerHTML = '<p style="padding:2rem;color:#999">Unable to load. Please refresh.</p>';
+      loadedSections.delete(name);
+    }
+  }
+
   function showSection(section, btn) {
-    document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-    // ── Change 3: update aria-selected on tabs ──
-    document.querySelectorAll('.main-nav-btn').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-selected', 'false');
+    fetchSection(section).then(() => {
+      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+      // ── Change 3: update aria-selected on tabs ──
+      document.querySelectorAll('.main-nav-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.getElementById('section-' + section).classList.add('active');
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      document.querySelector('.tabs-bar').style.display = section === 'events' ? '' : 'none';
+      applyFilter(currentRegion);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      updateHash(section, currentRegion);
     });
-    document.getElementById('section-' + section).classList.add('active');
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected', 'true');
-    document.querySelector('.tabs-bar').style.display = section === 'events' ? '' : 'none';
-    applyFilter(currentRegion);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    updateHash(section, currentRegion);
   }
 
   function showTab(id, btn) {
