@@ -648,6 +648,29 @@ let currentRegion = 'all';
     return today >= monday;
   }
 
+  // Update tab button labels dynamically from panel data-weekend attributes
+  function updateTabLabels() {
+    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let isFirst = true;
+    document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
+      if (btn.style.display === 'none') return;
+      const panelId = btn.getAttribute('aria-controls');
+      const panel = panelId && document.getElementById(panelId);
+      if (!panel || !panel.dataset.weekend) return;
+      const sat = new Date(panel.dataset.weekend + 'T00:00:00');
+      const sun = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 1);
+      const datePart = sun.getMonth() === sat.getMonth()
+        ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
+        : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
+      if (isFirst) {
+        btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}`;
+        isFirst = false;
+      } else {
+        btn.textContent = datePart;
+      }
+    });
+  }
+
   // Hide tabs and panels for weekends that have already passed
   function hidePastWeekendTabs() {
     let firstVisible = null;
@@ -1671,6 +1694,7 @@ let currentRegion = 'all';
   document.addEventListener('DOMContentLoaded', () => {
     generateRemainingWeekends();
     hidePastWeekendTabs();
+    updateTabLabels();
     buildHighlightsRow();
     injectAddButtons();
     // If Firebase is not configured, load from localStorage immediately
