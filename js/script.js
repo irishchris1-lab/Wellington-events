@@ -88,7 +88,16 @@ if ('serviceWorker' in navigator) {
     }
   });
 
-let currentRegion = 'all';
+const SECTION_TITLES = {
+    events:     "Events This Weekend — What's On Wellington",
+    food:       "Family Cafés & Restaurants — What's On Wellington",
+    walks:      "Family Walks & Trails — What's On Wellington",
+    parks:      "Best Playgrounds — What's On Wellington",
+    activities: "Family Activities — What's On Wellington",
+    markets:    "Weekend Markets — What's On Wellington",
+  };
+
+  let currentRegion = 'all';
   let currentTypeFilter = 'all';
   let currentDuration = 'all';
   let walkTopRatedOnly = false;
@@ -345,6 +354,7 @@ let currentRegion = 'all';
       btn.classList.add('active');
       btn.setAttribute('aria-selected', 'true');
       document.querySelector('.tabs-bar').style.display = section === 'events' ? '' : 'none';
+      document.title = SECTION_TITLES[section] || "What's On Wellington | Family Events, Cafés, Walks & Activities";
       applyFilter(currentRegion);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       updateHash(section, currentRegion);
