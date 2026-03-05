@@ -290,7 +290,43 @@ const SECTION_TITLES = {
     const nav = document.getElementById('bottomNav');
     if (!nav) return;
     const moreSet = new Set(['parks', 'activities', 'markets']);
-    nav.dataset.activeSection = moreSet.has(section) ? 'more' : (section === 'about' ? '' : section);
+    const activeSection = moreSet.has(section) ? 'more' : (section === 'about' ? '' : section);
+    nav.dataset.activeSection = activeSection;
+    const indicatorMap = {
+      planner: { idx: 0, color: '#0B5563' },
+      events:  { idx: 1, color: '#0B5563' },
+      food:    { idx: 2, color: '#C4522A' },
+      walks:   { idx: 3, color: '#1A8A6E' },
+      more:    { idx: 4, color: '#0B5563' },
+    };
+    const indicator = document.getElementById('bnavIndicator');
+    if (indicator) {
+      const d = indicatorMap[activeSection];
+      if (d) {
+        indicator.style.transform = `translateX(${d.idx * 100}%)`;
+        indicator.style.background = d.color;
+      }
+    }
+  }
+
+  function observeCards(container) {
+    if (!window.IntersectionObserver) {
+      container.querySelectorAll('.card, .venue-card').forEach(c => c.classList.add('revealed'));
+      return;
+    }
+    const cards = [...container.querySelectorAll('.card:not(.revealed), .venue-card:not(.revealed)')];
+    if (!cards.length) return;
+    let revealCount = 0;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        obs.unobserve(entry.target);
+        entry.target.style.transitionDelay = Math.min(revealCount, 6) * 50 + 'ms';
+        entry.target.classList.add('revealed');
+        revealCount++;
+      });
+    }, { threshold: 0.05 });
+    cards.forEach(card => obs.observe(card));
   }
 
   function toggleMorePopover() {
@@ -384,6 +420,7 @@ const SECTION_TITLES = {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       updateHash(section, currentRegion);
       syncBottomNav(section);
+      observeCards(document.getElementById('section-' + section));
     });
   }
 
