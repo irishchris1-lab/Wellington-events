@@ -888,3 +888,92 @@
     pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══ MOBILE INFO BUTTON ══ */
+.mobile-info-btn {
+  display: none;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px; padding: 9px 11px; cursor: pointer; font-size: 16px;
+  line-height: 1; transition: background 0.2s; align-items: center;
+}
+.mobile-info-btn:hover { background: rgba(255,255,255,0.25); }
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+  height: 60px; background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -1px 0 rgba(0,0,0,0.08), 0 -4px 16px rgba(0,0,0,0.06);
+  border-top: 1px solid rgba(0,0,0,0.07);
+  align-items: stretch;
+}
+.bnav-btn {
+  flex: 1; background: none; border: none; border-top: 3px solid transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; cursor: pointer; color: #9aacac; padding: 6px 4px 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.03em; transition: color 0.15s, border-color 0.15s;
+  position: relative; -webkit-tap-highlight-color: transparent;
+}
+.bnav-btn .bnav-icon { font-size: 20px; line-height: 1; }
+.bnav-btn .bnav-label { line-height: 1; }
+/* Active states — section accent colours via data attribute */
+.bottom-nav[data-active-section="planner"] .bnav-btn[data-section="planner"],
+.bottom-nav[data-active-section="events"]  .bnav-btn[data-section="events"]  { color: #0B5563; border-top-color: #0B5563; }
+.bottom-nav[data-active-section="food"]    .bnav-btn[data-section="food"]    { color: #C4522A; border-top-color: #C4522A; }
+.bottom-nav[data-active-section="walks"]   .bnav-btn[data-section="walks"]   { color: #1A8A6E; border-top-color: #1A8A6E; }
+.bottom-nav[data-active-section="more"]    .bnav-btn[data-section="more"]    { color: #0B5563; border-top-color: #0B5563; }
+/* Plan badge positioning inside bottom nav */
+.bnav-btn .plan-count-badge {
+  position: absolute; top: 5px; left: 50%; margin-left: 4px;
+  min-width: 14px; width: auto; height: 14px; font-size: 8px; padding: 0 3px; border-radius: 7px;
+}
+
+/* ══ MORE POPOVER ══ */
+.more-popover {
+  position: fixed; bottom: 68px; right: 8px; z-index: 910;
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.06);
+  overflow: hidden; display: none; flex-direction: column; min-width: 180px;
+  animation: fadeUp 0.18s ease;
+}
+.more-popover.open { display: flex; }
+.more-popover-btn, .info-popover-btn {
+  background: none; border: none; text-align: left; padding: 14px 18px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  color: #2a3a3a; cursor: pointer; display: flex; align-items: center; gap: 12px;
+  transition: background 0.15s; white-space: nowrap;
+}
+.more-popover-btn:hover, .info-popover-btn:hover { background: #f0f7f7; color: var(--teal); }
+.more-popover-btn span, .info-popover-btn span { font-size: 18px; }
+.more-popover-overlay, .info-popover-overlay {
+  display: none; position: fixed; inset: 0; z-index: 909;
+}
+.more-popover-overlay.open, .info-popover-overlay.open { display: block; }
+
+/* ══ INFO POPOVER ══ */
+.info-popover {
+  position: fixed; top: 68px; right: 8px; z-index: 910;
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.06);
+  overflow: hidden; display: none; flex-direction: column; min-width: 200px;
+  animation: fadeUp 0.18s ease;
+}
+.info-popover.open { display: flex; }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 767px) {
+  .hamburger-btn      { display: none; }
+  #headerInstallBtn   { display: none !important; }
+  .main-nav           { display: none; }
+  .mobile-info-btn    { display: flex; }
+  .bottom-nav         { display: flex; }
+  body                { padding-bottom: 64px; }
+}
+@media (min-width: 768px) {
+  #mobileInfoBtn      { display: none !important; }
+  .bottom-nav         { display: none !important; }
+  .more-popover,
+  .info-popover       { display: none !important; }
+}

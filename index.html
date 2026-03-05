@@ -146,6 +146,7 @@
         <button class="header-install-btn" id="headerInstallBtn" onclick="handleInstallClick()" aria-label="Add to Home Screen" style="display:none">
           📲 <span>Save app</span>
         </button>
+        <button class="mobile-info-btn" id="mobileInfoBtn" onclick="toggleInfoPopover()" aria-label="About &amp; settings">ℹ️</button>
         <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="dropdownPanel" id="hamburgerBtn">
           <span></span><span></span><span></span>
         </button>
@@ -197,6 +198,13 @@
     </div>
   </div>
 </div>
+
+<!-- ── MOBILE INFO POPOVER ── -->
+<div class="info-popover" id="infoPopover" role="dialog" aria-label="About &amp; settings">
+  <button class="info-popover-btn" onclick="showSectionFromMenu('about'); closeInfoPopover()"><span>👋</span> About this guide</button>
+  <button class="info-popover-btn" id="infoInstallBtn" style="display:none" onclick="handleInstallClick(); closeInfoPopover()"><span>📲</span> Add to Home Screen</button>
+</div>
+<div class="info-popover-overlay" id="infoPopoverOverlay" onclick="closeInfoPopover()"></div>
 
 <!-- ── MAIN NAV ── -->
 <nav class="main-nav" aria-label="Main sections">
@@ -2150,6 +2158,39 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<!-- ── MORE POPOVER (mobile) ── -->
+<div class="more-popover" id="morePopover" role="dialog" aria-label="More sections">
+  <button class="more-popover-btn" onclick="showSection('parks',      document.getElementById('tab-parks'));      closeMorePopover()"><span>🛝</span> Play Parks</button>
+  <button class="more-popover-btn" onclick="showSection('activities', document.getElementById('tab-activities')); closeMorePopover()"><span>🎯</span> Activities</button>
+  <button class="more-popover-btn" onclick="showSection('markets',    document.getElementById('tab-markets'));    closeMorePopover()"><span>🛒</span> Markets</button>
+</div>
+<div class="more-popover-overlay" id="morePopoverOverlay" onclick="closeMorePopover()"></div>
+
+<!-- ── BOTTOM NAV (mobile) ── -->
+<nav class="bottom-nav" id="bottomNav" data-active-section="planner" aria-label="Main navigation">
+  <button class="bnav-btn" data-section="planner" onclick="handlePlannerTabClick(document.getElementById('tab-planner'))">
+    <span class="bnav-icon">📋</span>
+    <span class="bnav-label">Plan</span>
+    <span class="plan-count-badge" id="planCountBadgeMobile">0</span>
+  </button>
+  <button class="bnav-btn" data-section="events" onclick="showSection('events', document.getElementById('tab-events'))">
+    <span class="bnav-icon">🗓</span>
+    <span class="bnav-label">Events</span>
+  </button>
+  <button class="bnav-btn" data-section="food" onclick="showSection('food', document.getElementById('tab-food'))">
+    <span class="bnav-icon">☕</span>
+    <span class="bnav-label">Food</span>
+  </button>
+  <button class="bnav-btn" data-section="walks" onclick="showSection('walks', document.getElementById('tab-walks'))">
+    <span class="bnav-icon">🌿</span>
+    <span class="bnav-label">Walks</span>
+  </button>
+  <button class="bnav-btn" data-section="more" onclick="toggleMorePopover()">
+    <span class="bnav-icon">⋯</span>
+    <span class="bnav-label">More</span>
+  </button>
+</nav>
 
 <script src="js/script.js"></script>
 <script>

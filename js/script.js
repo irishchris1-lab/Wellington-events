@@ -25,7 +25,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('appinstalled', () => {
     hideInstallBanner();
     deferredInstallPrompt = null;
-    ['installMenuBtn', 'headerInstallBtn'].forEach(id => {
+    ['installMenuBtn', 'headerInstallBtn', 'infoInstallBtn'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
@@ -78,7 +78,7 @@ if ('serviceWorker' in navigator) {
   // On load: show install buttons for any non-standalone user
   document.addEventListener('DOMContentLoaded', () => {
     if (!isStandalone()) {
-      ['installMenuBtn', 'headerInstallBtn'].forEach(id => {
+      ['installMenuBtn', 'headerInstallBtn', 'infoInstallBtn'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = '';
       });
@@ -286,6 +286,30 @@ const SECTION_TITLES = {
     btn.focus();
   }
 
+  function syncBottomNav(section) {
+    const nav = document.getElementById('bottomNav');
+    if (!nav) return;
+    const moreSet = new Set(['parks', 'activities', 'markets']);
+    nav.dataset.activeSection = moreSet.has(section) ? 'more' : (section === 'about' ? '' : section);
+  }
+
+  function toggleMorePopover() {
+    const open = document.getElementById('morePopover').classList.toggle('open');
+    document.getElementById('morePopoverOverlay').classList.toggle('open', open);
+  }
+  function closeMorePopover() {
+    document.getElementById('morePopover').classList.remove('open');
+    document.getElementById('morePopoverOverlay').classList.remove('open');
+  }
+  function toggleInfoPopover() {
+    const open = document.getElementById('infoPopover').classList.toggle('open');
+    document.getElementById('infoPopoverOverlay').classList.toggle('open', open);
+  }
+  function closeInfoPopover() {
+    document.getElementById('infoPopover').classList.remove('open');
+    document.getElementById('infoPopoverOverlay').classList.remove('open');
+  }
+
   function showSectionFromMenu(section) {
     const btns = document.querySelectorAll('.main-nav-btn');
     const map = { planner: 0, events: 1, activities: 2, markets: 3, food: 4, walks: 5, parks: 6 };
@@ -299,6 +323,7 @@ const SECTION_TITLES = {
       document.getElementById('section-about').classList.add('active');
       document.querySelector('.tabs-bar').style.display = 'none';
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      syncBottomNav('about');
       return;
     }
     if (section === 'planner') {
@@ -358,6 +383,7 @@ const SECTION_TITLES = {
       applyFilter(currentRegion);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       updateHash(section, currentRegion);
+      syncBottomNav(section);
     });
   }
 
@@ -1343,6 +1369,11 @@ const SECTION_TITLES = {
     const count = planItems.length;
     badge.textContent = count;
     badge.classList.toggle('visible', count > 0);
+    const mobileBadge = document.getElementById('planCountBadgeMobile');
+    if (mobileBadge) {
+      mobileBadge.textContent = count;
+      mobileBadge.classList.toggle('visible', count > 0);
+    }
   }
 
   // ── Share intercept — show sign-in prompt for guests ──
