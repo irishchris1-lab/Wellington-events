@@ -547,8 +547,10 @@ const SECTION_TITLES = {
       ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener">Find out more ↗</a>` : '',
       `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
+    const tierClass = ev.pick ? 'card-featured' : 'card-standard';
+    const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <div class="card" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}>
+      <div class="card ${tierClass}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}>
         <div class="card-strip ${tm.strip}"></div>
         ${ev.img ? cardImgHTML(ev.img, ev.title) : cardPlaceholderHTML(ev.type)}
         <div class="card-body">
@@ -1701,6 +1703,14 @@ const SECTION_TITLES = {
   }
 
   // ── Inject buttons and load guest plan on startup ──
+  // Toggle compact cards open/closed on click (skip if clicking a link or button)
+  document.addEventListener('click', e => {
+    const card = e.target.closest('.card-compact');
+    if (!card) return;
+    if (e.target.closest('a, button')) return;
+    card.classList.toggle('open');
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     generateRemainingWeekends();
     hidePastWeekendTabs();

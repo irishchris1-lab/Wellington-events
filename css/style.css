@@ -291,7 +291,64 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(11,85,99,0.12); }
-  .card.card-featured { background: #fffbf2; border: 2px solid var(--gold); }
+
+  /* ── TIER 1: Featured card ── */
+  .card.card-featured {
+    background: #fffbf2;
+    border: 1px solid rgba(200,144,26,0.2);
+    border-left: 4px solid var(--gold);
+    box-shadow: 0 4px 20px rgba(200,144,26,0.08);
+  }
+  .card.card-featured .card-title { font-size: 20px; }
+  .card.card-featured .card-body  { padding: 18px 20px 14px; }
+  .card.card-featured .badge-hot  { font-size: 10px; padding: 4px 12px; }
+
+  /* ── TIER 3: Compact card ── */
+  .card.card-compact {
+    background: #f5f4f0;
+    border-color: rgba(0,0,0,0.05);
+    cursor: pointer;
+    position: relative;
+  }
+  /* Chevron — collapses/expands */
+  .card.card-compact::after {
+    content: '›';
+    position: absolute;
+    right: 14px;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--muted);
+    transition: transform 0.2s;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .card.card-compact:not(.open)::after { top: 50%; transform: translateY(-50%); }
+  .card.card-compact.open::after       { top: 14px; transform: rotate(90deg); }
+  /* Collapsed: hide everything except the summary row */
+  .card.card-compact:not(.open) .card-img-wrap,
+  .card.card-compact:not(.open) .card-img-placeholder,
+  .card.card-compact:not(.open) .card-meta,
+  .card.card-compact:not(.open) .card-desc,
+  .card.card-compact:not(.open) .card-footer { display: none; }
+  .card.card-compact:not(.open) .card-body  { padding: 10px 44px 10px 16px; }
+  .card.card-compact:not(.open) .card-top   { margin-bottom: 0; }
+  .card.card-compact:not(.open) .card-title { font-size: 14px; color: #4a5a5a; }
+  .card.card-compact:not(.open) .card-cat   { margin-bottom: 2px; font-size: 9px; }
+  .card.card-compact:not(.open):hover       { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  /* Expanded: restore normal padding */
+  .card.card-compact.open .card-body { padding: 16px 40px 12px 18px; }
+
+  /* ── Events section day timeline ── */
+  #section-events .weekend-panel > .events-grid {
+    border-left: 2px solid rgba(11,85,99,0.10);
+    margin-left: 18px;
+    padding-left: 16px;
+  }
+  #section-events .weekend-panel > .day-label { padding-left: 12px; }
+  #section-events .weekend-panel > .day-label .pip {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
   .card-strip { height: 4px; flex-shrink: 0; }
 
   /* ── Card hero image ── */
