@@ -840,6 +840,9 @@ const SECTION_TITLES = {
           const ov = overrides[slug];
           if (!ov) return;
 
+          // Hidden/deleted
+          if (ov.deleted) { card.classList.add('hidden'); return; }
+
           // Name
           if (ov.name) nameEl.textContent = ov.name;
 

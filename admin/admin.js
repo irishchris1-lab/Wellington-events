@@ -793,6 +793,7 @@ async function loadVenueSection(section) {
         img:         ov.img         ?? (card.dataset.img || ''),
         section,
         hasOverride: !!overrides[slug],
+        isDeleted:   ov.deleted === true,
       };
     });
 
@@ -813,20 +814,24 @@ function renderVenueList(section, venues) {
     const rating = typeof v.rating === 'number' ? v.rating.toFixed(1) : v.rating;
     const meta   = [v.region, section === 'walks' && v.duration ? v.duration : '', '⭐ ' + rating]
                      .filter(Boolean).join(' · ');
-    return `<div class="venue-admin-card${v.hasOverride ? ' has-override' : ''}" id="vcard-${section}-${i}">
+    const editedBadge   = v.hasOverride && !v.isDeleted ? '<span class="badge-override">Edited</span>' : '';
+    const deletedBadge  = v.isDeleted ? '<span class="badge-override" style="background:#fee2e2;color:#b91c1c;border-color:#fca5a5">Hidden</span>' : '';
+    const editBtn       = !v.isDeleted ? `<button class="action-btn edit" onclick="toggleVenueEdit('${section}',${i})">Edit</button>` : '';
+    const deleteBtn     = !v.isDeleted ? `<button class="action-btn delete" onclick="deleteVenue('${section}',${i},'${v.slug}')">Delete</button>` : '';
+    const restoreBtn    = v.isDeleted  ? `<button class="action-btn edit" onclick="restoreVenueFromDeleted('${section}',${i},'${v.slug}')">Restore</button>` : '';
+    const revertBtn     = v.hasOverride && !v.isDeleted ? `<button class="action-btn delete" onclick="revertVenue('${section}',${i},'${v.slug}')">Revert</button>` : '';
+    return `<div class="venue-admin-card${v.hasOverride ? ' has-override' : ''}${v.isDeleted ? ' is-deleted' : ''}" id="vcard-${section}-${i}">
       <div class="venue-admin-header">
         <div class="venue-admin-info">
           <span class="venue-admin-name">${esc(v.name)}</span>
           <span class="venue-admin-meta">${esc(meta)}</span>
         </div>
         <div class="venue-admin-actions">
-          ${v.hasOverride ? '<span class="badge-override">Edited</span>' : ''}
-          <button class="action-btn edit" onclick="toggleVenueEdit('${section}',${i})">Edit</button>
-          ${v.hasOverride ? `<button class="action-btn delete" onclick="revertVenue('${section}',${i},'${v.slug}')">Revert</button>` : ''}
+          ${deletedBadge}${editedBadge}${editBtn}${deleteBtn}${restoreBtn}${revertBtn}
         </div>
       </div>
       <div class="venue-edit-form hidden" id="vedit-${section}-${i}">
-        ${buildVenueForm(section, v, i)}
+        ${!v.isDeleted ? buildVenueForm(section, v, i) : ''}
       </div>
     </div>`;
   }).join('');
@@ -949,5 +954,33 @@ async function revertVenue(section, idx, slug) {
     showToast('Venue reverted to original.');
   } catch (err) {
     showToast('Revert failed: ' + err.message);
+  }
+}
+
+async function deleteVenue(section, idx, slug) {
+  if (!confirm('Hide this venue from the main site?')) return;
+  try {
+    await db.collection('venues').doc(slug).set({ deleted: true, section }, { merge: true });
+    if (venueData[section]?.[idx]) {
+      venueData[section][idx].isDeleted  = true;
+      venueData[section][idx].hasOverride = true;
+    }
+    renderVenueList(section, venueData[section]);
+    showToast('Venue hidden from main site.');
+  } catch (err) {
+    showToast('Delete failed: ' + err.message);
+  }
+}
+
+async function restoreVenueFromDeleted(section, idx, slug) {
+  try {
+    await db.collection('venues').doc(slug).update({ deleted: false });
+    if (venueData[section]?.[idx]) {
+      venueData[section][idx].isDeleted = false;
+    }
+    renderVenueList(section, venueData[section]);
+    showToast('Venue restored.');
+  } catch (err) {
+    showToast('Restore failed: ' + err.message);
   }
 }

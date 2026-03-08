@@ -695,6 +695,15 @@ body {
   border-color: #c3dafe;
 }
 
+.venue-admin-card.is-deleted {
+  border-color: #fca5a5;
+  opacity: .65;
+}
+.venue-admin-card.is-deleted .venue-admin-name {
+  text-decoration: line-through;
+  color: #9aacac;
+}
+
 .venue-admin-card.save-flash {
   border-color: #34d399;
   transition: border-color .1s;
