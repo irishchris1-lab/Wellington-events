@@ -760,14 +760,14 @@ async function loadVenueSection(section) {
   const listEl = document.getElementById(section + '-list');
   listEl.innerHTML = '<p class="venue-status-msg">Loading venues from main site…</p>';
   try {
-    // Parse venue cards from the live main site HTML
-    const res  = await fetch('../index.html');
+    // Parse venue cards from the section's own HTML file (content is lazy-loaded,
+    // not embedded in index.html, so we fetch sections/{section}.html directly)
+    const res  = await fetch('../sections/' + section + '.html');
+    if (!res.ok) throw new Error('Could not load sections/' + section + '.html (' + res.status + ')');
     const html = await res.text();
     const doc  = new DOMParser().parseFromString(html, 'text/html');
-    const sectionEl = doc.getElementById('section-' + section);
-    if (!sectionEl) throw new Error('Section not found in main site');
-    const cards = [...sectionEl.querySelectorAll('.venue-card')];
-    if (!cards.length) throw new Error('No venue cards found');
+    const cards = [...doc.querySelectorAll('.venue-card')];
+    if (!cards.length) throw new Error('No venue cards found in sections/' + section + '.html');
 
     // Fetch existing Firestore overrides for this section
     const snap = await db.collection('venues').where('section', '==', section).get();
