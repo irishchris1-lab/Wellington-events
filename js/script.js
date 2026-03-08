@@ -433,6 +433,7 @@ const SECTION_TITLES = {
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     applyFilter(currentRegion);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -726,7 +727,7 @@ const SECTION_TITLES = {
   // Update tab button labels dynamically from panel data-weekend attributes
   function updateTabLabels() {
     const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    let isFirst = true;
+    let visibleCount = 0;
     document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
       if (btn.style.display === 'none') return;
       const panelId = btn.getAttribute('aria-controls');
@@ -737,9 +738,11 @@ const SECTION_TITLES = {
       const datePart = sun.getMonth() === sat.getMonth()
         ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
         : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
-      if (isFirst) {
+      visibleCount++;
+      if (visibleCount === 1) {
         btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}`;
-        isFirst = false;
+      } else if (visibleCount === 2) {
+        btn.textContent = `Next Weekend · ${datePart}`;
       } else {
         btn.textContent = datePart;
       }
@@ -1786,6 +1789,11 @@ const SECTION_TITLES = {
     generateRemainingWeekends();
     hidePastWeekendTabs();
     updateTabLabels();
+    // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
+    setTimeout(() => {
+      const activeTab = document.querySelector('.tabs-inner .tab-btn.active');
+      if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'start' });
+    }, 0);
     buildHighlightsRow();
     injectAddButtons();
     // If Firebase is not configured, load from localStorage immediately
