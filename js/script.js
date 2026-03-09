@@ -864,8 +864,7 @@ const SECTION_TITLES = {
   function loadFirestoreEvents() {
     if (!firebaseReady) return;
     db.collection('events')
-      .where('active',   '==', true)
-      .where('category', '==', 'events')
+      .where('active', '==', true)
       .onSnapshot(snapshot => {
         // Remove previously injected cards
         document.querySelectorAll('.card[data-firestore]').forEach(el => el.remove());
