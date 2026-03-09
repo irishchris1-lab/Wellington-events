@@ -450,8 +450,10 @@
   .rating-link:hover { color: var(--jade); text-decoration: underline; }
   .card-desc { font-size: 12px; color: var(--muted); line-height: 1.65; border-top: 1px solid #f0eeea; padding-top: 10px; }
   .card-footer { padding: 8px 18px 10px; border-top: 1px solid #f5f3ef; display: flex; justify-content: space-between; align-items: center; }
-  .card-link { font-size: 10.5px; font-weight: 500; color: #8a9a9a; text-decoration: none; letter-spacing: 0.03em; transition: color 0.15s; }
+  .card-link { font-size: 10.5px; font-weight: 500; color: #8a9a9a; text-decoration: none; letter-spacing: 0.03em; transition: color 0.15s; display: flex; flex-direction: column; gap: 1px; }
   .card-link:hover { color: var(--teal); }
+  .card-link-domain { font-size: 9px; font-weight: 400; color: #bbb; letter-spacing: 0.02em; transition: color 0.15s; }
+  .card-link:hover .card-link-domain { color: #8a9a9a; }
 
   /* Strip colours per category */
   .strip-festival { background: linear-gradient(90deg, #C8901A, #e0ad40); }

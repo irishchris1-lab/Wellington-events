@@ -153,6 +153,22 @@ const SECTION_TITLES = {
     });
   }
 
+  function extractDomain(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+  }
+
+  // Add a domain label to every .card-link that doesn't already have one.
+  function enhanceCardLinks(container) {
+    const root = container || document;
+    root.querySelectorAll('a.card-link').forEach(a => {
+      if (a.querySelector('.card-link-domain')) return; // already done
+      const domain = extractDomain(a.href);
+      if (!domain) return;
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.insertAdjacentHTML('beforeend', `<span class="card-link-domain">${domain}</span>`);
+    });
+  }
+
   // Set the first 2 visible card images in the active weekend panel to eager.
   function setEagerImages() {
     const panel = document.querySelector('.weekend-panel.active');
@@ -434,6 +450,7 @@ const SECTION_TITLES = {
       const res = await fetch('sections/' + name + '.html');
       main.innerHTML = await res.text();
       enhanceStaticImages(main);
+      enhanceCardLinks(main);
     } catch (e) {
       main.innerHTML = '<p style="padding:2rem;color:#999">Unable to load. Please refresh.</p>';
       loadedSections.delete(name);
@@ -679,7 +696,7 @@ const SECTION_TITLES = {
       ev.venue ? `<div class="meta-row"><span class="meta-icon">📍</span>${escHtml(ev.venue)}</div>` : '',
     ].join('');
     const footer = [
-      ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener">Find out more ↗</a>` : '',
+      ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${extractDomain(ev.url)}</span></a>` : '',
       `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
@@ -1871,6 +1888,7 @@ const SECTION_TITLES = {
     updateTabLabels();
     updateWeekendNav();
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
+    enhanceCardLinks();     // add domain label to all static card links
     setEagerImages();       // promote first 2 visible cards to loading="eager"
     // Bottom nav scroll-hint fade — init + keep updated on scroll
     updateBnavFade();
