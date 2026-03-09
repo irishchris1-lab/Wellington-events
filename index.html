@@ -181,6 +181,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- ════════════════════════════════════
      ✏️  HOW TO UPDATE THIS FILE
@@ -227,6 +228,7 @@
             <button class="user-dropdown-btn danger" onclick="signOutUser()">↩ Sign out</button>
           </div>
         </div>
+        <button class="plan-header-btn" id="planHeaderBtn" aria-label="View your plan" onclick="handlePlannerTabClick(null)">📋 Plan<span class="plan-count-badge" id="planCountBadgeHeader" aria-live="polite">0</span></button>
         <button class="header-install-btn" id="headerInstallBtn" onclick="handleInstallClick()" aria-label="Add to Home Screen" style="display:none">
           📲 <span>Save app</span>
         </button>
@@ -290,19 +292,6 @@
 </div>
 <div class="info-popover-overlay" id="infoPopoverOverlay" onclick="closeInfoPopover()"></div>
 
-<!-- ── MAIN NAV ── -->
-<nav class="main-nav" aria-label="Main sections">
-  <div class="main-nav-inner" role="tablist">
-    <button class="main-nav-btn active" role="tab" id="tab-planner" aria-selected="true"  aria-controls="section-planner" onclick="handlePlannerTabClick(this)"><span class="nav-icon">📋</span> Plan <span class="plan-count-badge" id="planCountBadge">0</span></button>
-    <button class="main-nav-btn"        role="tab" id="tab-events" aria-selected="false" aria-controls="section-events" onclick="showSection('events', this)"><span class="nav-icon">🗓</span> Events</button>
-    <button class="main-nav-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities" onclick="showSection('activities', this)"><span class="nav-icon">🎯</span> Activities</button>
-    <button class="main-nav-btn"        role="tab" id="tab-markets"    aria-selected="false" aria-controls="section-markets"    onclick="showSection('markets', this)"><span class="nav-icon">🛒</span> Markets</button>
-    <button class="main-nav-btn"        role="tab" id="tab-food"   aria-selected="false" aria-controls="section-food"   onclick="showSection('food', this)"><span class="nav-icon">☕</span> Food & Drink</button>
-    <button class="main-nav-btn"        role="tab" id="tab-walks"  aria-selected="false" aria-controls="section-walks"  onclick="showSection('walks', this)"><span class="nav-icon">🌿</span> Walks & Trails</button>
-    <button class="main-nav-btn"        role="tab" id="tab-parks"  aria-selected="false" aria-controls="section-parks"  onclick="showSection('parks', this)"><span class="nav-icon">🛝</span> Play Parks</button>
-  </div>
-</nav>
-
 <!-- ── REGION FILTERS — always visible ── -->
 <div class="filter-bar" role="region" aria-label="Filter by area">
   <div class="filter-inner">
@@ -317,10 +306,23 @@
   </div>
 </div>
 
+<!-- ── CATEGORY PILL NAV ── -->
+<nav class="cat-nav" aria-label="Browse categories">
+  <div class="cat-inner" role="tablist">
+    <button class="cat-btn active" role="tab" id="tab-events"     aria-selected="true"  aria-controls="section-events"     onclick="showSection('events', this)"><span aria-hidden="true">🗓</span> Events</button>
+    <button class="cat-btn"        role="tab" id="tab-food"       aria-selected="false" aria-controls="section-food"       onclick="showSection('food', this)"><span aria-hidden="true">☕</span> Food & Drink</button>
+    <button class="cat-btn"        role="tab" id="tab-walks"      aria-selected="false" aria-controls="section-walks"      onclick="showSection('walks', this)"><span aria-hidden="true">🌿</span> Walks & Trails</button>
+    <button class="cat-btn"        role="tab" id="tab-parks"      aria-selected="false" aria-controls="section-parks"      onclick="showSection('parks', this)"><span aria-hidden="true">🛝</span> Parks</button>
+    <button class="cat-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities" onclick="showSection('activities', this)"><span aria-hidden="true">🎯</span> Activities</button>
+    <button class="cat-btn"        role="tab" id="tab-markets"    aria-selected="false" aria-controls="section-markets"    onclick="showSection('markets', this)"><span aria-hidden="true">🛒</span> Markets</button>
+    <button class="cat-btn"        role="tab" id="tab-rainy"      aria-selected="false" aria-controls="section-rainy"      onclick="showRainyDay(this)"><span aria-hidden="true">🌧</span> Rainy Day</button>
+  </div>
+</nav>
+
 <!-- ══════════════════════════════════════
      EVENTS SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section" id="section-events" role="tabpanel" aria-labelledby="tab-events">
+<div class="app-section active" id="section-events" role="tabpanel" aria-labelledby="tab-events">
 <nav class="tabs-bar">
   <div class="tabs-inner" role="tablist" aria-label="Weekend dates">
     <button class="tab-btn active" id="wtab-w1" role="tab" aria-selected="true"  aria-controls="w1" onclick="showTab('w1',this)"><span class="tab-live-dot"></span>This Weekend · 28 Feb – 1 Mar</button>
@@ -338,23 +340,13 @@
     <button class="tab-btn"        id="wtab-w13" role="tab" aria-selected="false" aria-controls="w13" onclick="showTab('w13',this)">23–24 May</button>
   </div>
   <div class="weekend-nav-bar" id="weekendNavBar">
-    <button class="wnav-btn" id="wnavPrev" onclick="navigateWeekend(-1)" disabled>← Previous</button>
-    <span class="wnav-pos" id="wnavPos"></span>
-    <button class="wnav-btn" id="wnavNext" onclick="navigateWeekend(1)">Next →</button>
+    <button class="wnav-btn" id="wnavPrev" aria-label="Previous weekend" onclick="navigateWeekend(-1)" disabled>← Previous</button>
+    <span class="wnav-pos" id="wnavPos" aria-live="polite" aria-atomic="true"></span>
+    <button class="wnav-btn" id="wnavNext" aria-label="Next weekend" onclick="navigateWeekend(1)">Next →</button>
   </div>
 </nav>
 
-<div class="duration-filter">
-  <span class="duration-label">🏷 Type:</span>
-  <button class="duration-btn active" data-filter-type="all" aria-pressed="true" onclick="filterType('all', this)">All types</button>
-  <button class="duration-btn" data-filter-type="festival" aria-pressed="false" onclick="filterType('festival', this)">🎪 Festival</button>
-  <button class="duration-btn" data-filter-type="culture" aria-pressed="false" onclick="filterType('culture', this)">🎨 Arts</button>
-  <button class="duration-btn" data-filter-type="music" aria-pressed="false" onclick="filterType('music', this)">🎵 Music</button>
-  <button class="duration-btn" data-filter-type="outdoor" aria-pressed="false" onclick="filterType('outdoor', this)">🏃 Outdoor</button>
-  <button class="duration-btn" data-filter-type="sport" aria-pressed="false" onclick="filterType('sport', this)">🏆 Sport</button>
-  <button class="duration-btn" data-filter-type="whanau" aria-pressed="false" onclick="filterType('whanau', this)">👨‍👩‍👧 Whānau</button>
-</div>
-<main>
+<main id="main-content" tabindex="-1">
 
 <!-- ════════════════════════════════════
      WEEKEND 1 — 28 Feb – 1 Mar 2026
@@ -2153,13 +2145,6 @@
   <button class="duration-btn" data-filter-region="porirua" aria-pressed="false" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#C4522A"></span>Porirua</button>
   <button class="duration-btn" data-filter-region="wairarapa" aria-pressed="false" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
 </div>
-<div class="duration-filter" style="padding-top:6px;padding-bottom:4px">
-  <span class="duration-label">☁️ Weather:</span>
-  <button class="duration-btn active" aria-pressed="true" onclick="filterActivityWeather('all', this)">All</button>
-  <button class="duration-btn" aria-pressed="false" onclick="filterActivityWeather('sunny', this)">☀️ Sunny day</button>
-  <button class="duration-btn" aria-pressed="false" onclick="filterActivityWeather('rainy', this)">🌧 Rainy day</button>
-</div>
-
 <main>
   <p class="section-loading" style="padding:2rem;color:#999;font-style:italic">Loading…</p>
 </main>
@@ -2215,7 +2200,7 @@
 <!-- ══════════════════════════════════════
      PLANNER SECTION
 ═══════════════════════════════════════ -->
-<div class="app-section active" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
+<div class="app-section" id="section-planner" role="tabpanel" aria-labelledby="tab-planner">
 <main>
   <div id="plannerContent">
     <div class="plan-toolbar">
@@ -2242,8 +2227,8 @@
       <p>Your weekend starts here. Browse events, cafés, walks and parks — then tap <strong>+ Plan</strong> to build your day.</p>
       <div class="planner-empty-actions">
         <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">🗓 Browse events</button>
-        <button class="planner-cta-btn" onclick="showSection('food', document.getElementById('tab-food'))">☕ Find a café</button>
-        <button class="planner-cta-btn" onclick="showSection('walks', document.getElementById('tab-walks'))">🌿 Find a walk</button>
+        <button class="planner-cta-btn" onclick="showSection('food',   document.getElementById('tab-food'))">☕ Find a café</button>
+        <button class="planner-cta-btn" onclick="showSection('walks',  document.getElementById('tab-walks'))">🌿 Find a walk</button>
       </div>
     </div>
   </div>
@@ -2336,38 +2321,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<!-- ── BOTTOM NAV (mobile) ── -->
-<nav class="bottom-nav" id="bottomNav" data-active-section="planner" aria-label="Main navigation">
-  <button class="bnav-btn" data-section="planner" onclick="handlePlannerTabClick(document.getElementById('tab-planner'))">
-    <span class="bnav-icon">📋</span>
-    <span class="bnav-label">Plan</span>
-    <span class="plan-count-badge" id="planCountBadgeMobile">0</span>
-  </button>
-  <button class="bnav-btn" data-section="events" onclick="showSection('events', document.getElementById('tab-events'))">
-    <span class="bnav-icon">🗓</span>
-    <span class="bnav-label">Events</span>
-  </button>
-  <button class="bnav-btn" data-section="food" onclick="showSection('food', document.getElementById('tab-food'))">
-    <span class="bnav-icon">☕</span>
-    <span class="bnav-label">Food</span>
-  </button>
-  <button class="bnav-btn" data-section="walks" onclick="showSection('walks', document.getElementById('tab-walks'))">
-    <span class="bnav-icon">🌿</span>
-    <span class="bnav-label">Walks</span>
-  </button>
-  <button class="bnav-btn" data-section="parks" onclick="showSection('parks', document.getElementById('tab-parks'))">
-    <span class="bnav-icon">🛝</span>
-    <span class="bnav-label">Parks</span>
-  </button>
-  <button class="bnav-btn" data-section="activities" onclick="showSection('activities', document.getElementById('tab-activities'))">
-    <span class="bnav-icon">🎯</span>
-    <span class="bnav-label">Activities</span>
-  </button>
-  <button class="bnav-btn" data-section="markets" onclick="showSection('markets', document.getElementById('tab-markets'))">
-    <span class="bnav-icon">🛒</span>
-    <span class="bnav-label">Markets</span>
-  </button>
-</nav>
+<!-- ── RAINY DAY SECTION ── -->
+<div class="app-section" id="section-rainy" role="tabpanel" aria-labelledby="tab-rainy">
+  <div class="rainy-intro">
+    <div class="rainy-intro-title">🌧 Rainy Day in Wellington?</div>
+    <div class="rainy-intro-sub">Indoor-friendly options from across the guide — play centres, museums, cafés &amp; more.</div>
+  </div>
+  <main></main>
+</div>
 
 <script src="js/script.js"></script>
 <script>

@@ -95,15 +95,14 @@ const SECTION_TITLES = {
     parks:      "Best Playgrounds — What's On Wellington",
     activities: "Family Activities — What's On Wellington",
     markets:    "Weekend Markets — What's On Wellington",
+    rainy:      "Rainy Day Wellington — What's On Wellington",
   };
 
   let currentRegion = 'all';
-  let currentTypeFilter = 'all';
   let currentDuration = 'all';
   let walkTopRatedOnly = false;
   let foodRatingFilter = 'all';
   let kidFriendlyFilter = 'all';
-  let activityWeatherFilter = 'all';
   const loadedSections = new Set(['events', 'planner']);
 
   // ── imgix ──
@@ -166,6 +165,41 @@ const SECTION_TITLES = {
       if (!domain) return;
       a.setAttribute('rel', 'noopener noreferrer');
       a.insertAdjacentHTML('beforeend', `<span class="card-link-domain">${domain}</span>`);
+    });
+  }
+
+  // Enhance static HTML event cards with ARIA attributes.
+  function enhanceCardAccessibility(container) {
+    const root = container || document;
+    root.querySelectorAll('.card').forEach((card, i) => {
+      // Add role="article" to div.card elements (article elements already have implicit role)
+      if (card.tagName !== 'ARTICLE' && !card.getAttribute('role')) {
+        card.setAttribute('role', 'article');
+      }
+      // aria-labelledby pointing to the card title
+      const titleEl = card.querySelector('.card-title');
+      if (titleEl && !titleEl.id) {
+        const uid = 'ctitle-' + i + '-' + Math.random().toString(36).slice(2, 7);
+        titleEl.id = uid;
+        if (!card.getAttribute('aria-labelledby')) card.setAttribute('aria-labelledby', uid);
+      }
+      // Hide decorative meta icons from screen readers
+      card.querySelectorAll('.meta-icon').forEach(icon => {
+        if (!icon.getAttribute('aria-hidden')) icon.setAttribute('aria-hidden', 'true');
+      });
+      // Fix "🔥 Pick" badge so screen readers say "Editor's pick" not "fire emoji Pick"
+      card.querySelectorAll('.badge-hot').forEach(badge => {
+        if (!badge.querySelector('.sr-only')) {
+          badge.innerHTML = '<span aria-hidden="true">🔥</span><span class="sr-only">Editor\'s pick</span>';
+        }
+      });
+      // Descriptive aria-label on plan buttons
+      const title = titleEl?.textContent?.trim();
+      if (title) {
+        card.querySelectorAll('.add-to-plan-btn').forEach(btn => {
+          if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', `Add ${title} to plan`);
+        });
+      }
     });
   }
 
@@ -295,24 +329,10 @@ const SECTION_TITLES = {
     });
   }
 
-  // ── ACTIVITIES: weather filter ──
-  function filterActivityWeather(weather, btn) {
-    activityWeatherFilter = weather;
-    document.querySelectorAll('.duration-filter button[onclick*="filterActivityWeather"]').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed', 'false');
-    });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-    applyActivityFilters();
-  }
-
   function applyActivityFilters() {
     document.querySelectorAll('#section-activities .venue-card').forEach(card => {
       const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
-      const w = card.dataset.weather;
-      const weatherMatch = activityWeatherFilter === 'all' || w === activityWeatherFilter || w === 'both';
-      card.classList.toggle('hidden', !(regionMatch && weatherMatch));
+      card.classList.toggle('hidden', !regionMatch);
     });
     document.querySelectorAll('#section-activities .venue-grid').forEach(grid => {
       const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
@@ -369,24 +389,6 @@ const SECTION_TITLES = {
     btn.focus();
   }
 
-  function syncBottomNav(section) {
-    const nav = document.getElementById('bottomNav');
-    if (!nav) return;
-    nav.dataset.activeSection = section === 'about' ? '' : section;
-    // Scroll the active tab button into view within the scrollable nav
-    const activeBtn = nav.querySelector(`.bnav-btn[data-section="${section}"]`);
-    if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    updateBnavFade();
-  }
-
-  // Show/hide the right-edge scroll-hint gradient
-  function updateBnavFade() {
-    const nav = document.getElementById('bottomNav');
-    if (!nav) return;
-    const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 2;
-    nav.classList.toggle('bnav-at-end', atEnd);
-  }
-
   function observeCards(container) {
     if (!window.IntersectionObserver) {
       container.querySelectorAll('.card, .venue-card').forEach(c => c.classList.add('revealed'));
@@ -417,26 +419,22 @@ const SECTION_TITLES = {
   }
 
   function showSectionFromMenu(section) {
-    const btns = document.querySelectorAll('.main-nav-btn');
-    const map = { planner: 0, events: 1, activities: 2, markets: 3, food: 4, walks: 5, parks: 6 };
     if (section === 'about') {
-      // About has no tab — just show the section directly
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.main-nav-btn').forEach(b => {
+      document.querySelectorAll('.cat-btn').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
       });
       document.getElementById('section-about').classList.add('active');
-      document.querySelector('.tabs-bar').style.display = 'none';
+      document.querySelectorAll('.tabs-bar').forEach(tb => tb.style.display = 'none');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      syncBottomNav('about');
       return;
     }
     if (section === 'planner') {
-      handlePlannerTabClick(btns[map.planner]);
+      handlePlannerTabClick(null);
       return;
     }
-    const btn = map[section] !== undefined ? btns[map[section]] : null;
+    const btn = document.getElementById('tab-' + section);
     if (btn) showSection(section, btn);
   }
 
@@ -469,6 +467,7 @@ const SECTION_TITLES = {
       main.innerHTML = await res.text();
       enhanceStaticImages(main);
       enhanceCardLinks(main);
+      enhanceCardAccessibility(main);
     } catch (e) {
       main.innerHTML = '<p style="padding:2rem;color:#999">Unable to load. Please refresh.</p>';
       loadedSections.delete(name);
@@ -478,22 +477,116 @@ const SECTION_TITLES = {
   function showSection(section, btn) {
     fetchSection(section).then(() => {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-      // ── Change 3: update aria-selected on tabs ──
-      document.querySelectorAll('.main-nav-btn').forEach(b => {
+      document.querySelectorAll('.cat-btn').forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-selected', 'false');
       });
       document.getElementById('section-' + section).classList.add('active');
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      document.querySelector('.tabs-bar').style.display = section === 'events' ? '' : 'none';
+      if (btn) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+      }
+      document.querySelectorAll('.tabs-bar').forEach(tb => tb.style.display = section === 'events' ? '' : 'none');
       document.title = SECTION_TITLES[section] || "What's On Wellington | Family Events, Cafés, Walks & Activities";
       applyFilter(currentRegion);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       updateHash(section, currentRegion);
-      syncBottomNav(section);
       observeCards(document.getElementById('section-' + section));
     });
+  }
+
+  async function showRainyDay(btn) {
+    document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
+    document.getElementById('section-rainy').classList.add('active');
+    document.querySelectorAll('.tabs-bar').forEach(tb => tb.style.display = 'none');
+
+    const main = document.querySelector('#section-rainy main');
+    main.innerHTML = '<p style="padding:2rem;color:#999">Loading indoor options…</p>';
+
+    await Promise.all(['food', 'activities', 'parks'].map(s => fetchSection(s)));
+
+    const groups = [
+      {
+        label: '🛝 Indoor Play',
+        cards: [...document.querySelectorAll('#section-parks .venue-card[data-indoor="true"]')],
+      },
+      {
+        label: '🎯 Indoor Activities & Experiences',
+        cards: [...document.querySelectorAll(
+          '#section-activities .venue-card[data-weather="rainy"], #section-activities .venue-card[data-weather="both"]'
+        )],
+      },
+      {
+        label: '☕ Cafés with Indoor Play',
+        cards: [...document.querySelectorAll('#section-food .venue-card[data-indoor="true"]')],
+      },
+    ];
+
+    main.innerHTML = '';
+    let totalShown = 0;
+
+    groups.forEach(({ label, cards }) => {
+      const filtered = currentRegion === 'all'
+        ? cards
+        : cards.filter(c => c.dataset.region === currentRegion);
+      if (!filtered.length) return;
+      totalShown += filtered.length;
+
+      const labelEl = document.createElement('div');
+      labelEl.className = 'day-label';
+      labelEl.textContent = label;
+      main.appendChild(labelEl);
+
+      const grid = document.createElement('div');
+      grid.className = 'venue-grid';
+      filtered.forEach(c => {
+        const clone = c.cloneNode(true);
+        clone.classList.remove('revealed', 'hidden');
+        grid.appendChild(clone);
+      });
+      main.appendChild(grid);
+    });
+
+    appendRainyFirestoreEvents(main);
+
+    if (!totalShown && !main.querySelector('.card')) {
+      main.innerHTML = '<p style="padding:2rem;color:#999">No indoor options found for the selected area. Try "All regions".</p>';
+    }
+
+    injectAddButtons();
+    updateAddButtons();
+    enhanceCardAccessibility(main);
+    observeCards(document.getElementById('section-rainy'));
+    updateHash('rainy', currentRegion);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function appendRainyFirestoreEvents(main) {
+    const panels = [...document.querySelectorAll('.weekend-panel:not([data-pastWeekend])')];
+    if (!panels.length) return;
+    const panel = panels[0];
+    const cards = [...panel.querySelectorAll('.card[data-indoor="1"]')]
+      .filter(c => currentRegion === 'all' || c.dataset.region === currentRegion);
+    if (!cards.length) return;
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'day-label';
+    labelEl.textContent = '🗓 Indoor Events This Weekend';
+    main.appendChild(labelEl);
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+    cards.forEach(c => {
+      const clone = c.cloneNode(true);
+      clone.classList.remove('revealed', 'hidden');
+      grid.appendChild(clone);
+    });
+    main.appendChild(grid);
   }
 
   function showTab(id, btn, dir) {
@@ -547,35 +640,18 @@ const SECTION_TITLES = {
 
   function filterRegion(region, btn) {
     currentRegion = region;
-    // Sync all region buttons (global filter-btn + in-section duration-btn)
     document.querySelectorAll('[data-filter-region]').forEach(b => {
       const isActive = b.dataset.filterRegion === region;
       b.classList.toggle('active', isActive);
       b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
-    applyFilter(region);
-    // ── Change 5: update URL ──
     const activeSection = document.querySelector('.app-section.active')?.id?.replace('section-', '') || 'events';
-    updateHash(activeSection, region);
-  }
-
-  function getCardType(card) {
-    const strip = card.querySelector('.card-strip');
-    if (!strip) return 'other';
-    for (const cls of strip.classList) {
-      if (cls.startsWith('strip-') && cls !== 'strip-other') return cls.slice(6);
+    if (activeSection === 'rainy') {
+      showRainyDay(document.getElementById('tab-rainy'));
+      return;
     }
-    return 'other';
-  }
-
-  function filterType(type, btn) {
-    currentTypeFilter = type;
-    document.querySelectorAll('[data-filter-type]').forEach(b => {
-      const active = b.dataset.filterType === type;
-      b.classList.toggle('active', active);
-      b.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-    applyFilter(currentRegion);
+    applyFilter(region);
+    updateHash(activeSection, region);
   }
 
   function applyFilter(region) {
@@ -583,9 +659,7 @@ const SECTION_TITLES = {
     if (activePanel) {
       activePanel.querySelectorAll('.card').forEach(card => {
         const regionHide = region !== 'all' && card.dataset.region !== region;
-        const isFamilyCard = currentTypeFilter === 'whanau' && card.querySelector('.badge-family');
-        const typeHide   = currentTypeFilter !== 'all' && getCardType(card) !== currentTypeFilter && !isFamilyCard;
-        card.classList.toggle('hidden', regionHide || typeHide);
+        card.classList.toggle('hidden', regionHide);
       });
       activePanel.querySelectorAll('.events-grid').forEach(grid => {
         const existing = grid.nextElementSibling;
@@ -628,11 +702,14 @@ const SECTION_TITLES = {
   document.addEventListener('DOMContentLoaded', () => {
     const { section, region } = readHash();
 
-    // Restore section (default is now planner)
-    if (section !== 'planner') {
-      const navBtns = document.querySelectorAll('.main-nav-btn');
-      const map = { events: 1, activities: 2, markets: 3, food: 4, walks: 5, parks: 6 };
-      if (map[section] !== undefined) showSection(section, navBtns[map[section]]);
+    // Restore section (default is 'events')
+    if (section === 'planner') {
+      handlePlannerTabClick(null);
+    } else if (section === 'rainy') {
+      showRainyDay(document.getElementById('tab-rainy'));
+    } else {
+      const btn = document.getElementById('tab-' + section);
+      if (btn) showSection(section, btn);
     }
 
     // Restore region
@@ -703,43 +780,46 @@ const SECTION_TITLES = {
   // ═══════════════════════════════════════
 
   const EVENT_TYPE_MAP = {
-    festival: { strip: 'strip-festival', label: '🎪 Festival' },
-    culture:  { strip: 'strip-culture',  label: '🎨 Arts & Culture' },
-    market:   { strip: 'strip-market',   label: '🛒 Market' },
-    music:    { strip: 'strip-music',    label: '🎵 Music' },
-    outdoor:  { strip: 'strip-outdoor',  label: '🏃 Outdoor' },
-    whanau:   { strip: 'strip-whanau',   label: '👨‍👩‍👧 Whānau' },
+    festival: { strip: 'strip-festival', label: '<span aria-hidden="true">🎪</span> Festival' },
+    culture:  { strip: 'strip-culture',  label: '<span aria-hidden="true">🎨</span> Arts & Culture' },
+    market:   { strip: 'strip-market',   label: '<span aria-hidden="true">🛒</span> Market' },
+    music:    { strip: 'strip-music',    label: '<span aria-hidden="true">🎵</span> Music' },
+    outdoor:  { strip: 'strip-outdoor',  label: '<span aria-hidden="true">🏃</span> Outdoor' },
+    whanau:   { strip: 'strip-whanau',   label: '<span aria-hidden="true">👨‍👩‍👧</span> Whānau' },
   };
 
   function buildEventCardHTML(ev) {
-    const tm   = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '📅 Event' };
+    const tm   = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region = ev.region || 'all';
+    const titleId = `card-title-${escHtml(ev.id)}`;
     const meta = [
-      ev.time  ? `<div class="meta-row"><span class="meta-icon">🕐</span>${escHtml(ev.time)}</div>`  : '',
-      ev.venue ? `<div class="meta-row"><span class="meta-icon">📍</span>${escHtml(ev.venue)}</div>` : '',
+      ev.time  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(ev.time)}</div>`  : '',
+      ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${escHtml(ev.venue)}</div>` : '',
     ].join('');
     const footer = [
       ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${extractDomain(ev.url)}</span></a>` : '',
-      `<button class="add-to-plan-btn" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
+      `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
+    const pickBadge = ev.pick ? '<div class="card-badges"><span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor\'s pick</span></span></div>' : '';
     return `
-      <div class="card ${tierClass}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}>
+      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         <div class="card-strip ${tm.strip}"></div>
         ${ev.img ? cardImgHTML(ev.img, ev.title) : cardPlaceholderHTML(ev.type)}
         <div class="card-body">
           <div class="card-top">
             <div>
               <div class="card-cat">${tm.label}</div>
-              <div class="card-title">${escHtml(ev.title)}</div>
+              <div class="card-title" id="${titleId}">${escHtml(ev.title)}</div>
             </div>
+            ${pickBadge}
           </div>
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${ev.description ? `<div class="card-desc">${escHtml(ev.description)}</div>` : ''}
         </div>
         <div class="card-footer">${footer}</div>
-      </div>`;
+      </article>`;
   }
 
   function buildHighlightsRow() {
@@ -787,13 +867,13 @@ const SECTION_TITLES = {
     // Switch to Events section without the scroll-to-top that showSection() applies
     if (!eventsSection.classList.contains('active')) {
       document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.main-nav-btn').forEach(b => {
+      document.querySelectorAll('.cat-btn').forEach(b => {
         b.classList.remove('active'); b.setAttribute('aria-selected', 'false');
       });
       eventsSection.classList.add('active');
       const tabBtn = document.getElementById('tab-events');
       if (tabBtn) { tabBtn.classList.add('active'); tabBtn.setAttribute('aria-selected', 'true'); }
-      document.querySelector('.tabs-bar').style.display = '';
+      document.querySelectorAll('.tabs-bar').forEach(tb => tb.style.display = '');
       applyFilter(currentRegion);
       updateHash('events', currentRegion);
     }
@@ -1578,15 +1658,11 @@ const SECTION_TITLES = {
 
   // ── Plan badge count ──
   function updatePlanBadge() {
-    const badge = document.getElementById('planCountBadge');
-    if (!badge) return;
     const count = planItems.length;
-    badge.textContent = count;
-    badge.classList.toggle('visible', count > 0);
-    const mobileBadge = document.getElementById('planCountBadgeMobile');
-    if (mobileBadge) {
-      mobileBadge.textContent = count;
-      mobileBadge.classList.toggle('visible', count > 0);
+    const headerBadge = document.getElementById('planCountBadgeHeader');
+    if (headerBadge) {
+      headerBadge.textContent = count;
+      headerBadge.classList.toggle('visible', count > 0);
     }
   }
 
@@ -1797,6 +1873,8 @@ const SECTION_TITLES = {
       const btn = document.createElement('button');
       btn.className = 'add-to-plan-btn';
       btn.textContent = '+ Plan';
+      const cardTitle = footer.closest('.card')?.querySelector('.card-title')?.textContent?.trim();
+      if (cardTitle) btn.setAttribute('aria-label', `Add ${cardTitle} to plan`);
       btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.card')); };
       footer.prepend(btn);
     });
@@ -1806,6 +1884,8 @@ const SECTION_TITLES = {
       const btn = document.createElement('button');
       btn.className = 'add-to-plan-btn';
       btn.textContent = '+ Plan';
+      const venueName = footer.closest('.venue-card')?.querySelector('.venue-name, .card-title')?.textContent?.trim();
+      if (venueName) btn.setAttribute('aria-label', `Add ${venueName} to plan`);
       btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.venue-card')); };
       footer.prepend(btn);
     });
@@ -1831,7 +1911,11 @@ const SECTION_TITLES = {
 
   // ── Planner tab click handler ──
   function handlePlannerTabClick(btn) {
-    showSection('planner', btn);
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    showSection('planner', null);
     renderPlan();
   }
 
@@ -1966,10 +2050,6 @@ const SECTION_TITLES = {
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
     enhanceCardLinks();     // add domain label to all static card links
     setEagerImages();       // promote first 2 visible cards to loading="eager"
-    // Bottom nav scroll-hint fade — init + keep updated on scroll
-    updateBnavFade();
-    const bnavEl = document.getElementById('bottomNav');
-    if (bnavEl) bnavEl.addEventListener('scroll', updateBnavFade, { passive: true });
     // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
     setTimeout(() => {
       const activeTab = document.querySelector('.tabs-inner .tab-btn.active');
@@ -1977,6 +2057,7 @@ const SECTION_TITLES = {
     }, 0);
     buildHighlightsRow();
     injectAddButtons();
+    enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge, plan btn labels
     // If Firebase is not configured, load from localStorage immediately
     // If Firebase IS configured, onAuthStateChanged handles it after sign-in
     if (!firebaseReady) {

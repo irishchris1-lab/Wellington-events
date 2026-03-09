@@ -235,11 +235,13 @@ function openModal(docId) {
     document.getElementById('fImg').value      = ev.img      || '';
     document.getElementById('fActive').checked = ev.active !== false;
     updateImgPreview();
-    document.getElementById('fPick').checked  = ev.pick  || false;
+    document.getElementById('fPick').checked   = ev.pick   || false;
+    document.getElementById('fIndoor').checked = ev.indoor || false;
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
     document.getElementById('fActive').checked = true;
+    document.getElementById('fIndoor').checked = false;
     updateImgPreview();
   }
 
@@ -252,6 +254,7 @@ function closeModal() {
   editingDocId = null;
   document.getElementById('uploadStatus').textContent = '';
   document.getElementById('uploadStatus').className = 'upload-status';
+  document.getElementById('fIndoor').checked = false;
 }
 
 // ── Image upload / preview ──────────────────────────────────────────────────
@@ -344,6 +347,7 @@ async function handleFormSubmit(e) {
     img:         document.getElementById('fImg').value.trim(),
     active:      document.getElementById('fActive').checked,
     pick:        document.getElementById('fPick').checked,
+    indoor:      document.getElementById('fIndoor').checked || false,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
 
