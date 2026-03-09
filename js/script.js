@@ -873,6 +873,8 @@ const SECTION_TITLES = {
         updateTabLabels();
         updateAddButtons();
         buildHighlightsRow();
+        const evSection = document.getElementById('section-events');
+        if (evSection) observeCards(evSection);
       }, err => console.warn('Firestore events error:', err));
   }
 
