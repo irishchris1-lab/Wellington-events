@@ -290,8 +290,19 @@
         </div>
 
         <div class="form-row">
-          <label class="form-label" for="fImg">Image URL</label>
-          <input class="form-input" id="fImg" type="url" placeholder="https://…">
+          <label class="form-label">Image</label>
+          <div class="img-field">
+            <div class="img-field-top">
+              <label class="upload-btn" for="fImgFile">📁 Upload photo</label>
+              <input type="file" id="fImgFile" accept="image/*" class="img-file-input" onchange="handleImageUpload(this)">
+              <span class="upload-status" id="uploadStatus"></span>
+            </div>
+            <input class="form-input" id="fImg" type="url" placeholder="or paste image URL (https://…)" oninput="updateImgPreview()">
+            <div class="img-preview-wrap hidden" id="imgPreviewWrap">
+              <img id="imgPreview" src="" alt="Preview" class="img-preview" onerror="this.closest('.img-preview-wrap').classList.add('hidden')">
+              <button type="button" class="img-clear-btn" onclick="clearImg()">✕ Remove</button>
+            </div>
+          </div>
         </div>
 
         <div class="form-row form-row-check">
@@ -339,6 +350,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script src="admin.js"></script>
 
 </body>

@@ -15,8 +15,9 @@ const FIREBASE_CONFIG = {
 
 // ── Init Firebase ──────────────────────────────────────────────────────────────
 firebase.initializeApp(FIREBASE_CONFIG);
-const auth = firebase.auth();
-const db   = firebase.firestore();
+const auth    = firebase.auth();
+const db      = firebase.firestore();
+const storage = firebase.storage();
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let allEvents       = [];
@@ -233,11 +234,13 @@ function openModal(docId) {
     document.getElementById('fUrl').value      = ev.url      || '';
     document.getElementById('fImg').value      = ev.img      || '';
     document.getElementById('fActive').checked = ev.active !== false;
+    updateImgPreview();
     document.getElementById('fPick').checked  = ev.pick  || false;
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
     document.getElementById('fActive').checked = true;
+    updateImgPreview();
   }
 
   document.getElementById('modalOverlay').classList.remove('hidden');
@@ -247,6 +250,63 @@ function openModal(docId) {
 function closeModal() {
   document.getElementById('modalOverlay').classList.add('hidden');
   editingDocId = null;
+  document.getElementById('uploadStatus').textContent = '';
+  document.getElementById('uploadStatus').className = 'upload-status';
+}
+
+// ── Image upload / preview ──────────────────────────────────────────────────
+function handleImageUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('uploadStatus');
+  const ts       = Date.now();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const ref      = storage.ref('event-images/' + ts + '-' + safeName);
+  const task     = ref.put(file);
+
+  statusEl.textContent = 'Uploading…';
+  statusEl.className   = 'upload-status uploading';
+
+  task.on('state_changed',
+    snap => {
+      const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+      statusEl.textContent = 'Uploading… ' + pct + '%';
+    },
+    err => {
+      statusEl.textContent = 'Upload failed: ' + err.message;
+      statusEl.className   = 'upload-status error';
+      input.value = '';
+    },
+    async () => {
+      const url = await task.snapshot.ref.getDownloadURL();
+      document.getElementById('fImg').value = url;
+      updateImgPreview();
+      statusEl.textContent = '✓ Uploaded';
+      statusEl.className   = 'upload-status success';
+      input.value = '';
+    }
+  );
+}
+
+function updateImgPreview() {
+  const url  = document.getElementById('fImg').value.trim();
+  const wrap = document.getElementById('imgPreviewWrap');
+  const img  = document.getElementById('imgPreview');
+  if (url) {
+    img.src = url;
+    wrap.classList.remove('hidden');
+  } else {
+    wrap.classList.add('hidden');
+    img.src = '';
+  }
+}
+
+function clearImg() {
+  document.getElementById('fImg').value = '';
+  document.getElementById('imgPreviewWrap').classList.add('hidden');
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('uploadStatus').textContent = '';
+  document.getElementById('uploadStatus').className = 'upload-status';
 }
 
 function handleOverlayClick(e) {
