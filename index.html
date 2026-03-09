@@ -2336,17 +2336,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<!-- ── MORE POPOVER (mobile) ── -->
-<div class="more-popover" id="morePopover" role="dialog" aria-label="More sections">
-  <button class="more-popover-btn" onclick="showSection('parks',      document.getElementById('tab-parks'));      closeMorePopover()"><span>🛝</span> Play Parks</button>
-  <button class="more-popover-btn" onclick="showSection('activities', document.getElementById('tab-activities')); closeMorePopover()"><span>🎯</span> Activities</button>
-  <button class="more-popover-btn" onclick="showSection('markets',    document.getElementById('tab-markets'));    closeMorePopover()"><span>🛒</span> Markets</button>
-</div>
-<div class="more-popover-overlay" id="morePopoverOverlay" onclick="closeMorePopover()"></div>
-
 <!-- ── BOTTOM NAV (mobile) ── -->
 <nav class="bottom-nav" id="bottomNav" data-active-section="planner" aria-label="Main navigation">
-  <span class="bnav-indicator" id="bnavIndicator" aria-hidden="true"></span>
   <button class="bnav-btn" data-section="planner" onclick="handlePlannerTabClick(document.getElementById('tab-planner'))">
     <span class="bnav-icon">📋</span>
     <span class="bnav-label">Plan</span>
@@ -2364,9 +2355,17 @@
     <span class="bnav-icon">🌿</span>
     <span class="bnav-label">Walks</span>
   </button>
-  <button class="bnav-btn" data-section="more" onclick="toggleMorePopover()">
-    <span class="bnav-icon">⋯</span>
-    <span class="bnav-label">More</span>
+  <button class="bnav-btn" data-section="parks" onclick="showSection('parks', document.getElementById('tab-parks'))">
+    <span class="bnav-icon">🛝</span>
+    <span class="bnav-label">Parks</span>
+  </button>
+  <button class="bnav-btn" data-section="activities" onclick="showSection('activities', document.getElementById('tab-activities'))">
+    <span class="bnav-icon">🎯</span>
+    <span class="bnav-label">Activities</span>
+  </button>
+  <button class="bnav-btn" data-section="markets" onclick="showSection('markets', document.getElementById('tab-markets'))">
+    <span class="bnav-icon">🛒</span>
+    <span class="bnav-label">Markets</span>
   </button>
 </nav>
 

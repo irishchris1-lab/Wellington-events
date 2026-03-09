@@ -338,24 +338,19 @@ const SECTION_TITLES = {
   function syncBottomNav(section) {
     const nav = document.getElementById('bottomNav');
     if (!nav) return;
-    const moreSet = new Set(['parks', 'activities', 'markets']);
-    const activeSection = moreSet.has(section) ? 'more' : (section === 'about' ? '' : section);
-    nav.dataset.activeSection = activeSection;
-    const indicatorMap = {
-      planner: { idx: 0, color: '#0B5563' },
-      events:  { idx: 1, color: '#0B5563' },
-      food:    { idx: 2, color: '#C4522A' },
-      walks:   { idx: 3, color: '#1A8A6E' },
-      more:    { idx: 4, color: '#0B5563' },
-    };
-    const indicator = document.getElementById('bnavIndicator');
-    if (indicator) {
-      const d = indicatorMap[activeSection];
-      if (d) {
-        indicator.style.transform = `translateX(${d.idx * 100}%)`;
-        indicator.style.background = d.color;
-      }
-    }
+    nav.dataset.activeSection = section === 'about' ? '' : section;
+    // Scroll the active tab button into view within the scrollable nav
+    const activeBtn = nav.querySelector(`.bnav-btn[data-section="${section}"]`);
+    if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    updateBnavFade();
+  }
+
+  // Show/hide the right-edge scroll-hint gradient
+  function updateBnavFade() {
+    const nav = document.getElementById('bottomNav');
+    if (!nav) return;
+    const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 2;
+    nav.classList.toggle('bnav-at-end', atEnd);
   }
 
   function observeCards(container) {
@@ -378,14 +373,6 @@ const SECTION_TITLES = {
     cards.forEach(card => obs.observe(card));
   }
 
-  function toggleMorePopover() {
-    const open = document.getElementById('morePopover').classList.toggle('open');
-    document.getElementById('morePopoverOverlay').classList.toggle('open', open);
-  }
-  function closeMorePopover() {
-    document.getElementById('morePopover').classList.remove('open');
-    document.getElementById('morePopoverOverlay').classList.remove('open');
-  }
   function toggleInfoPopover() {
     const open = document.getElementById('infoPopover').classList.toggle('open');
     document.getElementById('infoPopoverOverlay').classList.toggle('open', open);
@@ -1875,6 +1862,10 @@ const SECTION_TITLES = {
     updateWeekendNav();
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
     setEagerImages();       // promote first 2 visible cards to loading="eager"
+    // Bottom nav scroll-hint fade — init + keep updated on scroll
+    updateBnavFade();
+    const bnavEl = document.getElementById('bottomNav');
+    if (bnavEl) bnavEl.addEventListener('scroll', updateBnavFade, { passive: true });
     // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
     setTimeout(() => {
       const activeTab = document.querySelector('.tabs-inner .tab-btn.active');
