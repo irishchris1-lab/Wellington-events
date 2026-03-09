@@ -117,6 +117,51 @@ const SECTION_TITLES = {
     return `https://${IMGIX_HOST}/${encodeURIComponent(url)}?auto=format,compress&fit=crop&ar=16:9&w=${w}`;
   }
 
+  // Generate a 2-stop srcset from a Wikimedia thumb URL by swapping the width token.
+  // Input:  .../thumb/a/ab/File.jpg/960px-File.jpg
+  // Output: ".../480px-File.jpg 480w, .../960px-File.jpg 960w"
+  function wikimediaSrcset(url) {
+    const m = url.match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/[^/]+\/thumb\/[^/]+\/[^/]+\/[^/]+\/)(\d+)px-(.+)$/);
+    if (!m) return '';
+    const [, base, , name] = m;
+    return `${base}480px-${name} 480w, ${url} 960w`;
+  }
+
+  // Shared onerror: hides broken img and marks the wrap so CSS can show a fallback state.
+  function onImgError(img) {
+    img.onerror = null;
+    img.parentElement.classList.add('img-failed');
+    img.remove();
+  }
+
+  // Walk all img.card-img in `container` (or entire document) and:
+  //   • add width/height if missing  • add Wikimedia srcset if not already set
+  //   • set onerror  • promote first 2 in active weekend panel to loading="eager"
+  function enhanceStaticImages(container) {
+    const root = container || document;
+    root.querySelectorAll('img.card-img').forEach(img => {
+      if (!img.getAttribute('width'))  img.setAttribute('width',  '960');
+      if (!img.getAttribute('height')) img.setAttribute('height', '540');
+      if (!img.onerror) img.onerror = function() { onImgError(this); };
+      if (!img.srcset) {
+        const ws = wikimediaSrcset(img.getAttribute('src') || '');
+        if (ws) {
+          img.srcset = ws;
+          img.sizes  = '(max-width:640px) calc(100vw - 32px), 400px';
+        }
+      }
+    });
+  }
+
+  // Set the first 2 visible card images in the active weekend panel to eager.
+  function setEagerImages() {
+    const panel = document.querySelector('.weekend-panel.active');
+    if (!panel) return;
+    panel.querySelectorAll('img.card-img').forEach((img, i) => {
+      img.loading = i < 2 ? 'eager' : 'lazy';
+    });
+  }
+
   const PLACEHOLDER_ICONS = {
     festival: '🎪', culture: '🎭', music: '🎶', outdoor: '🌿',
     market: '🛒', sport: '🏆', whanau: '👨‍👩‍👧',
@@ -128,12 +173,16 @@ const SECTION_TITLES = {
 
   function cardImgHTML(url, alt) {
     if (!url) return '';
-    const esc = url.replace(/"/g, '&quot;');
+    const esc    = url.replace(/"/g, '&quot;');
     const altEsc = (alt || '').replace(/"/g, '&quot;');
-    const srcset = IMGIX_HOST
-      ? ` srcset="${imgixSrc(url,400)} 400w,${imgixSrc(url,700)} 700w,${imgixSrc(url,1000)} 1000w" sizes="(max-width:640px) calc(100vw - 32px), 400px"`
-      : '';
-    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcset} loading="lazy" decoding="async" alt="${altEsc}"></div>`;
+    let srcsetAttr = '';
+    if (IMGIX_HOST) {
+      srcsetAttr = ` srcset="${imgixSrc(url,400)} 400w,${imgixSrc(url,700)} 700w,${imgixSrc(url,1000)} 1000w" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
+    } else {
+      const ws = wikimediaSrcset(url);
+      if (ws) srcsetAttr = ` srcset="${ws}" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
+    }
+    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onerror="onImgError(this)" alt="${altEsc}"></div>`;
   }
 
   // ── FOOD: top-rated filter ──
@@ -397,6 +446,7 @@ const SECTION_TITLES = {
     try {
       const res = await fetch('sections/' + name + '.html');
       main.innerHTML = await res.text();
+      enhanceStaticImages(main);
     } catch (e) {
       main.innerHTML = '<p style="padding:2rem;color:#999">Unable to load. Please refresh.</p>';
       loadedSections.delete(name);
@@ -688,7 +738,7 @@ const SECTION_TITLES = {
       const el        = document.createElement('div');
       el.className    = 'highlight-card';
       el.innerHTML    = `
-        ${img ? `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" loading="lazy" alt="${escHtml(title)}"></div>` : '<div class="highlight-card-img"></div>'}
+        ${img ? `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${escHtml(title)}"></div>` : '<div class="highlight-card-img"></div>'}
         <div class="highlight-card-body">
           <div class="highlight-card-title">${escHtml(title)}</div>
           <div class="highlight-card-meta">
@@ -1823,6 +1873,8 @@ const SECTION_TITLES = {
     hidePastWeekendTabs();
     updateTabLabels();
     updateWeekendNav();
+    enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
+    setEagerImages();       // promote first 2 visible cards to loading="eager"
     // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
     setTimeout(() => {
       const activeTab = document.querySelector('.tabs-inner .tab-btn.active');

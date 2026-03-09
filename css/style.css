@@ -379,8 +379,17 @@
   .card-img-wrap {
     overflow: hidden;
     aspect-ratio: 16 / 9;
-    background: #eceae6;
+    background: #e5e7eb;
     flex-shrink: 0;
+    position: relative;
+  }
+  /* Failed image: keep the sized box, show a subtle camera icon */
+  .card-img-wrap.img-failed { background: linear-gradient(135deg, #f0ece4, #e8e4dc); }
+  .card-img-wrap.img-failed::after {
+    content: '📷';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px; opacity: 0.2; pointer-events: none;
   }
   .card-img {
     width: 100%;
