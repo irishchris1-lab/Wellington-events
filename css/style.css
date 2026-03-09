@@ -205,6 +205,10 @@
   }
   .tab-btn:hover { color: rgba(255,255,255,0.75); }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  /* Past tab buttons (inside the collapsible group) */
+  .tab-btn[data-past-weekend] { color: rgba(255,255,255,0.35); font-style: italic; }
+  .tab-btn[data-past-weekend]:hover { color: rgba(255,255,255,0.55); }
+  .tab-btn[data-past-weekend].active { color: rgba(255,198,44,0.6); border-bottom-color: rgba(255,198,44,0.4); }
   .tab-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4fc58f; display: inline-block; margin-right: 7px; vertical-align: middle; animation: pulse 2.5s infinite; }
   .tab-count {
     display: inline-block; background: rgba(255,255,255,0.12); border-radius: 8px;
@@ -933,6 +937,33 @@
     pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══ PAST WEEKENDS TOGGLE ══ */
+.past-tabs-toggle {
+  flex-shrink: 0; background: none; border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(255,255,255,0.38); padding: 14px 14px 11px;
+  font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: color 0.15s;
+  letter-spacing: 0.02em;
+}
+.past-tabs-toggle:hover { color: rgba(255,255,255,0.6); }
+.past-tabs-chevron { display: inline-block; margin-left: 3px; font-style: normal; }
+
+/* Hidden by default; display:contents makes buttons flow as direct flex children */
+.past-tabs-group        { display: none; }
+.past-tabs-group.open   { display: contents; }
+
+/* ══ PAST WEEKEND BANNER ══ */
+.past-weekend-banner {
+  background: #fffbea; border: 1px solid #e8d478;
+  border-radius: 8px; padding: 10px 16px; margin: 16px 0 4px;
+  font-size: 13px; color: #7a6010; line-height: 1.4;
+}
+
+/* ══ MUTED LINKS WHEN VIEWING PAST WEEKEND ══ */
+.showing-past-weekend .card-link { opacity: 0.55; }
+.showing-past-weekend .card-link:hover { opacity: 1; }
 
 /* ══ MOBILE INFO BUTTON ══ */
 .mobile-info-btn {

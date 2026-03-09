@@ -511,6 +511,11 @@ const SECTION_TITLES = {
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    // Show/hide the "past weekend" banner and muted-link state
+    const isPast = !!panel.dataset.pastWeekend;
+    const banner = document.getElementById('pastWeekendBanner');
+    if (banner) banner.hidden = !isPast;
+    document.getElementById('section-events')?.classList.toggle('showing-past-weekend', isPast);
     applyFilter(currentRegion);
     updateWeekendNav();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -518,7 +523,7 @@ const SECTION_TITLES = {
 
   function navigateWeekend(dir) {
     const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .filter(p => p.style.display !== 'none');
+      .filter(p => !p.dataset.pastWeekend);
     const active = document.querySelector('.weekend-panel.active');
     const idx = panels.indexOf(active);
     const target = panels[idx + dir];
@@ -529,7 +534,7 @@ const SECTION_TITLES = {
 
   function updateWeekendNav() {
     const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .filter(p => p.style.display !== 'none');
+      .filter(p => !p.dataset.pastWeekend);
     const active = document.querySelector('.weekend-panel.active');
     const idx = panels.indexOf(active);
     const prevBtn = document.getElementById('wnavPrev');
@@ -744,7 +749,7 @@ const SECTION_TITLES = {
 
     // First non-past weekend panel = "this weekend"
     const panel = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .find(p => p.style.display !== 'none')
+      .find(p => !p.dataset.pastWeekend)
       || document.querySelector('.weekend-panel');
     if (!panel) { section.style.display = 'none'; return; }
 
@@ -835,7 +840,7 @@ const SECTION_TITLES = {
     const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     let visibleCount = 0;
     document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
-      if (btn.style.display === 'none') return;
+      if (btn.dataset.pastWeekend) return; // past tabs get their own labels from the date
       const panelId = btn.getAttribute('aria-controls');
       const panel = panelId && document.getElementById(panelId);
       if (!panel || !panel.dataset.weekend) return;
@@ -858,33 +863,86 @@ const SECTION_TITLES = {
   }
 
   // Hide tabs and panels for weekends that have already passed
-  function hidePastWeekendTabs() {
-    let firstVisible = null;
+  function setupPastWeekendTabs() {
+    const tabsInner = document.querySelector('.tabs-inner');
+    if (!tabsInner) return;
+
+    const pastBtns = [];
+    let firstFuture = null;
+
     document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
+      const btn = document.getElementById('wtab-' + panel.id);
       if (weekendIsPast(panel.dataset.weekend)) {
-        panel.style.display = 'none';
-        const btn = document.getElementById('wtab-' + panel.id);
-        if (btn) btn.style.display = 'none';
-      } else if (!firstVisible) {
-        firstVisible = panel;
+        panel.dataset.pastWeekend = '1';
+        if (btn) {
+          btn.dataset.pastWeekend = '1';
+          pastBtns.push(btn);
+        }
+      } else if (!firstFuture) {
+        firstFuture = panel;
       }
     });
-    // If the currently-active panel is now hidden, activate the first visible one
-    const active = document.querySelector('.weekend-panel.active');
-    if (active && active.style.display === 'none' && firstVisible) {
-      active.classList.remove('active');
-      firstVisible.classList.add('active');
-      document.querySelectorAll('.tab-btn[aria-selected]').forEach(b => {
-        b.setAttribute('aria-selected', 'false');
-        b.classList.remove('active');
+
+    if (pastBtns.length) {
+      // Add "Past weekends" toggle and collapsible group to the tab bar
+      const toggle = document.createElement('button');
+      toggle.className = 'past-tabs-toggle';
+      toggle.id = 'pastTabsToggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.innerHTML = 'Past weekends <span class="past-tabs-chevron">▾</span>';
+      toggle.onclick = togglePastTabs;
+
+      const group = document.createElement('div');
+      group.className = 'past-tabs-group';
+      group.id = 'pastTabsGroup';
+
+      // Sort most-recent past first
+      pastBtns.sort((a, b) => {
+        const pa = document.getElementById(a.getAttribute('aria-controls'));
+        const pb = document.getElementById(b.getAttribute('aria-controls'));
+        return (pb?.dataset.weekend || '').localeCompare(pa?.dataset.weekend || '');
       });
-      const newBtn = document.getElementById('wtab-' + firstVisible.id);
+      pastBtns.forEach(btn => group.appendChild(btn));
+
+      tabsInner.appendChild(toggle);
+      tabsInner.appendChild(group);
+    }
+
+    // Inject the "past weekend" banner once into the events main area
+    const evMain = document.querySelector('#section-events main');
+    if (evMain && !document.getElementById('pastWeekendBanner')) {
+      const banner = document.createElement('div');
+      banner.id = 'pastWeekendBanner';
+      banner.className = 'past-weekend-banner';
+      banner.hidden = true;
+      banner.textContent = '📅 This weekend has passed — showing for reference only.';
+      evMain.prepend(banner);
+    }
+
+    // If the active panel is past, switch to the first future panel
+    const active = document.querySelector('.weekend-panel.active');
+    if (active?.dataset.pastWeekend && firstFuture) {
+      active.classList.remove('active');
+      firstFuture.classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      const newBtn = document.getElementById('wtab-' + firstFuture.id);
       if (newBtn) { newBtn.classList.add('active'); newBtn.setAttribute('aria-selected', 'true'); }
     }
   }
 
+  function togglePastTabs() {
+    const group  = document.getElementById('pastTabsGroup');
+    const toggle = document.getElementById('pastTabsToggle');
+    if (!group || !toggle) return;
+    const isOpen = group.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    toggle.querySelector('.past-tabs-chevron').textContent = isOpen ? '▴' : '▾';
+  }
+
   function injectEventCard(ev) {
-    if (weekendIsPast(ev.weekend)) return; // skip past events
     const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
     if (!panel) {
       console.warn(`[WoW] No panel for weekend "${ev.weekend}" — "${ev.title || ev.id}" not shown. Must be a Saturday in YYYY-MM-DD format within the generated range.`);
@@ -1902,7 +1960,7 @@ const SECTION_TITLES = {
 
   document.addEventListener('DOMContentLoaded', () => {
     generateRemainingWeekends();
-    hidePastWeekendTabs();
+    setupPastWeekendTabs();
     updateTabLabels();
     updateWeekendNav();
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
