@@ -182,19 +182,25 @@ const SECTION_TITLES = {
     festival: '🎪', culture: '🎭', music: '🎶', outdoor: '🌿',
     market: '🛒', sport: '🏆', whanau: '👨‍👩‍👧',
   };
-  // Generic fallback images (Wikimedia Commons, CC-licensed) used when an event has no custom image.
+  // Generic fallback images (Wikimedia Commons, CC-licensed) — 480px thumbnails only.
+  // Using 480px (not 960px) and no srcset so the browser makes exactly one small request
+  // per type; subsequent cards of the same type hit the HTTP cache instantly.
   const FALLBACK_IMAGES = {
-    festival: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/CupaDupa_%2723.jpg/960px-CupaDupa_%2723.jpg',
-    culture:  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Exterior_view_of_Te_Papa_from_the_Wellington_Waterfront.jpg/960px-Exterior_view_of_Te_Papa_from_the_Wellington_Waterfront.jpg',
-    music:    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Tiki_Taane_in_concert_at_CubaDupa_2017_%285%29.jpg/960px-Tiki_Taane_in_concert_at_CubaDupa_2017_%285%29.jpg',
-    outdoor:  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Saturday_morning_cricket%2C_Wellington%2C_New_Zealand%2C_1_December_2007.jpg/960px-Saturday_morning_cricket%2C_Wellington%2C_New_Zealand%2C_1_December_2007.jpg',
-    market:   'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Harbourside_Market%2C_Wellington%2C_New_Zealand_-_DSC09758.jpg/960px-Harbourside_Market%2C_Wellington%2C_New_Zealand_-_DSC09758.jpg',
-    whanau:   'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Newtown_Festival_2024_%28078%29.jpg/960px-Newtown_Festival_2024_%28078%29.jpg',
-    kids:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Mt_Cook_Play_Area_Wellington_2024_1.jpg/960px-Mt_Cook_Play_Area_Wellington_2024_1.jpg',
+    festival: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/CupaDupa_%2723.jpg/480px-CupaDupa_%2723.jpg',
+    culture:  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Exterior_view_of_Te_Papa_from_the_Wellington_Waterfront.jpg/480px-Exterior_view_of_Te_Papa_from_the_Wellington_Waterfront.jpg',
+    music:    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Tiki_Taane_in_concert_at_CubaDupa_2017_%285%29.jpg/480px-Tiki_Taane_in_concert_at_CubaDupa_2017_%285%29.jpg',
+    outdoor:  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Saturday_morning_cricket%2C_Wellington%2C_New_Zealand%2C_1_December_2007.jpg/480px-Saturday_morning_cricket%2C_Wellington%2C_New_Zealand%2C_1_December_2007.jpg',
+    market:   'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Harbourside_Market%2C_Wellington%2C_New_Zealand_-_DSC09758.jpg/480px-Harbourside_Market%2C_Wellington%2C_New_Zealand_-_DSC09758.jpg',
+    whanau:   'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Newtown_Festival_2024_%28078%29.jpg/480px-Newtown_Festival_2024_%28078%29.jpg',
+    kids:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Mt_Cook_Play_Area_Wellington_2024_1.jpg/480px-Mt_Cook_Play_Area_Wellington_2024_1.jpg',
   };
   function cardPlaceholderHTML(type) {
-    const fallback = FALLBACK_IMAGES[type];
-    if (fallback) return cardImgHTML(fallback, type);
+    const src = FALLBACK_IMAGES[type];
+    if (src) {
+      const esc = src.replace(/"/g, '&quot;');
+      // No srcset — one small request, cached across all cards of the same type.
+      return `<div class="card-img-wrap"><img class="card-img" src="${esc}" width="480" height="270" loading="lazy" decoding="async" onerror="onImgError(this)" alt=""></div>`;
+    }
     const icon = PLACEHOLDER_ICONS[type] || '📅';
     return `<div class="card-img-placeholder"><span>${icon}</span></div>`;
   }
