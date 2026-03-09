@@ -424,18 +424,48 @@ const SECTION_TITLES = {
     });
   }
 
-  function showTab(id, btn) {
-    document.querySelectorAll('.weekend-panel').forEach(p => p.classList.remove('active'));
+  function showTab(id, btn, dir) {
+    document.querySelectorAll('.weekend-panel').forEach(p => {
+      p.classList.remove('active', 'slide-left', 'slide-right');
+    });
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-selected', 'false');
     });
-    document.getElementById(id).classList.add('active');
+    const panel = document.getElementById(id);
+    panel.classList.add('active');
+    if (dir === 1)  panel.classList.add('slide-right');
+    if (dir === -1) panel.classList.add('slide-left');
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     applyFilter(currentRegion);
+    updateWeekendNav();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function navigateWeekend(dir) {
+    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .filter(p => p.style.display !== 'none');
+    const active = document.querySelector('.weekend-panel.active');
+    const idx = panels.indexOf(active);
+    const target = panels[idx + dir];
+    if (!target) return;
+    const btn = document.getElementById('wtab-' + target.id);
+    if (btn) showTab(target.id, btn, dir);
+  }
+
+  function updateWeekendNav() {
+    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .filter(p => p.style.display !== 'none');
+    const active = document.querySelector('.weekend-panel.active');
+    const idx = panels.indexOf(active);
+    const prevBtn = document.getElementById('wnavPrev');
+    const nextBtn = document.getElementById('wnavNext');
+    const posEl   = document.getElementById('wnavPos');
+    if (prevBtn) prevBtn.disabled = idx <= 0;
+    if (nextBtn) nextBtn.disabled = idx >= panels.length - 1;
+    if (posEl)   posEl.textContent = panels.length > 0 ? `${idx + 1} of ${panels.length}` : '';
   }
 
   function filterRegion(region, btn) {
@@ -738,13 +768,15 @@ const SECTION_TITLES = {
       const datePart = sun.getMonth() === sat.getMonth()
         ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
         : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
+      const count = panel.querySelectorAll('.card').length;
+      const countBadge = count > 0 ? `<span class="tab-count">${count}</span>` : '';
       visibleCount++;
       if (visibleCount === 1) {
-        btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}`;
+        btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}${countBadge}`;
       } else if (visibleCount === 2) {
-        btn.textContent = `Next Weekend · ${datePart}`;
+        btn.innerHTML = `Next Weekend · ${datePart}${countBadge}`;
       } else {
-        btn.textContent = datePart;
+        btn.innerHTML = datePart + countBadge;
       }
     });
   }
@@ -795,6 +827,7 @@ const SECTION_TITLES = {
         document.querySelectorAll('.card[data-firestore]').forEach(el => el.remove());
         snapshot.docs.forEach(doc => injectEventCard({ id: doc.id, ...doc.data() }));
         applyFilter(currentRegion);
+        updateTabLabels();
         updateAddButtons();
         buildHighlightsRow();
       }, err => console.warn('Firestore events error:', err));
@@ -1789,6 +1822,7 @@ const SECTION_TITLES = {
     generateRemainingWeekends();
     hidePastWeekendTabs();
     updateTabLabels();
+    updateWeekendNav();
     // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
     setTimeout(() => {
       const activeTab = document.querySelector('.tabs-inner .tab-btn.active');

@@ -206,6 +206,27 @@
   .tab-btn:hover { color: rgba(255,255,255,0.75); }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
   .tab-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4fc58f; display: inline-block; margin-right: 7px; vertical-align: middle; animation: pulse 2.5s infinite; }
+  .tab-count {
+    display: inline-block; background: rgba(255,255,255,0.12); border-radius: 8px;
+    padding: 1px 6px; font-size: 9px; font-weight: 700; margin-left: 5px;
+    vertical-align: middle; line-height: 1.6; letter-spacing: 0; text-transform: none;
+  }
+  .tab-btn.active .tab-count { background: rgba(255,198,44,0.2); color: var(--gold); }
+
+  /* ── WEEKEND NAV BAR ── */
+  .weekend-nav-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1080px; margin: 0 auto; padding: 3px 20px 8px;
+  }
+  .wnav-btn {
+    background: none; border: none; color: rgba(255,255,255,0.5);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.03em; padding: 5px 12px; border-radius: 6px;
+    cursor: pointer; transition: color 0.15s, background 0.15s;
+  }
+  .wnav-btn:hover:not(:disabled) { color: #fff; background: rgba(255,255,255,0.1); }
+  .wnav-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+  .wnav-pos { color: rgba(255,255,255,0.25); font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; }
 
   /* ── REGION FILTERS ── */
   .filter-bar { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.07); }
@@ -225,7 +246,9 @@
   /* ── MAIN ── */
   main { max-width: 1080px; margin: 0 auto; padding: 36px 28px 80px; }
   .weekend-panel { display: none; }
-  .weekend-panel.active { display: block; animation: fadeUp 0.4s ease; }
+  .weekend-panel.active              { display: block; animation: wkdFade 0.3s ease; }
+  .weekend-panel.active.slide-right  { animation: wkdSlideRight 0.28s ease; }
+  .weekend-panel.active.slide-left   { animation: wkdSlideLeft  0.28s ease; }
 
   /* ── BANNER ── */
   .banner {
@@ -490,7 +513,10 @@
   footer a:hover { color: var(--gold); }
 
   /* ── ANIMATIONS ── */
-  @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp        { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes wkdFade       { from { opacity:0; } to { opacity:1; } }
+  @keyframes wkdSlideRight { from { opacity:0; transform:translateX(22px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes wkdSlideLeft  { from { opacity:0; transform:translateX(-22px); } to { opacity:1; transform:translateX(0); } }
   @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   @media (max-width: 600px) {

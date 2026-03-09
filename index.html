@@ -337,6 +337,11 @@
     <button class="tab-btn"        id="wtab-w12" role="tab" aria-selected="false" aria-controls="w12" onclick="showTab('w12',this)">16–17 May</button>
     <button class="tab-btn"        id="wtab-w13" role="tab" aria-selected="false" aria-controls="w13" onclick="showTab('w13',this)">23–24 May</button>
   </div>
+  <div class="weekend-nav-bar" id="weekendNavBar">
+    <button class="wnav-btn" id="wnavPrev" onclick="navigateWeekend(-1)" disabled>← Previous</button>
+    <span class="wnav-pos" id="wnavPos"></span>
+    <button class="wnav-btn" id="wnavNext" onclick="navigateWeekend(1)">Next →</button>
+  </div>
 </nav>
 
 <div class="duration-filter">
