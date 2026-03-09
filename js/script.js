@@ -550,10 +550,14 @@ const SECTION_TITLES = {
       activePanel.querySelectorAll('.events-grid').forEach(grid => {
         const existing = grid.nextElementSibling;
         if (existing && existing.classList.contains('no-results')) existing.remove();
-        if (grid.querySelectorAll('.card:not(.hidden)').length === 0) {
+        const totalCards   = grid.querySelectorAll('.card').length;
+        const visibleCards = grid.querySelectorAll('.card:not(.hidden)').length;
+        // Only show the message when cards exist but are ALL hidden by a filter.
+        // Genuinely empty grids (never had events) are collapsed by CSS :empty — no message needed.
+        if (totalCards > 0 && visibleCards === 0) {
           const msg = document.createElement('p');
           msg.className = 'no-results';
-          msg.style.cssText = 'color:#bbb;font-size:13px;padding:12px 0 24px;font-style:italic;';
+          msg.style.cssText = 'color:#bbb;font-size:13px;padding:8px 0 20px;font-style:italic;';
           msg.textContent = 'No events match the current filters.';
           grid.after(msg);
         }
