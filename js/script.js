@@ -851,7 +851,10 @@ const SECTION_TITLES = {
   function injectEventCard(ev) {
     if (weekendIsPast(ev.weekend)) return; // skip past events
     const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
-    if (!panel) return;
+    if (!panel) {
+      console.warn(`[WoW] No panel for weekend "${ev.weekend}" — "${ev.title || ev.id}" not shown. Must be a Saturday in YYYY-MM-DD format within the generated range.`);
+      return;
+    }
     const grids = panel.querySelectorAll('.events-grid');
     const grid  = (ev.day === 'sun' && grids.length > 1) ? grids[1] : grids[0];
     if (!grid) return;
@@ -1809,7 +1812,9 @@ const SECTION_TITLES = {
 
     let idx = existingPanels.length + 1; // w6, w7, …
 
-    while (sat.getFullYear() === 2026) {
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() + 18);
+    while (sat <= cutoff) {
       const sun = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 1);
       const id  = 'w' + idx;
       const fmt = d => String(d).padStart(2, '0');

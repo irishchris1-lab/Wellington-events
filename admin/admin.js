@@ -259,13 +259,23 @@ async function handleFormSubmit(e) {
   const tags = document.getElementById('fTags').value
     .split(',').map(t => t.trim()).filter(Boolean);
 
+  const weekendVal = document.getElementById('fWeekend').value;
+  if (weekendVal) {
+    const [wy, wm, wd] = weekendVal.split('-').map(Number);
+    const wDate = new Date(wy, wm - 1, wd);
+    if (wDate.getDay() !== 6) {
+      showToast('Weekend date must be a Saturday (day 6). Please correct it.');
+      return;
+    }
+  }
+
   const data = {
     title:       document.getElementById('fTitle').value.trim(),
     description: document.getElementById('fDesc').value.trim(),
     category:    'events',
     type:        document.getElementById('fType').value,
     day:         document.getElementById('fDay').value,
-    weekend:     document.getElementById('fWeekend').value,
+    weekend:     weekendVal,
     region:      document.getElementById('fRegion').value,
     tags,
     venue:       document.getElementById('fVenue').value.trim(),
