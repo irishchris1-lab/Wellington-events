@@ -805,7 +805,7 @@ const SECTION_TITLES = {
     market:   { strip: 'strip-market',   label: '<span aria-hidden="true">🛒</span> Market' },
     music:    { strip: 'strip-music',    label: '<span aria-hidden="true">🎵</span> Music' },
     outdoor:  { strip: 'strip-outdoor',  label: '<span aria-hidden="true">🏃</span> Outdoor' },
-    whanau:   { strip: 'strip-whanau',   label: '<span aria-hidden="true">👨‍👩‍👧</span> Whānau' },
+    whanau:   { strip: 'strip-whanau',   label: '<span aria-hidden="true">👨‍👩‍👧</span> whānau' },
   };
 
   function buildEventCardHTML(ev) {
