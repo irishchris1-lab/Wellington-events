@@ -422,12 +422,24 @@ async function handleImageUpload(input) {
     // Stage 4: upload processed JPEG to Firebase Storage
     // (using the processed blob — smaller file, no EXIF, consistent format)
     setUploadStatus('Uploading…');
-    let storageUrl = null;
+    let storageUrl  = null;
+    let storageErrMsg = null;
     try {
       storageUrl = await uploadToStorage(cardJpeg, slug);
     } catch (storageErr) {
-      // Storage failed — fall back to download buttons so the user isn't blocked
-      console.warn('Firebase Storage upload failed:', storageErr.message);
+      // Translate Firebase error codes into actionable messages
+      const code = storageErr.code || '';
+      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
+        storageErrMsg = `Permission denied (${code}). Open Firebase Console → Storage → Rules and allow authenticated writes to event-images/.`;
+      } else if (code === 'storage/bucket-not-found' || code === 'storage/project-not-found') {
+        storageErrMsg = `Bucket not found (${code}). Check storageBucket in admin.js config.`;
+      } else if (code === 'storage/canceled') {
+        storageErrMsg = 'Upload timed out after 25 s — check connection.';
+      } else {
+        // Likely a CORS or network error — show raw message
+        storageErrMsg = storageErr.message || code || 'Unknown Storage error';
+      }
+      console.warn('Firebase Storage upload failed:', code, storageErr.message);
     }
     if (timedOut) return;
 
@@ -471,7 +483,7 @@ async function handleImageUpload(input) {
         dlEl.appendChild(a);
       }
       document.getElementById('imgProcessed').classList.remove('hidden');
-      setUploadStatus('⚠ Storage unavailable — download files and commit them to images/events/', 'error');
+      setUploadStatus(`⚠ Storage error: ${storageErrMsg}`, 'error');
     }
   } catch (err) {
     clearTimeout(overallTimer);
