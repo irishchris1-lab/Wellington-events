@@ -1,0 +1,11 @@
+{
+  "name": "wellington-events",
+  "private": true,
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  },
+  "scripts": {
+    "process-image": "node scripts/process-image.js",
+    "migrate-images": "node scripts/migrate-images.js"
+  }
+}

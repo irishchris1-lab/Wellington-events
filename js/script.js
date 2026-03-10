@@ -239,10 +239,25 @@ const SECTION_TITLES = {
     return `<div class="card-img-placeholder"><span>${icon}</span></div>`;
   }
 
-  function cardImgHTML(url, alt) {
+  // For locally-hosted images (path starts with "images/"), emit a <picture>
+  // element with WebP source + JPEG fallback.  Pass useThumb=true to use the
+  // 400 px thumbnail variant (highlights carousel).
+  function localImgHTML(base, altEsc, useThumb) {
+    const src = useThumb ? `${base}-thumb` : base;
+    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onerror="onImgError(this)" alt="${altEsc}"></picture></div>`;
+  }
+
+  function cardImgHTML(url, alt, useThumb) {
     if (!url) return '';
-    const esc    = url.replace(/"/g, '&quot;');
     const altEsc = (alt || '').replace(/"/g, '&quot;');
+
+    // Local repo image — no external request, no srcset needed
+    if (url.startsWith('images/')) {
+      const base = url.replace(/\.(webp|jpe?g|png)$/i, '');
+      return localImgHTML(base, altEsc, useThumb);
+    }
+
+    const esc = url.replace(/"/g, '&quot;');
     let srcsetAttr = '';
     if (IMGIX_HOST) {
       srcsetAttr = ` srcset="${imgixSrc(url,400)} 400w,${imgixSrc(url,700)} 700w,${imgixSrc(url,1000)} 1000w" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
@@ -848,8 +863,18 @@ const SECTION_TITLES = {
       const venueText = metaRows[1]?.textContent.trim() || '';
       const el        = document.createElement('div');
       el.className    = 'highlight-card';
+      const altH = escHtml(title);
+      let imgWrapHtml;
+      if (!img) {
+        imgWrapHtml = '<div class="highlight-card-img"></div>';
+      } else if (img.startsWith('images/')) {
+        const base = img.replace(/\.(webp|jpe?g|png)$/i, '');
+        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
+      } else {
+        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
+      }
       el.innerHTML    = `
-        ${img ? `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${escHtml(title)}"></div>` : '<div class="highlight-card-img"></div>'}
+        ${imgWrapHtml}
         <div class="highlight-card-body">
           <div class="highlight-card-title">${escHtml(title)}</div>
           <div class="highlight-card-meta">

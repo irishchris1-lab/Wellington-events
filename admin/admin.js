@@ -252,51 +252,228 @@ function openModal(docId) {
 function closeModal() {
   document.getElementById('modalOverlay').classList.add('hidden');
   editingDocId = null;
+  // Reset image upload UI
+  revokeDownloadUrls();
+  document.getElementById('imgProcessed').classList.add('hidden');
+  document.getElementById('imgProcessedInfo').textContent = '';
+  document.getElementById('imgProcessedDownloads').innerHTML = '';
   document.getElementById('uploadStatus').textContent = '';
   document.getElementById('uploadStatus').className = 'upload-status';
   document.getElementById('fIndoor').checked = false;
 }
 
-// ── Image upload / preview ──────────────────────────────────────────────────
-function handleImageUpload(input) {
+// ── Image upload / preview (client-side processing) ─────────────────────────
+
+// Slug matching the main site + venue slug convention
+function imageSlug(str) {
+  return str.toLowerCase()
+    .replace(/[āáàä]/g, 'a').replace(/[ōóò]/g, 'o')
+    .replace(/[ūúù]/g, 'u').replace(/[īíì]/g, 'i').replace(/[ēé]/g, 'e')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+function setUploadStatus(msg, cls) {
+  const el = document.getElementById('uploadStatus');
+  el.textContent = msg;
+  el.className   = 'upload-status' + (cls ? ' ' + cls : ' uploading');
+}
+
+// HEIC/HEIF files from iPhones can't be decoded by the browser canvas API
+function isHeicFile(file) {
+  const ext = (file.name || '').split('.').pop().toLowerCase();
+  return file.type === 'image/heic' || file.type === 'image/heif' ||
+         ext === 'heic' || ext === 'heif';
+}
+
+// Load a File into an HTMLImageElement.
+// Rejects with a clear message if loading fails or times out.
+function loadImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const url     = URL.createObjectURL(file);
+    const img     = new Image();
+    const cleanup = () => URL.revokeObjectURL(url);
+    const timer   = setTimeout(() => {
+      cleanup();
+      reject(new Error('Image load timed out — file may be corrupted or in an unsupported format.'));
+    }, 8000);
+    img.onload = () => { clearTimeout(timer); cleanup(); resolve(img); };
+    img.onerror = () => {
+      clearTimeout(timer);
+      cleanup();
+      reject(new Error('Could not decode this image. Try converting it to JPG first.'));
+    };
+    img.src = url;
+  });
+}
+
+// Draw img to a canvas at targetW pixels wide (never upscale)
+function resizeToCanvas(img, targetW) {
+  const w = Math.min(img.naturalWidth, targetW);
+  const h = Math.round(w / (img.naturalWidth / img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d').drawImage(img, 0, 0, w, h);
+  return c;
+}
+
+// canvas.toBlob wrapped in a Promise with:
+//   • JPEG fallback when the requested type returns null/empty (e.g. WebP on old Safari)
+//   • 6-second timeout so the Promise can't hang if the callback never fires
+function canvasBlob(canvas, type, quality) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() =>
+      reject(new Error('canvas.toBlob timed out — try a different image or browser.')), 6000);
+    try {
+      canvas.toBlob(blob => {
+        clearTimeout(timer);
+        if (blob && blob.size > 0) {
+          resolve(blob);
+        } else {
+          // Format unsupported (e.g. WebP on older iOS Safari) — fall back to JPEG
+          canvas.toBlob(fb => {
+            fb && fb.size > 0
+              ? resolve(fb)
+              : reject(new Error('canvas.toBlob returned empty — please try a JPG or PNG source.'));
+          }, 'image/jpeg', quality);
+        }
+      }, type, quality);
+    } catch (e) {
+      clearTimeout(timer);
+      // toBlob threw synchronously (very old browsers)
+      canvas.toBlob(fb => resolve(fb), 'image/jpeg', quality);
+    }
+  });
+}
+
+// Revoke any previously created object URLs to avoid memory leaks
+let _pendingDownloadUrls = [];
+function revokeDownloadUrls() {
+  _pendingDownloadUrls.forEach(u => URL.revokeObjectURL(u));
+  _pendingDownloadUrls = [];
+}
+
+function handleImageDrop(event) {
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  handleImageUpload({ files: [file] });
+}
+
+async function handleImageUpload(input) {
   const file = input.files[0];
   if (!file) return;
-  const statusEl = document.getElementById('uploadStatus');
-  const ts       = Date.now();
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-  const ref      = storage.ref('event-images/' + ts + '-' + safeName);
-  const task     = ref.put(file);
+  if (typeof input.value === 'string') input.value = ''; // reset so same file can be reselected
 
-  statusEl.textContent = 'Uploading…';
-  statusEl.className   = 'upload-status uploading';
+  revokeDownloadUrls();
+  document.getElementById('imgProcessed').classList.add('hidden');
+  document.getElementById('imgPreviewWrap').classList.add('hidden');
 
-  task.on('state_changed',
-    snap => {
-      const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-      statusEl.textContent = 'Uploading… ' + pct + '%';
-    },
-    err => {
-      statusEl.textContent = 'Upload failed: ' + err.message;
-      statusEl.className   = 'upload-status error';
-      input.value = '';
-    },
-    async () => {
-      const url = await task.snapshot.ref.getDownloadURL();
-      document.getElementById('fImg').value = url;
-      updateImgPreview();
-      statusEl.textContent = '✓ Uploaded';
-      statusEl.className   = 'upload-status success';
-      input.value = '';
+  // ── HEIC guard ───────────────────────────────────────────────────────────
+  if (isHeicFile(file)) {
+    setUploadStatus(
+      '⚠ HEIC photos can\'t be processed here. On iPhone: open the photo → Share → "Save Image", then upload the saved JPEG.',
+      'error'
+    );
+    return;
+  }
+
+  // ── 10-second overall timeout ─────────────────────────────────────────────
+  let timedOut = false;
+  const overallTimer = setTimeout(() => {
+    timedOut = true;
+    setUploadStatus(
+      'Processing is taking longer than expected. Try a smaller image or a different format (JPG or PNG work best).',
+      'error'
+    );
+  }, 10000);
+
+  try {
+    // Stage 1: decode the file
+    setUploadStatus('Reading file…');
+    const img = await loadImageFile(file);
+    if (timedOut) return;
+
+    // Warn if source is too small, with a brief pause so it's readable
+    if (img.naturalWidth < 800) {
+      setUploadStatus(`⚠ Source is ${img.naturalWidth} × ${img.naturalHeight}px — ideally ≥ 800px wide. Processing anyway…`);
+      await new Promise(r => setTimeout(r, 700));
     }
-  );
+    if (timedOut) return;
+
+    // Stage 2: draw to canvases
+    setUploadStatus('Resizing…');
+    const cardCanvas  = resizeToCanvas(img, 800);
+    const thumbCanvas = resizeToCanvas(img, 400);
+    if (timedOut) return;
+
+    // Stage 3: compress to blobs
+    setUploadStatus('Compressing…');
+    const [cardWebp, thumbWebp, cardJpeg] = await Promise.all([
+      canvasBlob(cardCanvas,  'image/webp', 0.82),
+      canvasBlob(thumbCanvas, 'image/webp', 0.80),
+      canvasBlob(cardCanvas,  'image/jpeg', 0.80),
+    ]);
+    if (timedOut) return;
+
+    clearTimeout(overallTimer);
+
+    // ── Derive slug from event title or filename ───────────────────────────
+    const titleVal  = document.getElementById('fTitle').value.trim();
+    const rawName   = titleVal || file.name.replace(/\.[^.]+$/, '');
+    const slug      = imageSlug(rawName);
+    const localPath = `images/events/${slug}`;
+
+    // ── Preview ───────────────────────────────────────────────────────────
+    const previewUrl = URL.createObjectURL(cardWebp);
+    _pendingDownloadUrls.push(previewUrl);
+    document.getElementById('imgPreview').src = previewUrl;
+    document.getElementById('imgPreviewWrap').classList.remove('hidden');
+
+    // Auto-fill path field
+    document.getElementById('fImg').value = localPath;
+
+    // Detect whether WebP output was actually WebP (older Safari silently returns JPEG)
+    const gotWebp = cardWebp.type === 'image/webp';
+
+    // ── Download links ────────────────────────────────────────────────────
+    const downloads = [
+      { blob: cardWebp,  name: `${slug}.webp`,       label: '⬇ card.webp' },
+      { blob: thumbWebp, name: `${slug}-thumb.webp`, label: '⬇ thumb.webp' },
+      { blob: cardJpeg,  name: `${slug}.jpg`,        label: '⬇ card.jpg' },
+    ];
+    const kb = b => (b.size / 1024).toFixed(0) + ' KB';
+    document.getElementById('imgProcessedInfo').textContent =
+      `${localPath}  ·  card ${kb(cardWebp)}  ·  thumb ${kb(thumbWebp)}  ·  jpg ${kb(cardJpeg)}`
+      + (gotWebp ? '' : '  (WebP not supported by this browser — files saved as JPEG)');
+
+    const dlEl = document.getElementById('imgProcessedDownloads');
+    dlEl.innerHTML = '';
+    for (const { blob, name, label } of downloads) {
+      const url = URL.createObjectURL(blob);
+      _pendingDownloadUrls.push(url);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.textContent = label;
+      a.className = 'img-download-btn';
+      dlEl.appendChild(a);
+    }
+
+    document.getElementById('imgProcessed').classList.remove('hidden');
+    setUploadStatus('✓ Done — download the files and commit them to images/events/', 'success');
+
+  } catch (err) {
+    clearTimeout(overallTimer);
+    if (!timedOut) setUploadStatus('Error: ' + err.message, 'error');
+  }
 }
 
 function updateImgPreview() {
-  const url  = document.getElementById('fImg').value.trim();
+  const val  = document.getElementById('fImg').value.trim();
   const wrap = document.getElementById('imgPreviewWrap');
   const img  = document.getElementById('imgPreview');
-  if (url) {
-    img.src = url;
+  if (val) {
+    // For local paths show a placeholder (can't preview repo files from admin);
+    // for full URLs show normally.
+    img.src = val.startsWith('images/') ? (val + '.jpg') : val;
     wrap.classList.remove('hidden');
   } else {
     wrap.classList.add('hidden');
@@ -305,9 +482,13 @@ function updateImgPreview() {
 }
 
 function clearImg() {
+  revokeDownloadUrls();
   document.getElementById('fImg').value = '';
   document.getElementById('imgPreviewWrap').classList.add('hidden');
   document.getElementById('imgPreview').src = '';
+  document.getElementById('imgProcessed').classList.add('hidden');
+  document.getElementById('imgProcessedInfo').textContent = '';
+  document.getElementById('imgProcessedDownloads').innerHTML = '';
   document.getElementById('uploadStatus').textContent = '';
   document.getElementById('uploadStatus').className = 'upload-status';
 }
