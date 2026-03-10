@@ -809,12 +809,37 @@ const SECTION_TITLES = {
   };
 
   function buildEventCardHTML(ev) {
-    const tm   = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
-    const region = ev.region || 'all';
-    const titleId = `card-title-${escHtml(ev.id)}`;
+    const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
+    const region  = ev.region || 'all';
+    const idSuffix = ev._static ? escHtml(ev._staticId || 'sx') : escHtml(ev.id || 'fx');
+    const titleId  = `card-title-${idSuffix}`;
+    const idAttr   = ev._static
+      ? `data-static="${escHtml(ev._staticId || '')}"`
+      : `data-firestore="${escHtml(ev.id || '')}"`;
+
+    // Strip: prefer inline style (custom), then explicit class, then type-mapped class
+    const stripHtml = ev.stripStyle
+      ? `<div class="card-strip" style="${escHtml(ev.stripStyle)}"></div>`
+      : ev.stripClass
+        ? `<div class="card-strip ${escHtml(ev.stripClass)}"></div>`
+        : `<div class="card-strip ${tm.strip}"></div>`;
+
+    // Category label
+    const catLabel = ev.label || tm.label;
+    const catStyle = ev.labelStyle ? ` style="${escHtml(ev.labelStyle)}"` : '';
+
+    // Badges (free → ticketed → family → pick, in display order)
+    const badgeParts = [];
+    if (ev.free)     badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
+    if (ev.ticketed) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
+    if (ev.family)   badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
+    if (ev.pick)     badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
+    const badgesHtml = badgeParts.length ? `<div class="card-badges">${badgeParts.join('')}</div>` : '';
+
     const meta = [
       ev.time  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(ev.time)}</div>`  : '',
       ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${escHtml(ev.venue)}</div>` : '',
+      ev.cost  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>`  : '',
     ].join('');
     const footer = [
       ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${extractDomain(ev.url)}</span></a>` : '',
@@ -822,18 +847,17 @@ const SECTION_TITLES = {
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
-    const pickBadge = ev.pick ? '<div class="card-badges"><span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor\'s pick</span></span></div>' : '';
     return `
-      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-firestore="${escHtml(ev.id)}" data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
-        <div class="card-strip ${tm.strip}"></div>
+      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+        ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title) : cardPlaceholderHTML(ev.type)}
         <div class="card-body">
           <div class="card-top">
             <div>
-              <div class="card-cat">${tm.label}</div>
+              <div class="card-cat"${catStyle}>${catLabel}</div>
               <div class="card-title" id="${titleId}">${escHtml(ev.title)}</div>
             </div>
-            ${pickBadge}
+            ${badgesHtml}
           </div>
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${ev.description ? `<div class="card-desc">${escHtml(ev.description)}</div>` : ''}
@@ -1067,14 +1091,42 @@ const SECTION_TITLES = {
     grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
   }
 
+  function loadStaticEvents() {
+    if (typeof STATIC_EVENTS === 'undefined' || !STATIC_EVENTS.length) return;
+    STATIC_EVENTS.forEach((ev, i) => {
+      injectEventCard({ ...ev, _static: true, _staticId: `s${i}` });
+    });
+    applyFilter(currentRegion);
+    updateTabLabels();
+    updateAddButtons();
+    buildHighlightsRow();
+    setEagerImages();
+    const evSection = document.getElementById('section-events');
+    if (evSection) observeCards(evSection);
+  }
+
   function loadFirestoreEvents() {
     if (!firebaseReady) return;
     db.collection('events')
       .where('active', '==', true)
       .onSnapshot(snapshot => {
-        // Remove previously injected cards
+        // Remove previously injected Firestore cards
         document.querySelectorAll('.card[data-firestore]').forEach(el => el.remove());
         snapshot.docs.forEach(doc => injectEventCard({ id: doc.id, ...doc.data() }));
+
+        // Dedup: hide static cards whose event now exists in Firestore
+        const firestoreKeys = new Set(
+          snapshot.docs.map(doc => {
+            const d = doc.data();
+            return `${(d.title || '').trim()}|${d.weekend || ''}|${d.day || 'sat'}`;
+          })
+        );
+        document.querySelectorAll('.card[data-static]').forEach(card => {
+          const titleEl = card.querySelector('.card-title');
+          const key = `${(titleEl ? titleEl.textContent.trim() : '')}|${card.dataset.weekend || ''}|${card.dataset.day || 'sat'}`;
+          card.classList.toggle('hidden', firestoreKeys.has(key));
+        });
+
         applyFilter(currentRegion);
         updateTabLabels();
         updateAddButtons();
@@ -2091,6 +2143,7 @@ const SECTION_TITLES = {
     }, 0);
     buildHighlightsRow();
     injectAddButtons();
+    loadStaticEvents();         // inject STATIC_EVENTS into weekend panels
     enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge, plan btn labels
     // If Firebase is not configured, load from localStorage immediately
     // If Firebase IS configured, onAuthStateChanged handles it after sign-in
