@@ -301,7 +301,7 @@
               <input type="file" id="fImgFile" accept="image/*" class="img-file-input" onchange="handleImageUpload(this)">
               <span class="drop-icon">📁</span>
               <span class="drop-label">Click to choose photo, or drag &amp; drop</span>
-              <span class="drop-hint">Processed locally — download files and commit to <code>images/events/</code></span>
+              <span class="drop-hint">Resized &amp; compressed automatically — JPG and PNG work best</span>
             </div>
             <span class="upload-status" id="uploadStatus"></span>
             <!-- Processed image info + download buttons -->
@@ -310,7 +310,7 @@
               <div class="img-processed-downloads" id="imgProcessedDownloads"></div>
             </div>
             <!-- Manual path / URL field -->
-            <input class="form-input" id="fImg" type="text" placeholder="Auto-filled from upload, or type images/events/slug" oninput="updateImgPreview()">
+            <input class="form-input" id="fImg" type="text" placeholder="Auto-filled from upload, or paste an image URL" oninput="updateImgPreview()">
             <div class="img-preview-wrap hidden" id="imgPreviewWrap">
               <img id="imgPreview" src="" alt="Preview" class="img-preview" onerror="this.closest('.img-preview-wrap').classList.add('hidden')">
               <button type="button" class="img-clear-btn" onclick="clearImg()">✕ Remove</button>

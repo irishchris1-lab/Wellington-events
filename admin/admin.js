@@ -377,93 +377,141 @@ async function handleImageUpload(input) {
     return;
   }
 
-  // ── 10-second overall timeout ─────────────────────────────────────────────
+  // ── Overall timeout (covers processing + upload) ──────────────────────────
   let timedOut = false;
   const overallTimer = setTimeout(() => {
     timedOut = true;
     setUploadStatus(
-      'Processing is taking longer than expected. Try a smaller image or a different format (JPG or PNG work best).',
+      'This is taking longer than expected. Try a smaller image or check your connection.',
       'error'
     );
-  }, 10000);
+  }, 40000);
 
   try {
-    // Stage 1: decode the file
+    // Stage 1: decode
     setUploadStatus('Reading file…');
     const img = await loadImageFile(file);
     if (timedOut) return;
 
-    // Warn if source is too small, with a brief pause so it's readable
     if (img.naturalWidth < 800) {
-      setUploadStatus(`⚠ Source is ${img.naturalWidth} × ${img.naturalHeight}px — ideally ≥ 800px wide. Processing anyway…`);
+      setUploadStatus(`⚠ Source is ${img.naturalWidth} × ${img.naturalHeight}px — ideally ≥ 800px. Processing anyway…`);
       await new Promise(r => setTimeout(r, 700));
     }
     if (timedOut) return;
 
-    // Stage 2: draw to canvases
+    // Stage 2: resize
     setUploadStatus('Resizing…');
     const cardCanvas  = resizeToCanvas(img, 800);
     const thumbCanvas = resizeToCanvas(img, 400);
     if (timedOut) return;
 
-    // Stage 3: compress to blobs
+    // Stage 3: compress
     setUploadStatus('Compressing…');
     const [cardWebp, thumbWebp, cardJpeg] = await Promise.all([
       canvasBlob(cardCanvas,  'image/webp', 0.82),
       canvasBlob(thumbCanvas, 'image/webp', 0.80),
-      canvasBlob(cardCanvas,  'image/jpeg', 0.80),
+      canvasBlob(cardCanvas,  'image/jpeg', 0.82),
     ]);
+    if (timedOut) return;
+
+    // Slug from event title or filename
+    const titleVal = document.getElementById('fTitle').value.trim();
+    const rawName  = titleVal || file.name.replace(/\.[^.]+$/, '');
+    const slug     = imageSlug(rawName);
+
+    // Stage 4: upload processed JPEG to Firebase Storage
+    // (using the processed blob — smaller file, no EXIF, consistent format)
+    setUploadStatus('Uploading…');
+    let storageUrl = null;
+    try {
+      storageUrl = await uploadToStorage(cardJpeg, slug);
+    } catch (storageErr) {
+      // Storage failed — fall back to download buttons so the user isn't blocked
+      console.warn('Firebase Storage upload failed:', storageErr.message);
+    }
     if (timedOut) return;
 
     clearTimeout(overallTimer);
 
-    // ── Derive slug from event title or filename ───────────────────────────
-    const titleVal  = document.getElementById('fTitle').value.trim();
-    const rawName   = titleVal || file.name.replace(/\.[^.]+$/, '');
-    const slug      = imageSlug(rawName);
-    const localPath = `images/events/${slug}`;
-
-    // ── Preview ───────────────────────────────────────────────────────────
+    // ── Preview from the local blob ───────────────────────────────────────
     const previewUrl = URL.createObjectURL(cardWebp);
     _pendingDownloadUrls.push(previewUrl);
     document.getElementById('imgPreview').src = previewUrl;
     document.getElementById('imgPreviewWrap').classList.remove('hidden');
 
-    // Auto-fill path field
-    document.getElementById('fImg').value = localPath;
+    if (storageUrl) {
+      // ── Happy path: Storage URL saved directly ──────────────────────────
+      document.getElementById('fImg').value = storageUrl;
+      setUploadStatus('✓ Done', 'success');
+    } else {
+      // ── Fallback: show download buttons for manual git commit ───────────
+      const localPath = `images/events/${slug}`;
+      document.getElementById('fImg').value = localPath;
 
-    // Detect whether WebP output was actually WebP (older Safari silently returns JPEG)
-    const gotWebp = cardWebp.type === 'image/webp';
+      const gotWebp = cardWebp.type === 'image/webp';
+      const kb = b => (b.size / 1024).toFixed(0) + ' KB';
+      document.getElementById('imgProcessedInfo').textContent =
+        `Storage upload failed. Download and commit to images/events/\n`
+        + `${localPath}  ·  card ${kb(cardWebp)}  ·  thumb ${kb(thumbWebp)}  ·  jpg ${kb(cardJpeg)}`
+        + (gotWebp ? '' : '  (files are JPEG — WebP not supported by this browser)');
 
-    // ── Download links ────────────────────────────────────────────────────
-    const downloads = [
-      { blob: cardWebp,  name: `${slug}.webp`,       label: '⬇ card.webp' },
-      { blob: thumbWebp, name: `${slug}-thumb.webp`, label: '⬇ thumb.webp' },
-      { blob: cardJpeg,  name: `${slug}.jpg`,        label: '⬇ card.jpg' },
-    ];
-    const kb = b => (b.size / 1024).toFixed(0) + ' KB';
-    document.getElementById('imgProcessedInfo').textContent =
-      `${localPath}  ·  card ${kb(cardWebp)}  ·  thumb ${kb(thumbWebp)}  ·  jpg ${kb(cardJpeg)}`
-      + (gotWebp ? '' : '  (WebP not supported by this browser — files saved as JPEG)');
-
-    const dlEl = document.getElementById('imgProcessedDownloads');
-    dlEl.innerHTML = '';
-    for (const { blob, name, label } of downloads) {
-      const url = URL.createObjectURL(blob);
-      _pendingDownloadUrls.push(url);
-      const a = document.createElement('a');
-      a.href = url; a.download = name; a.textContent = label;
-      a.className = 'img-download-btn';
-      dlEl.appendChild(a);
+      const downloads = [
+        { blob: cardWebp,  name: `${slug}.webp`,       label: '⬇ card.webp' },
+        { blob: thumbWebp, name: `${slug}-thumb.webp`, label: '⬇ thumb.webp' },
+        { blob: cardJpeg,  name: `${slug}.jpg`,        label: '⬇ card.jpg' },
+      ];
+      const dlEl = document.getElementById('imgProcessedDownloads');
+      dlEl.innerHTML = '';
+      for (const { blob, name, label } of downloads) {
+        const url = URL.createObjectURL(blob);
+        _pendingDownloadUrls.push(url);
+        const a = document.createElement('a');
+        a.href = url; a.download = name; a.textContent = label;
+        a.className = 'img-download-btn';
+        dlEl.appendChild(a);
+      }
+      document.getElementById('imgProcessed').classList.remove('hidden');
+      setUploadStatus('⚠ Storage unavailable — download files and commit them to images/events/', 'error');
     }
-
-    document.getElementById('imgProcessed').classList.remove('hidden');
-    setUploadStatus('✓ Done — download the files and commit them to images/events/', 'success');
-
   } catch (err) {
     clearTimeout(overallTimer);
     if (!timedOut) setUploadStatus('Error: ' + err.message, 'error');
   }
+}
+
+// Upload a blob to Firebase Storage and return the download URL.
+// Rejects if the upload doesn't complete within 25 seconds.
+function uploadToStorage(blob, slug) {
+  return new Promise((resolve, reject) => {
+    const filename = slug + '-' + Date.now() + '.jpg';
+    const ref  = storage.ref('event-images/' + filename);
+    const task = ref.put(blob, { contentType: 'image/jpeg' });
+
+    const timer = setTimeout(() => {
+      task.cancel();
+      reject(new Error('Upload timed out after 25 s'));
+    }, 25000);
+
+    task.on('state_changed',
+      snap => {
+        const pct = Math.round((snap.bytesTransferred / (snap.totalBytes || 1)) * 100);
+        setUploadStatus(`Uploading… ${pct}%`);
+      },
+      err => {
+        clearTimeout(timer);
+        reject(err);
+      },
+      async () => {
+        clearTimeout(timer);
+        try {
+          const url = await task.snapshot.ref.getDownloadURL();
+          resolve(url);
+        } catch (e) {
+          reject(e);
+        }
+      }
+    );
+  });
 }
 
 function updateImgPreview() {
