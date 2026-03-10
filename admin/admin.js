@@ -763,11 +763,13 @@ async function importStaticEvent(staticId) {
   btn.disabled = true;
   btn.textContent = '…';
   try {
-    const existing = await db.collection('events').get();
+    const existing = await db.collection('events')
+      .where('weekend', '==', ev.weekend)
+      .where('day', '==', ev.day || 'sat')
+      .get();
     const isDupe = existing.docs.some(d => {
       const data = d.data();
-      return (data.title || '').trim().toLowerCase() === (ev.title || '').trim().toLowerCase() &&
-             data.weekend === ev.weekend && data.day === ev.day;
+      return (data.title || '').trim().toLowerCase() === (ev.title || '').trim().toLowerCase();
     });
     if (isDupe) {
       showToast('Already in Firestore');
@@ -793,6 +795,7 @@ async function importStaticEvent(staticId) {
       createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
     });
+    btn.textContent = '✓ Done';
     showToast(`"${ev.title}" imported as draft`);
   } catch (err) {
     btn.disabled = false;
