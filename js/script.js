@@ -203,12 +203,17 @@ const SECTION_TITLES = {
     });
   }
 
-  // Set the first 2 visible card images in the active weekend panel to eager.
+  // Set the first 2 visible card images in the active weekend panel to eager + high priority.
   function setEagerImages() {
     const panel = document.querySelector('.weekend-panel.active');
     if (!panel) return;
     panel.querySelectorAll('img.card-img').forEach((img, i) => {
-      img.loading = i < 2 ? 'eager' : 'lazy';
+      if (i < 2) {
+        img.loading = 'eager';
+        if (i === 0) img.setAttribute('fetchpriority', 'high');
+      } else {
+        img.loading = 'lazy';
+      }
     });
   }
 
@@ -855,7 +860,7 @@ const SECTION_TITLES = {
     if (!picks.length) { section.style.display = 'none'; return; }
     section.style.display = '';
 
-    picks.forEach(card => {
+    picks.forEach((card, pickIdx) => {
       const title     = card.querySelector('.card-title')?.textContent.trim() || '';
       const img       = card.dataset.img || '';
       const metaRows  = [...card.querySelectorAll('.meta-row')];
@@ -864,14 +869,17 @@ const SECTION_TITLES = {
       const el        = document.createElement('div');
       el.className    = 'highlight-card';
       const altH = escHtml(title);
+      // Highlights are always above the fold — eager-load all of them; high-priority for the first.
+      const loadAttr = 'eager';
+      const prioAttr = pickIdx === 0 ? ' fetchpriority="high"' : '';
       let imgWrapHtml;
       if (!img) {
         imgWrapHtml = '<div class="highlight-card-img"></div>';
       } else if (img.startsWith('images/')) {
         const base = img.replace(/\.(webp|jpe?g|png)$/i, '');
-        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
+        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
       } else {
-        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="lazy" decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
+        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
       }
       el.innerHTML    = `
         ${imgWrapHtml}
@@ -1071,6 +1079,7 @@ const SECTION_TITLES = {
         updateTabLabels();
         updateAddButtons();
         buildHighlightsRow();
+        setEagerImages();       // re-run after Firestore cards are injected
         const evSection = document.getElementById('section-events');
         if (evSection) observeCards(evSection);
       }, err => console.warn('Firestore events error:', err));
