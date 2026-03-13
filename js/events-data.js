@@ -229,6 +229,47 @@ const STATIC_EVENTS = [
     stripStyle: 'background:linear-gradient(90deg,#e74c8b,#f0a030,#3ab065,#2980b9,#8b4bcc)',
     free: 'Free',
     family: 'Family',},
+  {
+    title: 'Te Matapihi ki te Ao Nui — Wellington Library Opening Weekend',
+    type: 'culture', day: 'sat', weekend: '2026-03-14', region: 'wellington',
+    time: '14–15 March · Opening celebration',
+    venue: 'Te Matapihi ki te Ao Nui / Te Ngākau Civic Square, Wellington CBD',
+    description: 'The grand reopening of Wellington Central Library and Te Ngākau Civic Square — explore new community spaces, exhibitions and events across the weekend. A celebration for the whole whānau. Free entry.',
+    url: 'https://wellington.govt.nz/news-and-events/events-and-festivals',
+    img: '',
+    pick: true,
+
+    label: '📚 Free · Grand Opening',
+    labelStyle: 'color:#1A5E8A',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'Ōtaki International Kite Festival',
+    type: 'festival', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
+    time: '10:00 am – 4:00 pm',
+    venue: 'Ōtaki Beach, Kāpiti Coast',
+    description: 'Free annual kite festival with NZ Kite Association fliers — watch spectacular kites fill the sky above the beach. Hands-on fun for all ages.',
+    url: 'https://kapiticoast.govt.nz/explore-kapiti/things-to-do-in-kapiti/whats-on/events-in-kapiti/',
+    img: '',
+    pick: false,
+
+    label: '🪁 Free Festival',
+    labelStyle: 'color:#2478A8',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'Kapiti Classic 2026',
+    type: 'music', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
+    time: '11:00 am – 7:00 pm',
+    venue: 'Kāpiti Coast (venue TBC)',
+    description: 'Summer music festival celebrating nostalgic New Zealand acts — a day of classic Kiwi music and good vibes on the Kāpiti Coast.',
+    url: 'https://kapiticoast.govt.nz/explore-kapiti/things-to-do-in-kapiti/whats-on/events-in-kapiti/',
+    img: '',
+    pick: false,
+
+    label: '🎶 Music Festival',
+    labelStyle: 'color:#7A3B8A',
+    cost: 'Ticketed',},
 
   // ── 21–22 Mar 2026 ───────────────────────────────────────────────────────
   {
@@ -301,6 +342,20 @@ const STATIC_EVENTS = [
   
     label: '🍺 Brewery',
     labelStyle: 'color:#C8901A',
+    family: 'Family',},
+  {
+    title: 'Karaone Putiputi with The Tīwhas',
+    type: 'culture', day: 'sat', weekend: '2026-03-21', region: 'wellington',
+    time: 'Check website for time',
+    venue: 'Te Matapihi ki te Ao Nui, Te Ngākau Civic Square, Wellington CBD',
+    description: 'A Pride celebration at Wellington\'s newly reopened library — make flower crowns (karaone putiputi) and enjoy live performances by The Tīwhas girl group. A joyful, family-friendly afternoon. Free.',
+    url: 'https://wellington.govt.nz/news-and-events/event-calendar',
+    img: '',
+    pick: false,
+
+    label: '🌸 Pride · Family',
+    labelStyle: 'color:#8b4bcc',
+    free: 'Free',
     family: 'Family',},
 
   // ── 28–29 Mar 2026 ───────────────────────────────────────────────────────
@@ -375,6 +430,34 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#2478A8',
     family: 'Family',
     cost: 'Ticketed — hurricanes.flicket.co.nz',},
+  {
+    title: 'Māoriland Film Festival 2026',
+    type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'kapiti',
+    time: '24–28 March · 10:00 am – 10:00 pm daily',
+    venue: 'Māoriland Hub, 68 Main Street, Ōtaki',
+    description: 'The Southern Hemisphere\'s largest indigenous film festival — five days of indigenous cinema from around the world, including NZ premieres and special events. The 2026 theme is "light that reveals our legacies."',
+    url: 'https://www.maorilandfilm.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🎬 Film Festival',
+    labelStyle: 'color:#C8390A',
+    cost: 'Ticketed — maorilandfilm.co.nz',
+    family: 'Family',},
+  {
+    title: 'Pātaka Art + Museum — IHI & Ongo Exhibition Openings',
+    type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'porirua',
+    time: '10:00 am – 5:00 pm · Opening events Sat 28 Mar',
+    venue: 'Pātaka Art + Museum, cnr Norrie & Parumoana Streets, Porirua',
+    description: 'Double exhibition opening at Pātaka — IHI explores inner force through three emerging Māori artists, while Ongo: (Re)sounding the Vā unpacks Pacific sound and space. Opening day includes a free walk-through and live performances. Free admission.',
+    url: 'https://pataka.org.nz/whats-on/',
+    img: '',
+    pick: false,
+
+    label: '🎨 Free Exhibition',
+    labelStyle: 'color:#5B4A8A',
+    free: 'Free',
+    family: 'Family',},
 
   // ── 4–5 Apr 2026 ─────────────────────────────────────────────────────────
   {
@@ -433,6 +516,34 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#5B4A8A',
     family: 'Family',
     cost: 'Ticketed',},
+  {
+    title: 'The BIG Easter Weekend at Ngā Manu',
+    type: 'kids', day: 'sat', weekend: '2026-04-04', region: 'kapiti',
+    time: '3–6 April · 10:00 am – 5:00 pm daily',
+    venue: 'Ngā Manu Nature Reserve, Kauri Road, Waikanae',
+    description: 'Family Easter fun at Ngā Manu Nature Reserve — Easter egg hunts with $3,000 in prizes among native birds and wildlife. A magical long-weekend adventure in one of Kāpiti\'s finest wildlife sanctuaries.',
+    url: 'https://www.ngamanu.org.nz',
+    img: '',
+    pick: false,
+
+    label: '🐣 Easter · Family',
+    labelStyle: 'color:#C8901A',
+    family: 'Family',
+    cost: 'Entry fee applies',},
+  {
+    title: 'Ōtaki Easter Market',
+    type: 'market', day: 'sun', weekend: '2026-04-04', region: 'kapiti',
+    time: '10:00 am – 2:00 pm',
+    venue: 'State Highway 1, Ōtaki (opposite New World)',
+    description: 'Special Easter edition of the popular outdoor Ōtaki market — local stallholders, fresh produce, crafts and Easter surprises. A great stop on the way north for the long weekend.',
+    url: 'https://kapiticoast.govt.nz/explore-kapiti/things-to-do-in-kapiti/whats-on/events-in-kapiti/',
+    img: '',
+    pick: false,
+
+    label: '🛒 Easter Market',
+    labelStyle: 'color:#1A6B3A',
+    free: 'Free entry',
+    family: 'Family',},
 
   // ── 11–12 Apr 2026 ───────────────────────────────────────────────────────
   {
@@ -477,6 +588,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#7A3B8A',
     stripStyle: 'background:linear-gradient(90deg,#7A3B8A,#b06acc)',
     family: 'Family',},
+  {
+    title: 'Porirua Grand Traverse',
+    type: 'outdoor', day: 'sun', weekend: '2026-04-11', region: 'porirua',
+    time: 'Sunday 12 April · From 7:00 am',
+    venue: 'Start/Finish: Kai Tahi Foodhall, 20 Parumoana St, Porirua',
+    description: 'Wellington\'s biggest multisport festival — choose from a 9km fun run/walk to a full 58km challenge crossing Porirua Harbour, native bush, coastal farmland and hidden trails. Options for all ages and abilities.',
+    url: 'https://poriruagrandtraverse.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🏃 Multisport Festival',
+    labelStyle: 'color:#C8390A',
+    family: 'Family',
+    cost: 'Entry fee — poriruagrandtraverse.co.nz',},
 
   // ── 18–19 Apr 2026 ───────────────────────────────────────────────────────
   {
@@ -538,6 +663,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#1A8A6E',
     free: 'Free',
     family: 'Family',},
+  {
+    title: 'Glow in the Dark Titiwai Tours — Wellington Botanic Garden',
+    type: 'outdoor', day: 'sat', weekend: '2026-04-18', region: 'wellington',
+    time: 'Evening — check website for tour times',
+    venue: 'Wellington Botanic Garden, Tinakori Road, Thorndon',
+    description: 'Guided after-dark walk through the Wellington Botanic Garden to spot glowworms (titiwai) in their natural habitat. A magical evening experience for the whole family. Runs April through September.',
+    url: 'https://wellington.govt.nz/news-and-events/events-and-festivals',
+    img: '',
+    pick: false,
+
+    label: '✨ Glow Worms · Evening',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Ticketed',},
   {
     title: 'ANZAC Day — Dawn Service & National Ceremony',
     type: 'other', day: 'sat', weekend: '2026-04-25', region: 'wellington',
