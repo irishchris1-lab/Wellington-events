@@ -226,7 +226,7 @@ function renderTable() {
       }</td>
       <td class="col-actions">
         ${ev._static
-          ? `<button class="action-btn edit" onclick="importStaticEvent(${ev._staticId})">Import</button>`
+          ? `<button class="action-btn edit" onclick="editStaticEvent(${ev._staticId}, this)">Edit</button>`
           : `<button class="action-btn edit"   onclick="openModal('${ev.id}')">Edit</button>
              <button class="action-btn delete" onclick="openDeleteModal('${ev.id}', '${escAttr(ev.title)}')">Del</button>`
         }
@@ -755,52 +755,55 @@ async function bulkImportDraftEvents() {
   }
 }
 
-async function importStaticEvent(staticId) {
+async function editStaticEvent(staticId, btn) {
   if (typeof STATIC_EVENTS === 'undefined') return;
   const ev = STATIC_EVENTS[staticId];
   if (!ev) return;
-  const btn = event.target;
   btn.disabled = true;
   btn.textContent = '…';
   try {
+    // Check if already imported into Firestore
     const existing = await db.collection('events')
       .where('weekend', '==', ev.weekend)
       .where('day', '==', ev.day || 'sat')
       .get();
-    const isDupe = existing.docs.some(d => {
+    const dupeDoc = existing.docs.find(d => {
       const data = d.data();
       return (data.title || '').trim().toLowerCase() === (ev.title || '').trim().toLowerCase();
     });
-    if (isDupe) {
-      showToast('Already in Firestore');
-      btn.textContent = 'Import';
-      btn.disabled = false;
-      return;
+    let docId;
+    if (dupeDoc) {
+      docId = dupeDoc.id;
+    } else {
+      const ref = await db.collection('events').add({
+        title:       ev.title,
+        description: ev.description || '',
+        type:        ev.type        || 'other',
+        day:         ev.day         || 'sat',
+        weekend:     ev.weekend     || '',
+        region:      ev.region      || 'wellington',
+        venue:       ev.venue       || '',
+        time:        ev.time        || '',
+        url:         ev.url         || '',
+        img:         ev.img         || '',
+        pick:        ev.pick        || false,
+        indoor:      ev.indoor      || false,
+        tags:        [],
+        active:      false,
+        createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      docId = ref.id;
+      // Add to allEvents so openModal can find it
+      allEvents.push({ ...ev, id: docId, _static: false, active: false, tags: [] });
     }
-    await db.collection('events').add({
-      title:       ev.title,
-      description: ev.description || '',
-      type:        ev.type        || 'other',
-      day:         ev.day         || 'sat',
-      weekend:     ev.weekend     || '',
-      region:      ev.region      || 'wellington',
-      venue:       ev.venue       || '',
-      time:        ev.time        || '',
-      url:         ev.url         || '',
-      img:         ev.img         || '',
-      pick:        ev.pick        || false,
-      indoor:      ev.indoor      || false,
-      tags:        [],
-      active:      false,
-      createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    btn.textContent = '✓ Done';
-    showToast(`"${ev.title}" imported as draft`);
+    btn.disabled = false;
+    btn.textContent = 'Edit';
+    openModal(docId);
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = 'Import';
-    showToast('Import failed: ' + err.message);
+    btn.textContent = 'Edit';
+    showToast('Error: ' + err.message);
   }
 }
 // ── JSON paste import ──────────────────────────────────────────────────────────
