@@ -94,6 +94,7 @@
         </select>
       </div>
       <button class="show-past-btn" onclick="toggleShowPast(this)">Show past</button>
+      <button class="show-past-btn" onclick="deletePastEvents(this)" style="color:#c00">🗑 Delete past</button>
       <button class="import-btn" id="importBtn" onclick="bulkImportDraftEvents()">⬇ Import drafts</button>
       <button class="add-btn" onclick="openModal()">+ Add Event</button>
     </div>
@@ -105,14 +106,13 @@
           <tr>
             <th>Title</th>
             <th>Type</th>
-            <th>Weekend</th>
             <th>Region</th>
             <th>Status</th>
             <th class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody id="eventTableBody">
-          <tr class="table-empty"><td colspan="6">Loading…</td></tr>
+          <tr class="table-empty"><td colspan="5">Loading…</td></tr>
         </tbody>
       </table>
     </div>

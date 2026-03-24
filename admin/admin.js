@@ -27,6 +27,7 @@ let deletingDocId   = null;
 let deletingTitle   = '';
 let unsubscribeSnap = null;
 let showPast        = false;
+let firstLoad       = true;
 
 // True from Monday 00:00 after the weekend
 function weekendIsPast(satDateStr) {
@@ -43,6 +44,24 @@ function toggleShowPast(btn) {
   showPast = !showPast;
   btn.textContent = showPast ? 'Hide past' : 'Show past';
   applyFilters();
+}
+
+async function deletePastEvents(btn) {
+  const past = allEvents.filter(e => !e._static && weekendIsPast(e.weekend));
+  if (!past.length) { showToast('No past events to delete'); return; }
+  if (!confirm(`Delete ${past.length} past event${past.length === 1 ? '' : 's'} from Firestore?`)) return;
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const batch = db.batch();
+    past.forEach(e => batch.delete(db.collection('events').doc(e.id)));
+    await batch.commit();
+    showToast(`${past.length} past event${past.length === 1 ? '' : 's'} deleted`);
+  } catch (err) {
+    showToast('Delete failed: ' + err.message);
+  }
+  btn.disabled = false;
+  btn.textContent = '🗑 Delete past';
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -142,6 +161,11 @@ function subscribeToEvents() {
 
       updateStats();
       populateWeekendFilter();
+      if (firstLoad) {
+        firstLoad = false;
+        const upcoming = allEvents.map(e => e.weekend).filter(w => w && !weekendIsPast(w)).sort()[0];
+        if (upcoming) document.getElementById('weekendFilter').value = upcoming;
+      }
       applyFilters();
     }, err => {
       console.error('Firestore error:', err);
@@ -218,7 +242,6 @@ function renderTable() {
     <tr${ev._static ? ' style="background:#fdf8ee"' : ''}>
       <td><strong>${esc(ev.title)}</strong>${ev.venue ? `<br><small style="color:#888">${esc(ev.venue)}</small>` : ''}</td>
       <td><span class="badge-cat">${esc(ev.type || ev.category || '—')}</span></td>
-      <td>${ev.weekend ? formatWeekend(ev.weekend) : '—'}${weekendIsPast(ev.weekend) ? ' <span class="badge badge-past">Past</span>' : ''}</td>
       <td>${esc(ev.region || '—')}</td>
       <td>${ev._static
         ? '<span class="badge badge-draft" title="Hardcoded in site — import to manage via admin">Static</span>'
