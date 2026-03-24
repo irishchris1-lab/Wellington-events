@@ -458,6 +458,73 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#5B4A8A',
     free: 'Free',
     family: 'Family',},
+  {
+    title: 'The Rocky Horror Show — Final Weekend',
+    type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'wellington',
+    time: 'Sat 2:30 pm matinee & 7:30 pm · Sun 1:00 pm (final show)',
+    venue: 'St James Theatre, 77–87 Courtenay Place, Wellington',
+    description: 'The iconic stage musical returns to NZ for the first time in 15 years — direct from the UK with a West End cast. Sweet Transvestite, Time Warp, Dammit Janet. Dress-up warmly encouraged. Final weekend.',
+    url: 'https://rockyhorror.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🎭 Musical Theatre',
+    labelStyle: 'color:#8A1A1A',
+    cost: 'Ticketed — rockyhorror.co.nz',},
+  {
+    title: 'Wellington City Orchestra — Louise Webster Violin Concerto',
+    type: 'music', day: 'sat', weekend: '2026-03-28', region: 'wellington',
+    time: '3:00 pm – 4:45 pm',
+    venue: 'St Andrew\'s on The Terrace, 30 The Terrace, Wellington',
+    description: 'Conductor Justus Rozemond leads the orchestra with violinist Helene Pohl. Includes the NZ premiere of Louise Webster\'s violin concerto, Lili Boulanger, and Prokofiev\'s Romeo and Juliet Suite No. 2.',
+    url: 'https://events.humanitix.com/wellington-city-orchestra-28-march-2026',
+    img: '',
+    pick: false,
+
+    label: '🎻 Live Orchestra',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'From $20 · Children free',},
+  {
+    title: 'Peach PRC — Wandering Spirit Tour',
+    type: 'music', day: 'sat', weekend: '2026-03-28', region: 'wellington',
+    time: 'Doors 7:00 pm · Peach PRC 9:15 pm',
+    venue: 'Shed 6, 4 Queens Wharf, Wellington',
+    description: 'Australian pop artist Peach PRC headlines her NZ debut — theatrical boundary-pushing pop with 230M+ streams. Support from Sydney artist Salty. Licensed all-ages show on the Wellington waterfront.',
+    url: 'https://www.frontiertouring.com/peachprc',
+    img: '',
+    pick: false,
+
+    label: '🎤 Live Music',
+    labelStyle: 'color:#C8390A',
+    cost: 'GA $79.90 · VIP $179.90',},
+  {
+    title: 'The Superlative Artistry of Japan — Final Weekend',
+    type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'upper-hutt',
+    time: 'Gallery hours — check website',
+    venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
+    description: 'Free travelling exhibition by the Embassy of Japan — closing this weekend. Captures Japan\'s monozukuri (craft) spirit across traditional kogei, elaborate Meiji-era works, contemporary craft and food art. Free entry.',
+    url: 'https://www.expressions.org.nz/exhibitions/current-exhibitions/',
+    img: '',
+    pick: false,
+
+    label: '🇯🇵 Free Exhibition · Closing',
+    labelStyle: 'color:#8A1A1A',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'Wellington Phoenix Women v Western Sydney Wanderers',
+    type: 'outdoor', day: 'sun', weekend: '2026-03-28', region: 'porirua',
+    time: '2:00 pm kick-off',
+    venue: 'Porirua Park, Porirua',
+    description: 'A-League Women fixture — the Phoenix host Western Sydney Wanderers at their Porirua home ground. Fast, skilful women\'s football in an intimate community stadium setting. Broadcast on Sky Open.',
+    url: 'https://wellingtonphoenix.com/matches/',
+    img: '',
+    pick: false,
+
+    label: '⚽ A-League Women',
+    labelStyle: 'color:#FF6600',
+    family: 'Family',
+    cost: 'Ticketed',},
 
   // ── 4–5 Apr 2026 ─────────────────────────────────────────────────────────
   {
