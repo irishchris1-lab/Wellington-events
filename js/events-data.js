@@ -438,7 +438,7 @@ const STATIC_EVENTS = [
     description: 'The Southern Hemisphere\'s largest indigenous film festival — five days of indigenous cinema from around the world, including NZ premieres and special events. The 2026 theme is "light that reveals our legacies."',
     url: 'https://www.maorilandfilm.co.nz',
     img: '',
-    pick: true,
+    pick: false,
 
     label: '🎬 Film Festival',
     labelStyle: 'color:#C8390A',
@@ -466,7 +466,7 @@ const STATIC_EVENTS = [
     description: 'The iconic stage musical returns to NZ for the first time in 15 years — direct from the UK with a West End cast. Sweet Transvestite, Time Warp, Dammit Janet. Dress-up warmly encouraged. Final weekend.',
     url: 'https://rockyhorror.co.nz',
     img: '',
-    pick: true,
+    pick: false,
 
     label: '🎭 Musical Theatre',
     labelStyle: 'color:#8A1A1A',
