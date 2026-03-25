@@ -672,6 +672,19 @@ const STATIC_EVENTS = [
 
   // ── 18–19 Apr 2026 ───────────────────────────────────────────────────────
   {
+    title: 'Brewtown Beer Fest 2026',
+    type: 'festival', day: 'sat', weekend: '2026-04-18', region: 'upper-hutt',
+    time: '12:00 pm – 6:30 pm',
+    venue: 'Brewtown, 16 Miro St, Upper Hutt',
+    description: 'Annual craft beer festival at Brewtown Upper Hutt — local and guest breweries, live music and food in the open-air courtyard of Upper Hutt\'s thriving craft beer hub.',
+    url: 'https://brewtown.co.nz/beerfest',
+    img: '',
+    pick: false,
+
+    label: '🍺 Beer Festival',
+    labelStyle: 'color:#C8901A',
+    cost: 'Ticketed — brewtown.co.nz/beerfest',},
+  {
     title: 'Wellington Saints v Manawatu Jets',
     type: 'outdoor', day: 'sun', weekend: '2026-04-11', region: 'wellington',
     time: 'Check schedule for time',
