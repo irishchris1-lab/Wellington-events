@@ -799,6 +799,7 @@ async function editStaticEvent(staticId, btn) {
       const ref = await db.collection('events').add({
         title:       ev.title,
         description: ev.description || '',
+        category:    'events',
         type:        ev.type        || 'other',
         day:         ev.day         || 'sat',
         weekend:     ev.weekend     || '',
