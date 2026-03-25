@@ -785,18 +785,16 @@ async function editStaticEvent(staticId, btn) {
   btn.disabled = true;
   btn.textContent = '…';
   try {
-    // Check if already imported into Firestore
-    const existing = await db.collection('events')
-      .where('weekend', '==', ev.weekend)
-      .where('day', '==', ev.day || 'sat')
-      .get();
-    const dupeDoc = existing.docs.find(d => {
-      const data = d.data();
-      return (data.title || '').trim().toLowerCase() === (ev.title || '').trim().toLowerCase();
-    });
+    // Check local allEvents first (already synced from Firestore) to avoid a query
+    const titleKey = (ev.title || '').trim().toLowerCase();
+    const existing = allEvents.find(e =>
+      !e._static &&
+      (e.title || '').trim().toLowerCase() === titleKey &&
+      e.weekend === ev.weekend
+    );
     let docId;
-    if (dupeDoc) {
-      docId = dupeDoc.id;
+    if (existing) {
+      docId = existing.id;
     } else {
       const ref = await db.collection('events').add({
         title:       ev.title,
@@ -817,7 +815,6 @@ async function editStaticEvent(staticId, btn) {
         updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
       });
       docId = ref.id;
-      // Add to allEvents so openModal can find it
       allEvents.push({ ...ev, id: docId, _static: false, active: false, tags: [] });
     }
     btn.disabled = false;
