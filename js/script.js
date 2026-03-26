@@ -2179,26 +2179,32 @@ const SECTION_TITLES = {
         return rainChance > 50 || code >= 51;
       }
 
-      function weatherMessage(satCode, sunCode, satRain, sunRain) {
-        const satRainy = isRainy(satCode, satRain);
-        const sunRainy = isRainy(sunCode, sunRain);
+      // data = { satAm, satPm, sunAm, sunPm } each with { code, temp, rainChance }
+      function weatherMessage(data) {
+        const satRainy = isRainy(data.satPm.code, data.satPm.rainChance);
+        const sunRainy = isRainy(data.sunPm.code, data.sunPm.rainChance);
         if (satRainy && sunRainy) return 'A wet one — perfect for indoor adventures';
         if (satRainy && !sunRainy) return 'Rainy Saturday, better Sunday ahead';
         if (!satRainy && sunRainy) return 'Get outside Saturday — rain on Sunday';
         return 'Great weekend ahead — get outside!';
       }
 
-      function renderWeatherStrip(sat, sun) {
-        document.getElementById('weatherSatIcon').textContent = wmoEmoji(sat.code);
-        document.getElementById('weatherSatTemp').textContent = Math.round(sat.maxTemp) + '°';
-        document.getElementById('weatherSunIcon').textContent = wmoEmoji(sun.code);
-        document.getElementById('weatherSunTemp').textContent = Math.round(sun.maxTemp) + '°';
-        document.getElementById('weatherMessage').textContent = weatherMessage(sat.code, sun.code, sat.rainChance, sun.rainChance);
+      function setSlot(iconId, tempId, slot) {
+        document.getElementById(iconId).textContent = wmoEmoji(slot.code);
+        document.getElementById(tempId).textContent = Math.round(slot.temp) + '°';
+      }
 
-        const bothRainy = isRainy(sat.code, sat.rainChance) && isRainy(sun.code, sun.rainChance);
-        const bothSunny = !isRainy(sat.code, sat.rainChance) && !isRainy(sun.code, sun.rainChance);
-        strip.classList.toggle('rainy', bothRainy);
-        strip.classList.toggle('sunny', bothSunny);
+      function renderWeatherStrip(data) {
+        setSlot('weatherSatAmIcon', 'weatherSatAmTemp', data.satAm);
+        setSlot('weatherSatPmIcon', 'weatherSatPmTemp', data.satPm);
+        setSlot('weatherSunAmIcon', 'weatherSunAmTemp', data.sunAm);
+        setSlot('weatherSunPmIcon', 'weatherSunPmTemp', data.sunPm);
+        document.getElementById('weatherMessage').textContent = weatherMessage(data);
+
+        const satRainy = isRainy(data.satPm.code, data.satPm.rainChance);
+        const sunRainy = isRainy(data.sunPm.code, data.sunPm.rainChance);
+        strip.classList.toggle('rainy', satRainy && sunRainy);
+        strip.classList.toggle('sunny', !satRainy && !sunRainy);
         strip.style.display = '';
       }
 
@@ -2211,13 +2217,22 @@ const SECTION_TITLES = {
         return sat;
       }
 
+      // Extract one slot from hourly arrays at a given index
+      function slot(hourly, idx) {
+        return {
+          code: hourly.weathercode[idx],
+          temp: hourly.temperature_2m[idx],
+          rainChance: hourly.precipitation_probability[idx] || 0,
+        };
+      }
+
       async function fetchWeather() {
         try {
           const cached = sessionStorage.getItem(CACHE_KEY);
           if (cached) {
             const parsed = JSON.parse(cached);
             if (Date.now() - parsed.ts < CACHE_TTL) {
-              renderWeatherStrip(parsed.data.sat, parsed.data.sun);
+              renderWeatherStrip(parsed.data);
               return;
             }
           }
@@ -2227,19 +2242,22 @@ const SECTION_TITLES = {
         const sun = new Date(sat);
         sun.setDate(sat.getDate() + 1);
         const fmt = function(d) { return d.toISOString().slice(0, 10); };
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&daily=weathercode,temperature_2m_max,precipitation_probability_max&start_date=' + fmt(sat) + '&end_date=' + fmt(sun) + '&timezone=Pacific%2FAuckland';
+        // Hourly data for sat+sun. Sat hours = 0–23, Sun hours = 24–47.
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&hourly=weathercode,temperature_2m,precipitation_probability&start_date=' + fmt(sat) + '&end_date=' + fmt(sun) + '&timezone=Pacific%2FAuckland';
 
         try {
           const res = await fetch(url);
           if (!res.ok) return;
           const json = await res.json();
-          const daily = json.daily;
+          const h = json.hourly;
           const data = {
-            sat: { code: daily.weathercode[0], maxTemp: daily.temperature_2m_max[0], rainChance: daily.precipitation_probability_max[0] || 0 },
-            sun: { code: daily.weathercode[1], maxTemp: daily.temperature_2m_max[1], rainChance: daily.precipitation_probability_max[1] || 0 },
+            satAm: slot(h, 10),   // Sat 10am
+            satPm: slot(h, 15),   // Sat 3pm
+            sunAm: slot(h, 34),   // Sun 10am (24+10)
+            sunPm: slot(h, 39),   // Sun 3pm  (24+15)
           };
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch (e) {}
-          renderWeatherStrip(data.sat, data.sun);
+          renderWeatherStrip(data);
         } catch (e) {}
       }
 

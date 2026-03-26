@@ -249,16 +249,39 @@
 <!-- ── WEATHER STRIP ── -->
 <div class="weather-strip" id="weatherStrip" style="display:none">
   <div class="weather-days">
-    <span class="weather-day">
-      <span class="weather-day-label">Sat</span>
-      <span class="weather-day-icon" id="weatherSatIcon">☀️</span>
-      <span class="weather-day-temp" id="weatherSatTemp">—</span>
-    </span>
-    <span class="weather-day">
-      <span class="weather-day-label">Sun</span>
-      <span class="weather-day-icon" id="weatherSunIcon">⛅</span>
-      <span class="weather-day-temp" id="weatherSunTemp">—</span>
-    </span>
+    <div class="weather-day-group">
+      <span class="weather-day-group-label">Saturday</span>
+      <div class="weather-day-group-slots">
+        <div class="weather-day">
+          <span class="weather-day-label">Morning</span>
+          <span class="weather-day-icon" id="weatherSatAmIcon">—</span>
+          <span class="weather-day-temp" id="weatherSatAmTemp">—</span>
+        </div>
+        <div class="weather-day-divider"></div>
+        <div class="weather-day">
+          <span class="weather-day-label">Afternoon</span>
+          <span class="weather-day-icon" id="weatherSatPmIcon">—</span>
+          <span class="weather-day-temp" id="weatherSatPmTemp">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="weather-strip-sep"></div>
+    <div class="weather-day-group">
+      <span class="weather-day-group-label">Sunday</span>
+      <div class="weather-day-group-slots">
+        <div class="weather-day">
+          <span class="weather-day-label">Morning</span>
+          <span class="weather-day-icon" id="weatherSunAmIcon">—</span>
+          <span class="weather-day-temp" id="weatherSunAmTemp">—</span>
+        </div>
+        <div class="weather-day-divider"></div>
+        <div class="weather-day">
+          <span class="weather-day-label">Afternoon</span>
+          <span class="weather-day-icon" id="weatherSunPmIcon">—</span>
+          <span class="weather-day-temp" id="weatherSunPmTemp">—</span>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="weather-message" id="weatherMessage">This weekend's forecast</div>
 </div>
