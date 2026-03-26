@@ -2153,4 +2153,96 @@ const SECTION_TITLES = {
       // Still load localStorage for guests who haven't signed in yet
       loadPlan().then(() => { renderPlan(); updateAddButtons(); });
     }
+
+    // ── WEATHER STRIP ──
+    (function initWeatherStrip() {
+      const strip = document.getElementById('weatherStrip');
+      if (!strip) return;
+
+      const CACHE_KEY = 'wow_weather';
+      const CACHE_TTL = 3 * 60 * 60 * 1000;
+
+      function wmoEmoji(code) {
+        if (code === 0) return '☀️';
+        if (code <= 2) return '⛅';
+        if (code === 3) return '☁️';
+        if (code <= 49) return '🌫️';
+        if (code <= 67) return '🌧️';
+        if (code <= 77) return '🌨️';
+        if (code <= 82) return '🌦️';
+        if (code <= 86) return '🌨️';
+        if (code <= 99) return '⛈️';
+        return '🌡️';
+      }
+
+      function isRainy(code, rainChance) {
+        return rainChance > 50 || code >= 51;
+      }
+
+      function weatherMessage(satCode, sunCode, satRain, sunRain) {
+        const satRainy = isRainy(satCode, satRain);
+        const sunRainy = isRainy(sunCode, sunRain);
+        if (satRainy && sunRainy) return 'A wet one — perfect for indoor adventures';
+        if (satRainy && !sunRainy) return 'Rainy Saturday, better Sunday ahead';
+        if (!satRainy && sunRainy) return 'Get outside Saturday — rain on Sunday';
+        return 'Great weekend ahead — get outside!';
+      }
+
+      function renderWeatherStrip(sat, sun) {
+        document.getElementById('weatherSatIcon').textContent = wmoEmoji(sat.code);
+        document.getElementById('weatherSatTemp').textContent = Math.round(sat.maxTemp) + '°';
+        document.getElementById('weatherSunIcon').textContent = wmoEmoji(sun.code);
+        document.getElementById('weatherSunTemp').textContent = Math.round(sun.maxTemp) + '°';
+        document.getElementById('weatherMessage').textContent = weatherMessage(sat.code, sun.code, sat.rainChance, sun.rainChance);
+
+        const bothRainy = isRainy(sat.code, sat.rainChance) && isRainy(sun.code, sun.rainChance);
+        const bothSunny = !isRainy(sat.code, sat.rainChance) && !isRainy(sun.code, sun.rainChance);
+        strip.classList.toggle('rainy', bothRainy);
+        strip.classList.toggle('sunny', bothSunny);
+        strip.style.display = '';
+      }
+
+      function getNextSaturday() {
+        const today = new Date();
+        const day = today.getDay();
+        const daysUntilSat = day === 6 ? 0 : (6 - day);
+        const sat = new Date(today);
+        sat.setDate(today.getDate() + daysUntilSat);
+        return sat;
+      }
+
+      async function fetchWeather() {
+        try {
+          const cached = sessionStorage.getItem(CACHE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.ts < CACHE_TTL) {
+              renderWeatherStrip(parsed.data.sat, parsed.data.sun);
+              return;
+            }
+          }
+        } catch (e) {}
+
+        const sat = getNextSaturday();
+        const sun = new Date(sat);
+        sun.setDate(sat.getDate() + 1);
+        const fmt = function(d) { return d.toISOString().slice(0, 10); };
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&daily=weathercode,temperature_2m_max,precipitation_probability_max&start_date=' + fmt(sat) + '&end_date=' + fmt(sun) + '&timezone=Pacific%2FAuckland';
+
+        try {
+          const res = await fetch(url);
+          if (!res.ok) return;
+          const json = await res.json();
+          const daily = json.daily;
+          const data = {
+            sat: { code: daily.weathercode[0], maxTemp: daily.temperature_2m_max[0], rainChance: daily.precipitation_probability_max[0] || 0 },
+            sun: { code: daily.weathercode[1], maxTemp: daily.temperature_2m_max[1], rainChance: daily.precipitation_probability_max[1] || 0 },
+          };
+          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch (e) {}
+          renderWeatherStrip(data.sat, data.sun);
+        } catch (e) {}
+      }
+
+      fetchWeather();
+    })();
   });
