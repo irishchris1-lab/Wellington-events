@@ -1151,23 +1151,19 @@
 .weather-strip {
   background: linear-gradient(135deg, #0B5563 0%, #1A8A6E 100%);
   color: #fff;
-  padding: 14px 20px;
+}
+.weather-strip.rainy { background: linear-gradient(135deg, #1a3a5c 0%, #1a4a6a 100%); }
+.weather-strip.sunny { background: linear-gradient(135deg, #9a6a00 0%, #C8901A 100%); }
+/* Inner container — flex lives here so content can be centred on desktop */
+.weather-strip-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  padding: 14px 20px;
 }
-.weather-strip.rainy {
-  background: linear-gradient(135deg, #1a3a5c 0%, #1a4a6a 100%);
-}
-.weather-strip.sunny {
-  background: linear-gradient(135deg, #9a6a00 0%, #C8901A 100%);
-}
-.weather-days {
-  display: flex;
-  gap: 20px;
-}
+.weather-days { display: flex; gap: 20px; }
 .weather-day {
   display: flex;
   flex-direction: column;
@@ -1194,4 +1190,66 @@
 }
 @media (max-width: 480px) {
   .weather-message { text-align: left; width: 100%; flex: none; }
+}
+
+/* ══ DESKTOP CENTERING (min-width: 768px) ══
+   Constrains content to 1080px (matching header/tabs/main) while
+   keeping full-width backgrounds on their outer elements.
+   Mobile layout is completely unchanged below this breakpoint. */
+@media (min-width: 768px) {
+
+  /* Weather strip — group pills + message in a centred max-width container */
+  .weather-strip-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    justify-content: center;
+    gap: 48px;
+  }
+  .weather-message { text-align: left; flex: none; }
+
+  /* Highlights row */
+  .highlights-header {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .highlights-track {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  /* Wider cards and grid-like layout on desktop */
+  .highlight-card { width: 220px; }
+
+  /* Category pill nav */
+  .cat-nav { padding-left: 0; padding-right: 0; }
+  .cat-inner { max-width: 1080px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+
+  /* Venue section content — food, walks, parks, activities, markets */
+  #section-food .venue-grid,
+  #section-walks .venue-grid,
+  #section-parks .venue-grid,
+  #section-activities .venue-grid,
+  #section-markets .venue-grid,
+  #section-rainy .venue-grid {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 28px;
+    padding-right: 28px;
+    box-sizing: border-box;
+  }
+  #section-food .day-label,
+  #section-walks .day-label,
+  #section-parks .day-label,
+  #section-activities .day-label,
+  #section-markets .day-label {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 28px;
+    padding-right: 28px;
+    box-sizing: border-box;
+  }
 }
