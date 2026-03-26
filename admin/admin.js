@@ -542,7 +542,8 @@ async function handleImageUpload(input) {
 
 // Upload a blob to Firebase Storage and return the download URL.
 // Rejects if the upload doesn't complete within 25 seconds.
-function uploadToStorage(blob, slug) {
+// onProgress(msg) is optional — defaults to setUploadStatus for the events modal.
+function uploadToStorage(blob, slug, onProgress) {
   return new Promise((resolve, reject) => {
     const filename = slug + '-' + Date.now() + '.jpg';
     const ref  = storage.ref('event-images/' + filename);
@@ -556,7 +557,8 @@ function uploadToStorage(blob, slug) {
     task.on('state_changed',
       snap => {
         const pct = Math.round((snap.bytesTransferred / (snap.totalBytes || 1)) * 100);
-        setUploadStatus(`Uploading… ${pct}%`);
+        const msg = `Uploading… ${pct}%`;
+        if (onProgress) onProgress(msg); else setUploadStatus(msg);
       },
       err => {
         clearTimeout(timer);
@@ -1139,8 +1141,25 @@ function buildVenueForm(section, v, i) {
       <select class="form-select" id="vf-duration-${section}-${i}">${durOpts}</select>
     </div>` : ''}
     <div class="form-row">
-      <label class="form-label">Image URL</label>
-      <input class="form-input" id="vf-img-${section}-${i}" type="url" value="${escAttr(v.img || '')}" placeholder="https://upload.wikimedia.org/…">
+      <label class="form-label">Image</label>
+      <div class="img-field">
+        <div class="img-drop-zone"
+          onclick="document.getElementById('vf-imgFile-${section}-${i}').click()"
+          ondragover="event.preventDefault(); this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="event.preventDefault(); this.classList.remove('drag-over'); handleVenueDrop(event,'${section}',${i})">
+          <input type="file" id="vf-imgFile-${section}-${i}" accept="image/*" class="img-file-input" onchange="handleVenueImageUpload('${section}',${i},this)">
+          <span class="drop-icon">📁</span>
+          <span class="drop-label">Click to choose photo, or drag &amp; drop</span>
+          <span class="drop-hint">Resized &amp; compressed automatically</span>
+        </div>
+        <span class="upload-status" id="vf-uploadStatus-${section}-${i}"></span>
+        <input class="form-input" id="vf-img-${section}-${i}" type="url" value="${escAttr(v.img || '')}" placeholder="https://… (auto-filled from upload, or paste URL)" oninput="updateVenueImgPreview('${section}',${i})">
+        <div class="img-preview-wrap${v.img ? '' : ' hidden'}" id="vf-imgPreviewWrap-${section}-${i}">
+          <img id="vf-imgPreview-${section}-${i}" src="${escAttr(v.img || '')}" alt="Preview" class="img-preview" onerror="this.closest('.img-preview-wrap').classList.add('hidden')">
+          <button type="button" class="img-clear-btn" onclick="clearVenueImg('${section}',${i})">✕ Remove</button>
+        </div>
+      </div>
     </div>
     <div class="form-actions">
       <button type="button" class="btn-secondary" onclick="toggleVenueEdit('${section}',${i})">Cancel</button>
@@ -1202,6 +1221,125 @@ async function revertVenue(section, idx, slug) {
     showToast('Venue reverted to original.');
   } catch (err) {
     showToast('Revert failed: ' + err.message);
+  }
+}
+
+// ── Venue photo upload helpers ────────────────────────────────────────────────
+
+function handleVenueDrop(event, section, idx) {
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  handleVenueImageUpload(section, idx, { files: [file] });
+}
+
+function updateVenueImgPreview(section, idx) {
+  const uid  = section + '-' + idx;
+  const val  = (document.getElementById('vf-img-' + uid)?.value || '').trim();
+  const wrap = document.getElementById('vf-imgPreviewWrap-' + uid);
+  const img  = document.getElementById('vf-imgPreview-' + uid);
+  if (!wrap || !img) return;
+  if (val) { img.src = val; wrap.classList.remove('hidden'); }
+  else { wrap.classList.add('hidden'); }
+}
+
+function clearVenueImg(section, idx) {
+  const uid = section + '-' + idx;
+  const el = document.getElementById('vf-img-' + uid);
+  if (el) el.value = '';
+  document.getElementById('vf-imgPreviewWrap-' + uid)?.classList.add('hidden');
+}
+
+async function handleVenueImageUpload(section, idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (typeof input.value === 'string') input.value = '';
+
+  const uid = section + '-' + idx;
+  const setStatus = (msg, cls) => {
+    const el = document.getElementById('vf-uploadStatus-' + uid);
+    if (!el) return;
+    el.textContent = msg;
+    el.className   = 'upload-status' + (cls ? ' ' + cls : ' uploading');
+  };
+
+  document.getElementById('vf-imgPreviewWrap-' + uid)?.classList.add('hidden');
+
+  if (isHeicFile(file)) {
+    setStatus('⚠ HEIC photos can\'t be processed here. On iPhone: open the photo → Share → "Save Image", then upload the saved JPEG.', 'error');
+    return;
+  }
+
+  let timedOut = false;
+  const overallTimer = setTimeout(() => {
+    timedOut = true;
+    setStatus('This is taking longer than expected. Try a smaller image or check your connection.', 'error');
+  }, 40000);
+
+  try {
+    setStatus('Reading file…');
+    const img = await loadImageFile(file);
+    if (timedOut) return;
+
+    if (img.naturalWidth < 800) {
+      setStatus(`⚠ Source is ${img.naturalWidth} × ${img.naturalHeight}px — ideally ≥ 800px. Processing anyway…`);
+      await new Promise(r => setTimeout(r, 700));
+    }
+    if (timedOut) return;
+
+    setStatus('Resizing…');
+    const cardCanvas = resizeToCanvas(img, 800);
+    if (timedOut) return;
+
+    setStatus('Compressing…');
+    const [cardWebp, cardJpeg] = await Promise.all([
+      canvasBlob(cardCanvas, 'image/webp', 0.82),
+      canvasBlob(cardCanvas, 'image/jpeg', 0.82),
+    ]);
+    if (timedOut) return;
+
+    const nameVal = document.getElementById('vf-name-' + uid)?.value.trim() || '';
+    const slug    = imageSlug(nameVal || file.name.replace(/\.[^.]+$/, ''));
+
+    let storageUrl = null;
+    let storageErrMsg = null;
+    try {
+      storageUrl = await uploadToStorage(cardJpeg, slug, msg => setStatus(msg));
+    } catch (storageErr) {
+      const code = storageErr.code || '';
+      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
+        storageErrMsg = `Permission denied (${code}).`;
+      } else if (code === 'storage/bucket-not-found' || code === 'storage/project-not-found') {
+        storageErrMsg = `Bucket not found (${code}).`;
+      } else if (code === 'storage/canceled') {
+        storageErrMsg = 'Upload timed out — check connection.';
+      } else {
+        storageErrMsg = storageErr.message || code || 'Unknown Storage error';
+      }
+      console.warn('Storage upload failed:', code, storageErr.message);
+    }
+    if (timedOut) return;
+
+    clearTimeout(overallTimer);
+
+    const previewUrl = URL.createObjectURL(cardWebp);
+    _pendingDownloadUrls.push(previewUrl);
+    const previewWrap = document.getElementById('vf-imgPreviewWrap-' + uid);
+    const previewImg  = document.getElementById('vf-imgPreview-' + uid);
+    if (previewWrap && previewImg) {
+      previewImg.src = previewUrl;
+      previewWrap.classList.remove('hidden');
+    }
+
+    if (storageUrl) {
+      const imgInput = document.getElementById('vf-img-' + uid);
+      if (imgInput) imgInput.value = storageUrl;
+      setStatus('✓ Done', 'success');
+    } else {
+      setStatus('⚠ Storage upload failed: ' + storageErrMsg + ' — paste a URL manually.', 'error');
+    }
+  } catch (err) {
+    clearTimeout(overallTimer);
+    if (!timedOut) setStatus('Error: ' + err.message, 'error');
   }
 }
 
