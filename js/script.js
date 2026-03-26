@@ -135,13 +135,16 @@ const SECTION_TITLES = {
 
   // Walk all img.card-img in `container` (or entire document) and:
   //   • add width/height if missing  • add Wikimedia srcset if not already set
-  //   • set onerror  • promote first 2 in active weekend panel to loading="eager"
+  //   • set onerror/onload  • add .loaded immediately for already-cached images
   function enhanceStaticImages(container) {
     const root = container || document;
     root.querySelectorAll('img.card-img').forEach(img => {
       if (!img.getAttribute('width'))  img.setAttribute('width',  '960');
       if (!img.getAttribute('height')) img.setAttribute('height', '540');
       if (!img.onerror) img.onerror = function() { onImgError(this); };
+      // Fade-in: add .loaded when image resolves; handle already-cached images
+      if (!img.onload) img.onload = function() { this.classList.add('loaded'); };
+      if (img.complete) img.classList.add('loaded');
       if (!img.srcset) {
         const ws = wikimediaSrcset(img.getAttribute('src') || '');
         if (ws) {
@@ -249,7 +252,7 @@ const SECTION_TITLES = {
   // 400 px thumbnail variant (highlights carousel).
   function localImgHTML(base, altEsc, useThumb) {
     const src = useThumb ? `${base}-thumb` : base;
-    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" style="background:#e8e4dc" onload="this.style.background=''" onerror="this.style.display='none'" alt="${altEsc}"></picture></div>`;
+    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></picture></div>`;
   }
 
   function cardImgHTML(url, alt, useThumb) {
@@ -270,7 +273,7 @@ const SECTION_TITLES = {
       const ws = wikimediaSrcset(url);
       if (ws) srcsetAttr = ` srcset="${ws}" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
     }
-    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" style="background:#e8e4dc" onload="this.style.background=''" onerror="this.style.display='none'" alt="${altEsc}"></div>`;
+    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></div>`;
   }
 
   // ── FOOD: top-rated filter ──
@@ -901,9 +904,9 @@ const SECTION_TITLES = {
         imgWrapHtml = '<div class="highlight-card-img"></div>';
       } else if (img.startsWith('images/')) {
         const base = img.replace(/\.(webp|jpe?g|png)$/i, '');
-        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
+        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
       } else {
-        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
+        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
       }
       el.innerHTML    = `
         ${imgWrapHtml}
