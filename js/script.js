@@ -249,7 +249,7 @@ const SECTION_TITLES = {
   // 400 px thumbnail variant (highlights carousel).
   function localImgHTML(base, altEsc, useThumb) {
     const src = useThumb ? `${base}-thumb` : base;
-    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onerror="onImgError(this)" alt="${altEsc}"></picture></div>`;
+    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" style="background:#e8e4dc" onload="this.style.background=''" onerror="this.style.display='none'" alt="${altEsc}"></picture></div>`;
   }
 
   function cardImgHTML(url, alt, useThumb) {
@@ -270,7 +270,7 @@ const SECTION_TITLES = {
       const ws = wikimediaSrcset(url);
       if (ws) srcsetAttr = ` srcset="${ws}" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
     }
-    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onerror="onImgError(this)" alt="${altEsc}"></div>`;
+    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" style="background:#e8e4dc" onload="this.style.background=''" onerror="this.style.display='none'" alt="${altEsc}"></div>`;
   }
 
   // ── FOOD: top-rated filter ──
@@ -850,7 +850,7 @@ const SECTION_TITLES = {
     return `
       <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
-        ${ev.img ? cardImgHTML(ev.img, ev.title) : cardPlaceholderHTML(ev.type)}
+        ${ev.img ? cardImgHTML(ev.img, ev.title) : ''}
         <div class="card-body">
           <div class="card-top">
             <div>
