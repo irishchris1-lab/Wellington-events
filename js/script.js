@@ -101,7 +101,6 @@ const SECTION_TITLES = {
   let currentRegion = 'all';
   let currentDuration = 'all';
   let walkTopRatedOnly = false;
-  let foodRatingFilter = 'all';
   let kidFriendlyFilter = 'all';
   const loadedSections = new Set(['events', 'planner']);
 
@@ -276,18 +275,6 @@ const SECTION_TITLES = {
     return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></div>`;
   }
 
-  // ── FOOD: top-rated filter ──
-  function filterFood(rating, btn) {
-    foodRatingFilter = rating;
-    document.querySelectorAll('.duration-filter button[onclick*="filterFood"]').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-pressed', 'false');
-    });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-    applyFoodFilters();
-  }
-
   // ── FOOD: kid-friendly filter ──
   function filterKidFriendly(val, btn) {
     kidFriendlyFilter = val;
@@ -303,10 +290,8 @@ const SECTION_TITLES = {
   function applyFoodFilters() {
     document.querySelectorAll('#section-food .venue-card').forEach(card => {
       const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
-      const rating = parseFloat(card.dataset.rating || '0');
-      const ratingMatch = foodRatingFilter === 'all' || rating >= 4.5;
       const kidMatch = kidFriendlyFilter === 'all' || card.dataset.kidfriendly === 'true';
-      card.classList.toggle('hidden', !(regionMatch && ratingMatch && kidMatch));
+      card.classList.toggle('hidden', !(regionMatch && kidMatch));
     });
     document.querySelectorAll('#section-food .venue-grid').forEach(grid => {
       const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
