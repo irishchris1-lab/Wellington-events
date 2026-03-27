@@ -473,7 +473,7 @@
   .strip-music    { background: linear-gradient(90deg, #8A1A1A, #c44040); }
   .strip-other    { background: linear-gradient(90deg, #888,    #bbb);    }
 
-  .card.hidden, .venue-card.hidden { display: none; }
+  .card.hidden, .venue-card.hidden, .card.dedup-hidden { display: none; }
 
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 48px 20px; color: #bbb; }

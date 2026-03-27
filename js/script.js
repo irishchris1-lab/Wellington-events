@@ -665,7 +665,7 @@ const SECTION_TITLES = {
   function applyFilter(region) {
     const activePanel = document.querySelector('.weekend-panel.active');
     if (activePanel) {
-      activePanel.querySelectorAll('.card').forEach(card => {
+      activePanel.querySelectorAll('.card:not(.dedup-hidden)').forEach(card => {
         const regionHide = region !== 'all' && card.dataset.region !== region;
         card.classList.toggle('hidden', regionHide);
       });
@@ -1112,7 +1112,7 @@ const SECTION_TITLES = {
         document.querySelectorAll('.card[data-static]').forEach(card => {
           const titleEl = card.querySelector('.card-title');
           const key = `${(titleEl ? titleEl.textContent.trim() : '')}|${card.dataset.weekend || ''}|${card.dataset.day || 'sat'}`;
-          card.classList.toggle('hidden', firestoreKeys.has(key));
+          card.classList.toggle('dedup-hidden', firestoreKeys.has(key));
         });
 
         applyFilter(currentRegion);
