@@ -374,20 +374,6 @@ const STATIC_EVENTS = [
     free: 'Free',
     family: 'Family',},
   {
-    title: 'Wellington Cable Car & Botanic Garden',
-    type: 'outdoor', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    time: 'Daily · open hours vary',
-    venue: 'Cable Car, Kelburn, Wellington',
-    description: 'Take the iconic cable car up to Kelburn, stroll the Botanic Garden and enjoy harbour views. Walk back down for free. A classic Wellington family outing any weekend.',
-    url: 'https://www.wellingtoncablecar.co.nz',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Wellington_Cable_Car_%2832655662511%29.jpg/960px-Wellington_Cable_Car_%2832655662511%29.jpg',
-    pick: false,
-  
-    label: '🚡 Iconic',
-    labelStyle: 'color:#1A8A6E',
-    family: 'Family',
-    cost: '$5–9 cable car · Garden free',},
-  {
     title: 'Martinborough Village & Wine Trail',
     type: 'outdoor', day: 'sat', weekend: '2026-03-28', region: 'wairarapa',
     time: 'Daily · self-guided',
