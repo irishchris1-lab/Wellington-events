@@ -25,6 +25,7 @@ let filteredEvents  = [];
 let editingDocId    = null;
 let deletingDocId   = null;
 let deletingTitle   = '';
+let deletingStaticId = null;
 let unsubscribeSnap = null;
 let showPast        = false;
 let firstLoad       = true;
@@ -249,7 +250,8 @@ function renderTable() {
       }</td>
       <td class="col-actions">
         ${ev._static
-          ? `<button class="action-btn edit" onclick="editStaticEvent(${ev._staticId}, this)">Edit</button>`
+          ? `<button class="action-btn edit" onclick="editStaticEvent(${ev._staticId}, this)">Edit</button>
+             <button class="action-btn delete" onclick="openDeleteModal(null, '${escAttr(ev.title)}', ${ev._staticId})">Del</button>`
           : `<button class="action-btn edit"   onclick="openModal('${ev.id}')">Edit</button>
              <button class="action-btn delete" onclick="openDeleteModal('${ev.id}', '${escAttr(ev.title)}')">Del</button>`
         }
@@ -665,17 +667,26 @@ async function handleFormSubmit(e) {
 }
 
 // ── Delete ─────────────────────────────────────────────────────────────────────
-function openDeleteModal(docId, title) {
-  deletingDocId  = docId;
-  deletingTitle  = title;
-  document.getElementById('deleteEventName').textContent = title;
+function openDeleteModal(docId, title, staticId = null) {
+  deletingDocId    = docId;
+  deletingTitle    = title;
+  deletingStaticId = staticId ?? null;
+  const msg = document.querySelector('#deleteOverlay .delete-msg');
+  if (msg) {
+    if (deletingStaticId !== null) {
+      msg.innerHTML = `Hide <strong>${esc(title)}</strong> from the site? It will be moved to drafts where you can delete it permanently.`;
+    } else {
+      msg.innerHTML = `Are you sure you want to delete <strong>${esc(title)}</strong>? This cannot be undone.`;
+    }
+  }
   document.getElementById('deleteOverlay').classList.remove('hidden');
 }
 
 function closeDeleteModal() {
   document.getElementById('deleteOverlay').classList.add('hidden');
-  deletingDocId = null;
-  deletingTitle = '';
+  deletingDocId    = null;
+  deletingTitle    = '';
+  deletingStaticId = null;
 }
 
 function handleDeleteOverlayClick(e) {
@@ -683,6 +694,50 @@ function handleDeleteOverlayClick(e) {
 }
 
 async function confirmDelete() {
+  if (deletingStaticId !== null) {
+    // Static event: import to Firestore as inactive (suppresses the static copy),
+    // then the user can delete it permanently from the drafts list.
+    if (typeof STATIC_EVENTS === 'undefined') { closeDeleteModal(); return; }
+    const ev = STATIC_EVENTS[deletingStaticId];
+    if (!ev) { closeDeleteModal(); return; }
+    try {
+      const titleKey = (ev.title || '').trim().toLowerCase();
+      const existing = allEvents.find(e =>
+        !e._static &&
+        (e.title || '').trim().toLowerCase() === titleKey &&
+        e.weekend === ev.weekend
+      );
+      if (existing) {
+        // Already in Firestore — just deactivate it
+        await db.collection('events').doc(existing.id).update({ active: false });
+      } else {
+        await db.collection('events').add({
+          title:       ev.title,
+          description: ev.description || '',
+          category:    'events',
+          type:        ev.type     || 'other',
+          day:         ev.day      || 'sat',
+          weekend:     ev.weekend  || '',
+          region:      ev.region   || 'wellington',
+          venue:       ev.venue    || '',
+          time:        ev.time     || '',
+          url:         ev.url      || '',
+          img:         ev.img      || '',
+          pick:        ev.pick     || false,
+          indoor:      ev.indoor   || false,
+          tags:        [],
+          active:      false,
+          createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+      showToast(`"${deletingTitle}" moved to drafts — delete it permanently from the list.`);
+      closeDeleteModal();
+    } catch (err) {
+      showToast('Error: ' + err.message);
+    }
+    return;
+  }
   if (!deletingDocId) return;
   try {
     await db.collection('events').doc(deletingDocId).delete();
