@@ -22,10 +22,11 @@ const storage = firebase.storage();
 // ── State ─────────────────────────────────────────────────────────────────────
 let allEvents       = [];
 let filteredEvents  = [];
-let editingDocId    = null;
-let deletingDocId   = null;
-let deletingTitle   = '';
+let editingDocId     = null;
+let deletingDocId    = null;
+let deletingTitle    = '';
 let deletingStaticId = null;
+let hiddenStaticKeys = new Set();
 let unsubscribeSnap = null;
 let showPast        = false;
 let firstLoad       = true;
@@ -100,7 +101,11 @@ function showDashboard(user) {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('adminEmail').textContent = user.email;
-  subscribeToEvents();
+  db.collection('settings').doc('hiddenStatics').get().then(doc => {
+    if (doc.exists) (doc.data().keys || []).forEach(k => hiddenStaticKeys.add(k));
+  }).catch(() => {}).finally(() => {
+    subscribeToEvents();
+  });
   loadAbout();
   openFromUrlParams();
 }
@@ -150,7 +155,7 @@ function subscribeToEvents() {
         );
         STATIC_EVENTS.forEach((ev, i) => {
           const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
-          if (!firestoreKeys.has(key)) {
+          if (!firestoreKeys.has(key) && !hiddenStaticKeys.has(key)) {
             allEvents.push({ ...ev, id: `static-${i}`, _static: true, _staticId: i, active: true });
           }
         });
@@ -674,7 +679,7 @@ function openDeleteModal(docId, title, staticId = null) {
   const msg = document.querySelector('#deleteOverlay .delete-msg');
   if (msg) {
     if (deletingStaticId !== null) {
-      msg.innerHTML = `Hide <strong>${esc(title)}</strong> from the site? It will be moved to drafts where you can delete it permanently.`;
+      msg.innerHTML = `Remove <strong>${esc(title)}</strong> from the site?`;
     } else {
       msg.innerHTML = `Are you sure you want to delete <strong>${esc(title)}</strong>? This cannot be undone.`;
     }
@@ -695,44 +700,20 @@ function handleDeleteOverlayClick(e) {
 
 async function confirmDelete() {
   if (deletingStaticId !== null) {
-    // Static event: import to Firestore as inactive (suppresses the static copy),
-    // then the user can delete it permanently from the drafts list.
     if (typeof STATIC_EVENTS === 'undefined') { closeDeleteModal(); return; }
     const ev = STATIC_EVENTS[deletingStaticId];
     if (!ev) { closeDeleteModal(); return; }
+    const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
     try {
-      const titleKey = (ev.title || '').trim().toLowerCase();
-      const existing = allEvents.find(e =>
-        !e._static &&
-        (e.title || '').trim().toLowerCase() === titleKey &&
-        e.weekend === ev.weekend
+      await db.collection('settings').doc('hiddenStatics').set(
+        { keys: firebase.firestore.FieldValue.arrayUnion(key) },
+        { merge: true }
       );
-      if (existing) {
-        // Already in Firestore — just deactivate it
-        await db.collection('events').doc(existing.id).update({ active: false });
-      } else {
-        await db.collection('events').add({
-          title:       ev.title,
-          description: ev.description || '',
-          category:    'events',
-          type:        ev.type     || 'other',
-          day:         ev.day      || 'sat',
-          weekend:     ev.weekend  || '',
-          region:      ev.region   || 'wellington',
-          venue:       ev.venue    || '',
-          time:        ev.time     || '',
-          url:         ev.url      || '',
-          img:         ev.img      || '',
-          pick:        ev.pick     || false,
-          indoor:      ev.indoor   || false,
-          tags:        [],
-          active:      false,
-          createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-        });
-      }
-      showToast(`"${deletingTitle}" moved to drafts — delete it permanently from the list.`);
+      hiddenStaticKeys.add(key);
+      allEvents = allEvents.filter(e => !(e._static && e._staticId === deletingStaticId));
+      showToast(`"${deletingTitle}" removed.`);
       closeDeleteModal();
+      applyFilters();
     } catch (err) {
       showToast('Error: ' + err.message);
     }
