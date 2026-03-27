@@ -2142,10 +2142,10 @@ const SECTION_TITLES = {
       loadPlan().then(() => { renderPlan(); updateAddButtons(); });
     }
 
-    // ── INLINE WEATHER ──
+    // ── HERO WEATHER ──
     (function initWeatherStrip() {
-      const inlineWeather = document.getElementById('highlightsWeather');
-      if (!inlineWeather) return;
+      const heroWeather = document.getElementById('heroWeather');
+      if (!heroWeather) return;
 
       const CACHE_KEY = 'wow_weather';
       const CACHE_TTL = 3 * 60 * 60 * 1000;
@@ -2163,12 +2163,26 @@ const SECTION_TITLES = {
         return '🌡️';
       }
 
+      function isRainy(code, rainChance) {
+        return rainChance > 50 || code >= 51;
+      }
+
+      function weatherMessage(sat, sun) {
+        const satRainy = isRainy(sat.code, sat.rainChance);
+        const sunRainy = isRainy(sun.code, sun.rainChance);
+        if (satRainy && sunRainy) return 'A wet one — perfect for indoor adventures';
+        if (satRainy && !sunRainy) return 'Rainy Saturday, better Sunday ahead';
+        if (!satRainy && sunRainy) return 'Get outside Saturday — rain on Sunday';
+        return 'Great weekend ahead — get outside!';
+      }
+
       function renderWeatherStrip(sat, sun) {
-        document.getElementById('weatherSatIcon').textContent = wmoEmoji(sat.code);
-        document.getElementById('weatherSatTemp').textContent = Math.round(sat.maxTemp) + '°';
-        document.getElementById('weatherSunIcon').textContent = wmoEmoji(sun.code);
-        document.getElementById('weatherSunTemp').textContent = Math.round(sun.maxTemp) + '°';
-        inlineWeather.style.display = '';
+        document.getElementById('heroWeatherSatIcon').textContent = wmoEmoji(sat.code);
+        document.getElementById('heroWeatherSatTemp').textContent = Math.round(sat.maxTemp) + '°';
+        document.getElementById('heroWeatherSunIcon').textContent = wmoEmoji(sun.code);
+        document.getElementById('heroWeatherSunTemp').textContent = Math.round(sun.maxTemp) + '°';
+        document.getElementById('heroWeatherMsg').textContent = weatherMessage(sat, sun);
+        heroWeather.style.display = '';
       }
 
       function getNextSaturday() {

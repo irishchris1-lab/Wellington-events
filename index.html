@@ -240,6 +240,20 @@
     </div>
     <h1>Plan Your Wellington<br><em>Weekend</em></h1>
     <p class="header-sub">Build your perfect family weekend — curated events, cafés, walks and parks across Wellington, all in one place.</p>
+    <div class="hero-weather" id="heroWeather" style="display:none">
+      <div class="hero-weather-day">
+        <span class="hero-weather-day-label">Sat</span>
+        <span class="hero-weather-day-icon" id="heroWeatherSatIcon"></span>
+        <span class="hero-weather-day-temp" id="heroWeatherSatTemp"></span>
+      </div>
+      <div class="hero-weather-day">
+        <span class="hero-weather-day-label">Sun</span>
+        <span class="hero-weather-day-icon" id="heroWeatherSunIcon"></span>
+        <span class="hero-weather-day-temp" id="heroWeatherSunTemp"></span>
+      </div>
+      <div class="hero-weather-divider"></div>
+      <div class="hero-weather-message" id="heroWeatherMsg"></div>
+    </div>
   </div>
   <svg class="header-wave" viewBox="0 0 1440 44" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
     <path d="M0,22 C360,44 1080,0 1440,22 L1440,44 L0,44 Z" fill="#F7F2EB"/>
@@ -250,11 +264,6 @@
 <section class="highlights-section" id="highlights-section" style="display:none">
   <div class="highlights-header">
     <span class="highlights-eyebrow">🔥 This Weekend's Picks</span>
-    <span class="highlights-weather" id="highlightsWeather" style="display:none">
-      <span id="weatherSatIcon"></span><span id="weatherSatTemp"></span>
-      <span class="highlights-weather-sep">·</span>
-      <span id="weatherSunIcon"></span><span id="weatherSunTemp"></span>
-    </span>
     <button class="highlights-see-all" onclick="showSection('events', document.getElementById('tab-events'))">See all →</button>
   </div>
   <div class="highlights-track" id="highlightsTrack"></div>
