@@ -439,21 +439,6 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#8A1A1A',
     free: 'Free',
     family: 'Family',},
-  {
-    title: 'Wellington Phoenix Women v Western Sydney Wanderers',
-    type: 'outdoor', day: 'sun', weekend: '2026-03-28', region: 'porirua',
-    time: '2:00 pm kick-off',
-    venue: 'Porirua Park, Porirua',
-    description: 'A-League Women fixture — the Phoenix host Western Sydney Wanderers at their Porirua home ground. Fast, skilful women\'s football in an intimate community stadium setting. Broadcast on Sky Open.',
-    url: 'https://wellingtonphoenix.com/matches/',
-    img: '',
-    pick: false,
-
-    label: '⚽ A-League Women',
-    labelStyle: 'color:#FF6600',
-    family: 'Family',
-    cost: 'Ticketed',},
-
   // ── 4–5 Apr 2026 ─────────────────────────────────────────────────────────
   {
     title: 'Armageddon Expo Wellington 2026',
