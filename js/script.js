@@ -2142,10 +2142,10 @@ const SECTION_TITLES = {
       loadPlan().then(() => { renderPlan(); updateAddButtons(); });
     }
 
-    // ── WEATHER STRIP ──
+    // ── INLINE WEATHER ──
     (function initWeatherStrip() {
-      const strip = document.getElementById('weatherStrip');
-      if (!strip) return;
+      const inlineWeather = document.getElementById('highlightsWeather');
+      if (!inlineWeather) return;
 
       const CACHE_KEY = 'wow_weather';
       const CACHE_TTL = 3 * 60 * 60 * 1000;
@@ -2163,31 +2163,12 @@ const SECTION_TITLES = {
         return '🌡️';
       }
 
-      function isRainy(code, rainChance) {
-        return rainChance > 50 || code >= 51;
-      }
-
-      function weatherMessage(satCode, sunCode, satRain, sunRain) {
-        const satRainy = isRainy(satCode, satRain);
-        const sunRainy = isRainy(sunCode, sunRain);
-        if (satRainy && sunRainy) return 'A wet one — perfect for indoor adventures';
-        if (satRainy && !sunRainy) return 'Rainy Saturday, better Sunday ahead';
-        if (!satRainy && sunRainy) return 'Get outside Saturday — rain on Sunday';
-        return 'Great weekend ahead — get outside!';
-      }
-
       function renderWeatherStrip(sat, sun) {
         document.getElementById('weatherSatIcon').textContent = wmoEmoji(sat.code);
         document.getElementById('weatherSatTemp').textContent = Math.round(sat.maxTemp) + '°';
         document.getElementById('weatherSunIcon').textContent = wmoEmoji(sun.code);
         document.getElementById('weatherSunTemp').textContent = Math.round(sun.maxTemp) + '°';
-        document.getElementById('weatherMessage').textContent = weatherMessage(sat.code, sun.code, sat.rainChance, sun.rainChance);
-
-        const bothRainy = isRainy(sat.code, sat.rainChance) && isRainy(sun.code, sun.rainChance);
-        const bothSunny = !isRainy(sat.code, sat.rainChance) && !isRainy(sun.code, sun.rainChance);
-        strip.classList.toggle('rainy', bothRainy);
-        strip.classList.toggle('sunny', bothSunny);
-        strip.style.display = '';
+        inlineWeather.style.display = '';
       }
 
       function getNextSaturday() {
