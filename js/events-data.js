@@ -524,6 +524,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#1A6B3A',
     free: 'Free entry',
     family: 'Family',},
+  {
+    title: 'Toi Art Saturdays: Sit and Sketch',
+    type: 'culture', day: 'sat', weekend: '2026-04-04', region: 'wellington',
+    time: '10:00 am – 1:00 pm',
+    venue: 'Toi Art, Te Papa Tongarewa, 55 Cable Street',
+    description: 'A free monthly drop-in drawing session inside Te Papa\'s stunning Toi Art gallery. Grab a pencil and spend the morning looking closely at artworks, joining short talks and sketching at your own pace. Open to all ages and skill levels — a calm, creative start to the Easter weekend.',
+    url: 'https://www.tepapa.govt.nz/visit/whats-on',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg/960px-Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg',
+    pick: false,
+
+    label: '🎨 Free Drop-in',
+    labelStyle: 'color:#5B4A8A',
+    free: 'Free',
+    family: 'Family',},
 
   // ── 11–12 Apr 2026 ───────────────────────────────────────────────────────
   {
@@ -554,6 +568,34 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#C8390A',
     family: 'Family',
     cost: 'Entry fee — poriruagrandtraverse.co.nz',},
+  {
+    title: 'HELP! A Monster Ate My Story — Circa Theatre',
+    type: 'kids', day: 'sat', weekend: '2026-04-11', region: 'wellington',
+    time: '11:30 am & 1:30 pm (Sat); 1:30 pm & 3:30 pm (Sun)',
+    venue: 'Circa Two, 1 Taranaki Street, Wellington',
+    description: 'Ruth Paul\'s beloved picture book leaps off the page in this 50-minute musical stage show for children aged 3–9. Lion, Jellyfish, T-Rex and Kiwi team up to stop a mish-mash monster from eating their stories. Runs Tuesday 7 – Sunday 19 April with a relaxed performance (pre-show character meet-and-greet) on Wednesday 15 April at 11:30 am.',
+    url: 'https://www.circa.co.nz/shows/',
+    img: '',
+    pick: true,
+
+    label: '🎭 Kids Theatre',
+    labelStyle: 'color:#1A8A6E',
+    family: 'Family',
+    cost: '$20 per person · $70 family pass (4 tickets)',},
+  {
+    title: 'Whānau Day: Breathe | Mauri Ora — Te Papa',
+    type: 'culture', day: 'sat', weekend: '2026-04-11', region: 'wellington',
+    time: '10:00 am – 2:00 pm',
+    venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
+    description: 'A free family day built around the dazzling Breathe | Mauri Ora digital art exhibition. Explore connections to te taiao through art-making, taonga puoro (Māori musical instruments), and a children\'s discovery trail. NZSL interpreters are available, making it fully accessible for Deaf whānau.',
+    url: 'https://www.tepapa.govt.nz/visit/whats-on',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg/960px-Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg',
+    pick: false,
+
+    label: '🌿 Free Family Day',
+    labelStyle: 'color:#1A8A6E',
+    free: 'Free',
+    family: 'Family',},
 
   // ── 18–19 Apr 2026 ───────────────────────────────────────────────────────
   {
@@ -569,6 +611,33 @@ const STATIC_EVENTS = [
     label: '🍺 Beer Festival',
     labelStyle: 'color:#C8901A',
     cost: 'Ticketed — brewtown.co.nz/beerfest',},
+  {
+    title: 'NZSO Stories Alive! The Tortoise and the Hare',
+    type: 'kids', day: 'sat', weekend: '2026-04-18', region: 'wellington',
+    time: '10:30 am & 12:30 pm (both days)',
+    venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
+    description: 'Five NZSO musicians bring the classic fable to life in this lively 45-minute interactive concert designed for young children. Sing, clap, and watch the story unfold through live music and illustration in a perfect first live music experience. Runs Friday 17 and Saturday 18 April — book ahead as sessions fill fast.',
+    url: 'https://www.nzso.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg/960px-Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg',
+    pick: false,
+
+    label: '🎻 Family Concert',
+    labelStyle: 'color:#5B4A8A',
+    family: 'Family',
+    cost: 'Ticketed — nzso.co.nz',},
+  {
+    title: 'Orchestra Wellington: Mozart Requiem',
+    type: 'music', day: 'sat', weekend: '2026-04-18', region: 'wellington',
+    time: '7:30 pm',
+    venue: 'Michael Fowler Centre, Wellington',
+    description: 'Orpheus Choir Wellington and Orchestra Wellington unite for a breathtaking double bill — Christopher Tin\'s soaring To Shiver the Sky (celebrating humanity\'s dream of flight) paired with Mozart\'s timeless and soul-stirring Requiem. A majestic evening of choral music at Wellington\'s finest concert hall.',
+    url: 'https://orchestrawellington.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: false,
+
+    label: '🎶 Choral Concert',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — orchestrawellington.co.nz',},
   {
     title: 'Wellington Saints v Manawatu Jets',
     type: 'outdoor', day: 'sun', weekend: '2026-04-11', region: 'wellington',
@@ -613,6 +682,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#8A1A00',
     stripStyle: 'background:linear-gradient(90deg,#8A1A00,#c43030)',
     free: 'Free',},
+  {
+    title: 'Wrights Hill Fortress — ANZAC Day Open Day',
+    type: 'culture', day: 'sat', weekend: '2026-04-25', region: 'wellington',
+    time: '10:00 am – 4:00 pm',
+    venue: 'Wrights Hill Fortress, 50 Wrights Hill Road, Karori',
+    description: 'Explore 620 metres of authentic WWII underground tunnels, gun emplacements and history displays at this remarkable hillside fortress. Volunteer guides lead one-hour tours through the tunnels, or self-guide with a history pamphlet. A genuinely memorable piece of Wellington\'s wartime history — bring a torch and wear comfortable shoes.',
+    url: 'https://wrightshillfortress.org.nz',
+    img: '',
+    pick: false,
+
+    label: '🏰 WWII Fortress',
+    labelStyle: 'color:#8A1A00',
+    family: 'Family',
+    cost: 'Adults $10 · Under 15s $5 · Family $20 (cash only)',},
   {
     title: 'NZ Warriors v Dolphins — ANZAC Day Match',
     type: 'outdoor', day: 'sat', weekend: '2026-04-25', region: 'wellington',
@@ -695,6 +778,20 @@ const STATIC_EVENTS = [
     cost: 'Ticketed per show',},
 
   // ── 9–10 May 2026 ────────────────────────────────────────────────────────
+  {
+    title: 'Wellington Better Home & Living Show',
+    type: 'other', day: 'sat', weekend: '2026-05-09', region: 'wellington',
+    time: 'Fri–Sat 10:00 am – 5:00 pm · Sun 10:00 am – 4:00 pm',
+    venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
+    description: 'Wellington\'s biggest home improvement and lifestyle expo fills Hnry Stadium across the long weekend (Fri 8 – Sun 10 May). Hundreds of exhibitors across kitchens, building, renovation, heating, solar, interior design and more, plus free Ask An Expert presentations throughout. Great for anyone planning a reno or just looking for inspiration.',
+    url: 'https://homeandgardenshow.co.nz/event/wellington-better-home-living-show/',
+    img: '',
+    pick: false,
+
+    label: '🏠 Home & Living Expo',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Ticketed — homeandgardenshow.co.nz',},
   {
     title: 'NZ International Comedy Festival — Sunday Shows',
     type: 'culture', day: 'sun', weekend: '2026-05-09', region: 'wellington',
