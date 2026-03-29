@@ -491,11 +491,24 @@ const STATIC_EVENTS = [
     url: 'https://www.nzbrass.co.nz',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
     pick: false,
-  
+
     label: '🎺 Live Music · Competition',
     labelStyle: 'color:#5B4A8A',
     family: 'Family',
     cost: 'Ticketed',},
+  {
+    title: 'Ride the Cyclone — Circa Theatre',
+    type: 'culture', day: 'sat', weekend: '2026-04-11', region: 'wellington',
+    time: 'Various sessions · Runs 11 Apr – 9 May',
+    venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
+    description: 'The cult Canadian musical about a high school choir who die on a rollercoaster — and must compete for the chance to return to life. Dark, hilarious and wildly inventive, Ride the Cyclone has become a phenomenon through social media. Circa\'s production is a rare NZ staging of one of the most talked-about musicals of recent years. Don\'t miss it.',
+    url: 'https://www.circa.co.nz/shows/',
+    img: '',
+    pick: true,
+
+    label: '🎭 Cult Musical',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — circa.co.nz',},
   {
     title: 'The BIG Easter Weekend at Ngā Manu',
     type: 'kids', day: 'sat', weekend: '2026-04-04', region: 'kapiti',
@@ -697,6 +710,19 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Adults $10 · Under 15s $5 · Family $20 (cash only)',},
   {
+    title: 'The King of Pop Show',
+    type: 'music', day: 'sat', weekend: '2026-04-25', region: 'wellington',
+    time: 'Check schedule for time',
+    venue: 'The Opera House, 111 Manners Street, Wellington',
+    description: 'The world\'s most spectacular Michael Jackson tribute — a full live band, authentic costumes, flawless choreography and the complete Michael Jackson songbook from Off the Wall through Dangerous. A high-energy show that has toured internationally for years and thrills audiences of all ages.',
+    url: 'https://www.theoperahouse.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🎤 Tribute Show',
+    labelStyle: 'color:#1A1A8A',
+    cost: 'Ticketed — theoperahouse.co.nz',},
+  {
     title: 'NZ Warriors v Dolphins — ANZAC Day Match',
     type: 'outdoor', day: 'sat', weekend: '2026-04-25', region: 'wellington',
     time: 'Check schedule for time',
@@ -724,6 +750,33 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#1A6B3A',},
 
   // ── 2–3 May 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Hurricanes v Crusaders',
+    type: 'outdoor', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    time: 'Friday 1 May · Check schedule for time',
+    venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
+    description: 'Hurricanes host the Crusaders in a massive Super Rugby clash — the great Wellington vs Canterbury rivalry at Hnry Stadium. Kids under 15 go free with a paying adult, making this one of the best-value family sports outings of the season. Book early as this one always sells out.',
+    url: 'https://www.hurricanes.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Hurricanes_vs_Waratahs_2015.jpg/960px-Hurricanes_vs_Waratahs_2015.jpg',
+    pick: true,
+
+    label: '🌀 Super Rugby · Kids Free',
+    labelStyle: 'color:#2478A8',
+    family: 'Family',
+    cost: 'Kids under 15 free · hurricanes.flicket.co.nz',},
+  {
+    title: 'Boney M — Final Curtain Tour',
+    type: 'music', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    time: 'Friday 1 May · Check schedule for time',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'The legendary disco icons bring their farewell world tour to Wellington — Ra Ra Rasputin, Rivers of Babylon, Brown Girl in the Ring and more, performed live at the beautifully restored St James Theatre. A guaranteed good time and a chance to see one of the 70s\' greatest acts one final time.',
+    url: 'https://www.stjamestheatre.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🕺 Disco Legends · Farewell Tour',
+    labelStyle: 'color:#8A1A8A',
+    cost: 'Ticketed — stjamestheatre.co.nz',},
   {
     title: 'Fat Freddy\'s Drop — Based On A True Story (21st Anniversary)',
     type: 'music', day: 'sat', weekend: '2026-05-02', region: 'wellington',
@@ -778,6 +831,19 @@ const STATIC_EVENTS = [
     cost: 'Ticketed per show',},
 
   // ── 9–10 May 2026 ────────────────────────────────────────────────────────
+  {
+    title: '& Juliet — St James Theatre',
+    type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
+    time: 'Various sessions · Runs 9 May – 24 May',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'The smash-hit West End and Broadway musical asks: what if Juliet didn\'t die? Packed with anthems by Max Martin — Baby One More Time, Roar, Since U Been Gone, It\'s My Life and more — & Juliet is joyful, funny and wildly entertaining. Fresh from its award-winning London and New York runs, this is its New Zealand premiere.',
+    url: 'https://www.stjamestheatre.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🎭 West End Musical · NZ Premiere',
+    labelStyle: 'color:#8A1A5B',
+    cost: 'Ticketed — stjamestheatre.co.nz',},
   {
     title: 'Wellington Better Home & Living Show',
     type: 'other', day: 'sat', weekend: '2026-05-09', region: 'wellington',
@@ -849,6 +915,19 @@ const STATIC_EVENTS = [
     cost: 'Adults $21 · Children $10.50 · Twilight tours extra',},
 
   // ── 23–24 May 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Tommy Emmanuel & Mike Dawes',
+    type: 'music', day: 'sat', weekend: '2026-05-23', region: 'wellington',
+    time: 'Friday 22 May · Check schedule for time',
+    venue: 'The Opera House, 111 Manners Street, Wellington',
+    description: 'Two of the world\'s greatest acoustic guitarists on the same stage — Tommy Emmanuel CGP and Mike Dawes in an evening of jaw-dropping fingerstyle guitar. Tommy is one of Australia\'s most beloved musicians; Mike Dawes is a virtuoso in the same league. An intimate night of extraordinary musicianship at the beautiful Opera House.',
+    url: 'https://www.theoperahouse.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🎸 Acoustic Guitar · World Class',
+    labelStyle: 'color:#5B4A1A',
+    cost: 'Ticketed — theoperahouse.co.nz',},
   {
     title: 'NZ International Comedy Festival — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-05-23', region: 'wellington',
