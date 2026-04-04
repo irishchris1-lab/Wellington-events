@@ -315,6 +315,42 @@
   .day-mon .pip { background: var(--teal2); }
   .day-mon .line { background: linear-gradient(90deg, rgba(13,122,138,0.2), transparent); }
 
+  /* ── DAY SELECTOR ── */
+  .day-selector {
+    display: flex; gap: 6px; padding: 0 0 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .day-pill {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 8px 16px; border-radius: 10px;
+    border: 1.5px solid #d0d5c8; background: transparent;
+    cursor: pointer; transition: border-color 0.18s, background 0.18s;
+    min-width: 56px; flex-shrink: 0;
+  }
+  .day-pill-name {
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: #6b7280; line-height: 1;
+  }
+  .day-pill-date {
+    font-size: 1.1rem; font-weight: 700; color: #1a1a2e; line-height: 1.2;
+  }
+  .day-pill-count {
+    font-size: 0.58rem; font-weight: 600; color: #9ca3af; margin-top: 1px; line-height: 1;
+  }
+  .day-pill.active {
+    background: var(--teal); border-color: var(--teal);
+  }
+  .day-pill.active .day-pill-name,
+  .day-pill.active .day-pill-date,
+  .day-pill.active .day-pill-count { color: #fff; }
+  .day-pill.active .day-pill-count { color: rgba(255,255,255,0.65); }
+  @media (hover: hover) {
+    .day-pill:not(.active):hover { border-color: var(--teal); background: rgba(11,85,99,0.07); }
+  }
+  @media (max-width: 767px) {
+    .day-selector { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 16px 20px; justify-content: flex-start; }
+    .day-pill { padding: 7px 13px; min-width: 50px; }
+  }
+
   /* ── EVENTS GRID ── */
   .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; margin-bottom: 36px; }
   /* Collapse genuinely empty grids (no children) — generated panels start empty */

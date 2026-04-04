@@ -619,6 +619,12 @@ const SECTION_TITLES = {
     document.getElementById('section-events')?.classList.toggle('showing-past-weekend', isPast);
     applyFilter(currentRegion);
     updateWeekendNav();
+    // Reset day selector to first pill in newly active panel
+    const activePanel = document.querySelector('.weekend-panel.active');
+    if (activePanel) {
+      const pills = activePanel.querySelectorAll('.day-pill');
+      pills.forEach((p, i) => p.classList.toggle('active', i === 0));
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1081,6 +1087,95 @@ const SECTION_TITLES = {
     grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
   }
 
+  // ── Day Selector ─────────────────────────────────────────────────────────────
+
+  const _DAY_OFFSET = { 'day-fri': -1, 'day-sat': 0, 'day-sun': 1, 'day-mon': 2 };
+  const _DAY_SHORT  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let   _dsObserver = null;
+
+  function _ds(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function buildDaySelectors() {
+    if (_dsObserver) { _dsObserver.disconnect(); _dsObserver = null; }
+
+    document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
+      panel.querySelector('.day-selector')?.remove();
+
+      const satDate = new Date(panel.dataset.weekend + 'T00:00:00');
+      const banner  = panel.querySelector('.banner, .banner-sponsored');
+      if (!banner) return;
+
+      // Collect days that have visible event cards
+      const days = [];
+      panel.querySelectorAll('.day-label').forEach(label => {
+        const grid = label.nextElementSibling;
+        if (!grid?.classList.contains('events-grid')) return;
+        const dayClass = [...label.classList].find(c => c in _DAY_OFFSET);
+        if (!dayClass) return;
+        const date  = new Date(satDate.getFullYear(), satDate.getMonth(), satDate.getDate() + _DAY_OFFSET[dayClass]);
+        const ds    = _ds(date);
+        const count = grid.querySelectorAll('.card:not(.dedup-hidden)').length;
+        if (count === 0) return;
+        label.dataset.date = ds;
+        days.push({ ds, name: _DAY_SHORT[date.getDay()], num: date.getDate(), count, label });
+      });
+
+      if (days.length < 2) return;
+
+      const sel = document.createElement('div');
+      sel.className = 'day-selector';
+      sel.setAttribute('aria-label', 'Jump to day');
+      sel.innerHTML = days.map((d, i) =>
+        `<button class="day-pill${i === 0 ? ' active' : ''}" data-date="${d.ds}" type="button">` +
+          `<span class="day-pill-name">${d.name}</span>` +
+          `<span class="day-pill-date">${d.num}</span>` +
+          `<span class="day-pill-count">${d.count}</span>` +
+        `</button>`
+      ).join('');
+
+      banner.after(sel);
+
+      sel.addEventListener('click', e => {
+        const pill = e.target.closest('.day-pill');
+        if (!pill) return;
+        sel.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const target = days.find(d => d.ds === pill.dataset.date);
+        if (target) {
+          const navH = document.querySelector('.tabs-bar')?.offsetHeight || 52;
+          const y = target.label.getBoundingClientRect().top + window.scrollY - navH - 16;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Scroll-sync: update active pill as day headings enter view
+    const navH = document.querySelector('.tabs-bar')?.offsetHeight || 52;
+    _dsObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const label = entry.target;
+        const panel = label.closest('.weekend-panel');
+        if (!panel?.classList.contains('active')) return;
+        const sel = panel.querySelector('.day-selector');
+        if (!sel) return;
+        const ds  = label.dataset.date;
+        if (!ds) return;
+        const pill = sel.querySelector(`.day-pill[data-date="${ds}"]`);
+        if (pill) {
+          sel.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+        }
+      });
+    }, { rootMargin: `-${navH + 24}px 0px -52% 0px` });
+
+    document.querySelectorAll('.weekend-panel .day-label[data-date]').forEach(l => _dsObserver.observe(l));
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+
   function loadStaticEvents() {
     if (typeof STATIC_EVENTS === 'undefined' || !STATIC_EVENTS.length) return;
     STATIC_EVENTS.forEach((ev, i) => {
@@ -1090,6 +1185,7 @@ const SECTION_TITLES = {
     updateTabLabels();
     updateAddButtons();
     buildHighlightsRow();
+    buildDaySelectors();
     setEagerImages();
     const evSection = document.getElementById('section-events');
     if (evSection) observeCards(evSection);
@@ -1121,6 +1217,7 @@ const SECTION_TITLES = {
         updateTabLabels();
         updateAddButtons();
         buildHighlightsRow();
+        buildDaySelectors();
         setEagerImages();       // re-run after Firestore cards are injected
         const evSection = document.getElementById('section-events');
         if (evSection) observeCards(evSection);
