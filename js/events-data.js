@@ -439,7 +439,35 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#8A1A1A',
     free: 'Free',
     family: 'Family',},
-  // ── 4–5 Apr 2026 ─────────────────────────────────────────────────────────
+  // ── 3–6 Apr 2026 (Easter long weekend) ───────────────────────────────────
+  {
+    title: 'Armageddon Expo — Good Friday Opening Day',
+    type: 'festival', day: 'fri', weekend: '2026-04-04', region: 'wellington',
+    time: 'Friday 3 April · 10:00 am – 4:00 pm',
+    venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
+    description: 'Good Friday is Day 1 of Armageddon — NZ\'s biggest pop culture event. The opening day tends to be less crowded than Saturday, making it easier to get to the exhibits, panels and celebrity meet-and-greets. Andy Serkis and Renée O\'Connor are among the guest headliners. Running Friday to Sunday over Easter.',
+    url: 'https://www.armageddonexpo.com',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/LBCC_2014_-_Loki_and_Friends_%2815239112498%29.jpg/960px-LBCC_2014_-_Loki_and_Friends_%2815239112498%29.jpg',
+    pick: false,
+
+    label: '🤖 Pop Culture Expo · Opens Today',
+    labelStyle: 'color:#1A5C99',
+    family: 'Family',
+    cost: 'Adult $25 · Child (5–12) $14 · Family $69',},
+  {
+    title: 'Wairarapa Balloon Festival — Good Friday Welcome Flight',
+    type: 'outdoor', day: 'fri', weekend: '2026-04-04', region: 'wairarapa',
+    time: 'Friday 3 April · 7:00 am – 8:30 am',
+    venue: 'Carrington Park, Carterton, Wairarapa',
+    description: 'The opening balloon ascension of the Wairarapa Balloon Festival — colourful hot air balloons lift off from Carrington Park as Wairarapa wakes up for Easter. Free to watch, weather-permitting. The festival continues across the Easter long weekend with morning flights and the spectacular Night Glow.',
+    url: 'https://wairarapanz.com/products/wairarapa-balloon-festival',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Hot_air_balloons_in_Grass_Valley%2C_CA.jpg/960px-Hot_air_balloons_in_Grass_Valley%2C_CA.jpg',
+    pick: true,
+
+    label: '🎈 Balloon Festival · Opens Today',
+    labelStyle: 'color:#C8390A',
+    free: 'Free to watch',
+    family: 'Family',},
   {
     title: 'Armageddon Expo Wellington 2026',
     type: 'festival', day: 'sat', weekend: '2026-04-04', region: 'wellington',
@@ -511,7 +539,7 @@ const STATIC_EVENTS = [
     cost: 'Ticketed — circa.co.nz',},
   {
     title: 'The BIG Easter Weekend at Ngā Manu',
-    type: 'kids', day: 'sat', weekend: '2026-04-04', region: 'kapiti',
+    type: 'kids', day: 'fri', weekend: '2026-04-04', region: 'kapiti',
     time: '3–6 April · 10:00 am – 5:00 pm daily',
     venue: 'Ngā Manu Nature Reserve, Kauri Road, Waikanae',
     description: 'Family Easter fun at Ngā Manu Nature Reserve — Easter egg hunts with $3,000 in prizes among native birds and wildlife. A magical long-weekend adventure in one of Kāpiti\'s finest wildlife sanctuaries.',
@@ -523,6 +551,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#C8901A',
     family: 'Family',
     cost: 'Entry fee applies',},
+  {
+    title: 'Wairarapa Balloon Festival — Easter Monday Farewell Flight',
+    type: 'outdoor', day: 'mon', weekend: '2026-04-04', region: 'wairarapa',
+    time: 'Monday 6 April · 7:00 am – 8:30 am',
+    venue: 'Mystery location (announced day before), Wairarapa',
+    description: 'The final balloon ascension of the Wairarapa Balloon Festival — traditionally launched from a surprise location announced the evening before. A beautiful way to end the Easter long weekend, watching hot air balloons drift over Wairarapa farmland in the morning light. Free to watch, weather permitting.',
+    url: 'https://wairarapanz.com/products/wairarapa-balloon-festival',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Hot_air_balloons_in_Grass_Valley%2C_CA.jpg/960px-Hot_air_balloons_in_Grass_Valley%2C_CA.jpg',
+    pick: false,
+
+    label: '🎈 Balloon Festival · Farewell Flight',
+    labelStyle: 'color:#C8390A',
+    free: 'Free to watch',
+    family: 'Family',},
   {
     title: 'Ōtaki Easter Market',
     type: 'market', day: 'sun', weekend: '2026-04-04', region: 'kapiti',
@@ -552,7 +594,34 @@ const STATIC_EVENTS = [
     free: 'Free',
     family: 'Family',},
 
-  // ── 11–12 Apr 2026 ───────────────────────────────────────────────────────
+  // ── 10–13 Apr 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Ultra New Zealand 2026',
+    type: 'festival', day: 'fri', weekend: '2026-04-11', region: 'wellington',
+    time: 'Friday 10 April · All day',
+    venue: 'Wellington Waterfront',
+    description: 'The inaugural ULTRA Music Festival in New Zealand comes to Wellington — one of the world\'s most iconic electronic music brands landing on the waterfront for the first time. Three main stages plus a dedicated drum and bass stage with artists including The Chainsmokers, DJ Snake, Zedd, Alison Wonderland, Pendulum (DJ Set), Oliver Heldens and more. 20,000+ expected.',
+    url: 'https://www.ultranewzealand.com',
+    img: '',
+    pick: true,
+
+    label: '🎧 Electronic Music Festival',
+    labelStyle: 'color:#5B1A8A',
+    cost: 'Ticketed — ultranewzealand.com',},
+  {
+    title: 'K-Pop Live — St James Theatre',
+    type: 'music', day: 'mon', weekend: '2026-04-11', region: 'wellington',
+    time: 'Monday 13 April · 2:30 pm & 6:00 pm (two shows)',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'A one-hour live K-pop concert experience — authentic costumes, precision choreography and the biggest hits from BTS, Blackpink, Stray Kids and more. Choreographed by Rina Chae, this is a brilliant school holidays treat for K-pop fans of all ages. Two sessions available — book ahead.',
+    url: 'https://www.wellingtonnz.com/visit/events/k-pop-live',
+    img: '',
+    pick: true,
+
+    label: '🎤 K-Pop Live Show',
+    labelStyle: 'color:#8A1A5B',
+    family: 'Family',
+    cost: 'Ticketed — wellingtonnz.com',},
   {
     title: 'Hurricanes v Blues',
     type: 'outdoor', day: 'sat', weekend: '2026-04-11', region: 'wellington',
@@ -666,7 +735,21 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Ticketed — saints.co.nz',},
 
-  // ── 25–26 Apr 2026 (ANZAC long weekend) ─────────────────────────────────
+  // ── 24–27 Apr 2026 (ANZAC long weekend) ─────────────────────────────────
+  {
+    title: 'City Nature Challenge — ANZAC Weekend Bioblitz',
+    type: 'outdoor', day: 'fri', weekend: '2026-04-25', region: 'wellington',
+    time: 'Friday 24 – Monday 27 April · Anytime',
+    venue: 'Wellington region — wherever you find nature',
+    description: 'Wellington joins 650+ cities worldwide in the City Nature Challenge — a 4-day bioblitz where anyone can document wild plants, animals and fungi using the free iNaturalist app. No expertise needed: photograph anything alive in a park, garden, beach or bush and it contributes to Wellington\'s tally. Great family activity across the whole ANZAC long weekend. Guided expert walks on Monday 27 April (see below).',
+    url: 'https://wellington.govt.nz/climate-change-sustainability-environment/environment/what-you-can-do-for-the-environment/digital-tools-for-nature',
+    img: '',
+    pick: false,
+
+    label: '🌿 Nature Bioblitz · Free App',
+    labelStyle: 'color:#1A6B3A',
+    free: 'Free',
+    family: 'Family',},
   {
     title: 'Faultline Ultra — Wellington Trail Races',
     type: 'outdoor', day: 'sat', weekend: '2026-04-25', region: 'wellington',
@@ -745,9 +828,23 @@ const STATIC_EVENTS = [
     url: 'https://www.faultlineultra.co.nz',
     img: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Kilian.jpg',
     pick: false,
-  
+
     label: '🏃 Trail Running',
     labelStyle: 'color:#1A6B3A',},
+  {
+    title: 'City Nature Challenge — Island Bay Rock Pool Walk',
+    type: 'outdoor', day: 'mon', weekend: '2026-04-25', region: 'wellington',
+    time: 'Monday 27 April · 6:00 pm – 8:00 pm',
+    venue: 'Taputeranga Marine Reserve, 194 The Esplanade, Island Bay',
+    description: 'Explore the rock pools of Island Bay\'s marine reserve with experts from Mountains to Sea Wellington, Te Papa and Wellington City Council. Spot sea stars, crabs, fish and the occasional octopus at low tide. A brilliant whānau activity on the ANZAC Monday public holiday — no experience needed, just curiosity. Part of the global City Nature Challenge bioblitz weekend.',
+    url: 'https://www.mountainstoseawellington.org/events',
+    img: '',
+    pick: true,
+
+    label: '🐙 Guided Rock Pool Walk · Free',
+    labelStyle: 'color:#0B5563',
+    free: 'Free',
+    family: 'Family',},
 
   // ── 2–3 May 2026 ─────────────────────────────────────────────────────────
   {
@@ -872,7 +969,20 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#5B4A8A',
     cost: 'Ticketed per show',},
 
-  // ── 16–17 May 2026 ───────────────────────────────────────────────────────
+  // ── 15–18 May 2026 ───────────────────────────────────────────────────────
+  {
+    title: '& Juliet — St James Theatre',
+    type: 'culture', day: 'fri', weekend: '2026-05-16', region: 'wellington',
+    time: 'Friday 15 May · 7:30 pm',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'In its second week at the St James, the smash-hit West End and Broadway musical continues its New Zealand premiere run. & Juliet asks: what if Juliet didn\'t die? Packed with Max Martin anthems — Baby One More Time, Roar, Since U Been Gone, It\'s My Life and more. Friday night performances run throughout the three-week season.',
+    url: 'https://www.stjamestheatre.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🎭 West End Musical',
+    labelStyle: 'color:#8A1A5B',
+    cost: 'Ticketed — stjamestheatre.co.nz',},
   {
     title: 'NZ International Comedy Festival — Final Fortnight',
     type: 'culture', day: 'sat', weekend: '2026-05-16', region: 'wellington',
