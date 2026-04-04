@@ -949,15 +949,15 @@ const SECTION_TITLES = {
       .replace(/"/g, '&quot;');
   }
 
-  // Returns true from Monday 00:00 onwards after a weekend
+  // Returns true from Tuesday 00:00 onwards after a Fri–Mon block
   function weekendIsPast(satDateStr) {
     if (!satDateStr) return false;
-    const monday = new Date(satDateStr + 'T00:00:00');
-    monday.setDate(monday.getDate() + 2);
-    monday.setHours(0, 0, 0, 0);
+    const tuesday = new Date(satDateStr + 'T00:00:00');
+    tuesday.setDate(tuesday.getDate() + 3); // Sat+3 = Tue
+    tuesday.setHours(0, 0, 0, 0);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return today >= monday;
+    return today >= tuesday;
   }
 
   // Update tab button labels dynamically from panel data-weekend attributes
@@ -970,10 +970,11 @@ const SECTION_TITLES = {
       const panel = panelId && document.getElementById(panelId);
       if (!panel || !panel.dataset.weekend) return;
       const sat = new Date(panel.dataset.weekend + 'T00:00:00');
-      const sun = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 1);
-      const datePart = sun.getMonth() === sat.getMonth()
-        ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
-        : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
+      const fri = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() - 1);
+      const mon = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 2);
+      const datePart = mon.getMonth() === fri.getMonth()
+        ? `${fri.getDate()}–${mon.getDate()} ${MONTHS_SHORT[fri.getMonth()]}`
+        : `${fri.getDate()} ${MONTHS_SHORT[fri.getMonth()]}–${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]}`;
       const count = panel.querySelectorAll('.card').length;
       const countBadge = count > 0 ? `<span class="tab-count">${count}</span>` : '';
       visibleCount++;
@@ -1074,7 +1075,8 @@ const SECTION_TITLES = {
       return;
     }
     const grids = panel.querySelectorAll('.events-grid');
-    const grid  = (ev.day === 'sun' && grids.length > 1) ? grids[1] : grids[0];
+    const dayIndex = { fri: 0, sat: 1, sun: 2, mon: 3 };
+    const grid = grids[dayIndex[ev.day] ?? 1] || grids[0];
     if (!grid) return;
     grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
   }
@@ -1424,11 +1426,15 @@ const SECTION_TITLES = {
                      cardEl.closest('.weekend-panel')?.dataset?.weekend || '';
       // Day: from data-day attribute (Firestore cards) or by grid position (hardcoded cards)
       if (cardEl.dataset.day) {
-        day = cardEl.dataset.day === 'sun' ? 'sunday' : 'saturday';
+        const dayMap = { fri: 'friday', sat: 'saturday', sun: 'sunday', mon: 'monday' };
+        day = dayMap[cardEl.dataset.day] || 'saturday';
       } else {
         const grid = cardEl.closest('.events-grid');
         const prevLabel = grid?.previousElementSibling;
-        day = prevLabel?.classList.contains('day-sun') ? 'sunday' : 'saturday';
+        if (prevLabel?.classList.contains('day-fri')) day = 'friday';
+        else if (prevLabel?.classList.contains('day-sun')) day = 'sunday';
+        else if (prevLabel?.classList.contains('day-mon')) day = 'monday';
+        else day = 'saturday';
       }
     }
 

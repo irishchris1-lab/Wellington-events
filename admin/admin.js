@@ -31,15 +31,15 @@ let unsubscribeSnap = null;
 let showPast        = false;
 let firstLoad       = true;
 
-// True from Monday 00:00 after the weekend
+// True from Tuesday 00:00 after a Fri–Mon block
 function weekendIsPast(satDateStr) {
   if (!satDateStr) return false;
-  const monday = new Date(satDateStr + 'T00:00:00');
-  monday.setDate(monday.getDate() + 2);
-  monday.setHours(0, 0, 0, 0);
+  const tuesday = new Date(satDateStr + 'T00:00:00');
+  tuesday.setDate(tuesday.getDate() + 3); // Sat+3 = Tue
+  tuesday.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today >= monday;
+  return today >= tuesday;
 }
 
 function toggleShowPast(btn) {
@@ -880,12 +880,20 @@ function dateToWeekend(dateStr) {
   const fmt = dt => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
   if (dow === 6) {
     return { weekend: dateStr, day: 'sat' };
-  } else if (dow === 0) {
+  } else if (dow === 5) { // Friday
+    const sat = new Date(d);
+    sat.setDate(sat.getDate() + 1);
+    return { weekend: fmt(sat), day: 'fri' };
+  } else if (dow === 0) { // Sunday
     const sat = new Date(d);
     sat.setDate(sat.getDate() - 1);
     return { weekend: fmt(sat), day: 'sun' };
+  } else if (dow === 1) { // Monday
+    const sat = new Date(d);
+    sat.setDate(sat.getDate() - 2);
+    return { weekend: fmt(sat), day: 'mon' };
   } else {
-    // Weekday — map to the coming Saturday of the same week
+    // Tue/Wed/Thu — map to the coming Saturday
     const sat = new Date(d);
     sat.setDate(sat.getDate() + (6 - dow));
     return { weekend: fmt(sat), day: 'sat' };

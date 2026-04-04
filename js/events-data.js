@@ -752,7 +752,7 @@ const STATIC_EVENTS = [
   // ── 2–3 May 2026 ─────────────────────────────────────────────────────────
   {
     title: 'Hurricanes v Crusaders',
-    type: 'outdoor', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    type: 'outdoor', day: 'fri', weekend: '2026-05-02', region: 'wellington',
     time: 'Friday 1 May · Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Hurricanes host the Crusaders in a massive Super Rugby clash — the great Wellington vs Canterbury rivalry at Hnry Stadium. Kids under 15 go free with a paying adult, making this one of the best-value family sports outings of the season. Book early as this one always sells out.',
@@ -766,7 +766,7 @@ const STATIC_EVENTS = [
     cost: 'Kids under 15 free · hurricanes.flicket.co.nz',},
   {
     title: 'Boney M — Final Curtain Tour',
-    type: 'music', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    type: 'music', day: 'fri', weekend: '2026-05-02', region: 'wellington',
     time: 'Friday 1 May · Check schedule for time',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'The legendary disco icons bring their farewell world tour to Wellington — Ra Ra Rasputin, Rivers of Babylon, Brown Girl in the Ring and more, performed live at the beautifully restored St James Theatre. A guaranteed good time and a chance to see one of the 70s\' greatest acts one final time.',
@@ -917,7 +917,7 @@ const STATIC_EVENTS = [
   // ── 23–24 May 2026 ───────────────────────────────────────────────────────
   {
     title: 'Tommy Emmanuel & Mike Dawes',
-    type: 'music', day: 'sat', weekend: '2026-05-23', region: 'wellington',
+    type: 'music', day: 'fri', weekend: '2026-05-23', region: 'wellington',
     time: 'Friday 22 May · Check schedule for time',
     venue: 'The Opera House, 111 Manners Street, Wellington',
     description: 'Two of the world\'s greatest acoustic guitarists on the same stage — Tommy Emmanuel CGP and Mike Dawes in an evening of jaw-dropping fingerstyle guitar. Tommy is one of Australia\'s most beloved musicians; Mike Dawes is a virtuoso in the same league. An intimate night of extraordinary musicianship at the beautiful Opera House.',
