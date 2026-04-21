@@ -1493,4 +1493,202 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#1A6B3A',
     family: 'Family',
     cost: 'Ticketed for runners · Free to spectate',},
+
+  // ── 25–28 Apr (ANZAC weekend) additional ─────────────────────────────────
+  {
+    title: 'Wellington Saints v Auckland Tuatara — NBL Basketball',
+    type: 'outdoor', day: 'mon', weekend: '2026-04-25', region: 'wellington',
+    time: 'Monday 27 April · 5:00 pm',
+    venue: 'TSB Arena, 50 Cable St, Wellington',
+    description: 'Wellington Saints host the Auckland Tuatara in this ANZAC Week NBL home game at TSB Arena. Fast-paced professional basketball in a great atmosphere — the Saints are Wellington\'s team in NZ\'s premier basketball league.',
+    url: 'https://www.wellingtonsaints.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🏀 NBL Basketball',
+    labelStyle: 'color:#D44820',
+    family: 'Family',
+    cost: 'Ticketed — wellingtonsaints.co.nz',},
+
+  // ── 1–4 May additional ────────────────────────────────────────────────────
+  {
+    title: 'Fat Freddy\'s Drop — Based On A True Story (Opening Night)',
+    type: 'music', day: 'fri', weekend: '2026-05-02', region: 'wellington',
+    time: 'Friday 1 May · Doors 7:00 pm · Show 7:30 pm',
+    venue: 'Michael Fowler Centre, 111 Wakefield St, Wellington',
+    description: 'Three-night Wellington homecoming — Fat Freddy\'s Drop perform their landmark debut album \'Based On A True Story\' in full for the first time ever, to mark its 21st anniversary. Opening night of three. All ages.',
+    url: 'https://fatfreddysdrop.com',
+    img: '',
+    pick: true,
+
+    label: '🎶 Fat Freddy\'s Drop',
+    labelStyle: 'color:#7A3B8A',
+    family: 'All Ages',
+    cost: 'Ticketed',},
+
+  // ── 8–11 May additional ───────────────────────────────────────────────────
+  {
+    title: 'Hurricanes v Moana Pasifika — Super Rugby Pacific',
+    type: 'outdoor', day: 'sat', weekend: '2026-05-09', region: 'wellington',
+    time: 'Saturday 9 May · 5:05 pm',
+    venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
+    description: 'Hurricanes host Moana Pasifika at Hnry Stadium in Super Rugby Pacific Round 13. A fiercely physical matchup featuring some of the Pacific\'s best rugby talent — great atmosphere under lights.',
+    url: 'https://hurricanes.flicket.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Hurricanes_vs_Waratahs_2015.jpg/960px-Hurricanes_vs_Waratahs_2015.jpg',
+    pick: false,
+
+    label: '🌀 Super Rugby',
+    labelStyle: 'color:#2478A8',
+    family: 'Family',
+    cost: 'Ticketed — hurricanes.flicket.co.nz',},
+
+  // ── 22–25 May additional ──────────────────────────────────────────────────
+  {
+    title: 'Not In Our Neighbourhood — Circa Theatre',
+    type: 'culture', day: 'sat', weekend: '2026-05-23', region: 'wellington',
+    time: 'Sat 23 May – Sat 13 Jun · Tue–Sat 7:00 pm · Sun 4:00 pm',
+    venue: 'Circa Theatre, 1 Taranaki St, Te Aro, Wellington',
+    description: 'A new New Zealand play told through a filmmaker\'s lens, following a group of women whose lives intersect at a moment of neighbourhood conflict. Part of Circa\'s 2026 season — sharp, contemporary storytelling.',
+    url: 'https://www.circa.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🎭 New NZ Play',
+    labelStyle: 'color:#8A3B1A',
+    family: 'Teens+',
+    cost: 'Ticketed — circa.co.nz',},
+
+  // ── 29 May – 1 Jun additional ─────────────────────────────────────────────
+  {
+    title: 'Julia — Circa Theatre (Preview & Opening)',
+    type: 'culture', day: 'fri', weekend: '2026-05-30', region: 'wellington',
+    time: 'Fri 29 May (preview) · Sat 30 May (opens) · 7:00 pm',
+    venue: 'Circa One, 1 Taranaki St, Te Aro, Wellington',
+    description: 'Lara Macgregor plays Julia Gillard in the moment of her landmark 2012 misogyny speech. Written by Joanna Murray-Smith — gripping, urgent, and darkly funny. 100 minutes. Runs 29 May to 27 Jun. Ages 13+.',
+    url: 'https://www.circa.co.nz/package/julia/',
+    img: '',
+    pick: true,
+
+    label: '🎭 Circa Theatre',
+    labelStyle: 'color:#8A3B1A',
+    family: 'Teens+',
+    cost: 'From $25 — circa.co.nz',},
+  {
+    title: 'Sean Kelly & The Super 8\'s — Upper Hutt Music Festival',
+    type: 'music', day: 'sat', weekend: '2026-05-30', region: 'upper-hutt',
+    time: 'Saturday 30 May · 7:30 pm',
+    venue: 'Whirinaki Whare Taonga, 836 Fergusson Dr, Upper Hutt',
+    description: 'Irish singer Sean Kelly with Jono Lonie (fiddle/mandolin) and Maree Limpus (cello) bring an evening of Celtic and folk warmth to Upper Hutt as part of the Music Festival. Intimate and uplifting.',
+    url: 'https://www.whirinakiarts.org.nz',
+    img: '',
+    pick: false,
+
+    label: '🎻 Celtic Folk',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: '$25',},
+
+  // ── 5–8 Jun additional ────────────────────────────────────────────────────
+  {
+    title: 'Come Together — Born to Run (Springsteen Night)',
+    type: 'music', day: 'fri', weekend: '2026-06-06', region: 'wellington',
+    time: 'Friday 5 June · 8:00 pm',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'NZ\'s acclaimed \'Come Together\' tribute series performs Springsteen\'s Born to Run album in full, plus a second set of classics. Featuring Milan Borich, Adam McGrath, Jennie Skulander, Jon Toogood (Shihad) and the full band.',
+    url: 'https://www.stjames.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🎸 Springsteen Night',
+    labelStyle: 'color:#7A3B8A',
+    family: 'Teens+',
+    cost: 'Ticketed — stjames.co.nz',},
+  {
+    title: 'Wellington Baby Expo 2026',
+    type: 'kids', day: 'sat', weekend: '2026-06-06', region: 'lower-hutt',
+    time: 'Sat–Sun 6–7 June · 9:00 am – 4:00 pm',
+    venue: 'Lower Hutt Events Centre, 30 Laings Rd, Lower Hutt',
+    description: 'Annual baby and parenting expo with products, services, and expert advice for expectant parents and families. Prams, nursery, sleep, feeding, clothing, healthcare — everything in one place.',
+    url: 'https://www.aradapromotions.co.nz',
+    img: '',
+    pick: false,
+
+    label: '👶 Baby & Parenting Expo',
+    labelStyle: 'color:#D44895',
+    family: 'Family',
+    cost: 'Ticketed',},
+  {
+    title: 'Wellington Saints v Otago Nuggets — NBL Basketball',
+    type: 'outdoor', day: 'sun', weekend: '2026-06-06', region: 'wellington',
+    time: 'Sunday 7 June · 3:00 pm',
+    venue: 'TSB Arena, 50 Cable St, Wellington',
+    description: 'Wellington Saints host the Otago Nuggets in a Sal\'s NBL home fixture. Fast-paced professional basketball with a passionate home crowd at TSB Arena.',
+    url: 'https://www.wellingtonsaints.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🏀 NBL Basketball',
+    labelStyle: 'color:#D44820',
+    family: 'Family',
+    cost: 'Ticketed — wellingtonsaints.co.nz',},
+
+  // ── 12–15 Jun additional ──────────────────────────────────────────────────
+  {
+    title: 'Te Hau o Matariki — Ngāti Toa Rangatira at Te Papa',
+    type: 'culture', day: 'sat', weekend: '2026-06-13', region: 'wellington',
+    time: 'Saturday 13 June · 11:00 am – 4:00 pm',
+    venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
+    description: 'A free day of music, storytelling, and art from Ngāti Toa Rangatira as part of Matariki at Te Papa. Drop in to connect with the stories of the people of the Kāpiti and Cook Strait region.',
+    url: 'https://www.tepapa.govt.nz/visit/events',
+    img: '',
+    pick: false,
+
+    label: '🌟 Matariki — Free',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
+  {
+    title: 'Kids\' Concert — Konohete a ngā tamariki (Te Papa)',
+    type: 'kids', day: 'sun', weekend: '2026-06-13', region: 'wellington',
+    time: 'Sunday 14 June · 2:00 pm – 4:00 pm',
+    venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
+    description: 'A joyful children\'s concert performed by tamariki from six Wellington early childhood centres, celebrating Matariki at Te Papa. Singing, waiata and performances — free, all welcome.',
+    url: 'https://www.tepapa.govt.nz/visit/events',
+    img: '',
+    pick: true,
+
+    label: '🌟 Matariki Kids — Free',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
+
+  // ── 26–29 Jun additional ──────────────────────────────────────────────────
+  {
+    title: 'Wellington Saints v Nelson Giants — NBL Basketball',
+    type: 'outdoor', day: 'fri', weekend: '2026-06-27', region: 'wellington',
+    time: 'Friday 26 June · 7:30 pm',
+    venue: 'TSB Arena, 50 Cable St, Wellington',
+    description: 'Wellington Saints host the Nelson Giants in a Friday night Sal\'s NBL home game. Great live sport for the family — fast-paced basketball at TSB Arena.',
+    url: 'https://www.wellingtonsaints.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🏀 NBL Basketball',
+    labelStyle: 'color:#D44820',
+    family: 'Family',
+    cost: 'Ticketed — wellingtonsaints.co.nz',},
+  {
+    title: 'Kaumatua Kapa Haka — Te Papa Matariki',
+    type: 'culture', day: 'sat', weekend: '2026-06-27', region: 'wellington',
+    time: 'Sat–Sun 27–28 June · 10:00 am – 4:00 pm',
+    venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
+    description: 'Two days of kapa haka and waiata performed by kaumātua (elders) as part of Matariki at Te Papa. A deeply moving celebration of Māori song and movement by experienced performers. Free with museum entry.',
+    url: 'https://www.tepapa.govt.nz/visit/events',
+    img: '',
+    pick: false,
+
+    label: '🌟 Matariki — Free',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
 ];
