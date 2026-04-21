@@ -846,7 +846,34 @@ const STATIC_EVENTS = [
     free: 'Free',
     family: 'Family',},
 
-  // ── 2–3 May 2026 ─────────────────────────────────────────────────────────
+  // ── 1–4 May 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Toi Art Saturdays: Sit and Sketch',
+    type: 'culture', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    time: '10:00 am – 1:00 pm',
+    venue: 'Toi Art, Te Papa Tongarewa, 55 Cable Street',
+    description: 'The monthly free drop-in drawing session inside Te Papa\'s stunning Toi Art gallery returns for May. Grab a pencil and spend the morning looking closely at artworks, joining short talks and sketching at your own pace. Open to all ages and skill levels.',
+    url: 'https://www.tepapa.govt.nz/visit/whats-on',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg/960px-Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg',
+    pick: false,
+
+    label: '🎨 Free Drop-in',
+    labelStyle: 'color:#5B4A8A',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'Aqua Nullius: Toe Fai! and Talaucaka — Circa Theatre',
+    type: 'culture', day: 'sat', weekend: '2026-05-02', region: 'wellington',
+    time: 'Various sessions · Runs 2–16 May',
+    venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
+    description: 'Two interconnected Pasifika theatre works by Emele Ugavule — blending speculative sci-fi with Indigenous Oceanic storytelling. Set decades apart and linked through the journey of one woman navigating AI, ancestry and colonial power. A Studio Kiin production. Thought-provoking and original.',
+    url: 'https://www.circa.co.nz/shows/',
+    img: '',
+    pick: false,
+
+    label: '🎭 Pasifika Theatre',
+    labelStyle: 'color:#1A6B3A',
+    cost: '$25–$45 — circa.co.nz',},
   {
     title: 'Hurricanes v Crusaders',
     type: 'outdoor', day: 'fri', weekend: '2026-05-02', region: 'wellington',
@@ -927,7 +954,48 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#5B4A8A',
     cost: 'Ticketed per show',},
 
-  // ── 9–10 May 2026 ────────────────────────────────────────────────────────
+  // ── 8–11 May 2026 ────────────────────────────────────────────────────────
+  {
+    title: 'The Pink Floyd Experience — The Wall+',
+    type: 'music', day: 'sat', weekend: '2026-05-09', region: 'wellington',
+    time: 'Saturday 9 May · 8:00 pm',
+    venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
+    description: 'NZ\'s long-running Pink Floyd tribute brings The Wall to TSB Arena in full theatrical staging — the iconic album performed live with the construction and destruction of the wall set, opening with a set of classic Floyd anthems. An extraordinary sensory experience for any Floyd fan.',
+    url: 'https://pinkfloydexperience.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/TSB_Arena_Wellington.jpg/960px-TSB_Arena_Wellington.jpg',
+    pick: true,
+
+    label: '🎸 Pink Floyd Tribute · Full Production',
+    labelStyle: 'color:#1A1A6A',
+    cost: 'Ticketed — pinkfloydexperience.co.nz',},
+  {
+    title: 'Central Pulse vs Northern Mystics — ANZ Premiership',
+    type: 'outdoor', day: 'sat', weekend: '2026-05-09', region: 'porirua',
+    time: 'Saturday 9 May · 7:00 pm',
+    venue: 'Te Rauparaha Arena, 17 Parumoana St, Porirua',
+    description: 'Wellington\'s Central Pulse host the Northern Mystics in the ANZ Premiership — top-flight women\'s netball at its finest. Fast, physical and brilliantly entertaining. Te Rauparaha Arena is a great compact venue where every seat is close to the court. Brilliant value family sport.',
+    url: 'https://www.pulse.org.nz',
+    img: '',
+    pick: false,
+
+    label: '🏐 ANZ Premiership Netball',
+    labelStyle: 'color:#8A1A1A',
+    family: 'Family',
+    cost: 'Ticketed — pulse.org.nz',},
+  {
+    title: 'NZSL Week: Whānau Fun at Te Papa',
+    type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
+    time: 'Saturday 9 May · 10:00 am – 12:00 pm',
+    venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
+    description: 'Free family activities on Te Papa\'s marae celebrating New Zealand Sign Language Week (4–10 May). Learn signs, explore Deaf culture, and celebrate NZSL as one of Aotearoa\'s three official languages. NZSL interpreters on hand. Open and welcoming for all whānau.',
+    url: 'https://www.tepapa.govt.nz/visit/whats-on',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg/960px-Museum_of_New_Zealand_Te_Papa_Tongarewa_unsaturated.jpg',
+    pick: false,
+
+    label: '🤟 NZSL Week · Free',
+    labelStyle: 'color:#1A6B3A',
+    free: 'Free',
+    family: 'Family',},
   {
     title: '& Juliet — St James Theatre',
     type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
@@ -970,6 +1038,33 @@ const STATIC_EVENTS = [
     cost: 'Ticketed per show',},
 
   // ── 15–18 May 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Modern God — Circa Theatre',
+    type: 'culture', day: 'fri', weekend: '2026-05-16', region: 'wellington',
+    time: 'Various sessions · Runs 15–23 May',
+    venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
+    description: 'Six social media influencers collide in this high-energy dance-theatre work exploring fame, consumerism and identity. A provocative and visually arresting production from Footnote New Zealand Dance, running across this weekend and the following weekend. Powerful and thought-provoking for older teens and adults.',
+    url: 'https://www.circa.co.nz/shows/',
+    img: '',
+    pick: false,
+
+    label: '💃 Dance Theatre',
+    labelStyle: 'color:#8A1A8A',
+    cost: 'Ticketed — circa.co.nz',},
+  {
+    title: 'Central Pulse vs Magic — ANZ Premiership',
+    type: 'outdoor', day: 'sun', weekend: '2026-05-16', region: 'wellington',
+    time: 'Sunday 17 May · 4:00 pm',
+    venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
+    description: 'Central Pulse host the Waikato Bay of Plenty Magic at the waterfront TSB Arena in the ANZ Premiership. Top-flight women\'s netball in Wellington city — fast, skilled and brilliant value family sport.',
+    url: 'https://www.pulse.org.nz',
+    img: '',
+    pick: false,
+
+    label: '🏐 ANZ Premiership Netball',
+    labelStyle: 'color:#8A1A1A',
+    family: 'Family',
+    cost: 'Ticketed — pulse.org.nz',},
   {
     title: '& Juliet — St James Theatre',
     type: 'culture', day: 'fri', weekend: '2026-05-16', region: 'wellington',
@@ -1024,7 +1119,34 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Adults $21 · Children $10.50 · Twilight tours extra',},
 
-  // ── 23–24 May 2026 ───────────────────────────────────────────────────────
+  // ── 22–25 May 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'NZSO: Titan — Gemma New & James Ehnes',
+    type: 'music', day: 'fri', weekend: '2026-05-23', region: 'wellington',
+    time: 'Friday 22 May · 6:30 pm',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'Conductor Gemma New leads the NZSO with Grammy-winning violinist James Ehnes (Gramophone Artist of the Year 2021) in a stunning programme: a NZ premiere from Thomas Adès, the magnificent Korngold Violin Concerto, and Mahler\'s towering Symphony No. 1 "Titan". One of the great orchestral evenings of the Wellington year.',
+    url: 'https://www.nzso.co.nz/events/titan',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: true,
+
+    label: '🎻 NZSO · Grammy-winning Soloist',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — nzso.co.nz',},
+  {
+    title: 'Symphony in the Hutt — Free Community Concert',
+    type: 'music', day: 'fri', weekend: '2026-05-23', region: 'lower-hutt',
+    time: 'Friday 22 May · 7:00 pm',
+    venue: 'Walter Nash Centre, Taita, Lower Hutt',
+    description: 'Orchestra Wellington\'s annual free community concert — the orchestra performs alongside Arohanui Strings, the Sistema Hutt Valley youth programme, in a family-friendly gala programme of orchestral favourites. Free tickets available from Walter Nash Stadium reception. One of the most generous events in the Wellington music calendar.',
+    url: 'https://orchestrawellington.co.nz/events/',
+    img: '',
+    pick: true,
+
+    label: '🎻 Free Community Concert',
+    labelStyle: 'color:#1A6B3A',
+    free: 'Free',
+    family: 'Family',},
   {
     title: 'Tommy Emmanuel & Mike Dawes',
     type: 'music', day: 'fri', weekend: '2026-05-23', region: 'wellington',
@@ -1078,4 +1200,297 @@ const STATIC_EVENTS = [
     label: '😂 Comedy Festival · Closing Night',
     labelStyle: 'color:#5B4A8A',
     cost: 'Ticketed',},
+  {
+    title: 'Orpheus Choir Wellington — Glory (Carterton)',
+    type: 'music', day: 'sun', weekend: '2026-05-23', region: 'wairarapa',
+    time: 'Sunday 24 May · 2:00 pm – 4:00 pm',
+    venue: 'Wairarapa Events Centre, 50 Holloway St, Carterton',
+    description: 'Orpheus Choir Wellington performs Vivaldi\'s luminous Gloria alongside Mozart\'s deeply moving Requiem, with soloists from the NZ School of Music. Conductor Brent Stewart leads the choir in a programme of stunning sacred choral music — a beautiful afternoon in the Wairarapa.',
+    url: 'https://www.orpheuschoir.org.nz/our-concerts/glory-carterton',
+    img: '',
+    pick: false,
+
+    label: '🎶 Choral Concert · Wairarapa',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — orpheuschoir.org.nz',},
+  {
+    title: 'Wellington Saints vs Bay Hawks — NBL Basketball',
+    type: 'outdoor', day: 'mon', weekend: '2026-05-23', region: 'wellington',
+    time: 'Monday 25 May · 7:00 pm',
+    venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
+    description: 'Wellington Saints host the Hawke\'s Bay Hawks in the Sal\'s NBL — New Zealand\'s premier domestic basketball competition. Fast, high-energy basketball in a compact arena where every seat is close to the action. A great way to end the long weekend.',
+    url: 'https://nznbl.basketball/schedule/',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/2019_NCAA_Men%27s_Basketball_Finals_Game_3_crowd.jpg/960px-2019_NCAA_Men%27s_Basketball_Finals_Game_3_crowd.jpg',
+    pick: false,
+
+    label: '🏀 Sal\'s NBL Basketball',
+    labelStyle: 'color:#2478A8',
+    family: 'Family',
+    cost: 'Ticketed — saints.co.nz',},
+
+  // ── 29 May – 1 Jun 2026 (King's Birthday) ─────────────────────────────────
+  {
+    title: 'NZ Art Show 2026',
+    type: 'culture', day: 'fri', weekend: '2026-05-30', region: 'wellington',
+    time: 'Fri 29 May from 9:00 am · Sat–Sun 10:00 am (runs 29–31 May)',
+    venue: 'TSB Arena & Shed 6, Wellington Waterfront',
+    description: 'Aotearoa\'s premier art fair fills the waterfront across the King\'s Birthday long weekend — over 4,000 original works from 300+ artists spanning painting, sculpture, photography and emerging talent. Shed 6 spotlights up-and-coming artists. A brilliant day out for anyone who loves original art or wants to find something special for home.',
+    url: 'https://www.artshow.co.nz',
+    img: '',
+    pick: true,
+
+    label: '🖼 NZ Art Show · 4,000+ Works',
+    labelStyle: 'color:#5B4A8A',
+    family: 'Family',
+    cost: 'Entry fee — artshow.co.nz',},
+  {
+    title: 'Marlon Williams — Tā te Manawa (2nd Wellington Show)',
+    type: 'music', day: 'fri', weekend: '2026-05-30', region: 'wellington',
+    time: 'Friday 29 May · 7:00 pm',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'A second Wellington date added after Saturday 23 May sold out — Marlon Williams and The Yarra Benders perform a double-set headline show ahead of his planned sabbatical from touring. Extraordinary live performer at his peak; this may be one of the last chances to see him for some time.',
+    url: 'https://www.wellingtonnz.com/visit/events/marlon-williams',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: true,
+
+    label: '🎤 Live Music · Second Date Added',
+    labelStyle: 'color:#8A1A1A',
+    cost: 'Ticketed',},
+  {
+    title: 'Heathers the Musical — Opening Weekend',
+    type: 'culture', day: 'sat', weekend: '2026-05-30', region: 'wellington',
+    time: 'Runs 28 May – 7 June · Various sessions',
+    venue: 'The Opera House, 111 Manners Street, Wellington',
+    description: 'The cult musical based on the 1988 dark comedy film opens at the Opera House. Darkly funny and sharply observed, with a killer rock score by Kevin Murphy and Laurence O\'Keefe. Directed by Andy Fickman. Runs through the King\'s Birthday long weekend. For older teens and adults.',
+    url: 'https://heathersthemusical.com/new-zealand/tour-dates-nz/',
+    img: '',
+    pick: false,
+
+    label: '🎭 Cult Musical · Opening',
+    labelStyle: 'color:#8A1A1A',
+    cost: 'Ticketed — theoperahouse.co.nz',},
+  {
+    title: 'Upper Hutt Music Festival — TNT! Jazz Gala',
+    type: 'music', day: 'fri', weekend: '2026-05-30', region: 'upper-hutt',
+    time: 'Friday 29 May · Check schedule for time',
+    venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
+    description: 'The Upper Hutt Music Festival opens with a 19-piece jazz big band featuring vocalist Lisa Tomlins. Part of a multi-day festival running 29 May – 2 June at Whirinaki Whare Taonga. The Warratahs play Sunday 31 May.',
+    url: 'https://uhconnection.co.nz/community-events/upper-hutt-music-festival-29th-of-may-2nd-of-june/',
+    img: '',
+    pick: false,
+
+    label: '🎺 Jazz Big Band · Festival Opening',
+    labelStyle: 'color:#C8901A',
+    cost: '$25 — uhconnection.co.nz',},
+  {
+    title: 'The Warratahs — Upper Hutt Music Festival',
+    type: 'music', day: 'sun', weekend: '2026-05-30', region: 'upper-hutt',
+    time: 'Sunday 31 May · Check schedule for time',
+    venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
+    description: 'The beloved NZ roots and country institution The Warratahs perform at the Upper Hutt Music Festival. One of Aotearoa\'s most enduring and warmly loved bands, with wide appeal across generations. A perfect Sunday evening show.',
+    url: 'https://uhconnection.co.nz/community-events/upper-hutt-music-festival-29th-of-may-2nd-of-june/',
+    img: '',
+    pick: false,
+
+    label: '🎶 NZ Roots · Beloved Institution',
+    labelStyle: 'color:#C8901A',
+    family: 'Family',
+    cost: '$35–$40 — uhconnection.co.nz',},
+  {
+    title: 'Brewtown Record Convention — Aotearoa\'s Biggest Record Fair',
+    type: 'culture', day: 'sun', weekend: '2026-05-30', region: 'upper-hutt',
+    time: 'Sunday 31 May · From 10:00 am',
+    venue: 'Brewtown, 27 Blenheim Street, Upper Hutt',
+    description: 'The 4th annual Brewtown Record Convention — hundreds of thousands of new and pre-loved vinyl LPs, EPs, singles and music formats from multiple vendors. Books, posters, T-shirts and art too. Free entry and browsable in the craft brewery precinct. Combine with a beer and a burger for a perfect winter Sunday.',
+    url: 'https://www.brewtown.co.nz',
+    img: '',
+    pick: false,
+
+    label: '💿 Vinyl Record Fair · Free Entry',
+    labelStyle: 'color:#1A1A6A',
+    free: 'Free entry',
+    family: 'Family',},
+  {
+    title: 'Orchestra Wellington — W:ELLINGTON',
+    type: 'music', day: 'sat', weekend: '2026-05-30', region: 'wellington',
+    time: 'Saturday 30 May · 7:30 pm (pre-concert talk 6:30 pm)',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'Orchestra Wellington\'s "Collaborations" season concert — check their website for the full programme. Pre-concert talk in the Renouf Foyer from 6:30 pm for those wanting deeper context. A great Wellington winter evening out.',
+    url: 'https://orchestrawellington.co.nz/events/',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: false,
+
+    label: '🎻 Orchestra Wellington',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — orchestrawellington.co.nz',},
+
+  // ── 5–8 Jun 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'NZSO: Romeo & Juliet — Barber & Prokofiev',
+    type: 'music', day: 'fri', weekend: '2026-06-06', region: 'wellington',
+    time: 'Friday 5 June · 6:30 pm',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'Conductor Benjamin Northey leads the NZSO with cellist Li-Wei Qin in a programme of exquisite sweep: Samuel Barber\'s aching Cello Concerto, Prokofiev\'s selections from Romeo and Juliet, and a new work from Kenneth Young. Li-Wei Qin is one of the world\'s finest cellists — a very special Wellington evening.',
+    url: 'https://www.nzso.co.nz/events/romeo-and-juliet',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: true,
+
+    label: '🎻 NZSO · Cello & Romeo & Juliet',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — nzso.co.nz',},
+  {
+    title: 'Sola Rosa — In the Mids Tour',
+    type: 'music', day: 'sat', weekend: '2026-06-06', region: 'wellington',
+    time: 'Saturday 6 June · 7:00 pm',
+    venue: 'San Fran, 171 Cuba Street, Wellington',
+    description: 'Acclaimed NZ producer Andrew Spraggon (Sola Rosa) tours his tenth studio album In the Mids — seven collaborations with vocalists from across Aotearoa and Australia, performed live with a newly developed visual and lighting design. A Wellington institution returns to one of Wellington\'s best small venues.',
+    url: 'https://www.undertheradar.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🎵 NZ Music · Sola Rosa',
+    labelStyle: 'color:#1A6B3A',
+    cost: 'Ticketed — undertheradar.co.nz',},
+  {
+    title: 'Orpheus Choir Wellington — Glory (Kāpiti)',
+    type: 'music', day: 'sat', weekend: '2026-06-06', region: 'kapiti',
+    time: 'Saturday 6 June · 7:00 pm',
+    venue: 'Te Raukura ki Kāpiti, 32 Raumati Road, Raumati Beach',
+    description: 'Orpheus Choir Wellington brings their Glory programme to the Kāpiti Coast — Vivaldi\'s radiant Gloria and Mozart\'s deeply moving Requiem, with soloists from the NZ School of Music. The Raumati Beach venue is a beautiful setting for an outstanding choral evening.',
+    url: 'https://www.orpheuschoir.org.nz/our-concerts',
+    img: '',
+    pick: false,
+
+    label: '🎶 Choral Concert · Kāpiti',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — orpheuschoir.org.nz',},
+
+  // ── 12–15 Jun 2026 (Matariki season) ─────────────────────────────────────
+  {
+    title: 'Mana Moana Pōneke — Matariki Water Screen',
+    type: 'culture', day: 'sat', weekend: '2026-06-13', region: 'wellington',
+    time: 'Weekend evenings 12–15 June · Part of a 7–22 June season',
+    venue: 'Whairepo Lagoon, Wellington Waterfront',
+    description: 'Indigenous short films by Māori and Pasifika artists are projected onto a stunning water screen made from millions of water droplets at the waterfront lagoon. Part of Wellington\'s Matariki festival season. Completely free and unlike anything else — an unforgettable visual experience in the crisp winter air.',
+    url: 'https://wellington.govt.nz/news-and-events/events-and-festivals/matariki',
+    img: '',
+    pick: true,
+
+    label: '🌊 Matariki Water Screen · Free',
+    labelStyle: 'color:#0B5563',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'Matariki Market at Wharewaka',
+    type: 'market', day: 'sun', weekend: '2026-06-13', region: 'wellington',
+    time: 'Sunday 14 June · 10:00 am – 3:00 pm',
+    venue: 'Te Wharewaka o Pōneke, 2 Taranaki Street, Wellington Waterfront',
+    description: 'A beautiful Māori and Tangata Moana creative market at the waterfront — original art, pounamu, handmade taonga, vintage clothing and more. Karaka Cafe next door for coffee and kai. A wonderful way to celebrate Matariki season and support Māori and Pasifika creators.',
+    url: 'https://wellington.govt.nz/news-and-events/events-and-festivals/matariki',
+    img: '',
+    pick: false,
+
+    label: '🛒 Matariki Market · Free Entry',
+    labelStyle: 'color:#1A6B3A',
+    free: 'Free entry',
+    family: 'Family',},
+
+  // ── 19–22 Jun 2026 (Matariki Ahi Kā) ────────────────────────────────────
+  {
+    title: 'Matariki Ahi Kā — Wellington Waterfront Festival',
+    type: 'festival', day: 'fri', weekend: '2026-06-20', region: 'wellington',
+    time: 'Friday 19 – Monday 22 June · 6:00 pm – 9:00 pm each evening',
+    venue: 'Wellington Waterfront, Barnett Street area',
+    description: 'Wellington\'s most spectacular free annual event — a journey through Past, Present and Future across the waterfront. Fire installations, large-scale projections onto buildings and water, live performances, interactive storytelling, traditional Māori games, kai from food trucks, and a ceremonial procession each evening at 7:40 pm. Running all four evenings of the long Matariki weekend. Completely free.',
+    url: 'https://www.wellingtonnz.com/visit/events/matariki-ahi-ka',
+    img: '',
+    pick: true,
+
+    label: '🌟 Matariki Ahi Kā · Free · 4 Nights',
+    labelStyle: 'color:#0A4A6A',
+    stripStyle: 'background:linear-gradient(90deg,#0A1A2A,#1a4a6a)',
+    free: 'Free',
+    family: 'Family',},
+  {
+    title: 'NZ Opera — The Marriage of Figaro',
+    type: 'culture', day: 'fri', weekend: '2026-06-20', region: 'wellington',
+    time: 'Fri 19 June 7:30 pm · Sun 21 June 2:30 pm',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'Mozart\'s beloved comic masterpiece performed by NZ Opera with Orchestra Wellington — the Wellington premiere of a production originally planned for 2021 and delayed by COVID. Directed by Lindy Hume, conducted by James Judd, with a stellar NZ cast. Two performances at the beautifully restored St James.',
+    url: 'https://nzopera.com/opera/the-marriage-of-figaro/',
+    img: '',
+    pick: true,
+
+    label: '🎭 NZ Opera · Mozart',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — nzopera.com',},
+  {
+    title: 'Winter Solstice at Stonehenge Aotearoa',
+    type: 'outdoor', day: 'sun', weekend: '2026-06-20', region: 'wairarapa',
+    time: 'Sunday 21 June · From 4:00 pm (sunset ~4:30 pm)',
+    venue: 'Stonehenge Aotearoa, 51 Ahiaruhe Road, Carterton, Wairarapa',
+    description: 'Watch the sun set over the winter heel stone at Aotearoa\'s own astronomical henge on the longest night of the year. Introduction from 4:00 pm covering the history and purpose of the site — a moving and memorable way to mark the winter solstice. Small group event, book ahead.',
+    url: 'https://stonehenge-aotearoa.nz/events/winter-solstice/',
+    img: '',
+    pick: false,
+
+    label: '🌑 Winter Solstice · Wairarapa',
+    labelStyle: 'color:#1A1A4A',
+    cost: 'Ticketed — stonehenge-aotearoa.nz',
+    family: 'Family',},
+
+  // ── 26–29 Jun 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Engelbert Humperdinck — The Celebration Tour',
+    type: 'music', day: 'fri', weekend: '2026-06-27', region: 'wellington',
+    time: 'Friday 26 June · 7:00 pm',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'At 89, British pop legend Engelbert Humperdinck returns to New Zealand for the first time since 2019 — performing his timeless classics (Release Me, The Last Waltz, A Man Without Love) with his full band. An extraordinary evening for fans of a true entertainer who has sold over 150 million records worldwide.',
+    url: 'https://www.livenation.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: false,
+
+    label: '🎤 Pop Legend · 89 Years Young',
+    labelStyle: 'color:#8A1A1A',
+    cost: 'Ticketed — livenation.co.nz',},
+  {
+    title: 'Te Wehi — I\'m Home NZ Album Tour',
+    type: 'music', day: 'fri', weekend: '2026-06-27', region: 'wellington',
+    time: 'Friday 26 June · Check schedule for time',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'Acclaimed NZ Māori singer Te Wehi celebrates the release of her debut album I\'m Home with a national tour. A powerful voice and deeply personal music rooted in Māori language and culture — a beautiful Wellington evening for music lovers.',
+    url: 'https://www.stjamestheatre.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🎤 NZ Māori Music · Debut Album',
+    labelStyle: 'color:#1A6B3A',
+    cost: 'Ticketed',},
+  {
+    title: 'Orchestra Wellington — Virtuosi',
+    type: 'music', day: 'sat', weekend: '2026-06-27', region: 'wellington',
+    time: 'Saturday 27 June · 7:30 pm (pre-concert talk 6:30 pm)',
+    venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
+    description: 'Orchestra Wellington\'s Collaborations season finale — check their website for the programme, which will be announced closer to the date. Pre-concert talk from 6:30 pm for context and insight. A great closing event to a rich Wellington winter music season.',
+    url: 'https://orchestrawellington.co.nz/events/',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MichaelFowlerCentre.jpg/960px-MichaelFowlerCentre.jpg',
+    pick: false,
+
+    label: '🎻 Orchestra Wellington · Season Finale',
+    labelStyle: 'color:#5B4A8A',
+    cost: 'Ticketed — orchestrawellington.co.nz',},
+  {
+    title: 'Wellington Marathon 2026',
+    type: 'outdoor', day: 'sun', weekend: '2026-06-27', region: 'wellington',
+    time: 'Sunday 28 June · From 7:00 am',
+    venue: 'Start: Hnry Stadium Walkway, Wellington Waterfront',
+    description: 'The 39th Wellington Marathon — a flat, scenic harbour course past Te Papa, along Oriental Parade and out to Scorching Bay. Options from the Kids\' Magic Mile to Full Marathon. Around 4,000 runners from 20+ countries. A brilliant spectator event along the waterfront even if you\'re not running — cheer the field home.',
+    url: 'https://www.wellingtonmarathon.co.nz',
+    img: '',
+    pick: false,
+
+    label: '🏃 Wellington Marathon',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Ticketed for runners · Free to spectate',},
 ];
