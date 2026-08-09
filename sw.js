@@ -1,4 +1,4 @@
-const CACHE = 'wow-v3';
+const CACHE = 'wow-v4';
 const SHELL = [
   '/', '/css/style.css', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png',
@@ -17,12 +17,12 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Network-first: always try fresh, fall back to cache when offline
+// Network-first: bypass HTTP cache so pushes are reflected immediately; fall back to SW cache offline
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (!e.request.url.startsWith('http')) return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => {
         const clone = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, clone));
