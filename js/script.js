@@ -240,7 +240,7 @@ const SECTION_TITLES = {
     if (src) {
       const esc = src.replace(/"/g, '&quot;');
       // No srcset — one small request, cached across all cards of the same type.
-      return `<div class="card-img-wrap"><img class="card-img" src="${esc}" width="480" height="270" loading="lazy" decoding="async" onerror="onImgError(this)" alt=""></div>`;
+      return `<div class="card-img-wrap"><img class="card-img" src="${esc}" width="480" height="270" loading="lazy" decoding="async" onerror="onImgError(this)" alt="${type} event"></div>`;
     }
     const icon = PLACEHOLDER_ICONS[type] || '📅';
     return `<div class="card-img-placeholder"><span>${icon}</span></div>`;
@@ -837,7 +837,7 @@ const SECTION_TITLES = {
     ].join('');
     const footer = [
       ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${extractDomain(ev.url)}</span></a>` : '',
-      `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan" onclick="addToPlan(this.closest('.card'))">+ Plan</button>`,
+      `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan">+ Plan</button>`,
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
@@ -1772,7 +1772,7 @@ const SECTION_TITLES = {
     let html = '<div class="suggestions-section"><div class="suggestions-header"><span class="suggestions-title">💡 Suggested & Nearby</span><span class="suggestions-sub">Things to do near your plan in ' + regionNames + '</span></div><div class="suggestions-list">';
     shown.forEach(s => {
       // Store title in data-title to avoid quote conflicts in onclick attribute
-      html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escapeHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escapeHtml(s.category) + '</div></div><button class="suggestion-add-btn" data-title="' + escapeHtml(s.title) + '" onclick="addToPlanByTitle(this)">+ Plan</button></div>';
+      html += '<div class="suggestion-card"><div class="suggestion-info"><div class="suggestion-name">' + escHtml(s.title) + '</div><div class="suggestion-meta">' + (icons[s.section] || '📌') + ' ' + escHtml(s.category) + '</div></div><button class="suggestion-add-btn" data-title="' + escHtml(s.title) + '">+ Plan</button></div>';
     });
     html += '</div></div>';
     return html;
@@ -1808,11 +1808,11 @@ const SECTION_TITLES = {
         <div class="plan-item" draggable="true" data-item-id="${item.id}">
           <div class="plan-item-grip" title="Drag to reorder">⠿</div>
           <div class="plan-item-content">
-            <div class="plan-item-title">${escapeHtml(item.title)}</div>
+            <div class="plan-item-title">${escHtml(item.title)}</div>
             <div class="plan-item-meta">
-              <span>${sectionIcon} ${escapeHtml(item.category)}</span>
-              ${item.time ? '<span>🕐 ' + escapeHtml(item.time) + '</span>' : ''}
-              ${item.location ? '<span>📍 ' + escapeHtml(item.location) + '</span>' : ''}
+              <span>${sectionIcon} ${escHtml(item.category)}</span>
+              ${item.time ? '<span>🕐 ' + escHtml(item.time) + '</span>' : ''}
+              ${item.location ? '<span>📍 ' + escHtml(item.location) + '</span>' : ''}
             </div>
           </div>
           <select class="plan-day-select" onchange="changeDay('${item.id}', this.value)" title="Move to another day">
@@ -1825,12 +1825,6 @@ const SECTION_TITLES = {
 
     html += '</div></div>';
     return html;
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   // ── Plan badge count ──
@@ -2219,7 +2213,123 @@ const SECTION_TITLES = {
     card.classList.toggle('open');
   });
 
+  // Event delegation for dynamically-generated plan/suggestion buttons
+  document.addEventListener('click', e => {
+    const planBtn = e.target.closest('.add-to-plan-btn');
+    if (planBtn) { addToPlan(planBtn.closest('.card')); return; }
+    const suggBtn = e.target.closest('.suggestion-add-btn');
+    if (suggBtn) { addToPlanByTitle(suggBtn); }
+  });
+
+  function bindEventListeners() {
+    const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
+
+    // Header
+    on('authSignInBtn',    'click', () => openLoginModal());
+    on('authAvatarBtn',    'click', () => toggleUserDropdown());
+    on('planHeaderBtn',    'click', () => handlePlannerTabClick(null));
+    on('headerInstallBtn', 'click', () => handleInstallClick());
+    on('mobileInfoBtn',    'click', () => toggleInfoPopover());
+    on('hamburgerBtn',     'click', () => toggleMenu());
+
+    // User dropdown
+    document.querySelector('.user-dropdown-btn[data-action="planner"]')
+      ?.addEventListener('click', () => { showSectionFromMenu('planner'); closeUserDropdown(); });
+    document.querySelector('.user-dropdown-btn[data-action="signout"]')
+      ?.addEventListener('click', () => signOutUser());
+
+    // Highlights
+    document.querySelector('.highlights-see-all')
+      ?.addEventListener('click', () => showSection('events', document.getElementById('tab-events')));
+
+    // Dropdown menu
+    on('dropdownMenu',  'click', () => closeMenu());
+    on('dropdownClose', 'click', () => closeMenu());
+    document.querySelectorAll('.dropdown-nav-btn[data-nav]').forEach(btn =>
+      btn.addEventListener('click', () => { showSectionFromMenu(btn.dataset.nav); closeMenu(); })
+    );
+    on('installMenuBtn', 'click', () => { handleInstallClick(); closeMenu(); });
+
+    // Info popover
+    on('infoPopoverOverlay', 'click', () => closeInfoPopover());
+    document.querySelector('.info-popover-btn[data-action="about"]')
+      ?.addEventListener('click', () => { showSectionFromMenu('about'); closeInfoPopover(); });
+    on('infoInstallBtn', 'click', () => { handleInstallClick(); closeInfoPopover(); });
+
+    // Contact email obfuscation
+    document.querySelectorAll('.contact-email').forEach(a =>
+      a.addEventListener('click', () => { a.href = 'mailto:' + atob('d2hhdHNvbndlbGx5QGdtYWlsLmNvbQ=='); })
+    );
+
+    // Region filters
+    document.querySelectorAll('.filter-btn[data-filter-region]').forEach(btn =>
+      btn.addEventListener('click', () => filterRegion(btn.dataset.filterRegion, btn))
+    );
+
+    // Category tabs
+    document.querySelectorAll('.cat-btn[id]').forEach(btn => {
+      const section = btn.id.replace('tab-', '');
+      btn.addEventListener('click', () =>
+        section === 'rainy' ? showRainyDay(btn) : showSection(section, btn)
+      );
+    });
+
+    // Weekend tabs
+    document.querySelectorAll('.tab-btn[aria-controls]').forEach(btn =>
+      btn.addEventListener('click', () => showTab(btn.getAttribute('aria-controls'), btn))
+    );
+
+    // Weekend nav
+    on('wnavPrev', 'click', () => navigateWeekend(-1));
+    on('wnavNext', 'click', () => navigateWeekend(1));
+
+    // Kid-friendly filter
+    document.querySelectorAll('[data-kid-filter]').forEach(btn =>
+      btn.addEventListener('click', () => filterKidFriendly(btn.dataset.kidFilter, btn))
+    );
+
+    // Walk duration filter
+    document.querySelectorAll('[data-duration]').forEach(btn =>
+      btn.addEventListener('click', () => filterDuration(btn.dataset.duration, btn))
+    );
+    const walkTopBtn = document.getElementById('walkTopRatedBtn');
+    walkTopBtn?.addEventListener('click', () => toggleWalkTopRated(walkTopBtn));
+
+    // Planner CTAs
+    document.querySelectorAll('.planner-cta-btn[data-nav]').forEach(btn =>
+      btn.addEventListener('click', () => showSection(btn.dataset.nav, document.getElementById('tab-' + btn.dataset.nav)))
+    );
+
+    // Plan toolbar
+    on('planClearBtn', 'click', () => clearPlan());
+    on('calExportBtn', 'click', e => toggleCalendarExport(e));
+    on('calGcalBtn',   'click', () => openAllGCal());
+    on('calIcsBtn',    'click', () => downloadICS());
+    on('planShareBtn', 'click', () => handleShareClick());
+
+    // Share modal
+    on('shareModalOverlay', 'click', e => { if (e.target === e.currentTarget) closeShareModal(); });
+    on('shareModalClose',   'click', () => closeShareModal());
+    on('shareGoogleBtn',    'click', () => { closeShareModal(); signInWithGoogle(); });
+    on('shareGuestBtn',     'click', () => shareWithoutSignIn());
+
+    // Login modal
+    on('loginOverlay',    'click', e => { if (e.target === e.currentTarget) closeLoginModal(); });
+    on('loginModalClose', 'click', () => closeLoginModal());
+    on('googleSignInBtn', 'click', () => signInWithGoogle());
+    on('guestSignInBtn',  'click', () => continueAsGuest());
+
+    // Install banner
+    on('installBannerInstallBtn', 'click', () => triggerInstall());
+    on('installBannerCloseBtn',   'click', () => dismissInstall());
+
+    // iOS install modal
+    on('iosInstallOverlay', 'click', e => { if (e.target === e.currentTarget) closeIOSModal(); });
+    on('iosDoneBtn',        'click', () => closeIOSModal());
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    bindEventListeners();
     generateRemainingWeekends();
     setupPastWeekendTabs();
     updateTabLabels();

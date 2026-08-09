@@ -212,28 +212,28 @@
       <div class="eyebrow">Pōneke Wellington · Family Events Guide</div>
       <div class="header-auth-area">
         <!-- Logged out: sign in button -->
-        <button class="auth-btn" id="authSignInBtn" onclick="openLoginModal()" style="display:flex;">
+        <button class="auth-btn" id="authSignInBtn" style="display:flex;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Sign in
         </button>
         <!-- Logged in: avatar -->
         <div id="authUserArea" style="display:none; position:relative;">
-          <div class="auth-avatar-placeholder" id="authAvatarBtn" onclick="toggleUserDropdown()" title="Account"></div>
+          <div class="auth-avatar-placeholder" id="authAvatarBtn" title="Account"></div>
           <div class="user-dropdown" id="userDropdown">
             <div class="user-dropdown-header">
               <div class="user-dropdown-name" id="userDropdownName"></div>
               <div class="user-dropdown-email" id="userDropdownEmail"></div>
             </div>
-            <button class="user-dropdown-btn" onclick="showSectionFromMenu('planner'); closeUserDropdown();">📋 My Weekend Plan</button>
-            <button class="user-dropdown-btn danger" onclick="signOutUser()">↩ Sign out</button>
+            <button class="user-dropdown-btn" data-action="planner">📋 My Weekend Plan</button>
+            <button class="user-dropdown-btn danger" data-action="signout">↩ Sign out</button>
           </div>
         </div>
-        <button class="plan-header-btn" id="planHeaderBtn" aria-label="View your plan" onclick="handlePlannerTabClick(null)">📋 Plan<span class="plan-count-badge" id="planCountBadgeHeader" aria-live="polite">0</span></button>
-        <button class="header-install-btn" id="headerInstallBtn" onclick="handleInstallClick()" aria-label="Add to Home Screen" style="display:none">
+        <button class="plan-header-btn" id="planHeaderBtn" aria-label="View your plan">📋 Plan<span class="plan-count-badge" id="planCountBadgeHeader" aria-live="polite">0</span></button>
+        <button class="header-install-btn" id="headerInstallBtn" aria-label="Add to Home Screen" style="display:none">
           📲 <span>Save app</span>
         </button>
-        <button class="mobile-info-btn" id="mobileInfoBtn" onclick="toggleInfoPopover()" aria-label="About &amp; settings">ℹ️</button>
-        <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="dropdownPanel" id="hamburgerBtn">
+        <button class="mobile-info-btn" id="mobileInfoBtn" aria-label="About &amp; settings">ℹ️</button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false" aria-controls="dropdownPanel" id="hamburgerBtn">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -264,28 +264,28 @@
 <section class="highlights-section" id="highlights-section" style="display:none">
   <div class="highlights-header">
     <span class="highlights-eyebrow">🔥 This Weekend's Picks</span>
-    <button class="highlights-see-all" onclick="showSection('events', document.getElementById('tab-events'))">See all →</button>
+    <button class="highlights-see-all">See all →</button>
   </div>
   <div class="highlights-track" id="highlightsTrack"></div>
 </section>
 
 <!-- ── DROPDOWN MENU ── -->
-<div class="dropdown-overlay" id="dropdownMenu" onclick="closeMenu()"></div>
+<div class="dropdown-overlay" id="dropdownMenu"></div>
 <div class="dropdown-panel" id="dropdownPanel" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <div class="dropdown-header">
     <span class="dropdown-title">Menu</span>
-    <button class="dropdown-close" onclick="closeMenu()" aria-label="Close menu">✕</button>
+    <button class="dropdown-close" id="dropdownClose" aria-label="Close menu">✕</button>
   </div>
   <nav class="dropdown-nav">
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('planner'); closeMenu()"><span>📋</span> Plan</button>
-    <button class="dropdown-nav-btn" onclick="showSection('events', document.getElementById('tab-events')); closeMenu()"><span>🗓</span> Events</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('food'); closeMenu()"><span>☕</span> Food & Drink</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('walks'); closeMenu()"><span>🌿</span> Walks & Trails</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('parks'); closeMenu()"><span>🛝</span> Play Parks</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('activities'); closeMenu()"><span>🎯</span> Activities</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('markets'); closeMenu()"><span>🛒</span> Markets</button>
-    <button class="dropdown-nav-btn" onclick="showSectionFromMenu('about'); closeMenu()"><span>👋</span> About</button>
-    <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none" onclick="handleInstallClick(); closeMenu()"><span>📲</span> Add to Home Screen</button>
+    <button class="dropdown-nav-btn" data-nav="planner"><span>📋</span> Plan</button>
+    <button class="dropdown-nav-btn" data-nav="events"><span>🗓</span> Events</button>
+    <button class="dropdown-nav-btn" data-nav="food"><span>☕</span> Food & Drink</button>
+    <button class="dropdown-nav-btn" data-nav="walks"><span>🌿</span> Walks & Trails</button>
+    <button class="dropdown-nav-btn" data-nav="parks"><span>🛝</span> Play Parks</button>
+    <button class="dropdown-nav-btn" data-nav="activities"><span>🎯</span> Activities</button>
+    <button class="dropdown-nav-btn" data-nav="markets"><span>🛒</span> Markets</button>
+    <button class="dropdown-nav-btn" data-nav="about"><span>👋</span> About</button>
+    <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none"><span>📲</span> Add to Home Screen</button>
   </nav>
   <div class="dropdown-about">
     <div class="dropdown-about-title">About this guide</div>
@@ -294,42 +294,42 @@
     <p id="dropAboutPara3">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
     <div class="dropdown-made-with">Made with ❤️ in Wellington</div>
     <div class="dropdown-contact">
-      Spotted something incorrect, want to promote an event, or just have feedback? Drop us a message at <a class="contact-email" href="#" onclick="this.href='mailto:'+atob('d2hhdHNvbndlbGx5QGdtYWlsLmNvbQ==')">whatsonwelly@gmail.com</a>
+      Spotted something incorrect, want to promote an event, or just have feedback? Drop us a message at <a class="contact-email" href="#">whatsonwelly@gmail.com</a>
     </div>
   </div>
 </div>
 
 <!-- ── MOBILE INFO POPOVER ── -->
 <div class="info-popover" id="infoPopover" role="dialog" aria-label="About &amp; settings">
-  <button class="info-popover-btn" onclick="showSectionFromMenu('about'); closeInfoPopover()"><span>👋</span> About this guide</button>
-  <button class="info-popover-btn" id="infoInstallBtn" style="display:none" onclick="handleInstallClick(); closeInfoPopover()"><span>📲</span> Add to Home Screen</button>
+  <button class="info-popover-btn" data-action="about"><span>👋</span> About this guide</button>
+  <button class="info-popover-btn" id="infoInstallBtn" style="display:none"><span>📲</span> Add to Home Screen</button>
 </div>
-<div class="info-popover-overlay" id="infoPopoverOverlay" onclick="closeInfoPopover()"></div>
+<div class="info-popover-overlay" id="infoPopoverOverlay"></div>
 
 <!-- ── REGION FILTERS — always visible ── -->
 <div class="filter-bar" role="region" aria-label="Filter by area">
   <div class="filter-inner">
     <span class="filter-label" id="filter-label">Area:</span>
-    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all" aria-pressed="true" onclick="filterRegion('all', this)">🗺 All regions</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington" onclick="filterRegion('wellington', this)"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt" onclick="filterRegion('lower-hutt', this)"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt" onclick="filterRegion('upper-hutt', this)"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti" onclick="filterRegion('kapiti', this)"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua" onclick="filterRegion('porirua', this)"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa" onclick="filterRegion('wairarapa', this)"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all">🗺 All regions</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
   </div>
 </div>
 
 <!-- ── CATEGORY PILL NAV ── -->
 <nav class="cat-nav" aria-label="Browse categories">
   <div class="cat-inner" role="tablist">
-    <button class="cat-btn active" role="tab" id="tab-events"     aria-selected="true"  aria-controls="section-events"     onclick="showSection('events', this)"><span aria-hidden="true">🗓</span> Events</button>
-    <button class="cat-btn"        role="tab" id="tab-food"       aria-selected="false" aria-controls="section-food"       onclick="showSection('food', this)"><span aria-hidden="true">☕</span> Food & Drink</button>
-    <button class="cat-btn"        role="tab" id="tab-walks"      aria-selected="false" aria-controls="section-walks"      onclick="showSection('walks', this)"><span aria-hidden="true">🌿</span> Walks & Trails</button>
-    <button class="cat-btn"        role="tab" id="tab-parks"      aria-selected="false" aria-controls="section-parks"      onclick="showSection('parks', this)"><span aria-hidden="true">🛝</span> Parks</button>
-    <button class="cat-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities" onclick="showSection('activities', this)"><span aria-hidden="true">🎯</span> Activities</button>
-    <button class="cat-btn"        role="tab" id="tab-markets"    aria-selected="false" aria-controls="section-markets"    onclick="showSection('markets', this)"><span aria-hidden="true">🛒</span> Markets</button>
-    <button class="cat-btn"        role="tab" id="tab-rainy"      aria-selected="false" aria-controls="section-rainy"      onclick="showRainyDay(this)"><span aria-hidden="true">🌧</span> Rainy Day</button>
+    <button class="cat-btn active" role="tab" id="tab-events"     aria-selected="true"  aria-controls="section-events"    ><span aria-hidden="true">🗓</span> Events</button>
+    <button class="cat-btn"        role="tab" id="tab-food"       aria-selected="false" aria-controls="section-food"      ><span aria-hidden="true">☕</span> Food & Drink</button>
+    <button class="cat-btn"        role="tab" id="tab-walks"      aria-selected="false" aria-controls="section-walks"     ><span aria-hidden="true">🌿</span> Walks & Trails</button>
+    <button class="cat-btn"        role="tab" id="tab-parks"      aria-selected="false" aria-controls="section-parks"     ><span aria-hidden="true">🛝</span> Parks</button>
+    <button class="cat-btn"        role="tab" id="tab-activities" aria-selected="false" aria-controls="section-activities"><span aria-hidden="true">🎯</span> Activities</button>
+    <button class="cat-btn"        role="tab" id="tab-markets"    aria-selected="false" aria-controls="section-markets"   ><span aria-hidden="true">🛒</span> Markets</button>
+    <button class="cat-btn"        role="tab" id="tab-rainy"      aria-selected="false" aria-controls="section-rainy"     ><span aria-hidden="true">🌧</span> Rainy Day</button>
   </div>
 </nav>
 
@@ -339,37 +339,37 @@
 <div class="app-section active" id="section-events" role="tabpanel" aria-labelledby="tab-events">
 <nav class="tabs-bar">
   <div class="tabs-inner" role="tablist" aria-label="Weekend dates">
-    <button class="tab-btn" id="wtab-w1" role="tab" aria-selected="false" aria-controls="w1" onclick="showTab('w1',this)">28 Feb–1 Mar</button>
-    <button class="tab-btn"        id="wtab-w2" role="tab" aria-selected="false" aria-controls="w2" onclick="showTab('w2',this)">7–8 Mar</button>
-    <button class="tab-btn"        id="wtab-w3" role="tab" aria-selected="false" aria-controls="w3" onclick="showTab('w3',this)">14–15 Mar</button>
-    <button class="tab-btn"        id="wtab-w4" role="tab" aria-selected="false" aria-controls="w4" onclick="showTab('w4',this)">21–22 Mar</button>
-    <button class="tab-btn"        id="wtab-w5" role="tab" aria-selected="false" aria-controls="w5" onclick="showTab('w5',this)">28–29 Mar</button>
-    <button class="tab-btn"        id="wtab-w6" role="tab" aria-selected="false" aria-controls="w6" onclick="showTab('w6',this)">4–5 Apr</button>
-    <button class="tab-btn"        id="wtab-w7" role="tab" aria-selected="false" aria-controls="w7" onclick="showTab('w7',this)">11–12 Apr</button>
-    <button class="tab-btn"        id="wtab-w8" role="tab" aria-selected="false" aria-controls="w8" onclick="showTab('w8',this)">18–19 Apr</button>
-    <button class="tab-btn"        id="wtab-w9" role="tab" aria-selected="false" aria-controls="w9" onclick="showTab('w9',this)">25–26 Apr</button>
-    <button class="tab-btn"        id="wtab-w10" role="tab" aria-selected="false" aria-controls="w10" onclick="showTab('w10',this)">2–3 May</button>
-    <button class="tab-btn"        id="wtab-w11" role="tab" aria-selected="false" aria-controls="w11" onclick="showTab('w11',this)">9–10 May</button>
-    <button class="tab-btn"        id="wtab-w12" role="tab" aria-selected="false" aria-controls="w12" onclick="showTab('w12',this)">16–17 May</button>
-    <button class="tab-btn"        id="wtab-w13" role="tab" aria-selected="false" aria-controls="w13" onclick="showTab('w13',this)">23–24 May</button>
-    <button class="tab-btn"        id="wtab-w14" role="tab" aria-selected="false" aria-controls="w14" onclick="showTab('w14',this)">29 May–1 Jun</button>
-    <button class="tab-btn"        id="wtab-w15" role="tab" aria-selected="false" aria-controls="w15" onclick="showTab('w15',this)">5–8 Jun</button>
-    <button class="tab-btn"        id="wtab-w16" role="tab" aria-selected="false" aria-controls="w16" onclick="showTab('w16',this)">12–15 Jun</button>
-    <button class="tab-btn"        id="wtab-w17" role="tab" aria-selected="false" aria-controls="w17" onclick="showTab('w17',this)">19–22 Jun</button>
-    <button class="tab-btn"        id="wtab-w18" role="tab" aria-selected="false" aria-controls="w18" onclick="showTab('w18',this)">26–29 Jun</button>
-    <button class="tab-btn active"  id="wtab-w19" role="tab" aria-selected="true"  aria-controls="w19" onclick="showTab('w19',this)">8–9 Aug</button>
-    <button class="tab-btn"        id="wtab-w20" role="tab" aria-selected="false" aria-controls="w20" onclick="showTab('w20',this)">15–16 Aug</button>
-    <button class="tab-btn"        id="wtab-w21" role="tab" aria-selected="false" aria-controls="w21" onclick="showTab('w21',this)">22–23 Aug</button>
-    <button class="tab-btn"        id="wtab-w22" role="tab" aria-selected="false" aria-controls="w22" onclick="showTab('w22',this)">29–30 Aug</button>
-    <button class="tab-btn"        id="wtab-w23" role="tab" aria-selected="false" aria-controls="w23" onclick="showTab('w23',this)">5–6 Sep</button>
-    <button class="tab-btn"        id="wtab-w24" role="tab" aria-selected="false" aria-controls="w24" onclick="showTab('w24',this)">12–13 Sep</button>
-    <button class="tab-btn"        id="wtab-w25" role="tab" aria-selected="false" aria-controls="w25" onclick="showTab('w25',this)">19–20 Sep</button>
-    <button class="tab-btn"        id="wtab-w26" role="tab" aria-selected="false" aria-controls="w26" onclick="showTab('w26',this)">26–27 Sep</button>
+    <button class="tab-btn" id="wtab-w1" role="tab" aria-selected="false" aria-controls="w1">28 Feb–1 Mar</button>
+    <button class="tab-btn"        id="wtab-w2" role="tab" aria-selected="false" aria-controls="w2">7–8 Mar</button>
+    <button class="tab-btn"        id="wtab-w3" role="tab" aria-selected="false" aria-controls="w3">14–15 Mar</button>
+    <button class="tab-btn"        id="wtab-w4" role="tab" aria-selected="false" aria-controls="w4">21–22 Mar</button>
+    <button class="tab-btn"        id="wtab-w5" role="tab" aria-selected="false" aria-controls="w5">28–29 Mar</button>
+    <button class="tab-btn"        id="wtab-w6" role="tab" aria-selected="false" aria-controls="w6">4–5 Apr</button>
+    <button class="tab-btn"        id="wtab-w7" role="tab" aria-selected="false" aria-controls="w7">11–12 Apr</button>
+    <button class="tab-btn"        id="wtab-w8" role="tab" aria-selected="false" aria-controls="w8">18–19 Apr</button>
+    <button class="tab-btn"        id="wtab-w9" role="tab" aria-selected="false" aria-controls="w9">25–26 Apr</button>
+    <button class="tab-btn"        id="wtab-w10" role="tab" aria-selected="false" aria-controls="w10">2–3 May</button>
+    <button class="tab-btn"        id="wtab-w11" role="tab" aria-selected="false" aria-controls="w11">9–10 May</button>
+    <button class="tab-btn"        id="wtab-w12" role="tab" aria-selected="false" aria-controls="w12">16–17 May</button>
+    <button class="tab-btn"        id="wtab-w13" role="tab" aria-selected="false" aria-controls="w13">23–24 May</button>
+    <button class="tab-btn"        id="wtab-w14" role="tab" aria-selected="false" aria-controls="w14">29 May–1 Jun</button>
+    <button class="tab-btn"        id="wtab-w15" role="tab" aria-selected="false" aria-controls="w15">5–8 Jun</button>
+    <button class="tab-btn"        id="wtab-w16" role="tab" aria-selected="false" aria-controls="w16">12–15 Jun</button>
+    <button class="tab-btn"        id="wtab-w17" role="tab" aria-selected="false" aria-controls="w17">19–22 Jun</button>
+    <button class="tab-btn"        id="wtab-w18" role="tab" aria-selected="false" aria-controls="w18">26–29 Jun</button>
+    <button class="tab-btn active"  id="wtab-w19" role="tab" aria-selected="true"  aria-controls="w19">8–9 Aug</button>
+    <button class="tab-btn"        id="wtab-w20" role="tab" aria-selected="false" aria-controls="w20">15–16 Aug</button>
+    <button class="tab-btn"        id="wtab-w21" role="tab" aria-selected="false" aria-controls="w21">22–23 Aug</button>
+    <button class="tab-btn"        id="wtab-w22" role="tab" aria-selected="false" aria-controls="w22">29–30 Aug</button>
+    <button class="tab-btn"        id="wtab-w23" role="tab" aria-selected="false" aria-controls="w23">5–6 Sep</button>
+    <button class="tab-btn"        id="wtab-w24" role="tab" aria-selected="false" aria-controls="w24">12–13 Sep</button>
+    <button class="tab-btn"        id="wtab-w25" role="tab" aria-selected="false" aria-controls="w25">19–20 Sep</button>
+    <button class="tab-btn"        id="wtab-w26" role="tab" aria-selected="false" aria-controls="w26">26–27 Sep</button>
   </div>
   <div class="weekend-nav-bar" id="weekendNavBar">
-    <button class="wnav-btn" id="wnavPrev" aria-label="Previous weekend" onclick="navigateWeekend(-1)" disabled>← Previous</button>
+    <button class="wnav-btn" id="wnavPrev" aria-label="Previous weekend" disabled>← Previous</button>
     <span class="wnav-pos" id="wnavPos" aria-live="polite" aria-atomic="true"></span>
-    <button class="wnav-btn" id="wnavNext" aria-label="Next weekend" onclick="navigateWeekend(1)">Next →</button>
+    <button class="wnav-btn" id="wnavNext" aria-label="Next weekend">Next →</button>
   </div>
 </nav>
 
@@ -1066,8 +1066,8 @@
 
 <div class="duration-filter">
   <span class="duration-label">🌿 whānau:</span>
-  <button class="duration-btn active" aria-pressed="true"  onclick="filterKidFriendly('all', this)">All</button>
-  <button class="duration-btn"        aria-pressed="false" onclick="filterKidFriendly('yes', this)">Family / whānau friendly</button>
+  <button class="duration-btn active" aria-pressed="true"  data-kid-filter="all">All</button>
+  <button class="duration-btn"        aria-pressed="false" data-kid-filter="yes">Family / whānau friendly</button>
 </div>
 <main>
   <div class="venue-grid">
@@ -1113,13 +1113,13 @@
 
 <div class="duration-filter">
   <span class="duration-label">⏱ Duration:</span>
-  <button class="duration-btn active" aria-pressed="true"  onclick="filterDuration('all', this)">All walks</button>
-  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under30', this)">Under 30 min</button>
-  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under1', this)">30–60 min</button>
-  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('under2', this)">1–2 hours</button>
-  <button class="duration-btn"        aria-pressed="false" onclick="filterDuration('over2', this)">2 hours +</button>
+  <button class="duration-btn active" aria-pressed="true"  data-duration="all">All walks</button>
+  <button class="duration-btn"        aria-pressed="false" data-duration="under30">Under 30 min</button>
+  <button class="duration-btn"        aria-pressed="false" data-duration="under1">30–60 min</button>
+  <button class="duration-btn"        aria-pressed="false" data-duration="under2">1–2 hours</button>
+  <button class="duration-btn"        aria-pressed="false" data-duration="over2">2 hours +</button>
   <span class="duration-label" style="margin-left:8px">⭐ Rating:</span>
-  <button class="duration-btn" id="walkTopRatedBtn" aria-pressed="false" onclick="toggleWalkTopRated(this)">Top rated 4.5+</button>
+  <button class="duration-btn" id="walkTopRatedBtn" aria-pressed="false">Top rated 4.5+</button>
 </div>
 
 <main>
@@ -1244,7 +1244,7 @@
       <p id="aboutPara3" style="font-size:14px;color:#4a5a5a;line-height:1.75;margin-bottom:16px;">Updated regularly. If you spot something missing or wrong, we'd love to hear from you.</p>
       <p style="font-size:13px;color:#6a7a7a;line-height:1.7;text-align:center;padding-top:16px;border-top:1px solid #f0eeea;">
         Spotted something incorrect, want to promote an event, or just have feedback?<br>
-        Drop us a message at <a style="color:var(--teal);font-weight:600;text-decoration:none;" href="#" onclick="this.href='mailto:'+atob('d2hhdHNvbndlbGx5QGdtYWlsLmNvbQ==')">whatsonwelly@gmail.com</a>
+        Drop us a message at <a class="contact-email" style="color:var(--teal);font-weight:600;text-decoration:none;" href="#">whatsonwelly@gmail.com</a>
       </p>
       <p style="font-size:12px;color:#9aacac;text-align:center;margin-top:20px;letter-spacing:0.05em;">Made with ❤️ in Wellington</p>
     </div>
@@ -1261,15 +1261,15 @@
     <div class="plan-toolbar">
       <h3>My Weekend Plan</h3>
       <div class="plan-toolbar-actions">
-        <button class="plan-clear-btn" onclick="clearPlan()">Clear all</button>
+        <button class="plan-clear-btn" id="planClearBtn">Clear all</button>
         <div class="plan-export-wrap" id="calExportWrap" style="display:none">
-          <button class="plan-export-btn" id="calExportBtn" onclick="toggleCalendarExport(event)">📅 Export</button>
+          <button class="plan-export-btn" id="calExportBtn">📅 Export</button>
           <div class="cal-export-dropdown" id="calExportDropdown">
-            <button class="cal-export-item" onclick="openAllGCal()">📅 Add to Google Calendar</button>
-            <button class="cal-export-item" onclick="downloadICS()">⬇️ Download .ics file</button>
+            <button class="cal-export-item" id="calGcalBtn">📅 Add to Google Calendar</button>
+            <button class="cal-export-item" id="calIcsBtn">⬇️ Download .ics file</button>
           </div>
         </div>
-        <button class="plan-share-btn" onclick="handleShareClick()">📤 Share</button>
+        <button class="plan-share-btn" id="planShareBtn">📤 Share</button>
       </div>
     </div>
 
@@ -1281,9 +1281,9 @@
       <div class="planner-empty-icon">📋</div>
       <p>Your weekend starts here. Browse events, cafés, walks and parks — then tap <strong>+ Plan</strong> to build your day.</p>
       <div class="planner-empty-actions">
-        <button class="planner-cta-btn" onclick="showSection('events', document.getElementById('tab-events'))">🗓 Browse events</button>
-        <button class="planner-cta-btn" onclick="showSection('food',   document.getElementById('tab-food'))">☕ Find a café</button>
-        <button class="planner-cta-btn" onclick="showSection('walks',  document.getElementById('tab-walks'))">🌿 Find a walk</button>
+        <button class="planner-cta-btn" data-nav="events">🗓 Browse events</button>
+        <button class="planner-cta-btn" data-nav="food">☕ Find a café</button>
+        <button class="planner-cta-btn" data-nav="walks">🌿 Find a walk</button>
       </div>
     </div>
   </div>
@@ -1291,19 +1291,19 @@
 </div><!-- /section-planner -->
 
 <!-- ── SHARE MODAL ── -->
-<div class="login-overlay" id="shareModalOverlay" onclick="if(event.target===this)closeShareModal()">
+<div class="login-overlay" id="shareModalOverlay">
   <div class="login-modal" role="dialog" aria-modal="true" aria-label="Share your weekend plan">
     <div class="login-modal-header">
       <h2>Share your<br>weekend plan</h2>
       <p>Sign in with Google to save your plan to the cloud and share it across devices. Or copy a link to share what you've planned so far.</p>
-      <button class="login-modal-close" onclick="closeShareModal()" aria-label="Close">✕</button>
+      <button class="login-modal-close" id="shareModalClose" aria-label="Close">✕</button>
     </div>
     <div class="login-modal-body">
-      <button class="login-provider-btn" onclick="closeShareModal();signInWithGoogle()">
+      <button class="login-provider-btn" id="shareGoogleBtn">
         <svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
         Sign in with Google
       </button>
-      <button class="login-provider-btn login-guest-btn" onclick="shareWithoutSignIn()">
+      <button class="login-provider-btn login-guest-btn" id="shareGuestBtn">
         📤 Share without signing in
       </button>
     </div>
@@ -1311,19 +1311,19 @@
 </div>
 
 <!-- ── LOGIN MODAL ── -->
-<div class="login-overlay" id="loginOverlay" onclick="if(event.target===this)closeLoginModal()">
+<div class="login-overlay" id="loginOverlay">
   <div class="login-modal" role="dialog" aria-modal="true" aria-label="Sign in">
     <div class="login-modal-header">
       <h2>Save your weekend<br>plan to the cloud</h2>
       <p>Sign in so your plan syncs across all your devices. You can also plan as a guest — it'll save on this device only.</p>
-      <button class="login-modal-close" onclick="closeLoginModal()" aria-label="Close">✕</button>
+      <button class="login-modal-close" id="loginModalClose" aria-label="Close">✕</button>
     </div>
     <div class="login-modal-body">
-      <button class="login-provider-btn" onclick="signInWithGoogle()" id="googleSignInBtn">
+      <button class="login-provider-btn" id="googleSignInBtn">
         <svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
         Continue with Google
       </button>
-      <button class="login-provider-btn login-guest-btn" onclick="continueAsGuest()">
+      <button class="login-provider-btn login-guest-btn" id="guestSignInBtn">
         <svg class="login-provider-icon" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Continue as guest
       </button>
@@ -1342,12 +1342,12 @@
     <strong>What's On Wellington</strong>
     <span>Add to your home screen</span>
   </div>
-  <button class="install-banner-btn" onclick="triggerInstall()">Install</button>
-  <button class="install-banner-close" onclick="dismissInstall()" aria-label="Dismiss">✕</button>
+  <button class="install-banner-btn" id="installBannerInstallBtn">Install</button>
+  <button class="install-banner-close" id="installBannerCloseBtn" aria-label="Dismiss">✕</button>
 </div>
 
 <!-- ── IOS INSTALL MODAL ── -->
-<div id="iosInstallOverlay" class="ios-install-overlay" onclick="if(event.target===this)closeIOSModal()" style="display:none">
+<div id="iosInstallOverlay" class="ios-install-overlay" style="display:none">
   <div class="ios-install-modal" role="dialog" aria-modal="true" aria-label="Add to Home Screen">
     <div class="ios-install-header">
       <img src="icons/apple-touch-icon.png" class="ios-install-icon" alt="">
@@ -1361,7 +1361,7 @@
       <li><span class="ios-step-num">2</span>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
       <li><span class="ios-step-num">3</span>Tap <strong>"Add"</strong> in the top-right corner</li>
     </ol>
-    <button class="ios-install-done-btn" onclick="closeIOSModal()">Got it</button>
+    <button class="ios-install-done-btn" id="iosDoneBtn">Got it</button>
   </div>
 </div>
 
