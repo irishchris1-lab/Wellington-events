@@ -1691,4 +1691,160 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#1A6B3A',
     family: 'Family',
     cost: 'Free',},
+
+  // ── 8–9 Aug 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Visa Wellington on a Plate',
+    type: 'festival', day: 'sat', weekend: '2026-08-08', region: 'wellington',
+    time: 'All of August',
+    venue: 'Restaurants & venues citywide',
+    description: "Wellington's annual food festival. Restaurant events, Burger Wellington ($10 burgers at participating spots, 3–23 Aug), and unique culinary experiences across the city.",
+    url: 'https://www.wellingtononaplate.com/',
+    pick: true,
+    label: '🍽 Food Festival',
+    family: 'Family',},
+  {
+    title: 'Parkrun Waitangi Park',
+    type: 'outdoor', day: 'sat', weekend: '2026-08-08', region: 'wellington',
+    time: '8:00 am every Saturday',
+    venue: 'Waitangi Park, Te Aro',
+    description: 'Free 5 km timed run/walk along the waterfront. All paces welcome — bring the kids.',
+    url: 'https://www.parkrun.co.nz/waitangipark/',
+    cost: 'Free',
+    family: 'Family',},
+
+  // ── 15–16 Aug 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Visa Wellington on a Plate',
+    type: 'festival', day: 'sat', weekend: '2026-08-15', region: 'wellington',
+    time: 'All of August — Burger Welly ends 23 Aug',
+    venue: 'Restaurants & venues citywide',
+    url: 'https://www.wellingtononaplate.com/',
+    label: '🍽 Food Festival',
+    family: 'Family',},
+  {
+    title: 'Fashion Fest',
+    type: 'culture', day: 'sat', weekend: '2026-08-15', region: 'wellington',
+    time: 'Saturday 15 August',
+    venue: 'Shed 6, Queens Wharf',
+    description: 'Wellington fashion festival on the waterfront.',
+    ticketed: true,},
+  {
+    title: 'Myths & Legends',
+    type: 'culture', day: 'sat', weekend: '2026-08-15', region: 'wellington',
+    time: 'Saturday 15 August',
+    venue: 'Michael Fowler Centre',
+    ticketed: true,},
+  {
+    title: 'Plini',
+    type: 'music', day: 'sat', weekend: '2026-08-15', region: 'wellington',
+    time: 'Saturday evening',
+    venue: 'San Fran, Te Aro',
+    ticketed: true,},
+
+  // ── 22–23 Aug 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Visa Wellington on a Plate',
+    type: 'festival', day: 'sat', weekend: '2026-08-22', region: 'wellington',
+    time: 'All of August — final Burger Welly weekend',
+    venue: 'Restaurants & venues citywide',
+    url: 'https://www.wellingtononaplate.com/',
+    label: '🍽 Food Festival',
+    family: 'Family',},
+  {
+    title: 'Orchestra Wellington',
+    type: 'culture', day: 'sat', weekend: '2026-08-22', region: 'wellington',
+    time: 'Saturday 22 August',
+    venue: 'Michael Fowler Centre',
+    url: 'https://www.orchestrawellington.co.nz/',
+    pick: true,
+    ticketed: true,},
+
+  // ── 28–30 Aug 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'The Food Show Wellington',
+    type: 'festival', day: 'fri', weekend: '2026-08-29', region: 'wellington',
+    time: 'Fri 28 – Sun 30 August',
+    venue: 'Sky Stadium',
+    description: 'Three days of food, wine, cooking demos and artisan producers. Kids under 5 free; ages 6–12 $16.',
+    pick: true,
+    label: '🍽 Food Show',
+    family: 'Family',
+    cost: 'From $16 · Kids u5 free',},
+  {
+    title: 'The Food Show Wellington',
+    type: 'festival', day: 'sat', weekend: '2026-08-29', region: 'wellington',
+    time: 'Fri 28 – Sun 30 August',
+    venue: 'Sky Stadium',
+    description: 'Three days of food, wine, cooking demos and artisan producers. Kids under 5 free; ages 6–12 $16.',
+    label: '🍽 Food Show',
+    family: 'Family',
+    cost: 'From $16 · Kids u5 free',},
+  {
+    title: 'The Food Show Wellington',
+    type: 'festival', day: 'sun', weekend: '2026-08-29', region: 'wellington',
+    time: 'Fri 28 – Sun 30 August',
+    venue: 'Sky Stadium',
+    description: 'Three days of food, wine, cooking demos and artisan producers. Kids under 5 free; ages 6–12 $16.',
+    label: '🍽 Food Show',
+    family: 'Family',
+    cost: 'From $16 · Kids u5 free',},
+  {
+    title: 'Visa Wellington on a Plate',
+    type: 'festival', day: 'sat', weekend: '2026-08-29', region: 'wellington',
+    time: 'August food festival — final weekend',
+    venue: 'Restaurants & venues citywide',
+    url: 'https://www.wellingtononaplate.com/',
+    label: '🍽 Food Festival',
+    family: 'Family',},
+
+  // ── 5–6 Sep 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Great Sounds Great Festival',
+    type: 'music', day: 'sat', weekend: '2026-09-05', region: 'wellington',
+    time: 'Saturday 5 September',
+    venue: 'Cuba Street precinct, Te Aro',
+    description: "Multi-venue music festival across Pōneke's Cuba St area. Bic Runga, Savage, Silicon, So So Modern, Mokotron, MĀ and more. Wristbands from Trades Hall, 12 pm onwards.",
+    pick: true,
+    ticketed: true,},
+
+  // ── 12–13 Sep 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Happy Mondays',
+    type: 'music', day: 'sat', weekend: '2026-09-12', region: 'wellington',
+    time: '9:00 pm, Saturday 12 September',
+    venue: '92 Vivian St, Te Aro',
+    description: "Celebrating 35 years of Pills 'n' Thrills & Bellyaches.",
+    ticketed: true,},
+  {
+    title: 'The Daffodil Express',
+    type: 'outdoor', day: 'sun', weekend: '2026-09-12', region: 'wellington',
+    time: '8:00 am, Sunday 13 September',
+    venue: 'Wellington Railway Station',},
+
+  // ── 19–20 Sep 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Reece Mastin: The New Dawn Tour',
+    type: 'music', day: 'sat', weekend: '2026-09-19', region: 'wellington',
+    time: '7:30 pm, Saturday 19 September',
+    venue: 'San Fran, Te Aro',
+    ticketed: true,},
+
+  // ── 26–27 Sep 2026 ───────────────────────────────────────────────────────
+  {
+    title: 'Matilda the Musical',
+    type: 'culture', day: 'sat', weekend: '2026-09-26', region: 'wellington',
+    time: 'Running 23 Sep – 12 Oct',
+    venue: 'St James Theatre',
+    description: "Tony Award-winning musical based on Roald Dahl's beloved classic. Brought to life by Capital Theatre Trust and G&T Productions.",
+    pick: true,
+    label: '🎭 Musical',
+    family: 'Family',
+    ticketed: true,},
+  {
+    title: 'Carlucci Carnival',
+    type: 'festival', day: 'sat', weekend: '2026-09-26', region: 'wellington',
+    time: 'Saturday 26 September',
+    venue: 'Carlucci Land',
+    family: 'Family',},
 ];
