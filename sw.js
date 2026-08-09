@@ -1,4 +1,4 @@
-const CACHE = 'wow-v4';
+const CACHE = 'wow-v5';
 const SHELL = [
   '/', '/css/style.css', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png',
@@ -9,7 +9,16 @@ const SHELL = [
 
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL).catch(() => {})));
+  // Use cache:'no-cache' so install always fetches the current files, not HTTP-cached stale copies
+  e.waitUntil(
+    caches.open(CACHE).then(c =>
+      Promise.all(SHELL.map(url =>
+        fetch(url, { cache: 'no-cache' })
+          .then(res => res.ok ? c.put(url, res) : undefined)
+          .catch(() => {})
+      ))
+    )
+  );
 });
 
 self.addEventListener('activate', e => {
