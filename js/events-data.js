@@ -1831,12 +1831,14 @@ const STATIC_EVENTS = [
     time: '9:00 pm, Saturday 12 September',
     venue: '92 Vivian St, Te Aro',
     description: "Celebrating 35 years of Pills 'n' Thrills & Bellyaches.",
+    img: 'https://upload.wikimedia.org/wikipedia/commons/4/40/Happy_Mondays_June_30_2006_%28cropped%29.jpg',
     ticketed: true,},
   {
     title: 'The Daffodil Express',
     type: 'outdoor', day: 'sun', weekend: '2026-09-12', region: 'wellington',
     time: '8:00 am, Sunday 13 September',
-    venue: 'Wellington Railway Station',},
+    venue: 'Wellington Railway Station',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Spring_Daffodils_-_geograph.org.uk_-_1226772.jpg',},
   {
     title: 'Pollination in Motion',
     type: 'kids', day: 'sat', weekend: '2026-09-12', region: 'wellington',
