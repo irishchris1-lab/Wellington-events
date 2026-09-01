@@ -1879,7 +1879,7 @@ const STATIC_EVENTS = [
   {
     title: 'Irish Cultural Festival',
     type: 'culture', day: 'sat', weekend: '2026-09-12', region: 'upper-hutt',
-    time: 'Saturday 12 September · from 11:00 am',
+    time: 'Saturday 12 September · 11:00 am – 4:00 pm',
     venue: 'Brewtown, Upper Hutt',
     description: 'A day of Irish culture in Brewtown\'s courtyard precinct — music, dance and food. Handy if you are already heading to Upper Hutt for the Spring Festival on Main Street the same day.',
     url: 'https://www.brewtown.co.nz/whats-on/',
