@@ -21,7 +21,8 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 
 // ── 1. syntax ──────────────────────────────────────────────────────────
 const scripts = ['js/events-data.js', 'js/script.js', 'sw.js',
-                 'scripts/process-image.js', 'scripts/migrate-images.js'];
+                 'scripts/process-image.js', 'scripts/migrate-images.js',
+                 'scripts/generate-event-image.js', 'scripts/ai-event-image.js'];
 for (const f of scripts) {
   if (!fs.existsSync(path.join(root, f))) { fail('syntax', `${f} is missing`); continue; }
   try {
