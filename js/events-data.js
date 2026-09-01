@@ -1987,4 +1987,17 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#C8901A',
     family: 'Family',
     cost: 'Free',},
+  // ── 31 Oct 2026 ────────────────────────────────────────────────────────────
+  {
+    title: 'Mangaroa Farms Spring Festival',
+    type: 'festival', day: 'sat', weekend: '2026-10-31', region: 'upper-hutt',
+    time: 'Saturday 31 October · 10:00 am – 3:00 pm',
+    venue: 'Mangaroa Farms, 98 Whitemans Valley Road, Upper Hutt',
+    description: 'A day on the farm to welcome kōanga (spring) — garden and farm tours, workshops, live music, kids’ activities and local food and produce. Free entry; registration requested at mangaroa.org.',
+    url: 'https://store.mangaroa.org/products/mangaroa-spring-festival-2026-sat-31st-october',
+    img: 'images/events/mangaroa-spring-festival',
+    label: '🌸 Spring Festival',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free entry',},
 ];
