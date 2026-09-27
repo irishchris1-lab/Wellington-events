@@ -1,8 +1,3 @@
-// ── SERVICE WORKER REGISTRATION ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW registration failed:', e));
-}
-
 // ── INSTALL PROMPT ──
   let deferredInstallPrompt = null;
 
