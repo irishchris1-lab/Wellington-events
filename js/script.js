@@ -154,6 +154,15 @@ const SECTION_TITLES = {
     });
   }
 
+  // Returns the URL only if it is http(s); blocks javascript:, data: etc.
+  function safeUrl(url) {
+    if (!url) return '';
+    try {
+      const u = new URL(url, location.href);
+      return (u.protocol === 'https:' || u.protocol === 'http:') ? u.href : '';
+    } catch (e) { return ''; }
+  }
+
   function extractDomain(url) {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
   }
@@ -472,6 +481,7 @@ const SECTION_TITLES = {
     if (!main) return;
     try {
       const res = await fetch('sections/' + name + '.html');
+      if (!res.ok) throw new Error(`sections/${name}.html → HTTP ${res.status}`);
       main.innerHTML = await res.text();
       enhanceStaticImages(main);
       enhanceCardLinks(main);
@@ -819,7 +829,7 @@ const SECTION_TITLES = {
         : `<div class="card-strip ${tm.strip}"></div>`;
 
     // Category label
-    const catLabel = ev.label || tm.label;
+    const catLabel = ev.label ? escHtml(ev.label) : tm.label;   // ev.label is data; tm.label is trusted markup
     const catStyle = ev.labelStyle ? ` style="${escHtml(ev.labelStyle)}"` : '';
 
     // Badges (free → ticketed → family → pick, in display order)
@@ -836,7 +846,7 @@ const SECTION_TITLES = {
       ev.cost  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>`  : '',
     ].join('');
     const footer = [
-      ev.url ? `<a class="card-link" href="${escHtml(ev.url)}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${extractDomain(ev.url)}</span></a>` : '',
+      safeUrl(ev.url) ? `<a class="card-link" href="${escHtml(safeUrl(ev.url))}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${escHtml(extractDomain(ev.url))}</span></a>` : '',
       `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan">+ Plan</button>`,
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
@@ -2360,7 +2370,7 @@ const SECTION_TITLES = {
       const heroWeather = document.getElementById('heroWeather');
       if (!heroWeather) return;
 
-      const CACHE_KEY = 'wow_weather';
+      const CACHE_KEY = 'wow_weather_v2';   // v2: drops forecasts cached with the UTC date bug
       const CACHE_TTL = 3 * 60 * 60 * 1000;
 
       function wmoEmoji(code) {
@@ -2408,21 +2418,26 @@ const SECTION_TITLES = {
       }
 
       async function fetchWeather() {
+        const sat = getNextSaturday();
+        const sun = new Date(sat);
+        sun.setDate(sat.getDate() + 1);
+        // Local date, not toISOString(): UTC is a day behind NZ before midday/1pm
+        const fmt = function(d) {
+          return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        };
+        const satKey = fmt(sat);
+
         try {
           const cached = sessionStorage.getItem(CACHE_KEY);
           if (cached) {
             const parsed = JSON.parse(cached);
-            if (Date.now() - parsed.ts < CACHE_TTL) {
+            // Only reuse a forecast for the same weekend
+            if (parsed.sat === satKey && Date.now() - parsed.ts < CACHE_TTL) {
               renderWeatherStrip(parsed.data.sat, parsed.data.sun);
               return;
             }
           }
         } catch (e) {}
-
-        const sat = getNextSaturday();
-        const sun = new Date(sat);
-        sun.setDate(sat.getDate() + 1);
-        const fmt = function(d) { return d.toISOString().slice(0, 10); };
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&daily=weathercode,temperature_2m_max,precipitation_probability_max&start_date=' + fmt(sat) + '&end_date=' + fmt(sun) + '&timezone=Pacific%2FAuckland';
 
         try {
@@ -2434,7 +2449,7 @@ const SECTION_TITLES = {
             sat: { code: daily.weathercode[0], maxTemp: daily.temperature_2m_max[0], rainChance: daily.precipitation_probability_max[0] || 0 },
             sun: { code: daily.weathercode[1], maxTemp: daily.temperature_2m_max[1], rainChance: daily.precipitation_probability_max[1] || 0 },
           };
-          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch (e) {}
+          try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), sat: satKey, data })); } catch (e) {}
           renderWeatherStrip(data.sat, data.sun);
         } catch (e) {}
       }

@@ -9,6 +9,7 @@
  *     parse-time SyntaxError that kills script.js entirely)
  *  3. an event pointing at a local image whose files were never committed
  *  4. a service-worker shell entry that 404s, silently breaking precache
+ *  5. an og:image / twitter:image that points at a file that doesn't exist
  */
 const fs = require('fs');
 const path = require('path');
@@ -88,6 +89,16 @@ if (!shell) {
       fail('service-worker', `SHELL entry "${url}" has no file at ${rel}`);
     }
   }
+}
+
+// ── 5. social share images exist ───────────────────────────────────────
+// og:image / twitter:image pointing at a missing file = shares with no preview
+const site = 'https://whatsonwellington.co.nz/';
+for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:image|twitter:image)"\s+content="([^"]+)"/g)) {
+  const [, tag, url] = m;
+  if (!url.startsWith(site)) continue;               // external image — not ours to check
+  const rel = url.slice(site.length);
+  if (!fs.existsSync(path.join(root, rel))) fail('share-image', `${tag} "${url}" has no file at ${rel}`);
 }
 
 // ── report ─────────────────────────────────────────────────────────────
