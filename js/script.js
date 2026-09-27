@@ -1058,10 +1058,12 @@ const SECTION_TITLES = {
       console.warn(`[WoW] No panel for weekend "${ev.weekend}" — "${ev.title || ev.id}" not shown. Must be a Saturday in YYYY-MM-DD format within the generated range.`);
       return;
     }
-    const grids = panel.querySelectorAll('.events-grid');
-    const dayIndex = { fri: 0, sat: 1, sun: 2, mon: 3 };
-    const grid = grids[dayIndex[ev.day] ?? 1] || grids[0];
-    if (!grid) return;
+    // Route by the day label's class, never by grid position — panels don't all
+    // have the same set of days, and a positional lookup silently misfiles cards.
+    const label = panel.querySelector(`.day-label.day-${ev.day || 'sat'}`)
+               || panel.querySelector('.day-label.day-sat');
+    const grid = label && label.nextElementSibling;
+    if (!grid || !grid.classList.contains('events-grid')) return;
     grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
   }
 
@@ -2153,18 +2155,20 @@ const SECTION_TITLES = {
       btn.addEventListener('click', function() { showTab(id, this); });
       tabsInner.appendChild(btn);
 
-      // Weekend panel with empty Saturday + Sunday grids
+      // Weekend panel with the same Fri–Mon day groups as the hardcoded panels.
+      // Empty groups are hidden by CSS (.day-label:has(+ .events-grid:empty)).
       const panel = document.createElement('div');
       panel.className = 'weekend-panel';
       panel.id = id;
       panel.setAttribute('role', 'tabpanel');
       panel.setAttribute('aria-labelledby', 'wtab-' + id);
       panel.setAttribute('data-weekend', satStr);
-      panel.innerHTML =
-        `<div class="day-label day-sat"><span class="pip"></span>Saturday ${sat.getDate()} ${MONTHS_FULL[sat.getMonth()]}<span class="line"></span></div>` +
-        `<div class="events-grid"></div>` +
-        `<div class="day-label day-sun"><span class="pip"></span>Sunday ${sun.getDate()} ${MONTHS_FULL[sun.getMonth()]}<span class="line"></span></div>` +
-        `<div class="events-grid"></div>`;
+      panel.innerHTML = [['fri', 'Friday', -1], ['sat', 'Saturday', 0], ['sun', 'Sunday', 1], ['mon', 'Monday', 2]]
+        .map(([key, name, offset]) => {
+          const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
+          return `<div class="day-label day-${key}"><span class="pip"></span>${name} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
+                 `<div class="events-grid"></div>`;
+        }).join('');
       mainEl.appendChild(panel);
 
       sat = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 7);
