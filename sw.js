@@ -1,6 +1,6 @@
-const CACHE = 'wow-v5';
+const CACHE = 'wow-v6';   // v6: drops error pages and opaque cross-origin entries cached by v5
 const SHELL = [
-  '/', '/css/style.css', '/js/script.js',
+  '/', '/css/style.css', '/js/events-data.js', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png',
   '/icons/ruin-gin.png',
   '/sections/food.html', '/sections/walks.html', '/sections/parks.html',
@@ -29,12 +29,18 @@ self.addEventListener('activate', e => {
 // Network-first: bypass HTTP cache so pushes are reflected immediately; fall back to SW cache offline
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  if (!e.request.url.startsWith('http')) return;
+  // Same-origin only. Cross-origin requests (Wikimedia images, analytics, Firebase,
+  // the weather API) go straight to the network: <img> loads are no-cors, so their
+  // responses are opaque — unreadable, and heavily padded against storage quota.
+  if (new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith(
     fetch(e.request, { cache: 'no-cache' })
       .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
+        // Only cache successes, or offline would replay a 404/500 as if it were the page
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
         return res;
       })
       .catch(() => caches.match(e.request))
