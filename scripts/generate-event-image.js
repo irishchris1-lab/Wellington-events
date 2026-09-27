@@ -92,6 +92,117 @@ function equaliser(barCol, accentCol) {
   return bars;
 }
 
+function star(cx, cy, r, fill) {
+  let d = '';
+  for (let i = 0; i < 10; i++) {
+    const a = (i * 36 - 90) * Math.PI / 180, rr = i % 2 ? r * 0.45 : r;
+    d += `${i ? 'L' : 'M'} ${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr).toFixed(1)} `;
+  }
+  return `<path d="${d}Z" fill="${fill}"/>`;
+}
+
+function theatre(curtain, fold, spot) {
+  // stage curtains, a scalloped valance and a spotlight pool
+  const valance = Array.from({ length: 9 }, (_, i) =>
+    `<circle cx="${i * 100}" cy="0" r="58" fill="${curtain}"/>`).join('');
+  const drape = (x0, x1, dir) =>
+    `<path d="M ${x0} 0 L ${x1} 0 Q ${x1 - dir * 46} 220 ${x1 - dir * 12} 450 L ${x0} 450 Z" fill="${curtain}"/>` +
+    [0.3, 0.6].map(t => { const fx = x0 + (x1 - x0) * t;
+      return `<path d="M ${fx} 40 Q ${fx - dir * 20} 240 ${fx - dir * 6} 450" stroke="${fold}" stroke-width="7" fill="none" opacity="0.55"/>`; }).join('');
+  return `<path d="M ${CX - 70} 40 L ${CX + 70} 40 L ${CX + 175} 400 L ${CX - 175} 400 Z" fill="${spot}" opacity="0.13"/>`
+    + `<ellipse cx="${CX}" cy="392" rx="178" ry="30" fill="${spot}" opacity="0.45"/>`
+    + drape(0, 250, 1) + drape(800, 550, -1) + valance
+    + star(CX, 250, 48, spot);
+}
+
+function book(page, starCol, spine) {
+  // an open book with a path of stars rising from it
+  const pages = `<path d="M ${CX} 360 Q ${CX - 85} 322 ${CX - 190} 345 L ${CX - 190} 262 Q ${CX - 85} 238 ${CX} 276 Z" fill="${page}"/>`
+              + `<path d="M ${CX} 360 Q ${CX + 85} 322 ${CX + 190} 345 L ${CX + 190} 262 Q ${CX + 85} 238 ${CX} 276 Z" fill="${page}"/>`
+              + `<path d="M ${CX} 276 L ${CX} 360" stroke="${spine}" stroke-width="5"/>`;
+  const trail = [[CX + 10, 222, 8], [CX + 45, 178, 10], [CX + 95, 142, 12], [CX + 158, 118, 15]]
+    .map(([x, y, r]) => star(x, y, r, starCol)).join('');
+  return pages + trail + star(CX + 238, 104, 34, starCol);
+}
+
+function diyas(bowl, flame, glow) {
+  // three diya oil lamps — a Diwali cue
+  const lamp = (x, y, s) =>
+    `<circle cx="${x}" cy="${y - 44 * s}" r="${46 * s}" fill="${glow}" opacity="0.22"/>` +
+    `<path d="M ${x} ${y - 82 * s} Q ${x + 19 * s} ${y - 44 * s} ${x} ${y - 12 * s} Q ${x - 19 * s} ${y - 44 * s} ${x} ${y - 82 * s} Z" fill="${flame}"/>` +
+    `<path d="M ${x - 62 * s} ${y} A ${62 * s} ${38 * s} 0 0 0 ${x + 62 * s} ${y} Z" fill="${bowl}"/>`;
+  const dots = Array.from({ length: 13 }, (_, i) =>
+    `<circle cx="${130 + i * 45}" cy="392" r="${i % 2 ? 5 : 8}" fill="${glow}" opacity="0.75"/>`).join('');
+  return lamp(CX - 175, 305, 0.82) + lamp(CX, 290, 1.12) + lamp(CX + 175, 305, 0.82) + dots;
+}
+
+function yarn(ball, strand, needle) {
+  // a ball of yarn with crossed needles — handmade / craft
+  const r = 98;
+  const wraps = [-40, -12, 16, 44].map(o =>
+    `<path d="M ${CX - r + 10} ${CY + o} Q ${CX} ${CY + o - 52} ${CX + r - 10} ${CY + o}" stroke="${strand}" stroke-width="5" fill="none" opacity="0.7"/>`).join('');
+  const needles = [[-1, 1], [1, 1]].map(([dx]) =>
+    `<line x1="${CX + dx * 190}" y1="${CY - 125}" x2="${CX - dx * 20}" y2="${CY + 150}" stroke="${needle}" stroke-width="11" stroke-linecap="round"/>` +
+    `<circle cx="${CX + dx * 190}" cy="${CY - 125}" r="15" fill="${needle}"/>`).join('');
+  return needles + `<circle cx="${CX}" cy="${CY}" r="${r}" fill="${ball}"/>` + wraps
+    + `<path d="M ${CX + 70} ${CY + 70} Q ${CX + 170} ${CY + 170} ${CX + 290} ${CY + 130}" stroke="${ball}" stroke-width="6" fill="none"/>`;
+}
+
+function portico(stone, shadow) {
+  // a classical portico — heritage buildings
+  const cols = [-150, -75, 0, 75, 150].map(o =>
+    `<rect x="${CX + o - 17}" y="${CY - 38}" width="34" height="178" fill="${stone}"/>` +
+    `<rect x="${CX + o - 24}" y="${CY - 50}" width="48" height="14" fill="${stone}"/>`).join('');
+  return `<path d="M ${CX - 215} ${CY - 60} L ${CX} ${CY - 165} L ${CX + 215} ${CY - 60} Z" fill="${stone}"/>`
+    + `<path d="M ${CX - 160} ${CY - 72} L ${CX} ${CY - 142} L ${CX + 160} ${CY - 72} Z" fill="${shadow}" opacity="0.35"/>`
+    + `<rect x="${CX - 215}" y="${CY - 62}" width="430" height="14" fill="${stone}"/>`
+    + cols
+    + `<rect x="${CX - 225}" y="${CY + 140}" width="450" height="16" fill="${stone}"/>`
+    + `<rect x="${CX - 250}" y="${CY + 160}" width="500" height="16" fill="${stone}"/>`;
+}
+
+function witch(moon, hat, band, starCol) {
+  // crescent moon, a witch's hat and a scatter of stars
+  return `<defs><mask id="cres"><rect width="${W}" height="${H}" fill="#fff"/>`
+    + `<circle cx="${CX + 118}" cy="${CY - 70}" r="80" fill="#000"/></mask></defs>`
+    + `<circle cx="${CX + 80}" cy="${CY - 50}" r="92" fill="${moon}" mask="url(#cres)"/>`
+    + [[150, 90, 10], [250, 150, 7], [640, 110, 9], [690, 250, 7], [120, 250, 8], [560, 60, 6]]
+        .map(([x, y, r]) => star(x, y, r, starCol)).join('')
+    + `<path d="M ${CX - 30} ${CY - 95} Q ${CX - 60} ${CY + 30} ${CX - 105} ${CY + 125} L ${CX + 60} ${CY + 125} Q ${CX + 15} ${CY + 30} ${CX - 30} ${CY - 95} Z" fill="${hat}"/>`
+    + `<ellipse cx="${CX - 22}" cy="${CY + 130}" rx="150" ry="24" fill="${hat}"/>`
+    + `<path d="M ${CX - 96} ${CY + 104} L ${CX + 52} ${CY + 104} L ${CX + 58} ${CY + 122} L ${CX - 103} ${CY + 122} Z" fill="${band}"/>`;
+}
+
+function discoball(ball, tile, ray) {
+  // a mirror ball on a string with sparkle rays
+  const r = 100, cy = CY + 20;
+  let tiles = '';
+  for (let y = cy - r; y <= cy + r; y += 25) tiles += `<line x1="${CX - r}" y1="${y}" x2="${CX + r}" y2="${y}" stroke="${tile}" stroke-width="3"/>`;
+  for (let x = CX - r; x <= CX + r; x += 25) tiles += `<ellipse cx="${CX}" cy="${cy}" rx="${Math.abs(x - CX)}" ry="${r}" stroke="${tile}" stroke-width="3" fill="none"/>`;
+  const rays = Array.from({ length: 8 }, (_, i) => {
+    const a = (i * 45 + 22) * Math.PI / 180;
+    return `<line x1="${(CX + Math.cos(a) * 128).toFixed(1)}" y1="${(cy + Math.sin(a) * 128).toFixed(1)}" x2="${(CX + Math.cos(a) * 172).toFixed(1)}" y2="${(cy + Math.sin(a) * 172).toFixed(1)}" stroke="${ray}" stroke-width="7" stroke-linecap="round" opacity="0.85"/>`;
+  }).join('');
+  return `<defs><clipPath id="ball"><circle cx="${CX}" cy="${cy}" r="${r}"/></clipPath></defs>`
+    + `<line x1="${CX}" y1="0" x2="${CX}" y2="${cy - r}" stroke="${ball}" stroke-width="4"/>`
+    + rays + `<circle cx="${CX}" cy="${cy}" r="${r}" fill="${ball}"/>`
+    + `<g clip-path="url(#ball)">${tiles}</g>`
+    + star(CX - 150, cy - 110, 16, ray) + star(CX + 165, cy + 105, 12, ray);
+}
+
+function mic(body, grille, wave) {
+  // a stage microphone with sound waves either side
+  const waves = [1, -1].map(d => [70, 105, 140].map((r, i) =>
+    `<path d="M ${CX + d * r} ${CY - 60 + i * 4} Q ${CX + d * (r + 30)} ${CY - 5} ${CX + d * r} ${CY + 50 - i * 4}" stroke="${wave}" stroke-width="${9 - i * 2}" fill="none" stroke-linecap="round" opacity="${0.9 - i * 0.22}"/>`).join('')).join('');
+  let lines = '';
+  for (let y = CY - 88; y <= CY + 20; y += 16) lines += `<line x1="${CX - 44}" y1="${y}" x2="${CX + 44}" y2="${y}" stroke="${grille}" stroke-width="3"/>`;
+  return waves
+    + `<rect x="${CX - 50}" y="${CY - 110}" width="100" height="150" rx="50" fill="${body}"/>` + lines
+    + `<rect x="${CX - 12}" y="${CY + 40}" width="24" height="70" fill="${body}"/>`
+    + `<path d="M ${CX - 78} ${CY + 5} Q ${CX - 78} ${CY + 88} ${CX} ${CY + 88} Q ${CX + 78} ${CY + 88} ${CX + 78} ${CY + 5}" stroke="${body}" stroke-width="10" fill="none"/>`
+    + `<rect x="${CX - 70}" y="${CY + 112}" width="140" height="18" rx="9" fill="${body}"/>`;
+}
+
 // ── themes ────────────────────────────────────────────────────────────────
 const THEMES = {
   spring:  { from: '#2E8B57', to: '#E8C86A', bar: '#1A6B3A',
@@ -102,6 +213,22 @@ const THEMES = {
              art: () => fanfare('#E8C86A', '#3B1220', '#F7F2EB') },
   nightgig:{ from: '#241546', to: '#C0357A', bar: '#4FC58F',
              art: () => equaliser('#F7F2EB', '#4FC58F') },
+  theatre: { from: '#1B1F3B', to: '#4B2A5E', bar: '#E8C86A',
+             art: () => theatre('#B3263A', '#6E1224', '#F2D27A') },
+  book:    { from: '#0B5563', to: '#1B2A55', bar: '#E8C86A',
+             art: () => book('#F7F2EB', '#E8C86A', '#9AACAC') },
+  diwali:  { from: '#3A0F4A', to: '#B0306A', bar: '#F2B233',
+             art: () => diyas('#E0762B', '#FFD45C', '#F2B233') },
+  craft:   { from: '#C8723C', to: '#E8B04A', bar: '#0B5563',
+             art: () => yarn('#0B5563', '#F7F2EB', '#F7F2EB') },
+  heritage:{ from: '#2F4A5A', to: '#7C8C7A', bar: '#D9A441',
+             art: () => portico('#F7F2EB', '#2F4A5A') },
+  witch:   { from: '#120A2A', to: '#4A2468', bar: '#9B6BD1',
+             art: () => witch('#F4E7B8', '#0B0716', '#9B6BD1', '#E8C86A') },
+  disco:   { from: '#6A1B6A', to: '#E0643A', bar: '#F2D27A',
+             art: () => discoball('#E6E6EE', '#9A96B0', '#FFF4CC') },
+  mic:     { from: '#101820', to: '#1E6B5A', bar: '#E8C86A',
+             art: () => mic('#E8C86A', '#101820', '#F7F2EB') },
 };
 
 // ── args ──────────────────────────────────────────────────────────────────
