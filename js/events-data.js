@@ -2904,6 +2904,7 @@ const STATIC_EVENTS = [
   {
     title: 'New Year’s Eve on the Waterfront',
     type: 'festival', day: 'fri', weekend: '2027-01-02', region: 'wellington',
+    date: '2026-12-31',
     category: 'festivals',
     time: 'Thursday 31 December · food trucks from 3:00 pm, music 8:00 pm – midnight',
     venue: 'Whairepo Lagoon & Odlins Plaza, Frank Kitts Park',
@@ -2920,6 +2921,7 @@ const STATIC_EVENTS = [
   {
     title: 'Brew Year’s Eve',
     type: 'festival', day: 'fri', weekend: '2027-01-02', region: 'upper-hutt',
+    date: '2026-12-31',
     category: 'festivals',
     time: 'New Year’s Eve · confirm date and time with Brewtown',
     venue: 'Brewtown, Upper Hutt',

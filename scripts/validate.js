@@ -113,6 +113,9 @@ const CATEGORIES = ['music', 'festivals', 'sports', 'exhibitions', 'workshops', 
   if (!CATEGORIES.includes(ev.category)) {
     fail('category', `"${ev.title}" (${ev.weekend}) has category ${JSON.stringify(ev.category)}; use one of ${CATEGORIES.join(', ')}`);
   }
+  if ('date' in ev && !/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+    fail('category', `"${ev.title}" has date ${JSON.stringify(ev.date)}; use YYYY-MM-DD`);
+  }
   if ('indoor' in ev && typeof ev.indoor !== 'boolean') {
     fail('category', `"${ev.title}" (${ev.weekend}) has indoor: ${JSON.stringify(ev.indoor)}; use true or leave it out`);
   }

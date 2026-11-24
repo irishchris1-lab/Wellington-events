@@ -568,14 +568,20 @@ const SECTION_TITLES = {
   // that event's card directly. Shared links use it.
   const DAY_OFFSETS = { fri: -1, sat: 0, sun: 1, mon: 2, tue: 3 };
 
+  // An event's calendar date: an explicit `date` (needed for Wed/Thu events in
+  // the school holidays), else its weekend Saturday plus the day offset.
+  function eventDate(ev) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date || '')) return ev.date;
+    if (!ev.weekend) return '';
+    const [y, m, d] = ev.weekend.split('-').map(Number);
+    return _ds(new Date(y, m - 1, d + (DAY_OFFSETS[ev.day] ?? 0)));
+  }
+
   function eventSlug(ev) {
     const name = String(ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60).replace(/-$/, '');
-    if (!ev.weekend) return name;
-    const [y, m, d] = ev.weekend.split('-').map(Number);
-    const date = new Date(y, m - 1, d + (DAY_OFFSETS[ev.day] ?? 0));
-    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    return `${name}-${iso}`;
+    const iso = eventDate(ev);
+    return iso ? `${name}-${iso}` : name;
   }
 
   function eventLink(card) {
@@ -595,9 +601,9 @@ const SECTION_TITLES = {
     const title = card.querySelector('.card-title')?.textContent.trim() || "What's On Wellington";
     let when = card.querySelector('.meta-row')?.textContent.replace('🕐', '').trim() || '';
     // Times like "5:00 pm" need the date in front to make sense in a message
-    if (!MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.weekend) {
-      const [y, m, d] = card.dataset.weekend.split('-').map(Number);
-      const date = new Date(y, m - 1, d + (DAY_OFFSETS[card.dataset.day] ?? 0));
+    if (!MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.date) {
+      const [y, m, d] = card.dataset.date.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
       const day = date.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long' });
       when = when ? `${day} · ${when}` : day;
     }
@@ -681,7 +687,7 @@ const SECTION_TITLES = {
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${eventDate(ev)}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
@@ -811,6 +817,14 @@ const SECTION_TITLES = {
     return today >= tuesday;
   }
 
+  // A panel is past once its last day is over. Generated panels date their
+  // day labels; the older hand-written ones fall back to the Fri–Mon rule.
+  function panelIsPast(panel) {
+    const labels = panel.querySelectorAll('.day-label[data-date]');
+    if (!labels.length) return weekendIsPast(panel.dataset.weekend);
+    return _ds(new Date()) > labels[labels.length - 1].dataset.date;
+  }
+
   // Update tab button labels dynamically from panel data-weekend attributes
   function updateTabLabels() {
     const countBadge = n => n > 0 ? `<span class="tab-count">${n}</span>` : '';
@@ -848,7 +862,7 @@ const SECTION_TITLES = {
 
     document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
       const btn = document.getElementById('wtab-' + panel.id);
-      if (weekendIsPast(panel.dataset.weekend)) {
+      if (panelIsPast(panel)) {
         panel.dataset.pastWeekend = '1';
         if (btn) {
           btn.dataset.pastWeekend = '1';
@@ -908,10 +922,14 @@ const SECTION_TITLES = {
   // weekend; choosing it opens a row of the holiday weekends to pick from.
   // Term 4 ends by Fri 18 Dec 2026; Term 1 2027 starts between Thu 28 Jan and
   // Wed 3 Feb depending on the school (NZ Gazette). Update each year.
+  // Holiday weeks run Saturday to Friday and show every day, not just the
+  // weekend: firstDay–lastDay is the span shown.
   const SCHOOL_HOLIDAYS = {
     firstWeekend: '2026-12-19',   // Saturdays, inclusive
     lastWeekend:  '2027-01-30',
-    label:        '19 Dec – 1 Feb',
+    firstDay:     '2026-12-19',
+    lastDay:      '2027-02-02',
+    label:        '19 Dec – 2 Feb',
     note:         'Most schools go back between 28 Jan and 3 Feb',
   };
 
@@ -980,6 +998,18 @@ const SECTION_TITLES = {
 
   // Fri–Mon label for a weekend panel, e.g. "18–21 Dec" or "29 Jan–1 Feb"
   function weekendRangeLabel(panel) {
+    if (panel.dataset.holiday) {
+      const labels = panel.querySelectorAll('.day-label[data-date]');
+      if (labels.length) {
+        const [a, b] = [labels[0], labels[labels.length - 1]].map(l => {
+          const [y, m, d] = l.dataset.date.split('-').map(Number);
+          return new Date(y, m - 1, d);
+        });
+        return a.getMonth() === b.getMonth()
+          ? `${a.getDate()}–${b.getDate()} ${MONTHS_SHORT[a.getMonth()]}`
+          : `${a.getDate()} ${MONTHS_SHORT[a.getMonth()]}–${b.getDate()} ${MONTHS_SHORT[b.getMonth()]}`;
+      }
+    }
     const sat = new Date(panel.dataset.weekend + 'T00:00:00');
     const fri = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() - 1);
     const mon = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 2);
@@ -998,6 +1028,15 @@ const SECTION_TITLES = {
   }
 
   function injectEventCard(ev) {
+    // Generated panels label each day with its date, so route by date first:
+    // that is what puts a Wednesday school-holiday event on its own day.
+    const date = eventDate(ev);
+    const dayLabel = date && document.querySelector(`.weekend-panel .day-label[data-date="${date}"]`);
+    const dayGrid = dayLabel?.nextElementSibling;
+    if (dayGrid?.classList.contains('events-grid')) {
+      dayGrid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
+      return;
+    }
     const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
     if (!panel) {
       console.warn(`[WoW] No panel for weekend "${ev.weekend}" — "${ev.title || ev.id}" not shown. Must be a Saturday in YYYY-MM-DD format within the generated range.`);
@@ -1030,16 +1069,24 @@ const SECTION_TITLES = {
 
       const satDate = new Date(panel.dataset.weekend + 'T00:00:00');
       const banner  = panel.querySelector('.banner, .banner-sponsored');
-      if (!banner) return;
+      // Hand-written weekends put the day pills under their banner; school
+      // holiday weeks (up to 8 days) get them at the top of the panel.
+      if (!banner && !panel.dataset.holiday) return;
 
       // Collect days that have visible event cards
       const days = [];
       panel.querySelectorAll('.day-label').forEach(label => {
         const grid = label.nextElementSibling;
         if (!grid?.classList.contains('events-grid')) return;
-        const dayClass = [...label.classList].find(c => c in _DAY_OFFSET);
-        if (!dayClass) return;
-        const date  = new Date(satDate.getFullYear(), satDate.getMonth(), satDate.getDate() + _DAY_OFFSET[dayClass]);
+        let date;
+        if (label.dataset.date) {
+          const [y, m, d] = label.dataset.date.split('-').map(Number);
+          date = new Date(y, m - 1, d);
+        } else {
+          const dayClass = [...label.classList].find(c => c in _DAY_OFFSET);
+          if (!dayClass) return;
+          date = new Date(satDate.getFullYear(), satDate.getMonth(), satDate.getDate() + _DAY_OFFSET[dayClass]);
+        }
         const ds    = _ds(date);
         const count = grid.querySelectorAll('.card:not(.dedup-hidden)').length;
         if (count === 0) return;
@@ -1060,7 +1107,8 @@ const SECTION_TITLES = {
         `</button>`
       ).join('');
 
-      banner.after(sel);
+      if (banner) banner.after(sel);
+      else panel.prepend(sel);
 
       sel.addEventListener('click', e => {
         const pill = e.target.closest('.day-pill');
@@ -1183,6 +1231,22 @@ const SECTION_TITLES = {
     { short: 'Tue', label: 'Tuesday',  offset: 3 },
   ];
 
+  const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  // The days a panel shows: Fri–Tue normally; in the school holidays every
+  // day of the week (Sat–Fri), clipped to the holiday span.
+  function panelDays(sat, satStr) {
+    const at = offset => new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
+    const { firstWeekend, lastWeekend, firstDay, lastDay } = SCHOOL_HOLIDAYS;
+    if (satStr < firstWeekend || satStr > lastWeekend) return WEEKEND_DAYS.map(d => at(d.offset));
+    const days = [];
+    for (let i = -1; i <= 6; i++) {
+      const d = at(i), iso = _ds(d);
+      if (iso >= firstDay && iso <= lastDay && (i >= 0 || satStr === firstWeekend)) days.push(d);
+    }
+    return days;
+  }
+
   // ── Generate weekend tabs + panels for the next 18 months ──
   function generateRemainingWeekends() {
     const existingPanels = [...document.querySelectorAll('.weekend-panel[data-weekend]')];
@@ -1232,10 +1296,10 @@ const SECTION_TITLES = {
       panel.setAttribute('role', 'tabpanel');
       panel.setAttribute('aria-labelledby', 'wtab-' + id);
       panel.setAttribute('data-weekend', satStr);
-      panel.innerHTML = WEEKEND_DAYS
-        .map(({ short, label, offset }) => {
-          const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
-          return `<div class="day-label day-${short.toLowerCase()}"><span class="pip"></span>${label} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
+      panel.innerHTML = panelDays(sat, satStr)
+        .map(d => {
+          const name = DAY_NAMES[d.getDay()];
+          return `<div class="day-label day-${name.slice(0, 3).toLowerCase()}" data-date="${_ds(d)}"><span class="pip"></span>${name} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
                  `<div class="events-grid"></div>`;
         }).join('');
       mainEl.appendChild(panel);
