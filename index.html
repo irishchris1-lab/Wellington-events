@@ -80,7 +80,7 @@
 </script>
 
 <!-- ── PWA & theme ── -->
-<meta name="theme-color" content="#0B5563">
+<meta name="theme-color" content="#8E1B1F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="What's On Welly">
@@ -120,11 +120,14 @@
 ═══════════════════════════════════════ -->
 
 <!-- ── HEADER ── -->
-<header class="header">
+<header class="header festive">
   <div class="header-blob"></div>
+  <!-- Festive season decorations: remove the "festive" class above and these two divs to switch back -->
+  <div class="festive-snow" aria-hidden="true"></div>
+  <div class="festive-lights" aria-hidden="true"></div>
   <div class="header-inner">
     <div class="header-top">
-      <div class="eyebrow">Pōneke Wellington · Family Events</div>
+      <div class="eyebrow">Meri Kirihimete · Pōneke Wellington</div>
       <div class="header-auth-area">
         <!-- Weather — small supporting element -->
         <div class="hero-weather" id="heroWeather" style="display:none" aria-label="Weekend weather">
@@ -167,8 +170,8 @@
         </button>
       </div>
     </div>
-    <h1>What's on in <em>Wellington?</em></h1>
-    <p class="header-sub">Family events, cafés, walks and parks across the region — pick a weekend and area to start.</p>
+    <h1>What's on in <em>Wellington?</em><span class="festive-star" aria-hidden="true">✦</span></h1>
+    <p class="header-sub">Santa parades, carols, summer festivals and family days out across the region — pick a weekend and area to start.</p>
   </div>
 </header>
 
