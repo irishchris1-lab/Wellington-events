@@ -371,21 +371,38 @@ const SECTION_TITLES = {
     observeCards(document.getElementById('section-' + section));
   }
 
-  function showTab(id, btn, dir) {
-    document.querySelectorAll('.weekend-panel').forEach(p => {
-      p.classList.remove('active', 'slide-left', 'slide-right');
-    });
+  // Highlight the tab for a weekend panel: its own tab, or the School
+  // Holidays tab (plus that weekend's chip) when it falls in the holidays.
+  function markActiveTab(panel) {
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-selected', 'false');
+    });
+    const inHoliday = !!panel.dataset.holiday;
+    const btn = document.getElementById(inHoliday ? 'holidayTab' : 'wtab-' + panel.id);
+    btn?.classList.add('active');
+    btn?.setAttribute('aria-selected', 'true');
+    const bar = document.getElementById('holidayBar');
+    if (bar) {
+      bar.hidden = !inHoliday;
+      bar.querySelectorAll('.holiday-chip').forEach(chip => {
+        const on = chip.dataset.panel === panel.id;
+        chip.classList.toggle('active', on);
+        chip.setAttribute('aria-pressed', String(on));
+      });
+    }
+    return btn;
+  }
+
+  function showTab(id, btn, dir) {
+    document.querySelectorAll('.weekend-panel').forEach(p => {
+      p.classList.remove('active', 'slide-left', 'slide-right');
     });
     const panel = document.getElementById(id);
     panel.classList.add('active');
     if (dir === 1)  panel.classList.add('slide-right');
     if (dir === -1) panel.classList.add('slide-left');
-    btn.classList.add('active');
-    btn.setAttribute('aria-selected', 'true');
-    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    markActiveTab(panel)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     // Show/hide the "past weekend" banner and muted-link state
     const isPast = !!panel.dataset.pastWeekend;
     const banner = document.getElementById('pastWeekendBanner');
@@ -507,7 +524,7 @@ const SECTION_TITLES = {
     document.querySelectorAll('[role="tablist"]').forEach(tablist => {
       tablist.addEventListener('keydown', (e) => {
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-        const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+        const tabs = [...tablist.querySelectorAll('[role="tab"]')].filter(t => !t.hidden);
         const current = tabs.indexOf(document.activeElement);
         if (current === -1) return;
         e.preventDefault();
@@ -700,12 +717,8 @@ const SECTION_TITLES = {
     const cardPanel = card.closest('.weekend-panel');
     if (cardPanel && !cardPanel.classList.contains('active')) {
       document.querySelectorAll('.weekend-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active'); b.setAttribute('aria-selected', 'false');
-      });
       cardPanel.classList.add('active');
-      const panelBtn = document.getElementById('wtab-' + cardPanel.id);
-      if (panelBtn) { panelBtn.classList.add('active'); panelBtn.setAttribute('aria-selected', 'true'); }
+      markActiveTab(cardPanel);
       applyFilter();
     }
     if (card.classList.contains('hidden')) {
@@ -740,28 +753,28 @@ const SECTION_TITLES = {
 
   // Update tab button labels dynamically from panel data-weekend attributes
   function updateTabLabels() {
+    const countBadge = n => n > 0 ? `<span class="tab-count">${n}</span>` : '';
+    const panelCount = panel => panel.querySelectorAll('.card:not(.dedup-hidden)').length;
     let visibleCount = 0;
     document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
-      if (btn.dataset.pastWeekend) return; // past tabs get their own labels from the date
-      const panelId = btn.getAttribute('aria-controls');
-      const panel = panelId && document.getElementById(panelId);
-      if (!panel || !panel.dataset.weekend) return;
-      const sat = new Date(panel.dataset.weekend + 'T00:00:00');
-      const fri = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() - 1);
-      const mon = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 2);
-      const datePart = mon.getMonth() === fri.getMonth()
-        ? `${fri.getDate()}–${mon.getDate()} ${MONTHS_SHORT[fri.getMonth()]}`
-        : `${fri.getDate()} ${MONTHS_SHORT[fri.getMonth()]}–${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]}`;
-      const count = panel.querySelectorAll('.card').length;
-      const countBadge = count > 0 ? `<span class="tab-count">${count}</span>` : '';
+      if (btn.dataset.pastWeekend || btn.hidden) return; // past tabs keep their date labels
       visibleCount++;
-      if (visibleCount === 1) {
-        btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}${countBadge}`;
-      } else if (visibleCount === 2) {
-        btn.innerHTML = `Next Weekend · ${datePart}${countBadge}`;
-      } else {
-        btn.innerHTML = datePart + countBadge;
+      if (btn.id === 'holidayTab') {
+        const total = [...document.querySelectorAll('.weekend-panel[data-holiday]')].reduce((n, p) => n + panelCount(p), 0);
+        const lead = visibleCount === 1 ? '<span class="tab-live-dot"></span>' : '';
+        btn.innerHTML = `${lead}<span aria-hidden="true">🎄</span> School Holidays · ${SCHOOL_HOLIDAYS.label}${countBadge(total)}`;
+        return;
       }
+      const panel = document.getElementById(btn.getAttribute('aria-controls') || '');
+      if (!panel || !panel.dataset.weekend) return;
+      const datePart = weekendRangeLabel(panel) + countBadge(panelCount(panel));
+      if (visibleCount === 1)      btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}`;
+      else if (visibleCount === 2) btn.innerHTML = `Next Weekend · ${datePart}`;
+      else                         btn.innerHTML = datePart;
+    });
+    document.querySelectorAll('.holiday-chip').forEach(chip => {
+      const panel = document.getElementById(chip.dataset.panel);
+      if (panel) chip.innerHTML = weekendRangeLabel(panel) + countBadge(panelCount(panel));
     });
   }
 
@@ -827,13 +840,70 @@ const SECTION_TITLES = {
     if (active?.dataset.pastWeekend && firstFuture) {
       active.classList.remove('active');
       firstFuture.classList.add('active');
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      const newBtn = document.getElementById('wtab-' + firstFuture.id);
-      if (newBtn) { newBtn.classList.add('active'); newBtn.setAttribute('aria-selected', 'true'); }
     }
+  }
+
+  // ── School holidays ──────────────────────────────────────────────────────────
+  // The summer break gets one 🎄 tab in the weekend bar instead of a tab per
+  // weekend; choosing it opens a row of the holiday weekends to pick from.
+  // Term 4 ends by Fri 18 Dec 2026; Term 1 2027 starts between Thu 28 Jan and
+  // Wed 3 Feb depending on the school (NZ Gazette). Update each year.
+  const SCHOOL_HOLIDAYS = {
+    firstWeekend: '2026-12-19',   // Saturdays, inclusive
+    lastWeekend:  '2027-01-30',
+    label:        '19 Dec – 1 Feb',
+    note:         'Most schools go back between 28 Jan and 3 Feb',
+  };
+
+  function setupSchoolHolidays() {
+    const { firstWeekend, lastWeekend } = SCHOOL_HOLIDAYS;
+    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .filter(p => !p.dataset.pastWeekend && p.dataset.weekend >= firstWeekend && p.dataset.weekend <= lastWeekend);
+    if (!panels.length) return;
+
+    panels.forEach(p => {
+      p.dataset.holiday = '1';
+      const b = document.getElementById('wtab-' + p.id);
+      if (b) b.hidden = true;
+    });
+
+    const tab = document.createElement('button');
+    tab.className = 'tab-btn holiday-tab';
+    tab.id = 'holidayTab';
+    tab.type = 'button';
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-selected', 'false');
+    tab.addEventListener('click', () => {
+      const current = panels.find(p => p.classList.contains('active')) || panels[0];
+      showTab(current.id);
+    });
+    document.getElementById('wtab-' + panels[0].id)?.before(tab);
+
+    const bar = document.createElement('div');
+    bar.className = 'holiday-bar';
+    bar.id = 'holidayBar';
+    bar.hidden = true;
+    bar.innerHTML = `<div class="holiday-bar-inner">
+        <div class="holiday-bar-title"><span aria-hidden="true">🎄</span> School holidays <span class="holiday-bar-note">${escHtml(SCHOOL_HOLIDAYS.note)}</span></div>
+        <div class="holiday-chips" role="group" aria-label="Holiday weekends">
+          ${panels.map(p => `<button type="button" class="holiday-chip" data-panel="${p.id}" aria-pressed="false"></button>`).join('')}
+        </div>
+      </div>`;
+    bar.addEventListener('click', e => {
+      const chip = e.target.closest('.holiday-chip');
+      if (chip) showTab(chip.dataset.panel);
+    });
+    document.querySelector('.tabs-inner')?.after(bar);
+  }
+
+  // Fri–Mon label for a weekend panel, e.g. "18–21 Dec" or "29 Jan–1 Feb"
+  function weekendRangeLabel(panel) {
+    const sat = new Date(panel.dataset.weekend + 'T00:00:00');
+    const fri = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() - 1);
+    const mon = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 2);
+    return mon.getMonth() === fri.getMonth()
+      ? `${fri.getDate()}–${mon.getDate()} ${MONTHS_SHORT[fri.getMonth()]}`
+      : `${fri.getDate()} ${MONTHS_SHORT[fri.getMonth()]}–${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]}`;
   }
 
   function togglePastTabs() {
@@ -1892,6 +1962,9 @@ const SECTION_TITLES = {
     bindEventListeners();
     generateRemainingWeekends();
     setupPastWeekendTabs();
+    setupSchoolHolidays();
+    const startPanel = document.querySelector('.weekend-panel.active');
+    if (startPanel) markActiveTab(startPanel);
     updateTabLabels();
     updateWeekendNav();
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
