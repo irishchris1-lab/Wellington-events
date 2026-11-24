@@ -88,7 +88,6 @@ const MONTHS_FULL  = ['January','February','March','April','May','June','July','
 
 const SECTION_TITLES = {
     events:  "Events This Weekend — What's On Wellington",
-    planner: "My Weekend Plan — What's On Wellington",
     about:   "About — What's On Wellington",
   };
 
@@ -169,18 +168,6 @@ const SECTION_TITLES = {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
   }
 
-  // Add a domain label to every .card-link that doesn't already have one.
-  function enhanceCardLinks(container) {
-    const root = container || document;
-    root.querySelectorAll('a.card-link').forEach(a => {
-      if (a.querySelector('.card-link-domain')) return; // already done
-      const domain = extractDomain(a.href);
-      if (!domain) return;
-      a.setAttribute('rel', 'noopener noreferrer');
-      a.insertAdjacentHTML('beforeend', `<span class="card-link-domain">${domain}</span>`);
-    });
-  }
-
   // Enhance static HTML event cards with ARIA attributes.
   function enhanceCardAccessibility(container) {
     const root = container || document;
@@ -206,13 +193,6 @@ const SECTION_TITLES = {
           badge.innerHTML = '<span aria-hidden="true">🔥</span><span class="sr-only">Editor\'s pick</span>';
         }
       });
-      // Descriptive aria-label on plan buttons
-      const title = titleEl?.textContent?.trim();
-      if (title) {
-        card.querySelectorAll('.add-to-plan-btn').forEach(btn => {
-          if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', `Add ${title} to plan`);
-        });
-      }
     });
   }
 
@@ -333,8 +313,7 @@ const SECTION_TITLES = {
   }
 
   function showSectionFromMenu(section) {
-    if (section === 'planner') handlePlannerTabClick();
-    else showSection(section);
+    showSection(section);
   }
 
   // ── URL state (?s=section&r=region) ──
@@ -358,7 +337,7 @@ const SECTION_TITLES = {
     return { section, region, category };
   }
 
-  // Sections: events (the main page), planner and about
+  // Sections: events (the main page) and about
   function showSection(section) {
     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
     document.getElementById('section-' + section).classList.add('active');
@@ -518,8 +497,7 @@ const SECTION_TITLES = {
     const { section, region, category } = readHash();
     if (document.querySelector(`[data-filter-region="${region}"]`)) filterRegion(region);
     filterCategory(category);
-    if (section === 'planner') handlePlannerTabClick();
-    else showSection(section);
+    showSection(section);
 
     // ── Arrow key navigation for tablists ──
     document.querySelectorAll('[role="tablist"]').forEach(tablist => {
@@ -541,18 +519,11 @@ const SECTION_TITLES = {
   });
 
 // ═══════════════════════════════════════════════════════
-  // ✏️  FIREBASE SETUP — only needed for cross-device sync
+  // ✏️  FIREBASE — events added in the admin portal, and the About text
   //
-  //  The planner works RIGHT NOW for guests (saves locally).
-  //  To enable Google sign-in and cloud sync:
-  //
-  //  1. Go to https://console.firebase.google.com
-  //  2. Create a project → Add a web app → copy the config
-  //  3. Authentication → Sign-in methods → Enable Google
-  //  4. Firestore Database → Create database. Lock it down with security
-  //     rules: the admin email check in admin/admin.js is client-side only,
-  //     so the rules are what actually stop strangers writing events.
-  //  5. Paste your config values below and deploy
+  //  The public site only reads Firestore. Lock it down with security rules:
+  //  the admin email check in admin/admin.js is client-side only, so the
+  //  rules are what actually stop strangers writing events.
   // ═══════════════════════════════════════════════════════
   const firebaseConfig = {
     apiKey:            "AIzaSyCql0Pc_sSFcQSo8NDTWO29lLcXqFKFFgg",
@@ -565,11 +536,10 @@ const SECTION_TITLES = {
 
   // ── Initialise Firebase (silently skipped if not configured) ──
   let firebaseReady = false;
-  let db = null, auth = null;
+  let db = null;
   try {
     if (!firebaseConfig.apiKey.startsWith('YOUR_')) {
       firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
       db   = firebase.firestore();
       firebaseReady = true;
       loadFirestoreEvents();
@@ -630,12 +600,11 @@ const SECTION_TITLES = {
     ].join('');
     const detailsUrl = safeUrl(ev.url);
     const detailsLabel = detailsUrl.startsWith('https://www.google.com/search?')
-      ? 'Search for event details'
-      : 'Find out more';
-    const footer = [
-      detailsUrl ? `<a class="card-link" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} ↗<span class="card-link-domain">${escHtml(extractDomain(detailsUrl))}</span></a>` : '',
-      `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan">+ Plan</button>`,
-    ].join('');
+      ? 'Search for details'
+      : 'View event';
+    const footer = detailsUrl
+      ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
+      : '';
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
@@ -654,7 +623,7 @@ const SECTION_TITLES = {
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${ev.description ? `<div class="card-desc" id="${titleId}-more">${escHtml(ev.description)}</div>` : `<div id="${titleId}-more" hidden></div>`}
         </div>
-        <div class="card-footer">${footer}</div>
+        ${footer ? `<div class="card-footer">${footer}</div>` : ''}
       </article>`;
   }
 
@@ -1044,7 +1013,6 @@ const SECTION_TITLES = {
     });
     applyFilter();
     updateTabLabels();
-    updateAddButtons();
     buildHighlightsRow();
     buildDaySelectors();
     setEagerImages();
@@ -1076,7 +1044,6 @@ const SECTION_TITLES = {
 
         applyFilter();
         updateTabLabels();
-        updateAddButtons();
         buildHighlightsRow();
         buildDaySelectors();
         setEagerImages();       // re-run after Firestore cards are injected
@@ -1102,658 +1069,6 @@ const SECTION_TITLES = {
     }).catch(e => console.warn('Could not load about content:', e));
   }
 
-  // ═══════════════════════════════════════
-  //  AUTH STATE
-  // ═══════════════════════════════════════
-  let currentUser = null;
-
-  function openLoginModal()  { document.getElementById('loginOverlay').classList.add('open'); }
-  function closeLoginModal() { document.getElementById('loginOverlay').classList.remove('open'); }
-
-  // Guest — just close modal and use localStorage
-  function continueAsGuest() {
-    closeLoginModal();
-    showToast('Planning as guest — your plan saves on this device');
-    renderPlan();
-  }
-
-  async function signInWithGoogle() {
-    if (!firebaseReady) {
-      showToast('Firebase not set up yet — planning as guest for now');
-      continueAsGuest();
-      return;
-    }
-    const btn = document.getElementById('googleSignInBtn');
-    btn.textContent = 'Signing in…';
-    btn.disabled = true;
-    try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      await auth.signInWithPopup(provider);
-      closeLoginModal();
-    } catch (e) {
-      btn.disabled = false;
-      btn.innerHTML = `<svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google`;
-      if (e.code !== 'auth/popup-closed-by-user') {
-        showToast('Sign-in failed — please try again');
-        console.error('Google sign-in error:', e);
-      }
-    }
-  }
-
-  async function signOutUser() {
-    closeUserDropdown();
-    if (firebaseReady && auth) await auth.signOut();
-    currentUser = null;
-    updateAuthUI(null);
-    showToast('Signed out');
-  }
-
-  function updateAuthUI(user) {
-    const signInBtn = document.getElementById('authSignInBtn');
-    const userArea  = document.getElementById('authUserArea');
-    const avatarBtn = document.getElementById('authAvatarBtn');
-    const nameEl    = document.getElementById('userDropdownName');
-    const emailEl   = document.getElementById('userDropdownEmail');
-
-    if (user) {
-      signInBtn.style.display = 'none';
-      userArea.style.display  = 'block';
-      nameEl.textContent  = user.displayName || 'Signed in';
-      emailEl.textContent = user.email || '';
-      // Show avatar photo or initials
-      const initial = (user.displayName || 'U')[0].toUpperCase();
-      if (user.photoURL) {
-        avatarBtn.style.backgroundImage = `url(${user.photoURL})`;
-        avatarBtn.style.backgroundSize  = 'cover';
-        avatarBtn.textContent = '';
-      } else {
-        avatarBtn.textContent = initial;
-      }
-    } else {
-      signInBtn.style.display = 'flex';
-      userArea.style.display  = 'none';
-    }
-  }
-
-  // Listen for Firebase auth state changes
-  if (firebaseReady) {
-    auth.onAuthStateChanged(async user => {
-      currentUser = user;
-      updateAuthUI(user);
-      if (user) {
-        await loadPlan();
-        renderPlan();
-        updateAddButtons();
-        showToast(`Welcome back, ${user.displayName?.split(' ')[0] || 'there'} 👋`);
-      }
-    });
-  }
-
-  // ── User dropdown ──
-  function toggleUserDropdown() {
-    document.getElementById('userDropdown').classList.toggle('open');
-  }
-  function closeUserDropdown() {
-    document.getElementById('userDropdown').classList.remove('open');
-  }
-  // Close dropdown on outside click
-  document.addEventListener('click', (e) => {
-    const dd = document.getElementById('userDropdown');
-    const area = document.getElementById('authUserArea');
-    if (dd && area && !area.contains(e.target)) dd.classList.remove('open');
-  });
-
-  // ═══════════════════════════════════════
-  //  PLANNER — Data & Persistence
-  // ═══════════════════════════════════════
-  let planItems = []; // Array of { id, title, time, location, category, day, weekendStart, section, region, addedAt }
-
-  // Plan days, in weekend order, with their offset from the Saturday
-  const PLAN_DAYS = [
-    { value: 'friday',   label: 'Friday',   short: 'Fri', offset: -1 },
-    { value: 'saturday', label: 'Saturday', short: 'Sat', offset: 0 },
-    { value: 'sunday',   label: 'Sunday',   short: 'Sun', offset: 1 },
-    { value: 'monday',   label: 'Monday',   short: 'Mon', offset: 2 },
-    { value: 'tuesday',  label: 'Tuesday',  short: 'Tue', offset: 3 },
-  ];
-  let currentPlanWeekend = null; // YYYY-MM-DD of the Saturday for the selected weekend
-
-  // ── Weekend helpers ──
-  function getUpcomingWeekends(count) {
-    count = count || 4;
-    const weekends = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dayOfWeek = today.getDay(); // 0=Sun, 6=Sat
-    const daysToSat = dayOfWeek === 6 ? 0 : dayOfWeek === 0 ? 6 : (6 - dayOfWeek);
-    const firstSat = new Date(today);
-    firstSat.setDate(today.getDate() + daysToSat);
-    for (let i = 0; i < count; i++) {
-      const sat = new Date(firstSat);
-      sat.setDate(firstSat.getDate() + i * 7);
-      const sun = new Date(sat);
-      sun.setDate(sat.getDate() + 1);
-      const pad = n => String(n).padStart(2, '0');
-      const key = `${sat.getFullYear()}-${pad(sat.getMonth() + 1)}-${pad(sat.getDate())}`;
-      weekends.push({ key, sat, sun, label: formatWeekendLabel(sat, sun) });
-    }
-    return weekends;
-  }
-
-  function formatWeekendLabel(sat, sun) {
-    const satStr = sat.getDate() + ' ' + MONTHS_SHORT[sat.getMonth()];
-    const sunStr = sun.getMonth() === sat.getMonth()
-      ? sun.getDate() + ''
-      : sun.getDate() + ' ' + MONTHS_SHORT[sun.getMonth()];
-    return satStr + '–' + sunStr;
-  }
-
-  // Returns all non-past weekends sourced directly from the DOM panels
-  // (includes both hardcoded and dynamically generated panels)
-  function getAllWeekends() {
-    return [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .map(p => {
-        const satStr = p.dataset.weekend;
-        const [y, m, d] = satStr.split('-').map(Number);
-        const sat = new Date(y, m - 1, d);
-        const sun = new Date(y, m - 1, d + 1);
-        const label = sun.getMonth() === sat.getMonth()
-          ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
-          : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
-        return { key: satStr, sat, sun, label };
-      })
-      .filter(w => !weekendIsPast(w.key))
-      .sort((a, b) => a.key.localeCompare(b.key));
-  }
-
-  function selectPlanWeekend(key) {
-    currentPlanWeekend = key;
-    renderPlan();
-  }
-
-  function generateItemId(title) {
-    return title.replace(/[^a-z0-9]/gi, '-').toLowerCase().substring(0, 60) + '-' + Date.now().toString(36);
-  }
-
-  function getCardData(cardEl) {
-    const data = {
-      title:    cardEl.querySelector('.card-title')?.textContent?.trim() || '',
-      time:     '',
-      location: '',
-      category: cardEl.querySelector('.card-cat')?.textContent?.trim() || '',
-      region:   cardEl.dataset.region || '',
-      section:  'events',
-      // Weekend: data-weekend (generated cards) or the parent panel (static HTML cards)
-      weekendStart: cardEl.dataset.weekend || cardEl.closest('.weekend-panel')?.dataset?.weekend || '',
-    };
-    cardEl.querySelectorAll('.meta-row').forEach(row => {
-      const text = row.textContent.trim();
-      if (text.includes('🕐')) data.time = text.replace('🕐', '').trim();
-      if (text.includes('📍')) data.location = text.replace('📍', '').trim();
-    });
-    // Day: data-day (generated cards) or the day heading above the grid (static HTML cards)
-    const dayMap = { fri: 'friday', sat: 'saturday', sun: 'sunday', mon: 'monday', tue: 'tuesday' };
-    const dayKey = cardEl.dataset.day
-      || [...(cardEl.closest('.events-grid')?.previousElementSibling?.classList || [])]
-           .map(c => c.replace('day-', '')).find(k => k in dayMap);
-    data.day = dayMap[dayKey] || 'saturday';
-    return data;
-  }
-
-  function addToPlan(cardEl) {
-    const data = getCardData(cardEl);
-    // Check if already added (by title match)
-    if (planItems.some(item => item.title === data.title)) {
-      showToast('Already in your plan');
-      return;
-    }
-
-    // Use the event's own weekend date; fall back to selected planner weekend or next upcoming
-    const weekendStart = data.weekendStart || currentPlanWeekend || getUpcomingWeekends(1)[0].key;
-    currentPlanWeekend = weekendStart;
-    const item = {
-      id: generateItemId(data.title),
-      ...data,
-      weekendStart,
-      addedAt: Date.now()
-    };
-
-    planItems.push(item);
-    savePlan();
-    renderPlan();
-    updateAddButtons();
-    showToast('Added to your weekend plan ✓');
-  }
-
-  function removeFromPlan(itemId) {
-    planItems = planItems.filter(i => i.id !== itemId);
-    savePlan();
-    renderPlan();
-    updateAddButtons();
-    showToast('Removed from plan');
-  }
-
-  function changeDay(itemId, newDay) {
-    const item = planItems.find(i => i.id === itemId);
-    if (item) {
-      item.day = newDay;
-      savePlan();
-      renderPlan();
-    }
-  }
-
-  function clearPlan() {
-    if (!confirm('Clear your entire weekend plan?')) return;
-    planItems = [];
-    savePlan();
-    renderPlan();
-    updateAddButtons();
-    showToast('Plan cleared');
-  }
-
-  // ── Persist to Firestore (or localStorage fallback) ──
-  async function savePlan() {
-    updatePlanBadge();
-    if (firebaseReady && currentUser) {
-      try {
-        await db.collection('plans').doc(currentUser.uid).set({
-          items: planItems,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (e) {
-        console.warn('Firestore save failed, using localStorage', e);
-        localStorage.setItem('wow_plan', JSON.stringify(planItems));
-      }
-    } else {
-      localStorage.setItem('wow_plan', JSON.stringify(planItems));
-    }
-  }
-
-  function readLocalPlan() {
-    try {
-      const items = JSON.parse(localStorage.getItem('wow_plan') || '[]');
-      return Array.isArray(items) ? items : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  async function loadPlan() {
-    if (firebaseReady && currentUser) {
-      try {
-        const doc = await db.collection('plans').doc(currentUser.uid).get();
-        if (doc.exists && doc.data().items) {
-          planItems = doc.data().items;
-        } else {
-          // Check localStorage for items added before sign-in
-          const local = readLocalPlan();
-          if (local.length) {
-            planItems = local;
-            await savePlan(); // migrate to Firestore
-            localStorage.removeItem('wow_plan');
-          }
-        }
-      } catch (e) {
-        console.warn('Firestore load failed', e);
-        planItems = readLocalPlan();
-      }
-    } else {
-      planItems = readLocalPlan();
-    }
-    renderPlan();
-    updateAddButtons();
-  }
-
-  // ── Render plan timeline ──
-  function renderPlan() {
-    const container = document.getElementById('plannerTimeline');
-    const emptyEl   = document.getElementById('plannerEmpty');
-
-    const allWeekends = getAllWeekends();
-    if (!currentPlanWeekend && allWeekends.length) currentPlanWeekend = allWeekends[0].key;
-
-    // Migrate legacy items without weekendStart
-    planItems.forEach(item => { if (!item.weekendStart && allWeekends.length) item.weekendStart = allWeekends[0].key; });
-
-    const weekendItems = planItems.filter(i => i.weekendStart === currentPlanWeekend);
-
-    const exportWrap = document.getElementById('calExportWrap');
-    if (planItems.length === 0) {
-      container.innerHTML = renderWeekendPicker(allWeekends);
-      emptyEl.style.display = 'block';
-      if (exportWrap) exportWrap.style.display = 'none';
-      updatePlanBadge();
-      return;
-    }
-    emptyEl.style.display = 'none';
-    if (exportWrap) exportWrap.style.display = '';
-
-    let html = renderWeekendPicker(allWeekends);
-
-    if (weekendItems.length === 0) {
-      html += '<p class="plan-weekend-empty">Nothing planned for this weekend yet — browse and tap <strong>+ Plan</strong> to add something.</p>';
-    } else {
-      PLAN_DAYS.forEach(d => {
-        const items = weekendItems.filter(i => planDay(i) === d.value);
-        if (items.length) html += renderDaySection(d, items);
-      });
-    }
-
-    container.innerHTML = html;
-    updatePlanBadge();
-
-    // Scroll picker to show the active weekend chip without moving the page
-    requestAnimationFrame(() => {
-      const picker = container.querySelector('.weekend-picker');
-      const activeChip = picker?.querySelector('.weekend-chip.active');
-      if (picker && activeChip) {
-        const group = activeChip.closest('.weekend-month-group');
-        if (group) {
-          const groupRect  = group.getBoundingClientRect();
-          const pickerRect = picker.getBoundingClientRect();
-          picker.scrollTop += groupRect.top - pickerRect.top - 4;
-        }
-      }
-    });
-  }
-
-  function renderWeekendPicker(weekends) {
-    // Group by year-month
-    const groups = [];
-    weekends.forEach(w => {
-      const groupKey = `${w.sat.getFullYear()}-${w.sat.getMonth()}`;
-      let group = groups.find(g => g.key === groupKey);
-      if (!group) {
-        group = { key: groupKey, label: MONTHS_FULL[w.sat.getMonth()] + ' ' + w.sat.getFullYear(), weekends: [] };
-        groups.push(group);
-      }
-      group.weekends.push(w);
-    });
-
-    let html = '<div class="weekend-picker">';
-    groups.forEach(group => {
-      html += '<div class="weekend-month-group">';
-      html += '<div class="weekend-month-label">' + group.label + '</div>';
-      html += '<div class="weekend-chips">';
-      group.weekends.forEach(w => {
-        const isActive = w.key === currentPlanWeekend;
-        const count = planItems.filter(i => i.weekendStart === w.key).length;
-        const badge = count > 0 ? '<span class="weekend-chip-badge">' + count + '</span>' : '';
-        html += '<button class="weekend-chip' + (isActive ? ' active' : '') + '" onclick="selectPlanWeekend(\'' + w.key + '\')">' + w.label + badge + '</button>';
-      });
-      html += '</div></div>';
-    });
-    html += '</div>';
-    return html;
-  }
-
-  // Items saved before Friday/Monday existed, or with an unknown day, sit on Saturday
-  function planDay(item) {
-    return PLAN_DAYS.some(d => d.value === item.day) ? item.day : 'saturday';
-  }
-
-  function renderDaySection(day, items) {
-    const dayValue = day.value;
-    const options = PLAN_DAYS.map(d =>
-      `<option value="${d.value}"${d.value === dayValue ? ' selected' : ''}>${d.short}</option>`).join('');
-
-    let html = `<div class="plan-day-section">
-      <div class="plan-day-title"><span class="pip"></span>${day.label}<span class="line"></span></div>
-      <div class="plan-items">`;
-
-    items.forEach((item, idx) => {
-      const sectionIcon = { events: '🗓', food: '☕', walks: '🌿', parks: '🛝', activities: '🎯', markets: '🛒', other: '📌' }[item.section] || '📌';
-      html += `
-        <div class="plan-item" draggable="true" data-item-id="${item.id}">
-          <div class="plan-item-grip" title="Drag to reorder">⠿</div>
-          <div class="plan-item-content">
-            <div class="plan-item-title">${escHtml(item.title)}</div>
-            <div class="plan-item-meta">
-              <span>${sectionIcon} ${escHtml(item.category)}</span>
-              ${item.time ? '<span>🕐 ' + escHtml(item.time) + '</span>' : ''}
-              ${item.location ? '<span>📍 ' + escHtml(item.location) + '</span>' : ''}
-            </div>
-          </div>
-          <select class="plan-day-select" onchange="changeDay('${item.id}', this.value)" title="Move to another day" aria-label="Day">
-            ${options}
-          </select>
-          <button class="plan-item-remove" onclick="removeFromPlan('${item.id}')" title="Remove">✕</button>
-        </div>`;
-    });
-
-    html += '</div></div>';
-    return html;
-  }
-
-  // ── Plan badge count ──
-  function updatePlanBadge() {
-    const count = planItems.length;
-    const headerBadge = document.getElementById('planCountBadgeHeader');
-    if (headerBadge) {
-      headerBadge.textContent = count;
-      headerBadge.classList.toggle('visible', count > 0);
-    }
-  }
-
-  // ── Share intercept — show sign-in prompt for guests ──
-  function handleShareClick() {
-    if (currentUser) {
-      sharePlan();
-    } else {
-      document.getElementById('shareModalOverlay').classList.add('open');
-    }
-  }
-  function closeShareModal() {
-    document.getElementById('shareModalOverlay').classList.remove('open');
-  }
-  function shareWithoutSignIn() {
-    closeShareModal();
-    sharePlan();
-  }
-
-  // ── Share plan ──
-  function sharePlan() {
-    if (planItems.length === 0) { showToast('Nothing to share yet'); return; }
-    let text = '🗓 My Wellington Weekend Plan\n\n';
-    const line = i => `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`;
-    const allWeekends = getAllWeekends();
-    const weekendKeys = [...new Set(planItems.map(i => i.weekendStart || ''))].sort();
-    weekendKeys.forEach(key => {
-      const wInfo = allWeekends.find(w => w.key === key);
-      if (wInfo) text += '🗓 ' + wInfo.label + '\n';
-      PLAN_DAYS.forEach(d => {
-        const items = planItems.filter(i => (i.weekendStart || '') === key && planDay(i) === d.value);
-        if (!items.length) return;
-        text += '📅 ' + d.label.toUpperCase() + '\n';
-        items.forEach(i => { text += line(i); });
-        text += '\n';
-      });
-    });
-    text += '\nPlanned on whatsonwellington.co.nz';
-
-    if (navigator.share) {
-      navigator.share({ title: 'My Wellington Weekend', text }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(text).then(() => showToast('Plan copied to clipboard'));
-    }
-  }
-
-  // ═══════════════════════════════════════
-  //  CALENDAR EXPORT
-  // ═══════════════════════════════════════
-
-  function toggleCalendarExport(e) {
-    e.stopPropagation();
-    document.getElementById('calExportDropdown')?.classList.toggle('open');
-  }
-
-  // Close calendar dropdown on outside click
-  document.addEventListener('click', () => {
-    document.getElementById('calExportDropdown')?.classList.remove('open');
-  });
-
-  // Parse a time string like "10am", "10:30am–12pm", "2.00pm" into {startH,startM,endH,endM}
-  function parseTimeRange(timeStr) {
-    if (!timeStr) return { startH: 10, startM: 0, endH: 12, endM: 0 };
-    const s = timeStr.toLowerCase()
-      .replace(/\s+/g, '')
-      .replace(/[–—]/g, '-')
-      .replace(/\./g, ':')
-      .replace(/^from/, '');
-    const parts = s.split('-');
-    function parseOne(t) {
-      const m = t.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)$/);
-      if (!m) return null;
-      let h = parseInt(m[1]);
-      const min = parseInt(m[2] || '0');
-      if (m[3] === 'pm' && h !== 12) h += 12;
-      if (m[3] === 'am' && h === 12) h = 0;
-      return { h, m: min };
-    }
-    const start = parseOne(parts[0]);
-    if (!start) return { startH: 10, startM: 0, endH: 12, endM: 0 };
-    const end = parts[1] ? parseOne(parts[1]) : null;
-    return {
-      startH: start.h, startM: start.m,
-      endH: end ? end.h : Math.min(start.h + 2, 23),
-      endM: end ? end.m : start.m
-    };
-  }
-
-  // Returns plain date/time objects for calendar formatting (avoids timezone pitfalls)
-  function getItemDateParts(item) {
-    if (!item.weekendStart) return null;
-    const [y, mo, d] = item.weekendStart.split('-').map(Number);
-    const offset = PLAN_DAYS.find(pd => pd.value === planDay(item)).offset;
-    const dt = new Date(y, mo - 1, d + offset); // Date handles month boundaries
-    const year = dt.getFullYear(), month = dt.getMonth() + 1, day = dt.getDate();
-    const t = parseTimeRange(item.time);
-    return {
-      year, month, day,
-      startH: t.startH, startM: t.startM,
-      endH:   t.endH,   endM:   t.endM
-    };
-  }
-
-  function pad2(n) { return String(n).padStart(2, '0'); }
-
-  function calDateStr(p, useEnd) {
-    const h = useEnd ? p.endH   : p.startH;
-    const m = useEnd ? p.endM   : p.startM;
-    return `${p.year}${pad2(p.month)}${pad2(p.day)}T${pad2(h)}${pad2(m)}00`;
-  }
-
-  function buildGCalUrl(item) {
-    const p = getItemDateParts(item);
-    if (!p) return null;
-    const details = [item.category, item.location].filter(Boolean).join(' · ');
-    const params = new URLSearchParams({
-      action:   'TEMPLATE',
-      text:     item.title,
-      dates:    calDateStr(p, false) + '/' + calDateStr(p, true),
-      details:  details,
-      location: item.location || ''
-    });
-    return 'https://calendar.google.com/calendar/render?' + params.toString();
-  }
-
-  function openAllGCal() {
-    document.getElementById('calExportDropdown')?.classList.remove('open');
-    const items = planItems.filter(i => i.weekendStart);
-    if (items.length === 0) { showToast('No items with dates to export'); return; }
-    items.forEach(item => {
-      const url = buildGCalUrl(item);
-      if (url) window.open(url, '_blank', 'noopener');
-    });
-  }
-
-  function escapeICS(str) {
-    return String(str || '')
-      .replace(/\\/g, '\\\\')
-      .replace(/;/g, '\\;')
-      .replace(/,/g, '\\,')
-      .replace(/\n/g, '\\n');
-  }
-
-  function downloadICS() {
-    document.getElementById('calExportDropdown')?.classList.remove('open');
-    const items = planItems.filter(i => i.weekendStart);
-    if (items.length === 0) { showToast('No items with dates to export'); return; }
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//What\'s On Wellington//Wellington Weekend Planner//EN',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH'
-    ];
-    items.forEach(item => {
-      const p = getItemDateParts(item);
-      if (!p) return;
-      const desc = [item.category, item.location].filter(Boolean).join(' · ');
-      const uid = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2) + '@whatsonwellington.co.nz';
-      const event = [
-        'BEGIN:VEVENT',
-        'UID:' + uid,
-        'SUMMARY:' + escapeICS(item.title),
-        'DTSTART:' + calDateStr(p, false),
-        'DTEND:'   + calDateStr(p, true),
-        'DESCRIPTION:' + escapeICS(desc),
-        item.location ? 'LOCATION:' + escapeICS(item.location) : '',
-        'END:VEVENT'
-      ].filter(Boolean);
-      lines.push(...event);
-    });
-    lines.push('END:VCALENDAR');
-    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'wellington-weekend.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Calendar file downloaded');
-  }
-
-  // ═══════════════════════════════════════
-  //  ADD-TO-PLAN BUTTONS — Injected on cards
-  // ═══════════════════════════════════════
-  function injectAddButtons() {
-    // Event cards
-    document.querySelectorAll('.card-footer').forEach(footer => {
-      if (footer.querySelector('.add-to-plan-btn')) return;
-      const btn = document.createElement('button');
-      btn.className = 'add-to-plan-btn';
-      btn.textContent = '+ Plan';
-      const cardTitle = footer.closest('.card')?.querySelector('.card-title')?.textContent?.trim();
-      if (cardTitle) btn.setAttribute('aria-label', `Add ${cardTitle} to plan`);
-      footer.prepend(btn);
-    });
-  }
-
-  function updateAddButtons() {
-    const addedTitles = new Set(planItems.map(i => i.title));
-
-    document.querySelectorAll('.add-to-plan-btn').forEach(btn => {
-      const card = btn.closest('.card');
-      if (!card) return;
-      const title = card.querySelector('.card-title')?.textContent?.trim() || '';
-      if (addedTitles.has(title)) {
-        btn.classList.add('added');
-        btn.textContent = 'In plan';
-      } else {
-        btn.classList.remove('added');
-        btn.textContent = '+ Plan';
-      }
-    });
-  }
-
-  // ── Planner tab click handler ──
-  function handlePlannerTabClick() {
-    showSection('planner');
-    renderPlan();
-  }
-
   // ── Toast notification ──
   function showToast(msg) {
     const toast = document.getElementById('toast');
@@ -1763,48 +1078,14 @@ const SECTION_TITLES = {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
-  // ── Drag and drop for plan items ──
-  document.addEventListener('dragstart', (e) => {
-    const item = e.target.closest('.plan-item');
-    if (!item) return;
-    item.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', item.dataset.itemId);
-  });
-  document.addEventListener('dragend', (e) => {
-    const item = e.target.closest('.plan-item');
-    if (item) item.classList.remove('dragging');
-  });
-  document.addEventListener('dragover', (e) => {
-    const target = e.target.closest('.plan-item');
-    if (!target || target.classList.contains('dragging')) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const container = target.closest('.plan-items');
-    const dragging = container?.querySelector('.dragging');
-    if (!dragging || !container) return;
-    const siblings = [...container.querySelectorAll('.plan-item:not(.dragging)')];
-    const next = siblings.find(s => {
-      const rect = s.getBoundingClientRect();
-      return e.clientY < rect.top + rect.height / 2;
-    });
-    container.insertBefore(dragging, next || null);
-  });
-  document.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const draggedId = e.dataTransfer.getData('text/plain');
-    // Rebuild order from DOM
-    const newOrder = [];
-    document.querySelectorAll('.plan-item').forEach(el => {
-      const id = el.dataset.itemId;
-      const item = planItems.find(i => i.id === id);
-      if (item) newOrder.push(item);
-    });
-    if (newOrder.length === planItems.length) {
-      planItems = newOrder;
-      savePlan();
-    }
-  });
+  // Day groups in each weekend panel, with their offset from the Saturday
+  const WEEKEND_DAYS = [
+    { short: 'Fri', label: 'Friday',   offset: -1 },
+    { short: 'Sat', label: 'Saturday', offset: 0 },
+    { short: 'Sun', label: 'Sunday',   offset: 1 },
+    { short: 'Mon', label: 'Monday',   offset: 2 },
+    { short: 'Tue', label: 'Tuesday',  offset: 3 },
+  ];
 
   // ── Generate weekend tabs + panels for the next 18 months ──
   function generateRemainingWeekends() {
@@ -1847,7 +1128,7 @@ const SECTION_TITLES = {
       btn.addEventListener('click', function() { showTab(id, this); });
       tabsInner.appendChild(btn);
 
-      // Weekend panel with day groups kept in the same order as the planner.
+      // Weekend panel with Fri–Tue day groups.
       // Empty groups are hidden by CSS (.day-label:has(+ .events-grid:empty)).
       const panel = document.createElement('div');
       panel.className = 'weekend-panel';
@@ -1855,7 +1136,7 @@ const SECTION_TITLES = {
       panel.setAttribute('role', 'tabpanel');
       panel.setAttribute('aria-labelledby', 'wtab-' + id);
       panel.setAttribute('data-weekend', satStr);
-      panel.innerHTML = PLAN_DAYS
+      panel.innerHTML = WEEKEND_DAYS
         .map(({ short, label, offset }) => {
           const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
           return `<div class="day-label day-${short.toLowerCase()}"><span class="pip"></span>${label} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
@@ -1906,31 +1187,13 @@ const SECTION_TITLES = {
     toggleCard(card);
   });
 
-  // Event delegation for every + Plan button
-  document.addEventListener('click', e => {
-    const planBtn = e.target.closest('.add-to-plan-btn');
-    if (planBtn) {
-      const card = planBtn.closest('.card');
-      if (card) addToPlan(card);
-    }
-  });
-
   function bindEventListeners() {
     const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
 
     // Header
-    on('authSignInBtn',    'click', () => openLoginModal());
-    on('authAvatarBtn',    'click', () => toggleUserDropdown());
-    on('planHeaderBtn',    'click', () => handlePlannerTabClick());
     on('headerInstallBtn', 'click', () => handleInstallClick());
     on('mobileInfoBtn',    'click', () => toggleInfoPopover());
     on('hamburgerBtn',     'click', () => toggleMenu());
-
-    // User dropdown
-    document.querySelector('.user-dropdown-btn[data-action="planner"]')
-      ?.addEventListener('click', () => { showSectionFromMenu('planner'); closeUserDropdown(); });
-    document.querySelector('.user-dropdown-btn[data-action="signout"]')
-      ?.addEventListener('click', () => signOutUser());
 
     // Highlights
     document.querySelector('.highlights-see-all')
@@ -1974,30 +1237,6 @@ const SECTION_TITLES = {
     on('wnavPrev', 'click', () => navigateWeekend(-1));
     on('wnavNext', 'click', () => navigateWeekend(1));
 
-    // Planner CTAs
-    document.querySelectorAll('.planner-cta-btn[data-nav]').forEach(btn =>
-      btn.addEventListener('click', () => showSection(btn.dataset.nav))
-    );
-
-    // Plan toolbar
-    on('planClearBtn', 'click', () => clearPlan());
-    on('calExportBtn', 'click', e => toggleCalendarExport(e));
-    on('calGcalBtn',   'click', () => openAllGCal());
-    on('calIcsBtn',    'click', () => downloadICS());
-    on('planShareBtn', 'click', () => handleShareClick());
-
-    // Share modal
-    on('shareModalOverlay', 'click', e => { if (e.target === e.currentTarget) closeShareModal(); });
-    on('shareModalClose',   'click', () => closeShareModal());
-    on('shareGoogleBtn',    'click', () => { closeShareModal(); signInWithGoogle(); });
-    on('shareGuestBtn',     'click', () => shareWithoutSignIn());
-
-    // Login modal
-    on('loginOverlay',    'click', e => { if (e.target === e.currentTarget) closeLoginModal(); });
-    on('loginModalClose', 'click', () => closeLoginModal());
-    on('googleSignInBtn', 'click', () => signInWithGoogle());
-    on('guestSignInBtn',  'click', () => continueAsGuest());
-
     // Install banner
     on('installBannerInstallBtn', 'click', () => triggerInstall());
     on('installBannerCloseBtn',   'click', () => dismissInstall());
@@ -2017,7 +1256,6 @@ const SECTION_TITLES = {
     updateTabLabels();
     updateWeekendNav();
     enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
-    enhanceCardLinks();     // add domain label to all static card links
     setEagerImages();       // promote first 2 visible cards to loading="eager"
     // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
     setTimeout(() => {
@@ -2025,12 +1263,8 @@ const SECTION_TITLES = {
       if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'start' });
     }, 0);
     buildHighlightsRow();
-    injectAddButtons();
     loadStaticEvents();         // inject STATIC_EVENTS into weekend panels
-    enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge, plan btn labels
-    // Load the guest plan from localStorage now; if the user is signed in,
-    // onAuthStateChanged reloads it from Firestore.
-    loadPlan();
+    enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge
 
     // ── HERO WEATHER ──
     (function initWeatherStrip() {

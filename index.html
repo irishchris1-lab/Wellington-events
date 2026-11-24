@@ -14,7 +14,7 @@
 
 <!-- ── SEO ── -->
 <title>Wellington Family Events This Weekend | What's On Wellington</title>
-<meta name="description" content="Plan your Wellington weekend — curated family events, food and drink events and rainy-day ideas across Wellington City, the Hutt Valley, Porirua, Kāpiti Coast and Wairarapa.">
+<meta name="description" content="What's on in Wellington this weekend — curated family events, gigs, festivals, sport, exhibitions and rainy-day ideas across Wellington City, the Hutt Valley, Porirua, Kāpiti Coast and Wairarapa.">
 <meta name="keywords" content="Wellington family events, Wellington kids activities, Wellington cafes kids, Wellington walks children, Hutt Valley family, Kāpiti family events, Wellington weekend, Wellington zoo, Staglands, Zealandia, things to do Wellington">
 <meta name="author" content="What's On Wellington">
 <link rel="canonical" href="https://whatsonwellington.co.nz/">
@@ -23,18 +23,18 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://whatsonwellington.co.nz/">
 <meta property="og:title" content="Wellington Family Events This Weekend | What's On Wellington">
-<meta property="og:description" content="Curated events, cafés, walks &amp; parks across the Wellington region. Plan your perfect family weekend — free and easy.">
+<meta property="og:description" content="Curated weekend events across the Wellington region — gigs, festivals, sport, exhibitions and rainy-day ideas.">
 <meta property="og:image" content="https://whatsonwellington.co.nz/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="What's On Wellington — Family Weekend Planner for the Wellington Region">
+<meta property="og:image:alt" content="What's On Wellington — weekend events across the Wellington region">
 <meta property="og:locale" content="en_NZ">
 <meta property="og:site_name" content="What's On Wellington">
 
 <!-- ── Twitter / X card ── -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Wellington Family Events This Weekend | What's On Wellington">
-<meta name="twitter:description" content="Curated events, cafés, walks &amp; parks across Wellington. Plan your perfect family weekend.">
+<meta name="twitter:description" content="Curated weekend events across the Wellington region — gigs, festivals, sport, exhibitions and rainy-day ideas.">
 <meta name="twitter:image" content="https://whatsonwellington.co.nz/og-image.jpg">
 
 <!-- ── Structured data ── -->
@@ -136,24 +136,6 @@
           </span>
           <span class="hero-weather-message" id="heroWeatherMsg"></span>
         </div>
-        <button class="plan-header-btn" id="planHeaderBtn" aria-label="View your plan">📋 Plan<span class="plan-count-badge" id="planCountBadgeHeader" aria-live="polite">0</span></button>
-        <!-- Logged out: sign in button -->
-        <button class="auth-btn" id="authSignInBtn" style="display:flex;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Sign in
-        </button>
-        <!-- Logged in: avatar -->
-        <div id="authUserArea" style="display:none; position:relative;">
-          <div class="auth-avatar-placeholder" id="authAvatarBtn" title="Account"></div>
-          <div class="user-dropdown" id="userDropdown">
-            <div class="user-dropdown-header">
-              <div class="user-dropdown-name" id="userDropdownName"></div>
-              <div class="user-dropdown-email" id="userDropdownEmail"></div>
-            </div>
-            <button class="user-dropdown-btn" data-action="planner">📋 My Weekend Plan</button>
-            <button class="user-dropdown-btn danger" data-action="signout">↩ Sign out</button>
-          </div>
-        </div>
         <button class="header-install-btn" id="headerInstallBtn" aria-label="Add to Home Screen" style="display:none">
           📲 <span>Save app</span>
         </button>
@@ -176,7 +158,6 @@
     <button class="dropdown-close" id="dropdownClose" aria-label="Close menu">✕</button>
   </div>
   <nav class="dropdown-nav">
-    <button class="dropdown-nav-btn" data-nav="planner"><span>📋</span> Plan</button>
     <button class="dropdown-nav-btn" data-nav="events"><span>🗓</span> Events</button>
     <button class="dropdown-nav-btn" data-nav="about"><span>👋</span> About</button>
     <button class="dropdown-nav-btn" id="installMenuBtn" style="display:none"><span>📲</span> Add to Home Screen</button>
@@ -982,84 +963,6 @@
 </main>
 </div><!-- /section-about -->
 
-<!-- ══════════════════════════════════════
-     PLANNER SECTION
-═══════════════════════════════════════ -->
-<div class="app-section" id="section-planner">
-<main>
-  <div id="plannerContent">
-    <div class="plan-toolbar">
-      <h3>My Weekend Plan</h3>
-      <div class="plan-toolbar-actions">
-        <button class="plan-clear-btn" id="planClearBtn">Clear all</button>
-        <div class="plan-export-wrap" id="calExportWrap" style="display:none">
-          <button class="plan-export-btn" id="calExportBtn">📅 Export</button>
-          <div class="cal-export-dropdown" id="calExportDropdown">
-            <button class="cal-export-item" id="calGcalBtn">📅 Add to Google Calendar</button>
-            <button class="cal-export-item" id="calIcsBtn">⬇️ Download .ics file</button>
-          </div>
-        </div>
-        <button class="plan-share-btn" id="planShareBtn">📤 Share</button>
-      </div>
-    </div>
-
-    <div id="plannerTimeline">
-      <!-- Dynamically rendered -->
-    </div>
-
-    <div id="plannerEmpty" class="planner-empty">
-      <div class="planner-empty-icon">📋</div>
-      <p>Your weekend starts here. Browse events, cafés, walks and parks — then tap <strong>+ Plan</strong> to build your day.</p>
-      <div class="planner-empty-actions">
-        <button class="planner-cta-btn" data-nav="events">🗓 Browse events</button>
-      </div>
-    </div>
-  </div>
-</main>
-</div><!-- /section-planner -->
-
-<!-- ── SHARE MODAL ── -->
-<div class="login-overlay" id="shareModalOverlay">
-  <div class="login-modal" role="dialog" aria-modal="true" aria-label="Share your weekend plan">
-    <div class="login-modal-header">
-      <h2>Share your<br>weekend plan</h2>
-      <p>Sign in with Google to save your plan to the cloud and share it across devices. Or copy a link to share what you've planned so far.</p>
-      <button class="login-modal-close" id="shareModalClose" aria-label="Close">✕</button>
-    </div>
-    <div class="login-modal-body">
-      <button class="login-provider-btn" id="shareGoogleBtn">
-        <svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
-        Sign in with Google
-      </button>
-      <button class="login-provider-btn login-guest-btn" id="shareGuestBtn">
-        📤 Share without signing in
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── LOGIN MODAL ── -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-modal" role="dialog" aria-modal="true" aria-label="Sign in">
-    <div class="login-modal-header">
-      <h2>Save your weekend<br>plan to the cloud</h2>
-      <p>Sign in so your plan syncs across all your devices. You can also plan as a guest — it'll save on this device only.</p>
-      <button class="login-modal-close" id="loginModalClose" aria-label="Close">✕</button>
-    </div>
-    <div class="login-modal-body">
-      <button class="login-provider-btn" id="googleSignInBtn">
-        <svg class="login-provider-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
-        Continue with Google
-      </button>
-      <button class="login-provider-btn login-guest-btn" id="guestSignInBtn">
-        <svg class="login-provider-icon" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Continue as guest
-      </button>
-      <div class="login-footer-note">Signing in with Google only uses your name and photo.<br>No spam, no passwords, sign out any time.</div>
-    </div>
-  </div>
-</div>
-
 <!-- ── TOAST NOTIFICATION ── -->
 <div class="toast" id="toast"></div>
 
@@ -1100,7 +1003,6 @@
 
 <!-- ── Firebase SDK (compat) ── -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script src="js/events-data.js"></script>

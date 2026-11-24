@@ -492,10 +492,14 @@
 
   .card-desc { font-size: 12px; color: var(--muted); line-height: 1.65; border-top: 1px solid #f0eeea; padding-top: 10px; }
   .card-footer { padding: 8px 18px 10px; border-top: 1px solid #f5f3ef; display: flex; justify-content: space-between; align-items: center; }
-  .card-link { font-size: 10.5px; font-weight: 500; color: #8a9a9a; text-decoration: none; letter-spacing: 0.03em; transition: color 0.15s; display: flex; flex-direction: column; gap: 1px; }
-  .card-link:hover { color: var(--teal); }
-  .card-link-domain { font-size: 9px; font-weight: 400; color: #bbb; letter-spacing: 0.02em; transition: color 0.15s; }
-  .card-link:hover .card-link-domain { color: #8a9a9a; }
+  .event-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--teal); color: #fff; text-decoration: none;
+    font: 600 13px 'DM Sans', sans-serif; padding: 9px 16px; border-radius: 20px;
+    transition: background 0.15s;
+  }
+  .event-btn:hover { background: #0d6b7c; }
+  .event-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
 
   /* Strip colours per category */
   .strip-festival { background: linear-gradient(90deg, #C8901A, #e0ad40); }
@@ -546,249 +550,10 @@
 
   /* ── AUTH BUTTON (header) ── */
   .header-auth-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .auth-btn {
-    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 8px; padding: 8px 14px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-    color: #fff; display: flex; align-items: center; gap: 7px;
-    transition: background 0.2s; white-space: nowrap;
-  }
-  .auth-btn:hover { background: rgba(255,255,255,0.25); }
-
-  .auth-avatar-placeholder {
-    width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; transition: border-color 0.2s;
-  }
-  .auth-avatar-placeholder:hover { border-color: var(--gold); }
 
   /* ── LOGIN MODAL ── */
-  .login-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(10,30,35,0.65); backdrop-filter: blur(6px);
-    z-index: 2000; align-items: center; justify-content: center;
-  }
-  .login-overlay.open { display: flex; }
-  .login-modal {
-    background: #fff; border-radius: 8px; width: 380px; max-width: 92vw;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.3); overflow: hidden;
-    animation: modalSlideUp 0.35s ease;
-  }
+
   @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-  .login-modal-header {
-    background: linear-gradient(135deg, var(--teal), var(--jade));
-    padding: 28px 28px 24px; color: #fff; position: relative;
-  }
-  .login-modal-header h2 {
-    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;
-    line-height: 1.2; margin-bottom: 6px;
-  }
-  .login-modal-header p { font-size: 13px; opacity: 0.65; line-height: 1.5; }
-  .login-modal-close {
-    position: absolute; top: 16px; right: 16px;
-    background: rgba(255,255,255,0.2); border: none; color: #fff;
-    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
-    font-size: 13px; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
-  .login-modal-close:hover { background: rgba(255,255,255,0.35); }
-  .login-modal-body { padding: 24px 28px 28px; }
-  .login-provider-btn {
-    width: 100%; border: 1.5px solid #e0ddd7; border-radius: 6px;
-    background: #fff; padding: 13px 16px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-    color: #2a3a3a; display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    margin-bottom: 12px;
-  }
-  .login-provider-btn:hover { border-color: var(--teal); box-shadow: 0 2px 12px rgba(11,85,99,0.1); background: #fafbfb; }
-  .login-provider-btn:last-child { margin-bottom: 0; }
-  .login-provider-icon { width: 22px; height: 22px; flex-shrink: 0; }
-
-  .login-footer-note { font-size: 11px; color: #aaa; line-height: 1.6; text-align: center; margin-top: 18px; }
-  .login-guest-btn { color: #888 !important; border-color: rgba(0,0,0,0.08) !important; }
-  .login-guest-btn:hover { border-color: rgba(0,0,0,0.2) !important; color: #555 !important; }
-
-  /* ── USER DROPDOWN (logged in) ── */
-  .user-dropdown {
-    position: absolute; top: 100%; right: 0; margin-top: 8px;
-    background: #fff; border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    min-width: 200px; z-index: 500; overflow: hidden;
-    display: none; animation: fadeUp 0.2s ease;
-  }
-  .user-dropdown.open { display: block; }
-  .user-dropdown-header { padding: 14px 16px; border-bottom: 1px solid #f0eeea; }
-  .user-dropdown-name { font-size: 13px; font-weight: 600; color: #1a2a2a; }
-  .user-dropdown-email { font-size: 11px; color: #9aacac; margin-top: 2px; }
-  .user-dropdown-btn {
-    width: 100%; background: none; border: none; text-align: left;
-    padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px;
-    font-weight: 500; color: #4a5a5a; cursor: pointer;
-    display: flex; align-items: center; gap: 10px;
-    transition: background 0.15s;
-  }
-  .user-dropdown-btn:hover { background: #f5f7f7; color: var(--teal); }
-  .user-dropdown-btn.danger { color: var(--ember); }
-  .user-dropdown-btn.danger:hover { background: #fff5f3; }
-
-  /* ── ADD TO PLAN BUTTON (on cards) — primary action ── */
-  .add-to-plan-btn {
-    background: var(--teal); color: #fff; border: none;
-    border-radius: 6px; padding: 7px 14px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700;
-    letter-spacing: 0.03em;
-    display: inline-flex; align-items: center; gap: 5px;
-    transition: background 0.15s, transform 0.1s; white-space: nowrap;
-  }
-  .add-to-plan-btn:hover { background: var(--teal2); }
-  .add-to-plan-btn:active { transform: scale(0.97); }
-  .add-to-plan-btn.added {
-    background: #d0edd8; border: none; color: #1a6b3a; pointer-events: none;
-  }
-  .add-to-plan-btn.added::before { content: '✓ '; }
-
-  /* ── PLANNER SECTION ── */
-  .planner-empty {
-    text-align: center; padding: 60px 20px; color: #bbb;
-  }
-  .planner-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.7; }
-  .planner-empty p { font-size: 14px; line-height: 1.7; max-width: 380px; margin: 0 auto; color: #8a9a9a; }
-  .planner-empty-actions {
-    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 24px;
-  }
-  .planner-empty .planner-cta-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--teal); color: #fff;
-    border: none; border-radius: 8px; padding: 11px 20px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-    transition: background 0.15s;
-  }
-  .planner-empty .planner-cta-btn:hover { background: var(--teal2); }
-
-  /* ── PLAN TIMELINE ── */
-  .plan-toolbar {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
-  }
-  .plan-toolbar h3 {
-    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--teal);
-  }
-  .plan-toolbar-actions { display: flex; gap: 8px; }
-  .plan-clear-btn {
-    background: none; border: 1.5px solid rgba(196,82,42,0.3); border-radius: 4px;
-    padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 600; color: var(--ember);
-    transition: all 0.2s;
-  }
-  .plan-clear-btn:hover { background: var(--ember); color: #fff; border-color: var(--ember); }
-  .plan-share-btn {
-    background: var(--teal); border: none; border-radius: 4px;
-    padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 600; color: #fff;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: background 0.2s;
-  }
-  .plan-share-btn:hover { background: var(--teal2); }
-  /* ── Calendar export button + dropdown ── */
-  .plan-export-wrap { position: relative; }
-  .plan-export-btn {
-    background: none; border: 1.5px solid var(--teal); border-radius: 4px;
-    padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 600; color: var(--teal);
-    display: inline-flex; align-items: center; gap: 5px;
-    transition: all 0.2s;
-  }
-  .plan-export-btn:hover { background: var(--teal); color: #fff; }
-  .cal-export-dropdown {
-    display: none; position: absolute; top: calc(100% + 6px); right: 0;
-    background: #fff; border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    z-index: 200; min-width: 215px; padding: 5px;
-  }
-  .cal-export-dropdown.open { display: block; }
-  .cal-export-item {
-    display: block; width: 100%; text-align: left;
-    background: none; border: none; border-radius: 6px;
-    padding: 9px 13px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    color: var(--ink); transition: background 0.15s;
-  }
-  .cal-export-item:hover { background: var(--cream); }
-  .plan-day-section { margin-bottom: 28px; }
-  .plan-day-title {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--teal); margin-bottom: 14px; display: flex; align-items: center; gap: 12px;
-  }
-  .plan-day-title .pip { width: 3px; height: 14px; border-radius: 2px; background: var(--gold); flex-shrink: 0; }
-  .plan-day-title .line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(11,85,99,0.2), transparent); }
-  .plan-items { display: flex; flex-direction: column; gap: 10px; }
-  .plan-item {
-    background: #fff; border-radius: 4px; border: 1px solid rgba(0,0,0,0.07);
-    padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px;
-    transition: box-shadow 0.2s; cursor: grab; position: relative;
-  }
-  .plan-item:hover { box-shadow: 0 4px 16px rgba(11,85,99,0.08); }
-  .plan-item.dragging { opacity: 0.5; box-shadow: 0 8px 24px rgba(11,85,99,0.15); }
-  .plan-item-grip {
-    color: #ccc; font-size: 16px; flex-shrink: 0; cursor: grab;
-    user-select: none; line-height: 1; padding-top: 2px;
-  }
-  .plan-item-content { flex: 1; min-width: 0; }
-  .plan-item-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--teal); line-height: 1.25; }
-  .plan-item-meta { font-size: 11.5px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .plan-item-remove {
-    background: none; border: none; color: #ccc; font-size: 16px;
-    cursor: pointer; padding: 2px; flex-shrink: 0; transition: color 0.15s; line-height: 1;
-  }
-  .plan-item-remove:hover { color: var(--ember); }
-  .plan-day-select {
-    background: none; border: 1px solid rgba(0,0,0,0.12); border-radius: 4px;
-    padding: 2px 6px; font-family: 'DM Sans', sans-serif; font-size: 10px;
-    font-weight: 600; color: var(--muted); cursor: pointer;
-  }
-
-  /* ── WEEKEND PICKER ── */
-  .weekend-picker {
-    margin-bottom: 24px; padding: 0 0 20px;
-    border-bottom: 1px solid rgba(0,0,0,0.07);
-    max-height: 220px; overflow-y: auto;
-    scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.12) transparent;
-  }
-  .weekend-picker::-webkit-scrollbar { width: 3px; }
-  .weekend-picker::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
-  .weekend-month-group { margin-bottom: 14px; }
-  .weekend-month-group:last-child { margin-bottom: 0; }
-  .weekend-month-label {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 7px; padding: 0 1px;
-  }
-  .weekend-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .weekend-chip {
-    background: none; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 20px;
-    padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 12px;
-    font-weight: 600; color: #444; cursor: pointer; transition: all 0.15s;
-    white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
-  }
-  .weekend-chip:hover { border-color: var(--teal); color: var(--teal); }
-  .weekend-chip.active { background: var(--teal); border-color: var(--teal); color: #fff; }
-  .weekend-chip-badge {
-    background: var(--gold); color: #fff; font-size: 9px; font-weight: 700;
-    min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .weekend-chip.active .weekend-chip-badge { background: rgba(255,255,255,0.3); }
-  .plan-weekend-empty {
-    text-align: center; padding: 32px 20px; color: #bbb;
-    font-size: 13px; line-height: 1.7; font-style: italic;
-  }
-
-  /* ── PLAN ITEM COUNT BADGE ── */
-  .plan-count-badge {
-    background: var(--gold); color: #fff; font-size: 9px; font-weight: 700;
-    width: 16px; height: 16px; border-radius: 50%; display: none;
-    align-items: center; justify-content: center; margin-left: -2px;
-  }
-  .plan-count-badge.visible { display: inline-flex; }
 
   /* ── INSTALL BANNER (Android / Chrome) ── */
   .install-banner {
@@ -894,10 +659,6 @@
   font-size: 13px; color: #7a6010; line-height: 1.4;
 }
 
-/* ══ MUTED LINKS WHEN VIEWING PAST WEEKEND ══ */
-.showing-past-weekend .card-link { opacity: 0.55; }
-.showing-past-weekend .card-link:hover { opacity: 1; }
-
 /* ══ MOBILE INFO BUTTON ══ */
 .mobile-info-btn {
   display: none;
@@ -906,36 +667,6 @@
   line-height: 1; transition: background 0.2s; align-items: center;
 }
 .mobile-info-btn:hover { background: rgba(255,255,255,0.25); }
-
-/* ══ PLAN HEADER BUTTON ══ */
-.plan-header-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  position: relative;
-}
-.plan-header-btn:hover { background: rgba(255,255,255,0.25); }
-.plan-header-btn .plan-count-badge {
-  position: static;
-  margin: 0;
-  transform: none;
-  font-size: 10px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  line-height: 16px;
-  border-radius: 8px;
-}
 
 /* ══ INFO POPOVER BUTTON STYLES (shared) ══ */
 .info-popover-btn {
@@ -988,7 +719,7 @@
 .past-tabs-toggle:focus-visible { outline-color: #fff; }
 
 /* Filter and action buttons */
-.filter-btn:focus-visible, .add-to-plan-btn:focus-visible, .card-link:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.filter-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
 
 /* ══ RESPONSIVE ══ */
 @media (max-width: 767px) {
