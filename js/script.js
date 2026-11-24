@@ -650,8 +650,9 @@ const SECTION_TITLES = {
             </div>
             ${badgesHtml}
           </div>
+          <button type="button" class="card-toggle" aria-expanded="false" aria-controls="${titleId}-more" aria-label="Show details for ${escHtml(ev.title)}"></button>
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
-          ${ev.description ? `<div class="card-desc">${escHtml(ev.description)}</div>` : ''}
+          ${ev.description ? `<div class="card-desc" id="${titleId}-more">${escHtml(ev.description)}</div>` : `<div id="${titleId}-more" hidden></div>`}
         </div>
         <div class="card-footer">${footer}</div>
       </article>`;
@@ -741,6 +742,7 @@ const SECTION_TITLES = {
       filterCategory('all');
       filterRegion('all');
     }
+    if (compactCards.matches) setCardOpen(card, true);
     requestAnimationFrame(() => {
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       card.classList.add('card-flash');
@@ -1866,12 +1868,42 @@ const SECTION_TITLES = {
     }
   }
 
-  // Toggle compact cards open/closed on click (skip if clicking a link or button)
+  // ── Collapsible event cards (phones) ──
+  // On narrow screens cards start as a compact row (thumbnail, title, time,
+  // venue). Tapping one expands it to the full card and closes any other
+  // open card, so the list stays easy to scan.
+  const compactCards = window.matchMedia('(max-width: 600px)');
+
+  function setCardOpen(card, open) {
+    card.classList.toggle('open', open);
+    const toggle = card.querySelector('.card-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(open));
+      const title = card.querySelector('.card-title')?.textContent.trim() || 'event';
+      toggle.setAttribute('aria-label', `${open ? 'Hide' : 'Show'} details for ${title}`);
+    }
+  }
+
+  function toggleCard(card) {
+    const open = !card.classList.contains('open');
+    if (open) document.querySelectorAll('.events-grid .card.open').forEach(c => { if (c !== card) setCardOpen(c, false); });
+    setCardOpen(card, open);
+    if (open) {
+      requestAnimationFrame(() => {
+        const top = card.getBoundingClientRect().top;
+        const navH = document.querySelector('.tabs-bar')?.offsetHeight || 0;
+        if (top < navH + 8) window.scrollBy({ top: top - navH - 8, behavior: 'smooth' });
+      });
+    }
+  }
+
   document.addEventListener('click', e => {
-    const card = e.target.closest('.card-compact');
+    if (!compactCards.matches) return;
+    const card = e.target.closest('.events-grid .card');
     if (!card) return;
-    if (e.target.closest('a, button')) return;
-    card.classList.toggle('open');
+    // Links and other buttons keep working; the chevron button toggles
+    if (e.target.closest('a, button:not(.card-toggle)')) return;
+    toggleCard(card);
   });
 
   // Event delegation for every + Plan button
