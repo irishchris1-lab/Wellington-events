@@ -3,7 +3,7 @@
   "area": "Wellington City",
   "events_url": "https://www.tepapa.govt.nz/visit/events",
   "image": "images/tepapa.jpg",
-  "image_credit": "Photo: Pierre André Leclercq, CC BY-SA 4.0, Wikimedia Commons"
+  "image_credit": "Photo: Ulrich Lange, CC BY-SA 3.0, Wikimedia Commons"
  },
  "Wellington Botanic Garden": {
   "area": "Wellington City",
@@ -11,6 +11,7 @@
  },
  "Te Matapihi ki te Ao Nui Central Library": {
   "area": "Wellington City",
-  "image": "images/categories/community.webp"
+  "image": "images/central-library.jpg",
+  "image_credit": "Photo: Tom Ackroyd, CC BY-SA 4.0, Wikimedia Commons"
  }
 }
