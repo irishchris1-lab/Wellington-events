@@ -1,6 +1,6 @@
-const CACHE = 'wow-v7';   // v7: venue sections removed; events-only site
+const CACHE = 'wow-v8';   // v8: calendar date helpers
 const SHELL = [
-  '/', '/css/style.css', '/js/events-data.js', '/js/script.js',
+  '/', '/css/style.css', '/js/event-dates.js', '/js/events-data.js', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'
 ];
 

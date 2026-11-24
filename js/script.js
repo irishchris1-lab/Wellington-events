@@ -83,11 +83,10 @@
     }
   });
 
-const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const SECTION_TITLES = {
-    events:  "Events This Weekend — What's On Wellington",
+    events:  "Wellington Events — What's On Wellington",
     about:   "About — What's On Wellington",
   };
 
@@ -112,9 +111,62 @@ const SECTION_TITLES = {
   }
   // Filter values: 'all', a category, or 'rainy' (anything marked indoor)
   const CATEGORIES = ['all', ...Object.keys(EVENT_CATEGORIES), 'rainy'];
+  const PRICE_LABELS = {
+    Free: 'Free entry',
+    '$': 'Under NZ$30',
+    '$$': 'NZ$30 to under NZ$80',
+    '$$$': 'NZ$80 or more',
+  };
+  const staticEvents = (typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
+    .map((ev, i) => ({ ...ev, _static: true, _staticId: `s${i}` }));
+  const curatedEvents = new Map(staticEvents.map(ev => [eventListingKey(ev), ev]));
+  const legacyEventDates = new Map(staticEvents.filter(ev => isCalendarDate(ev.date))
+    .map(ev => [legacyEventKey(ev), ev.date]));
+  let calendarEvents = staticEvents;
+  let calendarReady = false;
 
   let currentRegion = 'all';
   let currentCategory = 'all';
+  let freeOnly = false;
+
+  function eventListingKey(ev) {
+    return `${(ev.title || '').trim()}|${eventDate(ev)}`;
+  }
+
+  function legacyEventKey(ev) {
+    return `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
+  }
+
+  function eventPrice(ev) {
+    if (Object.hasOwn(PRICE_LABELS, ev.priceTier)) {
+      return { tier: ev.priceTier, estimated: ev.priceEstimated === true };
+    }
+
+    // Older and newly imported Firestore events may not have an assigned tier.
+    const cost = String(ev.cost || '').trim();
+    const freeEntry = /^free(?: entry| to watch| to spectate)?(?:$|\s*[·—–.-])/i;
+    if (ev.free === true || freeEntry.test(ev.free || '') || freeEntry.test(cost)) {
+      return { tier: 'Free', estimated: false };
+    }
+    const amount = cost.match(/\$\s*(\d[\d,]*(?:\.\d+)?)/);
+    if (amount) {
+      const n = Number(amount[1].replace(/,/g, ''));
+      return { tier: n === 0 ? 'Free' : n < 30 ? '$' : n < 80 ? '$$' : '$$$', estimated: false };
+    }
+    if (!cost && Array.isArray(ev.tags) && ev.tags.some(tag => /^free$/i.test(tag))) {
+      return { tier: 'Free', estimated: false };
+    }
+    const curated = curatedEvents.get(eventListingKey(ev));
+    if (curated && Object.hasOwn(PRICE_LABELS, curated.priceTier)) {
+      return { tier: curated.priceTier, estimated: curated.priceEstimated === true };
+    }
+    return { tier: eventCategory(ev) === 'music' ? '$$' : '$', estimated: true };
+  }
+
+  function priceBadge(tier, estimated) {
+    const style = tier === 'Free' ? 'badge-free' : 'badge-ticketed';
+    return `<span class="badge badge-price ${style}" title="${PRICE_LABELS[tier]}${estimated ? ' (estimated)' : ''}">${tier}${estimated ? ' <abbr title="Estimated">est.</abbr>' : ''}</span>`;
+  }
 
   // Generate a 2-stop srcset from a Wikimedia thumb URL by swapping the width token.
   // Input:  .../thumb/a/ab/File.jpg/960px-File.jpg
@@ -136,26 +188,6 @@ const SECTION_TITLES = {
   // Walk all img.card-img in `container` (or entire document) and:
   //   • add width/height if missing  • add Wikimedia srcset if not already set
   //   • set onerror/onload  • add .loaded immediately for already-cached images
-  function enhanceStaticImages(container) {
-    const root = container || document;
-    root.querySelectorAll('img.card-img').forEach(img => {
-      if (!img.getAttribute('width'))  img.setAttribute('width',  '960');
-      if (!img.getAttribute('height')) img.setAttribute('height', '540');
-      if (!img.onerror) img.onerror = function() { onImgError(this); };
-      // Fade-in: add .loaded when image resolves; handle already-cached images
-      if (!img.onload) img.onload = function() { this.classList.add('loaded'); };
-      if (img.complete) img.classList.add('loaded');
-      if (!img.srcset) {
-        const ws = wikimediaSrcset(img.getAttribute('src') || '');
-        if (ws) {
-          img.srcset = ws;
-          img.sizes  = '(max-width:640px) calc(100vw - 32px), 400px';
-        }
-      }
-    });
-  }
-
-  // Returns the URL only if it is http(s); blocks javascript:, data: etc.
   function safeUrl(url) {
     if (!url) return '';
     try {
@@ -168,45 +200,10 @@ const SECTION_TITLES = {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
   }
 
-  // Enhance static HTML event cards with ARIA attributes.
-  function enhanceCardAccessibility(container) {
-    const root = container || document;
-    root.querySelectorAll('.card').forEach((card, i) => {
-      // Add role="article" to div.card elements (article elements already have implicit role)
-      if (card.tagName !== 'ARTICLE' && !card.getAttribute('role')) {
-        card.setAttribute('role', 'article');
-      }
-      // aria-labelledby pointing to the card title
-      const titleEl = card.querySelector('.card-title');
-      if (titleEl && !titleEl.id) {
-        const uid = 'ctitle-' + i + '-' + Math.random().toString(36).slice(2, 7);
-        titleEl.id = uid;
-        if (!card.getAttribute('aria-labelledby')) card.setAttribute('aria-labelledby', uid);
-      }
-      // Hide decorative meta icons from screen readers
-      card.querySelectorAll('.meta-icon').forEach(icon => {
-        if (!icon.getAttribute('aria-hidden')) icon.setAttribute('aria-hidden', 'true');
-      });
-      // Fix "🔥 Pick" badge so screen readers say "Editor's pick" not "fire emoji Pick"
-      card.querySelectorAll('.badge-hot').forEach(badge => {
-        if (!badge.querySelector('.sr-only')) {
-          badge.innerHTML = '<span aria-hidden="true">🔥</span><span class="sr-only">Editor\'s pick</span>';
-        }
-      });
-    });
-  }
-
-  // Set the first 2 visible card images in the active weekend panel to eager + high priority.
   function setEagerImages() {
-    const panel = document.querySelector('.weekend-panel.active');
-    if (!panel) return;
-    panel.querySelectorAll('img.card-img').forEach((img, i) => {
-      if (i < 2) {
-        img.loading = 'eager';
-        if (i === 0) img.setAttribute('fetchpriority', 'high');
-      } else {
-        img.loading = 'lazy';
-      }
+    document.querySelectorAll('#calendarResults img.card-img').forEach((img, i) => {
+      img.loading = i < 2 ? 'eager' : 'lazy';
+      if (i === 0) img.setAttribute('fetchpriority', 'high');
     });
   }
 
@@ -283,7 +280,10 @@ const SECTION_TITLES = {
     btn.focus();
   }
 
+  let cardObserver;
+
   function observeCards(container) {
+    cardObserver?.disconnect();
     if (!window.IntersectionObserver) {
       container.querySelectorAll('.card').forEach(c => c.classList.add('revealed'));
       return;
@@ -291,7 +291,7 @@ const SECTION_TITLES = {
     const cards = [...container.querySelectorAll('.card:not(.revealed)')];
     if (!cards.length) return;
     let revealCount = 0;
-    const obs = new IntersectionObserver((entries) => {
+    const obs = cardObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         obs.unobserve(entry.target);
@@ -316,207 +316,167 @@ const SECTION_TITLES = {
     showSection(section);
   }
 
-  // ── URL state (?s=section&r=region) ──
-  function updateHash(section) {
-    try {
-      const params = new URLSearchParams();
-      if (section && section !== 'events') params.set('s', section);
-      if (currentRegion !== 'all') params.set('r', currentRegion);
-      if (currentCategory !== 'all') params.set('c', currentCategory);
-      history.replaceState(null, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
-    } catch (e) {
-      // Silently ignore — happens when opened as a local file rather than served
+  const DATE_PRESETS = ['next-7', 'today', 'tomorrow', 'this-weekend', 'next-weekend', 'custom'];
+  const SCHOOL_HOLIDAYS = { start: '2026-12-19', end: '2027-02-02' };
+  const CALENDAR_DATE_LABEL = new Intl.DateTimeFormat('en-NZ', {
+    timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric',
+  });
+  const CALENDAR_DAY_LABEL = new Intl.DateTimeFormat('en-NZ', {
+    timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long',
+  });
+
+  let datePreset = 'next-7';
+  let customRange = null;
+  let currentToday = aucklandToday();
+
+  function selectedRange() {
+    if (datePreset === 'custom') return customRange;
+    const today = currentToday;
+    if (datePreset === 'today') return { start: today, end: today };
+    if (datePreset === 'tomorrow') {
+      const tomorrow = addCalendarDays(today, 1);
+      return { start: tomorrow, end: tomorrow };
     }
+    if (datePreset === 'this-weekend' || datePreset === 'next-weekend') {
+      const saturday = weekendForDate(today);
+      const start = datePreset === 'next-weekend' ? addCalendarDays(saturday, 7) : saturday;
+      return { start, end: addCalendarDays(start, 1) };
+    }
+    return { start: today, end: addCalendarDays(today, 6) };
+  }
+
+  function rangeLabel({ start, end }) {
+    const from = CALENDAR_DATE_LABEL.format(calendarDay(start));
+    return start === end ? from : `${from} – ${CALENDAR_DATE_LABEL.format(calendarDay(end))}`;
+  }
+
+  // Save the selected view without turning relative presets into stale dates.
+  function updateHash(section) {
+    const params = new URLSearchParams();
+    if (section !== 'events') params.set('s', section);
+    if (currentRegion !== 'all') params.set('r', currentRegion);
+    if (currentCategory !== 'all') params.set('c', currentCategory);
+    if (freeOnly) params.set('free', '1');
+    if (datePreset !== 'next-7') params.set('dates', datePreset);
+    if (datePreset === 'custom') {
+      params.set('from', customRange.start);
+      params.set('to', customRange.end);
+    }
+    if (pendingEventLink) params.set('e', pendingEventLink);
+    // The selector also works when the page is opened directly from disk.
+    const query = params.toString();
+    try {
+      history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
+    } catch (e) {}
   }
 
   function readHash() {
-    const params = new URLSearchParams(window.location.search);
-    const section  = SECTION_TITLES[params.get('s')] ? params.get('s') : 'events';
-    const region   = params.get('r') || 'all';
-    const category = CATEGORIES.includes(params.get('c')) ? params.get('c') : 'all';
-    return { section, region, category };
+    const params = new URLSearchParams(location.search);
+    const section = Object.hasOwn(SECTION_TITLES, params.get('s')) ? params.get('s') : 'events';
+    const region = params.get('r');
+    if ([...document.querySelectorAll('[data-filter-region]')].some(b => b.dataset.filterRegion === region)) {
+      currentRegion = region;
+    }
+    if (CATEGORIES.includes(params.get('c'))) currentCategory = params.get('c');
+    freeOnly = params.get('free') === '1';
+    const from = params.get('from'), to = params.get('to');
+    if (params.get('dates') === 'custom' && isCalendarDate(from) && isCalendarDate(to) && from <= to) {
+      datePreset = 'custom';
+      customRange = { start: from, end: to };
+    } else if (DATE_PRESETS.includes(params.get('dates')) && params.get('dates') !== 'custom') {
+      datePreset = params.get('dates');
+    }
+    if (location.hash === '#school-holidays') {
+      datePreset = 'custom';
+      customRange = SCHOOL_HOLIDAYS;
+    }
+    return section;
   }
 
-  // Sections: events (the main page) and about
   function showSection(section) {
     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
     document.getElementById('section-' + section).classList.add('active');
-    // The filter bars only apply to events
     document.querySelectorAll('.filter-bar').forEach(bar => bar.hidden = section !== 'events');
     document.title = SECTION_TITLES[section];
-    applyFilter();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updateHash(section);
-    observeCards(document.getElementById('section-' + section));
-  }
-
-  // Highlight the tab for a weekend panel: its own tab, or the School
-  // Holidays tab (plus that weekend's chip) when it falls in the holidays.
-  function markActiveTab(panel) {
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active');
-      b.setAttribute('aria-selected', 'false');
-    });
-    const inHoliday = !!panel.dataset.holiday;
-    const btn = document.getElementById(inHoliday ? 'holidayTab' : 'wtab-' + panel.id);
-    btn?.classList.add('active');
-    btn?.setAttribute('aria-selected', 'true');
-    const bar = document.getElementById('holidayBar');
-    if (bar) {
-      bar.hidden = !inHoliday;
-      bar.querySelectorAll('.holiday-chip').forEach(chip => {
-        const on = chip.dataset.panel === panel.id;
-        chip.classList.toggle('active', on);
-        chip.setAttribute('aria-pressed', String(on));
-      });
-    }
-    return btn;
-  }
-
-  function showTab(id, btn, dir) {
-    document.querySelectorAll('.weekend-panel').forEach(p => {
-      p.classList.remove('active', 'slide-left', 'slide-right');
-    });
-    const panel = document.getElementById(id);
-    panel.classList.add('active');
-    if (dir === 1)  panel.classList.add('slide-right');
-    if (dir === -1) panel.classList.add('slide-left');
-    markActiveTab(panel)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-    buildHighlightsRow();
-    // Show/hide the "past weekend" banner and muted-link state
-    const isPast = !!panel.dataset.pastWeekend;
-    const banner = document.getElementById('pastWeekendBanner');
-    if (banner) banner.hidden = !isPast;
-    document.getElementById('section-events')?.classList.toggle('showing-past-weekend', isPast);
-    applyFilter();
-    updateWeekendNav();
-    // Reset day selector to first pill in newly active panel
-    const activePanel = document.querySelector('.weekend-panel.active');
-    if (activePanel) {
-      const pills = activePanel.querySelectorAll('.day-pill');
-      pills.forEach((p, i) => p.classList.toggle('active', i === 0));
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function navigateWeekend(dir) {
-    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .filter(p => !p.dataset.pastWeekend);
-    const active = document.querySelector('.weekend-panel.active');
-    const idx = panels.indexOf(active);
-    const target = panels[idx + dir];
-    if (!target) return;
-    const btn = document.getElementById('wtab-' + target.id);
-    if (btn) showTab(target.id, btn, dir);
-  }
-
-  function updateWeekendNav() {
-    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .filter(p => !p.dataset.pastWeekend);
-    const active = document.querySelector('.weekend-panel.active');
-    const idx = panels.indexOf(active);
-    const prevBtn = document.getElementById('wnavPrev');
-    const nextBtn = document.getElementById('wnavNext');
-    const posEl   = document.getElementById('wnavPos');
-    if (prevBtn) prevBtn.disabled = idx <= 0;
-    if (nextBtn) nextBtn.disabled = idx >= panels.length - 1;
-    if (posEl)   posEl.textContent = panels.length > 0 ? `${idx + 1} of ${panels.length}` : '';
   }
 
   function setPressed(selector, isActive) {
     document.querySelectorAll(selector).forEach(b => {
       const active = isActive(b);
       b.classList.toggle('active', active);
-      b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      b.setAttribute('aria-pressed', String(active));
     });
   }
 
-  function filterRegion(region) {
-    currentRegion = region;
-    setPressed('[data-filter-region]', b => b.dataset.filterRegion === region);
-    applyFilter();
-    buildHighlightsRow();
+  function syncFilterControls() {
+    setPressed('[data-filter-region]', b => b.dataset.filterRegion === currentRegion);
+    setPressed('[data-filter-category]', b => b.dataset.filterCategory === currentCategory);
+    setPressed('[data-filter-free]', () => freeOnly);
+    setPressed('[data-date-filter]', b => b.dataset.dateFilter === datePreset);
+  }
+
+  function filterEvents() {
+    currentToday = aucklandToday();
+    syncFilterControls();
+    renderCalendar();
     updateHash('events');
   }
 
-  function filterCategory(category) {
-    currentCategory = category;
-    setPressed('[data-filter-category]', b => b.dataset.filterCategory === category);
-    applyFilter();
-    buildHighlightsRow();
-    updateHash('events');
+  function resetEventFilters() {
+    currentRegion = currentCategory = 'all';
+    freeOnly = false;
   }
 
-  function cardMatchesFilters(card) {
-    if (currentRegion !== 'all' && card.dataset.region !== currentRegion) return false;
-    if (currentCategory === 'rainy') return card.dataset.indoor === '1';
-    if (currentCategory !== 'all') return card.dataset.category === currentCategory;
-    return true;
-  }
-
-
-
-  function applyFilter() {
-    const activePanel = document.querySelector('.weekend-panel.active');
-    if (!activePanel) return;
-    activePanel.querySelectorAll('.card:not(.dedup-hidden)').forEach(card => {
-      card.classList.toggle('hidden', !cardMatchesFilters(card));
-    });
-
-    // A day whose events are all filtered out loses its heading too.
-    // (Days that never had events are collapsed by CSS :empty.)
-    let anyVisible = false, anyCards = false;
-    activePanel.querySelectorAll('.events-grid').forEach(grid => {
-      const cards = grid.querySelectorAll('.card:not(.dedup-hidden)');
-      const visible = grid.querySelectorAll('.card:not(.dedup-hidden):not(.hidden)');
-      anyCards = anyCards || cards.length > 0;
-      anyVisible = anyVisible || visible.length > 0;
-      const filteredOut = cards.length > 0 && visible.length === 0;
-      grid.classList.toggle('filtered-out', filteredOut);
-      const label = grid.previousElementSibling;
-      if (label?.classList.contains('day-label')) label.classList.toggle('filtered-out', filteredOut);
-    });
-    activePanel.querySelector('.day-selector')?.classList.toggle('filtered-out', !anyVisible);
-
-    // One message for the whole weekend, with a way back to everything
-    activePanel.querySelector('.no-results')?.remove();
-    if (anyCards && !anyVisible) {
-      const what = currentCategory === 'rainy' ? 'No indoor events'
-        : EVENT_CATEGORIES[currentCategory] ? `No ${EVENT_CATEGORIES[currentCategory].toLowerCase()} events` : 'No events match';
-      const where = currentRegion === 'all' ? '' : ' in this area';
-      const msg = document.createElement('div');
-      msg.className = 'no-results';
-      msg.innerHTML = `<p>${what}${where} this weekend.</p><button type="button" class="no-results-reset">Show all events</button>`;
-      msg.querySelector('button').addEventListener('click', () => { filterCategory('all'); filterRegion('all'); });
-      activePanel.append(msg);
+  function setCustomDatesOpen(open) {
+    const form = document.getElementById('customDates');
+    form.hidden = !open;
+    document.querySelector('[data-date-filter="custom"]').setAttribute('aria-expanded', String(open));
+    const end = document.getElementById('dateTo');
+    end.setCustomValidity('');
+    if (open) {
+      const range = customRange || selectedRange();
+      const start = document.getElementById('dateFrom');
+      start.value = range.start;
+      end.value = range.end;
+      start.focus();
     }
   }
 
-  // ── Restore state from URL on load ──
-  document.addEventListener('DOMContentLoaded', () => {
-    const { section, region, category } = readHash();
-    if (document.querySelector(`[data-filter-region="${region}"]`)) filterRegion(region);
-    filterCategory(category);
-    showSection(section);
+  function changeDatePreset(preset) {
+    if (preset === 'custom') {
+      setCustomDatesOpen(document.getElementById('customDates').hidden);
+      return;
+    }
+    datePreset = preset;
+    setCustomDatesOpen(false);
+    filterEvents();
+  }
 
-    // ── Arrow key navigation for tablists ──
-    document.querySelectorAll('[role="tablist"]').forEach(tablist => {
-      tablist.addEventListener('keydown', (e) => {
-        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
-        const tabs = [...tablist.querySelectorAll('[role="tab"]')].filter(t => !t.hidden);
-        const current = tabs.indexOf(document.activeElement);
-        if (current === -1) return;
-        e.preventDefault();
-        let next;
-        if (e.key === 'ArrowRight') next = (current + 1) % tabs.length;
-        else if (e.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
-        else if (e.key === 'Home') next = 0;
-        else if (e.key === 'End') next = tabs.length - 1;
-        tabs[next].focus();
-        tabs[next].click();
-      });
-    });
-  });
+  function applyCustomDates(event) {
+    event.preventDefault();
+    const start = document.getElementById('dateFrom').value;
+    const endInput = document.getElementById('dateTo');
+    const end = endInput.value;
+    if (!isCalendarDate(start) || !isCalendarDate(end) || end < start) {
+      endInput.setCustomValidity('Choose an end date on or after the start date.');
+      endInput.reportValidity();
+      return;
+    }
+    datePreset = 'custom';
+    customRange = { start, end };
+    setCustomDatesOpen(false);
+    filterEvents();
+    document.querySelector('[data-date-filter="custom"]').focus();
+  }
+
+  function eventMatchesFilters(ev) {
+    if (currentRegion !== 'all' && ev.region !== currentRegion) return false;
+    if (freeOnly && eventPrice(ev).tier !== 'Free') return false;
+    if (currentCategory === 'rainy') return ev.indoor === true;
+    return currentCategory === 'all' || eventCategory(ev) === currentCategory;
+  }
 
 // ═══════════════════════════════════════════════════════
   // ✏️  FIREBASE — events added in the admin portal, and the About text
@@ -566,17 +526,6 @@ const SECTION_TITLES = {
   // Every event gets a stable id from its title and date, e.g.
   // "dermot-kennedy-the-weight-of-the-woods-2026-11-27", so ?e=<id> can open
   // that event's card directly. Shared links use it.
-  const DAY_OFFSETS = { fri: -1, sat: 0, sun: 1, mon: 2, tue: 3 };
-
-  // An event's calendar date: an explicit `date` (needed for Wed/Thu events in
-  // the school holidays), else its weekend Saturday plus the day offset.
-  function eventDate(ev) {
-    if (/^\d{4}-\d{2}-\d{2}$/.test(ev.date || '')) return ev.date;
-    if (!ev.weekend) return '';
-    const [y, m, d] = ev.weekend.split('-').map(Number);
-    return _ds(new Date(y, m - 1, d + (DAY_OFFSETS[ev.day] ?? 0)));
-  }
-
   function eventSlug(ev) {
     const name = String(ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60).replace(/-$/, '');
@@ -602,9 +551,7 @@ const SECTION_TITLES = {
     let when = card.querySelector('.meta-row')?.textContent.replace('🕐', '').trim() || '';
     // Times like "5:00 pm" need the date in front to make sense in a message
     if (!MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.date) {
-      const [y, m, d] = card.dataset.date.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      const day = date.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long' });
+      const day = CALENDAR_DAY_LABEL.format(calendarDay(card.dataset.date));
       when = when ? `${day} · ${when}` : day;
     }
     if (navigator.share) {
@@ -629,14 +576,26 @@ const SECTION_TITLES = {
   let pendingEventLink = new URLSearchParams(location.search).get('e');
 
   function openLinkedEvent() {
-    if (!pendingEventLink) return;
-    const card = [...document.querySelectorAll('.card[data-event-id]')]
-      .find(c => c.dataset.eventId === pendingEventLink && !c.classList.contains('dedup-hidden'));
-    if (!card) return;
+    if (!pendingEventLink) return false;
+    const event = calendarEvents.find(ev => eventSlug(ev) === pendingEventLink);
+    if (!event) return false;
     pendingEventLink = null;
-    const panel = card.closest('.weekend-panel');
-    if (panel && !panel.classList.contains('active')) showTab(panel.id);
-    scrollToPickCard(card);
+
+    const date = eventDate(event);
+    const { start, end } = selectedRange();
+    if (date && (date < start || date > end)) {
+      datePreset = 'custom';
+      customRange = { start: date, end: date };
+    }
+    if (!eventMatchesFilters(event)) resetEventFilters();
+    showSection('events');
+    syncFilterControls();
+    renderCalendar();
+
+    const card = [...document.querySelectorAll('#calendarResults .card')]
+      .find(c => c.dataset.eventId === eventSlug(event));
+    if (card) scrollToPickCard(card);
+    return true;
   }
 
   function buildEventCardHTML(ev) {
@@ -659,9 +618,10 @@ const SECTION_TITLES = {
     const catLabel = ev.label ? escHtml(ev.label) : tm.label;   // ev.label is data; tm.label is trusted markup
     const catStyle = ev.labelStyle ? ` style="${escHtml(ev.labelStyle)}"` : '';
 
-    // Badges (free → ticketed → family → pick, in display order)
-    const badgeParts = [];
-    if (ev.free)     badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
+    const price = eventPrice(ev);
+    // Price is also shown on collapsed mobile cards.
+    const badgeParts = [priceBadge(price.tier, price.estimated)];
+    if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
     if (ev.ticketed) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
     if (ev.family)   badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
     if (ev.pick)     badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
@@ -687,7 +647,7 @@ const SECTION_TITLES = {
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${eventDate(ev)}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${eventDate(ev)}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
@@ -711,22 +671,9 @@ const SECTION_TITLES = {
     const section = document.getElementById('highlights-section');
     if (!track || !section) return;
 
-    // Picks follow the weekend being viewed
-    const panel = document.querySelector('.weekend-panel.active')
-      || document.querySelector('.weekend-panel[data-weekend]:not([data-past-weekend])');
-    if (!panel) { section.style.display = 'none'; return; }
-
-    const thisWeekend = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .find(p => !p.dataset.pastWeekend);
     const eyebrow = section.querySelector('.highlights-eyebrow');
-    if (eyebrow) {
-      eyebrow.textContent = panel === thisWeekend
-        ? "🔥 This Weekend's Picks"
-        : `🔥 Picks for ${weekendRangeLabel(panel)}`;
-    }
-
-    const picks = [...panel.querySelectorAll('.card:not(.dedup-hidden)')]
-      .filter(c => (c.querySelector('.badge-hot') || c.dataset.pick === '1') && cardMatchesFilters(c));
+    if (eyebrow) eyebrow.textContent = `🔥 Picks for ${rangeLabel(selectedRange())}`;
+    const picks = [...document.querySelectorAll('#calendarResults .card[data-pick="1"]')];
 
     track.innerHTML = '';
     if (!picks.length) { section.style.display = 'none'; return; }
@@ -738,6 +685,7 @@ const SECTION_TITLES = {
       const metaRows  = [...card.querySelectorAll('.meta-row')];
       const timeText  = metaRows[0]?.textContent.trim() || '';
       const venueText = metaRows[1]?.textContent.trim() || '';
+      const price     = card.querySelector('.badge-price')?.outerHTML || '';
       const el        = document.createElement('div');
       el.className    = 'highlight-card';
       const altH = escHtml(title);
@@ -757,7 +705,10 @@ const SECTION_TITLES = {
       el.innerHTML    = `
         ${imgWrapHtml}
         <div class="highlight-card-body">
-          <div class="highlight-card-title">${escHtml(title)}</div>
+          <div class="highlight-card-title-row">
+            <div class="highlight-card-title">${escHtml(title)}</div>
+            ${price}
+          </div>
           <div class="highlight-card-meta">
             ${timeText  ? `<span>${escHtml(timeText)}</span>`  : ''}
             ${venueText ? `<span>${escHtml(venueText)}</span>` : ''}
@@ -769,27 +720,6 @@ const SECTION_TITLES = {
   }
 
   function scrollToPickCard(card) {
-    const eventsSection = document.getElementById('section-events');
-    // Switch to Events section without the scroll-to-top that showSection() applies
-    if (!eventsSection.classList.contains('active')) {
-      document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-      eventsSection.classList.add('active');
-      document.querySelectorAll('.filter-bar').forEach(bar => bar.hidden = false);
-      applyFilter();
-      updateHash('events');
-    }
-    // Ensure card's weekend panel is active
-    const cardPanel = card.closest('.weekend-panel');
-    if (cardPanel && !cardPanel.classList.contains('active')) {
-      document.querySelectorAll('.weekend-panel').forEach(p => p.classList.remove('active'));
-      cardPanel.classList.add('active');
-      markActiveTab(cardPanel);
-      applyFilter();
-    }
-    if (card.classList.contains('hidden')) {
-      filterCategory('all');
-      filterRegion('all');
-    }
     if (compactCards.matches) setCardOpen(card, true);
     requestAnimationFrame(() => {
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -806,397 +736,82 @@ const SECTION_TITLES = {
       .replace(/"/g, '&quot;');
   }
 
-  // Returns true from Tuesday 00:00 onwards after a Fri–Mon block
-  function weekendIsPast(satDateStr) {
-    if (!satDateStr) return false;
-    const tuesday = new Date(satDateStr + 'T00:00:00');
-    tuesday.setDate(tuesday.getDate() + 3); // Sat+3 = Tue
-    tuesday.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today >= tuesday;
-  }
+  function renderCalendar() {
+    const results = document.getElementById('calendarResults');
+    const openId = results.querySelector('.card.open')?.dataset.eventId;
+    const { start, end } = selectedRange();
+    const groups = new Map();
+    let datesHaveEvents = false;
 
-  // Ordinary weekends roll over on the Tuesday (weekendIsPast), even though
-  // their panel also lists Tuesday events. A school-holiday week stays current
-  // until its last day, so midweek holiday events stay on "this week".
-  function panelIsPast(panel) {
-    const sat = panel.dataset.weekend;
-    const inHolidays = sat >= SCHOOL_HOLIDAYS.firstWeekend && sat <= SCHOOL_HOLIDAYS.lastWeekend;
-    const labels = panel.querySelectorAll('.day-label[data-date]');
-    if (!inHolidays || !labels.length) return weekendIsPast(sat);
-    return _ds(new Date()) > labels[labels.length - 1].dataset.date;
-  }
-
-  // Update tab button labels dynamically from panel data-weekend attributes
-  function updateTabLabels() {
-    const countBadge = n => n > 0 ? `<span class="tab-count">${n}</span>` : '';
-    const panelCount = panel => panel.querySelectorAll('.card:not(.dedup-hidden)').length;
-    let visibleCount = 0;
-    document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
-      if (btn.dataset.pastWeekend || btn.hidden) return; // past tabs keep their date labels
-      visibleCount++;
-      if (btn.id === 'holidayTab') {
-        const total = [...document.querySelectorAll('.weekend-panel[data-holiday]')].reduce((n, p) => n + panelCount(p), 0);
-        const lead = visibleCount === 1 ? '<span class="tab-live-dot"></span>' : '';
-        btn.innerHTML = `${lead}<span aria-hidden="true">🎄</span> School Holidays · ${SCHOOL_HOLIDAYS.label}${countBadge(total)}`;
-        return;
-      }
-      const panel = document.getElementById(btn.getAttribute('aria-controls') || '');
-      if (!panel || !panel.dataset.weekend) return;
-      const datePart = weekendRangeLabel(panel) + countBadge(panelCount(panel));
-      if (visibleCount === 1)      btn.innerHTML = `<span class="tab-live-dot"></span>This Weekend · ${datePart}`;
-      else if (visibleCount === 2) btn.innerHTML = `Next Weekend · ${datePart}`;
-      else                         btn.innerHTML = datePart;
-    });
-    document.querySelectorAll('.holiday-chip').forEach(chip => {
-      const panel = document.getElementById(chip.dataset.panel);
-      if (panel) chip.innerHTML = weekendRangeLabel(panel) + countBadge(panelCount(panel));
-    });
-  }
-
-  // Hide tabs and panels for weekends that have already passed
-  function setupPastWeekendTabs() {
-    const tabsInner = document.querySelector('.tabs-inner');
-    if (!tabsInner) return;
-
-    const pastBtns = [];
-    let firstFuture = null;
-
-    document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
-      const btn = document.getElementById('wtab-' + panel.id);
-      if (panelIsPast(panel)) {
-        panel.dataset.pastWeekend = '1';
-        if (btn) {
-          btn.dataset.pastWeekend = '1';
-          pastBtns.push(btn);
-        }
-      } else if (!firstFuture) {
-        firstFuture = panel;
-      }
-    });
-
-    if (pastBtns.length) {
-      // Add "Past weekends" toggle and collapsible group to the tab bar
-      const toggle = document.createElement('button');
-      toggle.className = 'past-tabs-toggle';
-      toggle.id = 'pastTabsToggle';
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.innerHTML = 'Past weekends <span class="past-tabs-chevron">▾</span>';
-      toggle.onclick = togglePastTabs;
-
-      const group = document.createElement('div');
-      group.className = 'past-tabs-group';
-      group.id = 'pastTabsGroup';
-
-      // Sort most-recent past first
-      pastBtns.sort((a, b) => {
-        const pa = document.getElementById(a.getAttribute('aria-controls'));
-        const pb = document.getElementById(b.getAttribute('aria-controls'));
-        return (pb?.dataset.weekend || '').localeCompare(pa?.dataset.weekend || '');
-      });
-      pastBtns.forEach(btn => group.appendChild(btn));
-
-      tabsInner.appendChild(toggle);
-      tabsInner.appendChild(group);
+    for (const ev of calendarEvents) {
+      const day = eventDate(ev);
+      if (!day || day < start || day > end) continue;
+      datesHaveEvents = true;
+      if (!eventMatchesFilters(ev)) continue;
+      if (!groups.has(day)) groups.set(day, []);
+      groups.get(day).push(ev);
     }
 
-    // Inject the "past weekend" banner once into the events main area
-    const evMain = document.querySelector('#section-events main');
-    if (evMain && !document.getElementById('pastWeekendBanner')) {
-      const banner = document.createElement('div');
-      banner.id = 'pastWeekendBanner';
-      banner.className = 'past-weekend-banner';
-      banner.hidden = true;
-      banner.textContent = '📅 This weekend has passed — showing for reference only.';
-      evMain.prepend(banner);
-    }
+    const dates = [...groups.keys()].sort();
+    document.getElementById('dateRangeSummary').textContent = rangeLabel({ start, end });
+    const headings = dates.map(iso => {
+      const d = calendarDay(iso);
+      const weekday = CALENDAR_DAY_LABEL.formatToParts(d).find(part => part.type === 'weekday').value;
+      return `<div class="day-label day-${weekday.slice(0, 3).toLowerCase()}" id="day-${iso}" data-date="${iso}">
+        <span class="pip"></span><h2>${CALENDAR_DAY_LABEL.format(d)}</h2><span class="line"></span>
+      </div><div class="events-grid">${groups.get(iso).map(buildEventCardHTML).join('')}</div>`;
+    }).join('');
 
-    // If the active panel is past, switch to the first future panel
-    const active = document.querySelector('.weekend-panel.active');
-    if (active?.dataset.pastWeekend && firstFuture) {
-      active.classList.remove('active');
-      firstFuture.classList.add('active');
-    }
-  }
-
-  // ── School holidays ──────────────────────────────────────────────────────────
-  // The summer break gets one 🎄 tab in the weekend bar instead of a tab per
-  // weekend; choosing it opens a row of the holiday weekends to pick from.
-  // Term 4 ends by Fri 18 Dec 2026; Term 1 2027 starts between Thu 28 Jan and
-  // Wed 3 Feb depending on the school (NZ Gazette). Update each year.
-  // Holiday weeks run Saturday to Friday and show every day, not just the
-  // weekend: firstDay–lastDay is the span shown.
-  const SCHOOL_HOLIDAYS = {
-    firstWeekend: '2026-12-19',   // Saturdays, inclusive
-    lastWeekend:  '2027-01-30',
-    firstDay:     '2026-12-19',
-    lastDay:      '2027-02-02',
-    label:        '19 Dec – 2 Feb',
-    note:         'Most schools go back between 28 Jan and 3 Feb',
-  };
-
-  function setupSchoolHolidays() {
-    const { firstWeekend, lastWeekend } = SCHOOL_HOLIDAYS;
-    const panels = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .filter(p => !p.dataset.pastWeekend && p.dataset.weekend >= firstWeekend && p.dataset.weekend <= lastWeekend);
-    if (!panels.length) return;
-
-    panels.forEach(p => {
-      p.dataset.holiday = '1';
-      const b = document.getElementById('wtab-' + p.id);
-      if (b) b.hidden = true;
-    });
-
-    const tab = document.createElement('button');
-    tab.className = 'tab-btn holiday-tab';
-    tab.id = 'holidayTab';
-    tab.type = 'button';
-    tab.setAttribute('role', 'tab');
-    tab.setAttribute('aria-selected', 'false');
-    tab.addEventListener('click', () => {
-      const current = panels.find(p => p.classList.contains('active')) || panels[0];
-      showTab(current.id);
-    });
-    document.getElementById('wtab-' + panels[0].id)?.before(tab);
-
-    const bar = document.createElement('div');
-    bar.className = 'holiday-bar';
-    bar.id = 'holidayBar';
-    bar.hidden = true;
-    bar.innerHTML = `<div class="holiday-bar-inner">
-        <div class="holiday-bar-title"><span aria-hidden="true">🎄</span> School holidays <span class="holiday-bar-note">${escHtml(SCHOOL_HOLIDAYS.note)}</span></div>
-        <div class="holiday-chips" role="group" aria-label="Holiday weekends">
-          ${panels.map(p => `<button type="button" class="holiday-chip" data-panel="${p.id}" aria-pressed="false"></button>`).join('')}
-        </div>
+    if (!dates.length) {
+      const message = datesHaveEvents
+        ? (freeOnly ? 'No free events match these filters.' : 'No events match these filters.')
+        : 'No events are listed for these dates.';
+      results.innerHTML = `<div class="no-results" role="status"><p>${message}</p>
+        ${datesHaveEvents ? '<button type="button" class="no-results-reset">Clear event filters</button>' : ''}
       </div>`;
-    bar.addEventListener('click', e => {
-      const chip = e.target.closest('.holiday-chip');
-      if (chip) showTab(chip.dataset.panel);
-    });
-    document.querySelector('.tabs-inner')?.after(bar);
-
-    // Header link — the holidays are the season's big event
-    const cta = document.getElementById('holidayCta');
-    if (cta) {
-      cta.querySelector('.holiday-cta-text').textContent = `School holidays · ${SCHOOL_HOLIDAYS.label}`;
-      cta.hidden = false;
-      cta.addEventListener('click', e => { e.preventDefault(); openSchoolHolidays(); });
-    }
-    if (location.hash === '#school-holidays') openSchoolHolidays();
-  }
-
-  // Show the holidays tab and bring the weekend bar to the top of the screen
-  function openSchoolHolidays() {
-    const panels = [...document.querySelectorAll('.weekend-panel[data-holiday]')];
-    if (!panels.length) return;
-    if (!document.getElementById('section-events').classList.contains('active')) showSection('events');
-    const current = panels.find(p => p.classList.contains('active')) || panels[0];
-    showTab(current.id);
-    const bars = document.querySelectorAll('.filter-bar');
-    const above = bars[bars.length - 1];
-    const y = above ? above.getBoundingClientRect().bottom + window.scrollY : 0;
-    window.scrollTo({ top: y, behavior: 'smooth' });
-  }
-
-  // Fri–Mon label for a weekend panel, e.g. "18–21 Dec" or "29 Jan–1 Feb"
-  function weekendRangeLabel(panel) {
-    if (panel.dataset.holiday) {
-      const labels = panel.querySelectorAll('.day-label[data-date]');
-      if (labels.length) {
-        const [a, b] = [labels[0], labels[labels.length - 1]].map(l => {
-          const [y, m, d] = l.dataset.date.split('-').map(Number);
-          return new Date(y, m - 1, d);
-        });
-        return a.getMonth() === b.getMonth()
-          ? `${a.getDate()}–${b.getDate()} ${MONTHS_SHORT[a.getMonth()]}`
-          : `${a.getDate()} ${MONTHS_SHORT[a.getMonth()]}–${b.getDate()} ${MONTHS_SHORT[b.getMonth()]}`;
+    } else {
+      results.innerHTML = headings;
+      if (dates.length > 1) renderDaySelector(results, dates, groups);
+      if (openId) {
+        const openCard = [...results.querySelectorAll('.card')].find(card => card.dataset.eventId === openId);
+        if (openCard) setCardOpen(openCard, true);
       }
     }
-    const sat = new Date(panel.dataset.weekend + 'T00:00:00');
-    const fri = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() - 1);
-    const mon = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 2);
-    return mon.getMonth() === fri.getMonth()
-      ? `${fri.getDate()}–${mon.getDate()} ${MONTHS_SHORT[fri.getMonth()]}`
-      : `${fri.getDate()} ${MONTHS_SHORT[fri.getMonth()]}–${mon.getDate()} ${MONTHS_SHORT[mon.getMonth()]}`;
-  }
-
-  function togglePastTabs() {
-    const group  = document.getElementById('pastTabsGroup');
-    const toggle = document.getElementById('pastTabsToggle');
-    if (!group || !toggle) return;
-    const isOpen = group.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
-    toggle.querySelector('.past-tabs-chevron').textContent = isOpen ? '▴' : '▾';
-  }
-
-  function injectEventCard(ev) {
-    // Generated panels label each day with its date, so route by date first:
-    // that is what puts a Wednesday school-holiday event on its own day.
-    const date = eventDate(ev);
-    const dayLabel = date && document.querySelector(`.weekend-panel .day-label[data-date="${date}"]`);
-    const dayGrid = dayLabel?.nextElementSibling;
-    if (dayGrid?.classList.contains('events-grid')) {
-      dayGrid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
-      return;
-    }
-    const panel = document.querySelector(`.weekend-panel[data-weekend="${ev.weekend}"]`);
-    if (!panel) {
-      console.warn(`[WoW] No panel for weekend "${ev.weekend}" — "${ev.title || ev.id}" not shown. Must be a Saturday in YYYY-MM-DD format within the generated range.`);
-      return;
-    }
-    // Route by the day label's class, never by grid position — panels don't all
-    // have the same set of days, and a positional lookup silently misfiles cards.
-    const label = panel.querySelector(`.day-label.day-${ev.day || 'sat'}`)
-               || panel.querySelector('.day-label.day-sat');
-    const grid = label && label.nextElementSibling;
-    if (!grid || !grid.classList.contains('events-grid')) return;
-    grid.insertAdjacentHTML('beforeend', buildEventCardHTML(ev));
-  }
-
-  // ── Day Selector ─────────────────────────────────────────────────────────────
-
-  const _DAY_OFFSET = { 'day-fri': -1, 'day-sat': 0, 'day-sun': 1, 'day-mon': 2, 'day-tue': 3 };
-  const _DAY_SHORT  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let   _dsObserver = null;
-
-  function _ds(d) {
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
-  function buildDaySelectors() {
-    if (_dsObserver) { _dsObserver.disconnect(); _dsObserver = null; }
-
-    document.querySelectorAll('.weekend-panel[data-weekend]').forEach(panel => {
-      panel.querySelector('.day-selector')?.remove();
-
-      const satDate = new Date(panel.dataset.weekend + 'T00:00:00');
-      const banner  = panel.querySelector('.banner, .banner-sponsored');
-      // Hand-written weekends put the day pills under their banner; school
-      // holiday weeks (up to 8 days) get them at the top of the panel.
-      if (!banner && !panel.dataset.holiday) return;
-
-      // Collect days that have visible event cards
-      const days = [];
-      panel.querySelectorAll('.day-label').forEach(label => {
-        const grid = label.nextElementSibling;
-        if (!grid?.classList.contains('events-grid')) return;
-        let date;
-        if (label.dataset.date) {
-          const [y, m, d] = label.dataset.date.split('-').map(Number);
-          date = new Date(y, m - 1, d);
-        } else {
-          const dayClass = [...label.classList].find(c => c in _DAY_OFFSET);
-          if (!dayClass) return;
-          date = new Date(satDate.getFullYear(), satDate.getMonth(), satDate.getDate() + _DAY_OFFSET[dayClass]);
-        }
-        const ds    = _ds(date);
-        const count = grid.querySelectorAll('.card:not(.dedup-hidden)').length;
-        if (count === 0) return;
-        label.dataset.date = ds;
-        days.push({ ds, name: _DAY_SHORT[date.getDay()], num: date.getDate(), count, label });
-      });
-
-      if (days.length < 2) return;
-
-      const sel = document.createElement('div');
-      sel.className = 'day-selector';
-      sel.setAttribute('aria-label', 'Jump to day');
-      sel.innerHTML = days.map((d, i) =>
-        `<button class="day-pill${i === 0 ? ' active' : ''}" data-date="${d.ds}" type="button">` +
-          `<span class="day-pill-name">${d.name}</span>` +
-          `<span class="day-pill-date">${d.num}</span>` +
-          `<span class="day-pill-count">${d.count}</span>` +
-        `</button>`
-      ).join('');
-
-      if (banner) banner.after(sel);
-      else panel.prepend(sel);
-
-      sel.addEventListener('click', e => {
-        const pill = e.target.closest('.day-pill');
-        if (!pill) return;
-        sel.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const target = days.find(d => d.ds === pill.dataset.date);
-        if (target) {
-          const navH = document.querySelector('.tabs-bar')?.offsetHeight || 52;
-          const y = target.label.getBoundingClientRect().top + window.scrollY - navH - 16;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        }
-      });
-    });
-
-    // Scroll-sync: update active pill as day headings enter view
-    const navH = document.querySelector('.tabs-bar')?.offsetHeight || 52;
-    _dsObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const label = entry.target;
-        const panel = label.closest('.weekend-panel');
-        if (!panel?.classList.contains('active')) return;
-        const sel = panel.querySelector('.day-selector');
-        if (!sel) return;
-        const ds  = label.dataset.date;
-        if (!ds) return;
-        const pill = sel.querySelector(`.day-pill[data-date="${ds}"]`);
-        if (pill) {
-          sel.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
-          pill.classList.add('active');
-        }
-      });
-    }, { rootMargin: `-${navH + 24}px 0px -52% 0px` });
-
-    document.querySelectorAll('.weekend-panel .day-label[data-date]').forEach(l => _dsObserver.observe(l));
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  function loadStaticEvents() {
-    if (typeof STATIC_EVENTS === 'undefined' || !STATIC_EVENTS.length) return;
-    STATIC_EVENTS.forEach((ev, i) => {
-      injectEventCard({ ...ev, _static: true, _staticId: `s${i}` });
-    });
-    applyFilter();
-    updateTabLabels();
     buildHighlightsRow();
-    buildDaySelectors();
     setEagerImages();
-    const evSection = document.getElementById('section-events');
-    if (evSection) observeCards(evSection);
+    observeCards(results);
+  }
+
+  function renderDaySelector(results, dates, groups) {
+    const selector = document.createElement('nav');
+    selector.className = 'day-selector';
+    selector.setAttribute('aria-label', 'Jump to day');
+    selector.innerHTML = dates.map((iso, i) => {
+      const day = calendarDay(iso);
+      const name = CALENDAR_DAY_LABEL.formatToParts(day).find(part => part.type === 'weekday').value;
+      const count = groups.get(iso).length;
+      return `<button class="day-pill${i === 0 ? ' active' : ''}" type="button" data-date="${iso}" aria-label="${CALENDAR_DAY_LABEL.format(day)}, ${count} ${count === 1 ? 'event' : 'events'}">
+        <span class="day-pill-name">${name.slice(0, 3)}</span>
+        <span class="day-pill-date">${day.getUTCDate()}</span>
+        <span class="day-pill-count">${count}</span>
+      </button>`;
+    }).join('');
+    results.prepend(selector);
   }
 
   function loadFirestoreEvents() {
     if (!firebaseReady) return;
-    db.collection('events')
-      .where('active', '==', true)
-      .onSnapshot(snapshot => {
-        // Remove previously injected Firestore cards
-        document.querySelectorAll('.card[data-firestore]').forEach(el => el.remove());
-        snapshot.docs.forEach(doc => injectEventCard({ id: doc.id, ...doc.data() }));
-
-        // Dedup: hide static cards whose event now exists in Firestore
-        const firestoreKeys = new Set(
-          snapshot.docs.map(doc => {
-            const d = doc.data();
-            return `${(d.title || '').trim()}|${d.weekend || ''}|${d.day || 'sat'}`;
-          })
-        );
-        document.querySelectorAll('.card[data-static]').forEach(card => {
-          const titleEl = card.querySelector('.card-title');
-          const key = `${(titleEl ? titleEl.textContent.trim() : '')}|${card.dataset.weekend || ''}|${card.dataset.day || 'sat'}`;
-          card.classList.toggle('dedup-hidden', firestoreKeys.has(key));
-        });
-
-        applyFilter();
-        updateTabLabels();
-        buildHighlightsRow();
-        buildDaySelectors();
-        setEagerImages();       // re-run after Firestore cards are injected
-        const evSection = document.getElementById('section-events');
-        if (evSection) observeCards(evSection);
-        openLinkedEvent();
-      }, err => console.warn('Firestore events error:', err));
+    db.collection('events').where('active', '==', true).onSnapshot(snapshot => {
+      const liveEvents = snapshot.docs.map(doc => {
+        const ev = doc.data();
+        const date = isCalendarDate(ev.date) ? ev.date : (legacyEventDates.get(legacyEventKey(ev)) || eventDate(ev));
+        return { ...ev, id: doc.id, date };
+      });
+      const liveKeys = new Set(liveEvents.map(eventListingKey));
+      calendarEvents = [...staticEvents.filter(ev => !liveKeys.has(eventListingKey(ev))), ...liveEvents];
+      if (!calendarReady) return;
+      if (!openLinkedEvent()) renderCalendar();
+    }, err => console.warn('Firestore events error:', err));
   }
 
   function loadAboutContent() {
@@ -1223,93 +838,6 @@ const SECTION_TITLES = {
     toast.classList.add('show');
     clearTimeout(toast._timer);
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
-  }
-
-  // Day groups in each weekend panel, with their offset from the Saturday
-  const WEEKEND_DAYS = [
-    { short: 'Fri', label: 'Friday',   offset: -1 },
-    { short: 'Sat', label: 'Saturday', offset: 0 },
-    { short: 'Sun', label: 'Sunday',   offset: 1 },
-    { short: 'Mon', label: 'Monday',   offset: 2 },
-    { short: 'Tue', label: 'Tuesday',  offset: 3 },
-  ];
-
-  const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-  // The days a panel shows: Fri–Tue normally; in the school holidays every
-  // day of the week (Sat–Fri), clipped to the holiday span.
-  function panelDays(sat, satStr) {
-    const at = offset => new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
-    const { firstWeekend, lastWeekend, firstDay, lastDay } = SCHOOL_HOLIDAYS;
-    if (satStr < firstWeekend || satStr > lastWeekend) return WEEKEND_DAYS.map(d => at(d.offset));
-    const days = [];
-    for (let i = -1; i <= 6; i++) {
-      const d = at(i), iso = _ds(d);
-      if (iso >= firstDay && iso <= lastDay && (i >= 0 || satStr === firstWeekend)) days.push(d);
-    }
-    return days;
-  }
-
-  // ── Generate weekend tabs + panels for the next 18 months ──
-  function generateRemainingWeekends() {
-    const existingPanels = [...document.querySelectorAll('.weekend-panel[data-weekend]')];
-    if (existingPanels.length === 0) return;
-
-    const tabsInner = document.querySelector('.tabs-inner');
-    const mainEl    = document.querySelector('#section-events main');
-    if (!tabsInner || !mainEl) return;
-
-
-    // Start one week after the last existing hardcoded panel
-    const lastSat = existingPanels[existingPanels.length - 1].dataset.weekend;
-    const [ly, lm, ld] = lastSat.split('-').map(Number);
-    let sat = new Date(ly, lm - 1, ld + 7);
-
-    let idx = existingPanels.length + 1; // w6, w7, …
-
-    const cutoff = new Date();
-    cutoff.setMonth(cutoff.getMonth() + 18);
-    while (sat <= cutoff) {
-      const sun = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 1);
-      const id  = 'w' + idx;
-      const fmt = d => String(d).padStart(2, '0');
-      const satStr = `${sat.getFullYear()}-${fmt(sat.getMonth() + 1)}-${fmt(sat.getDate())}`;
-
-      // Tab label
-      const tabLabel = sun.getMonth() === sat.getMonth()
-        ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
-        : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
-
-      // Tab button
-      const btn = document.createElement('button');
-      btn.className = 'tab-btn';
-      btn.id = 'wtab-' + id;
-      btn.setAttribute('role', 'tab');
-      btn.setAttribute('aria-selected', 'false');
-      btn.setAttribute('aria-controls', id);
-      btn.textContent = tabLabel;
-      btn.addEventListener('click', function() { showTab(id, this); });
-      tabsInner.appendChild(btn);
-
-      // Weekend panel with Fri–Tue day groups.
-      // Empty groups are hidden by CSS (.day-label:has(+ .events-grid:empty)).
-      const panel = document.createElement('div');
-      panel.className = 'weekend-panel';
-      panel.id = id;
-      panel.setAttribute('role', 'tabpanel');
-      panel.setAttribute('aria-labelledby', 'wtab-' + id);
-      panel.setAttribute('data-weekend', satStr);
-      panel.innerHTML = panelDays(sat, satStr)
-        .map(d => {
-          const name = DAY_NAMES[d.getDay()];
-          return `<div class="day-label day-${name.slice(0, 3).toLowerCase()}" data-date="${_ds(d)}"><span class="pip"></span>${name} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
-                 `<div class="events-grid"></div>`;
-        }).join('');
-      mainEl.appendChild(panel);
-
-      sat = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 7);
-      idx++;
-    }
   }
 
   // ── Collapsible event cards (phones) ──
@@ -1383,24 +911,47 @@ const SECTION_TITLES = {
       ?.addEventListener('click', () => { showSectionFromMenu('about'); closeInfoPopover(); });
     on('infoInstallBtn', 'click', () => { handleInstallClick(); closeInfoPopover(); });
 
-    // Region filters
-    document.querySelectorAll('.filter-btn[data-filter-region]').forEach(btn =>
-      btn.addEventListener('click', () => filterRegion(btn.dataset.filterRegion))
+    // Calendar filters share the same date range and results.
+    document.querySelectorAll('[data-filter-region]').forEach(btn =>
+      btn.addEventListener('click', () => { currentRegion = btn.dataset.filterRegion; filterEvents(); })
     );
-
-    // Event type filter
     document.querySelectorAll('[data-filter-category]').forEach(btn =>
-      btn.addEventListener('click', () => filterCategory(btn.dataset.filterCategory))
+      btn.addEventListener('click', () => { currentCategory = btn.dataset.filterCategory; filterEvents(); })
     );
-
-    // Weekend tabs
-    document.querySelectorAll('.tab-btn[aria-controls]').forEach(btn =>
-      btn.addEventListener('click', () => showTab(btn.getAttribute('aria-controls'), btn))
+    on('freeFilterBtn', 'click', () => { freeOnly = !freeOnly; filterEvents(); });
+    document.querySelectorAll('[data-date-filter]').forEach(btn =>
+      btn.addEventListener('click', () => changeDatePreset(btn.dataset.dateFilter))
     );
+    on('customDates', 'submit', applyCustomDates);
+    on('customDates', 'input', () => document.getElementById('dateTo').setCustomValidity(''));
+    on('calendarResults', 'click', e => {
+      if (e.target.closest('.no-results-reset')) {
+        resetEventFilters();
+        filterEvents();
+        document.querySelector('[data-filter-category="all"]').focus();
+        return;
+      }
+      const pill = e.target.closest('.day-pill');
+      if (!pill) return;
+      pill.closest('.day-selector').querySelector('.day-pill.active')?.classList.remove('active');
+      pill.classList.add('active');
+      const label = document.getElementById('day-' + pill.dataset.date);
+      const offset = document.querySelector('.tabs-bar').offsetHeight + 12;
+      window.scrollTo({ top: window.scrollY + label.getBoundingClientRect().top - offset, behavior: 'smooth' });
+    });
 
-    // Weekend nav
-    on('wnavPrev', 'click', () => navigateWeekend(-1));
-    on('wnavNext', 'click', () => navigateWeekend(1));
+    const holidayLink = document.getElementById('holidayCta');
+    holidayLink.hidden = currentToday > SCHOOL_HOLIDAYS.end;
+    holidayLink.querySelector('.holiday-cta-text').textContent = 'School holidays · 19 Dec – 2 Feb';
+    holidayLink.addEventListener('click', e => {
+      e.preventDefault();
+      datePreset = 'custom';
+      customRange = SCHOOL_HOLIDAYS;
+      setCustomDatesOpen(false);
+      showSection('events');
+      filterEvents();
+      document.getElementById('eventDateFilters').scrollIntoView();
+    });
 
     // Install banner
     on('installBannerInstallBtn', 'click', () => triggerInstall());
@@ -1413,24 +964,23 @@ const SECTION_TITLES = {
 
   document.addEventListener('DOMContentLoaded', () => {
     bindEventListeners();
-    generateRemainingWeekends();
-    setupPastWeekendTabs();
-    setupSchoolHolidays();
-    const startPanel = document.querySelector('.weekend-panel.active');
-    if (startPanel) markActiveTab(startPanel);
-    updateTabLabels();
-    updateWeekendNav();
-    enhanceStaticImages();  // add srcset/onerror/width/height to all static card images
-    setEagerImages();       // promote first 2 visible cards to loading="eager"
-    // Scroll the active tab into view (matters on mobile where early tabs may be off-screen)
-    setTimeout(() => {
-      const activeTab = document.querySelector('.tabs-inner .tab-btn.active');
-      if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'start' });
-    }, 0);
-    buildHighlightsRow();
-    loadStaticEvents();         // inject STATIC_EVENTS into weekend panels
-    openLinkedEvent();          // ?e=<event id> from a shared link
-    enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge
+    const section = readHash();
+    calendarReady = true;
+    if (!openLinkedEvent()) {
+      showSection(section);
+      syncFilterControls();
+      renderCalendar();
+    }
+
+    // Refresh relative dates when Auckland rolls into the next day.
+    const refreshDay = () => {
+      const today = aucklandToday();
+      if (today === currentToday) return;
+      currentToday = today;
+      renderCalendar();
+    };
+    setInterval(refreshDay, 60_000);
+    document.addEventListener('visibilitychange', refreshDay);
 
     // ── HERO WEATHER ──
     (function initWeatherStrip() {
@@ -1475,24 +1025,9 @@ const SECTION_TITLES = {
         heroWeather.style.display = '';
       }
 
-      function getNextSaturday() {
-        const today = new Date();
-        const day = today.getDay();
-        const daysUntilSat = day === 6 ? 0 : (6 - day);
-        const sat = new Date(today);
-        sat.setDate(today.getDate() + daysUntilSat);
-        return sat;
-      }
-
       async function fetchWeather() {
-        const sat = getNextSaturday();
-        const sun = new Date(sat);
-        sun.setDate(sat.getDate() + 1);
-        // Local date, not toISOString(): UTC is a day behind NZ before midday/1pm
-        const fmt = function(d) {
-          return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        };
-        const satKey = fmt(sat);
+        const satKey = weekendForDate(aucklandToday());
+        const sunKey = addCalendarDays(satKey, 1);
 
         try {
           const cached = sessionStorage.getItem(CACHE_KEY);
@@ -1505,7 +1040,7 @@ const SECTION_TITLES = {
             }
           }
         } catch (e) {}
-        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&daily=weathercode,temperature_2m_max,precipitation_probability_max&start_date=' + fmt(sat) + '&end_date=' + fmt(sun) + '&timezone=Pacific%2FAuckland';
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-41.2865&longitude=174.7762&daily=weathercode,temperature_2m_max,precipitation_probability_max&start_date=' + satKey + '&end_date=' + sunKey + '&timezone=Pacific%2FAuckland';
 
         try {
           const res = await fetch(url);

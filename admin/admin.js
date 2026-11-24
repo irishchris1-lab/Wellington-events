@@ -33,13 +33,12 @@ let firstLoad       = true;
 
 // True from Tuesday 00:00 after a Fri–Mon block
 function weekendIsPast(satDateStr) {
-  if (!satDateStr) return false;
-  const tuesday = new Date(satDateStr + 'T00:00:00');
-  tuesday.setDate(tuesday.getDate() + 3); // Sat+3 = Tue
-  tuesday.setHours(0, 0, 0, 0);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today >= tuesday;
+  return isCalendarDate(satDateStr) && aucklandToday() >= addCalendarDays(satDateStr, 3);
+}
+
+function eventIsPast(ev) {
+  const date = eventDate(ev);
+  return Boolean(date && date < aucklandToday());
 }
 
 function toggleShowPast(btn) {
@@ -49,7 +48,7 @@ function toggleShowPast(btn) {
 }
 
 async function deletePastEvents(btn) {
-  const past = allEvents.filter(e => !e._static && weekendIsPast(e.weekend));
+  const past = allEvents.filter(e => !e._static && weekendIsPast(e.weekend) && eventIsPast(e));
   if (!past.length) { showToast('No past events to delete'); return; }
   if (!confirm(`Delete ${past.length} past event${past.length === 1 ? '' : 's'} from Firestore?`)) return;
   btn.disabled = true;
@@ -121,8 +120,7 @@ function openFromUrlParams() {
     set('fTitle',   p.get('title'));
     set('fDesc',    p.get('description'));
     set('fType',    p.get('type'));
-    set('fDay',     p.get('day'));
-    set('fWeekend', p.get('weekend'));
+    set('fDate',    eventDate({ date: p.get('date'), day: p.get('day'), weekend: p.get('weekend') }));
     set('fRegion',  p.get('region'));
     set('fVenue',   p.get('venue'));
     set('fTime',    p.get('time'));
@@ -156,7 +154,7 @@ function subscribeToEvents() {
         STATIC_EVENTS.forEach((ev, i) => {
           const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
           if (!firestoreKeys.has(key) && !hiddenStaticKeys.has(key)) {
-            allEvents.push({ ...ev, id: `static-${i}`, _static: true, _staticId: i, active: true });
+            allEvents.push({ ...ev, ...adminEventSchedule(ev), id: `static-${i}`, _static: true, _staticId: i, active: true });
           }
         });
         allEvents.sort((a, b) => {
@@ -169,7 +167,7 @@ function subscribeToEvents() {
       populateWeekendFilter();
       if (firstLoad) {
         firstLoad = false;
-        const upcoming = allEvents.map(e => e.weekend).filter(w => w && !weekendIsPast(w)).sort()[0];
+        const upcoming = allEvents.filter(e => e.weekend && !eventIsPast(e)).map(e => e.weekend).sort()[0];
         if (upcoming) document.getElementById('weekendFilter').value = upcoming;
       }
       applyFilters();
@@ -226,7 +224,7 @@ function applyFilters() {
   const status  = document.getElementById('statusFilter').value;
 
   filteredEvents = allEvents.filter(ev => {
-    if (!showPast && weekendIsPast(ev.weekend)) return false;
+    if (!showPast && eventIsPast(ev)) return false;
     if (weekend && ev.weekend !== weekend) return false;
     if (region  && ev.region  !== region)  return false;
     if (status === 'active' && !ev.active)  return false;
@@ -281,14 +279,15 @@ function openModal(docId) {
     document.getElementById('fTitle').value    = ev.title    || '';
     document.getElementById('fDesc').value     = ev.description || '';
     document.getElementById('fType').value     = ev.type     || '';
-    document.getElementById('fDay').value      = ev.day      || 'sat';
-    document.getElementById('fWeekend').value  = ev.weekend  || '';
+    document.getElementById('fDate').value     = eventDate(ev);
     document.getElementById('fRegion').value   = ev.region   || '';
     document.getElementById('fTags').value     = (ev.tags || []).join(', ');
     document.getElementById('fVenue').value    = ev.venue    || '';
     document.getElementById('fTime').value     = ev.time     || '';
     document.getElementById('fUrl').value      = ev.url      || '';
     document.getElementById('fImg').value      = ev.img      || '';
+    document.getElementById('fPriceTier').value = ev.priceTier || '';
+    document.getElementById('fPriceEstimated').checked = ev.priceEstimated === true;
     document.getElementById('fActive').checked = ev.active !== false;
     updateImgPreview();
     document.getElementById('fPick').checked   = ev.pick   || false;
@@ -623,22 +622,23 @@ async function handleFormSubmit(e) {
   const tags = document.getElementById('fTags').value
     .split(',').map(t => t.trim()).filter(Boolean);
 
-  const weekendVal = document.getElementById('fWeekend').value;
-  if (weekendVal) {
-    const [wy, wm, wd] = weekendVal.split('-').map(Number);
-    const wDate = new Date(wy, wm - 1, wd);
-    if (wDate.getDay() !== 6) {
-      showToast('Weekend date must be a Saturday (day 6). Please correct it.');
-      return;
-    }
+  const date = document.getElementById('fDate').value;
+  if (!isCalendarDate(date)) {
+    showToast('Choose an event date.');
+    return;
   }
+  const existing = allEvents.find(ev => ev.id === editingDocId);
+  const { day, weekend } = isCalendarDate(existing?.weekend) && eventDate(existing) === date
+    ? existing : dateToWeekend(date);
 
+  const priceTier = document.getElementById('fPriceTier').value;
   const data = {
     title:       document.getElementById('fTitle').value.trim(),
     description: document.getElementById('fDesc').value.trim(),
     type:        document.getElementById('fType').value,
-    day:         document.getElementById('fDay').value,
-    weekend:     weekendVal,
+    date,
+    day,
+    weekend,
     region:      document.getElementById('fRegion').value,
     tags,
     venue:       document.getElementById('fVenue').value.trim(),
@@ -649,6 +649,8 @@ async function handleFormSubmit(e) {
     pick:        document.getElementById('fPick').checked,
     indoor:      document.getElementById('fIndoor').checked || false,
     category:    document.getElementById('fCategory').value,
+    priceTier,
+    priceEstimated: priceTier !== '' && document.getElementById('fPriceEstimated').checked,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
 
@@ -782,8 +784,8 @@ async function bulkImportDraftEvents() {
       const isDupe = existing.docs.some(d => {
         const data = d.data();
         return (data.title || '').trim().toLowerCase() === key &&
-               data.weekend === ev.weekend &&
-               data.day === ev.day;
+               (eventDate(data) === eventDate(ev) ||
+                 (!data.date && data.weekend === ev.weekend && data.day === ev.day));
       });
 
       if (isDupe) { skipped++; continue; }
@@ -792,8 +794,7 @@ async function bulkImportDraftEvents() {
         title:       ev.title,
         description: ev.description || '',
         type:        ev.type        || 'other',
-        day:         ev.day         || 'sat',
-        weekend:     ev.weekend     || '',
+        ...adminEventSchedule(ev),
         region:      ev.region      || 'wellington',
         venue:       ev.venue       || '',
         time:        ev.time        || '',
@@ -802,6 +803,8 @@ async function bulkImportDraftEvents() {
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
         category:    ev.category    || '',
+        priceTier:   ev.priceTier    || '',
+        priceEstimated: ev.priceEstimated === true,
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
@@ -831,7 +834,8 @@ async function editStaticEvent(staticId, btn) {
     const existing = allEvents.find(e =>
       !e._static &&
       (e.title || '').trim().toLowerCase() === titleKey &&
-      e.weekend === ev.weekend
+      (eventDate(e) === eventDate(ev) ||
+        (!e.date && e.weekend === ev.weekend && e.day === ev.day))
     );
     let docId;
     if (existing) {
@@ -841,8 +845,7 @@ async function editStaticEvent(staticId, btn) {
         title:       ev.title,
         description: ev.description || '',
         type:        ev.type        || 'other',
-        day:         ev.day         || 'sat',
-        weekend:     ev.weekend     || '',
+        ...adminEventSchedule(ev),
         region:      ev.region      || 'wellington',
         venue:       ev.venue       || '',
         time:        ev.time        || '',
@@ -851,13 +854,15 @@ async function editStaticEvent(staticId, btn) {
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
         category:    ev.category    || '',
+        priceTier:   ev.priceTier    || '',
+        priceEstimated: ev.priceEstimated === true,
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
       });
       docId = ref.id;
-      allEvents.push({ ...ev, id: docId, _static: false, active: false, tags: [] });
+      allEvents.push({ ...ev, ...adminEventSchedule(ev), id: docId, _static: false, active: false, tags: [] });
     }
     btn.disabled = false;
     btn.textContent = 'Edit';
@@ -877,30 +882,14 @@ function toggleJsonPanel(btn) {
 
 // Given a YYYY-MM-DD date string, return the Saturday `weekend` key and `day`
 function dateToWeekend(dateStr) {
-  const d   = new Date(dateStr + 'T12:00:00'); // noon avoids DST edge cases
-  const dow = d.getDay(); // 0=Sun, 6=Sat
-  const pad = n => String(n).padStart(2, '0');
-  const fmt = dt => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
-  if (dow === 6) {
-    return { weekend: dateStr, day: 'sat' };
-  } else if (dow === 5) { // Friday
-    const sat = new Date(d);
-    sat.setDate(sat.getDate() + 1);
-    return { weekend: fmt(sat), day: 'fri' };
-  } else if (dow === 0) { // Sunday
-    const sat = new Date(d);
-    sat.setDate(sat.getDate() - 1);
-    return { weekend: fmt(sat), day: 'sun' };
-  } else if (dow === 1) { // Monday
-    const sat = new Date(d);
-    sat.setDate(sat.getDate() - 2);
-    return { weekend: fmt(sat), day: 'mon' };
-  } else {
-    // Tue/Wed/Thu — map to the coming Saturday
-    const sat = new Date(d);
-    sat.setDate(sat.getDate() + (6 - dow));
-    return { weekend: fmt(sat), day: 'sat' };
-  }
+  const day = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][calendarDay(dateStr).getUTCDay()];
+  return { weekend: addCalendarDays(dateStr, -EVENT_DAY_OFFSETS[day]), day };
+}
+
+function adminEventSchedule(ev) {
+  const date = eventDate(ev);
+  if (isCalendarDate(ev.weekend)) return { date, weekend: ev.weekend, day: ev.day || 'sat' };
+  return { date, ...(date ? dateToWeekend(date) : { weekend: '', day: 'sat' }) };
 }
 
 async function importFromJSON() {
@@ -936,7 +925,7 @@ async function importFromJSON() {
       resultEl.classList.add('json-import-error');
       return;
     }
-    if (!ev.date || !/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
+    if (!isCalendarDate(ev.date)) {
       resultEl.textContent = `Event ${i + 1}: "date" must be YYYY-MM-DD (got "${ev.date}").`;
       resultEl.classList.add('json-import-error');
       return;
@@ -954,6 +943,7 @@ async function importFromJSON() {
         title:       String(ev.title).trim(),
         description: String(ev.description || '').trim(),
         type:        'other',
+        date:        ev.date,
         day,
         weekend,
         region:      'wellington',

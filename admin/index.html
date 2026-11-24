@@ -189,34 +189,22 @@
             </select>
           </div>
           <div class="form-row">
-            <label class="form-label" for="fDay">Day *</label>
-            <select class="form-select" id="fDay" required>
-              <option value="">Select…</option>
-              <option value="fri">Friday</option>
-              <option value="sat">Saturday</option>
-              <option value="sun">Sunday</option>
-              <option value="mon">Monday</option>
-            </select>
+            <label class="form-label" for="fDate">Event date *</label>
+            <input class="form-input" id="fDate" type="date" required>
           </div>
         </div>
 
-        <div class="form-grid">
-          <div class="form-row">
-            <label class="form-label" for="fWeekend">Weekend (Saturday date) *</label>
-            <input class="form-input" id="fWeekend" type="date" required>
-          </div>
-          <div class="form-row">
-            <label class="form-label" for="fRegion">Region *</label>
-            <select class="form-select" id="fRegion" required>
-              <option value="">Select…</option>
-              <option value="wellington">Wellington City</option>
-              <option value="lower-hutt">Lower Hutt</option>
-              <option value="upper-hutt">Upper Hutt</option>
-              <option value="kapiti">Kāpiti Coast</option>
-              <option value="porirua">Porirua</option>
-              <option value="wairarapa">Wairarapa</option>
-            </select>
-          </div>
+        <div class="form-row">
+          <label class="form-label" for="fRegion">Region *</label>
+          <select class="form-select" id="fRegion" required>
+            <option value="">Select…</option>
+            <option value="wellington">Wellington City</option>
+            <option value="lower-hutt">Lower Hutt</option>
+            <option value="upper-hutt">Upper Hutt</option>
+            <option value="kapiti">Kāpiti Coast</option>
+            <option value="porirua">Porirua</option>
+            <option value="wairarapa">Wairarapa</option>
+          </select>
         </div>
 
         <div class="form-row">
@@ -238,6 +226,25 @@
         <div class="form-row">
           <label class="form-label" for="fUrl">Event URL</label>
           <input class="form-input" id="fUrl" type="url" placeholder="https://…">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label class="form-label" for="fPriceTier">Price tier</label>
+            <select class="form-select" id="fPriceTier">
+              <option value="">Automatic</option>
+              <option value="Free">Free</option>
+              <option value="$">$ — under NZ$30</option>
+              <option value="$$">$$ — NZ$30 to under NZ$80</option>
+              <option value="$$$">$$$ — NZ$80 or more</option>
+            </select>
+          </div>
+          <div class="form-row form-row-check">
+            <label class="check-label">
+              <input type="checkbox" id="fPriceEstimated">
+              <span>Price tier is an estimate</span>
+            </label>
+          </div>
         </div>
 
         <div class="form-row">
@@ -335,6 +342,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="../js/event-dates.js"></script>
   <script src="../js/events-data.js"></script>
   <script src="admin.js"></script>
 

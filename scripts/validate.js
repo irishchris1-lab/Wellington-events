@@ -10,7 +10,7 @@
  *  3. an event pointing at a local image whose files were never committed
  *  4. a service-worker shell entry that 404s, silently breaking precache
  *  5. an og:image / twitter:image that points at a file that doesn't exist
- *  6. an event without a valid category, which the type filter would mis-file
+ *  6. an event without a valid category or price tier, which filters would mis-file
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,7 +22,7 @@ const fail = (check, msg) => errors.push(`${check}: ${msg}`);
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 
 // ── 1. syntax ──────────────────────────────────────────────────────────
-const scripts = ['js/events-data.js', 'js/script.js', 'sw.js',
+const scripts = ['js/event-dates.js', 'js/events-data.js', 'js/script.js', 'admin/admin.js', 'sw.js',
                  'scripts/process-image.js',
                  'scripts/generate-event-image.js', 'scripts/ai-event-image.js',
                  'scripts/import-event-image.js'];
@@ -108,16 +108,26 @@ for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:imag
 const vm = require('vm');
 const sandbox = {};
 vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
+const { isCalendarDate, eventDate } = vm.runInNewContext(read('js/event-dates.js') + '\n({ isCalendarDate, eventDate })');
 const CATEGORIES = ['music', 'festivals', 'sports', 'exhibitions', 'workshops', 'food'];
+const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
 (sandbox.STATIC_EVENTS || []).forEach(ev => {
   if (!CATEGORIES.includes(ev.category)) {
     fail('category', `"${ev.title}" (${ev.weekend}) has category ${JSON.stringify(ev.category)}; use one of ${CATEGORIES.join(', ')}`);
   }
-  if ('date' in ev && !/^\d{4}-\d{2}-\d{2}$/.test(ev.date)) {
-    fail('category', `"${ev.title}" has date ${JSON.stringify(ev.date)}; use YYYY-MM-DD`);
+  if ('date' in ev && !isCalendarDate(ev.date)) {
+    fail('date', `"${ev.title}" has date ${JSON.stringify(ev.date)}; use a valid YYYY-MM-DD date`);
+  } else if (!eventDate(ev)) {
+    fail('date', `"${ev.title}" needs a valid date or a legacy weekend date`);
   }
   if ('indoor' in ev && typeof ev.indoor !== 'boolean') {
     fail('category', `"${ev.title}" (${ev.weekend}) has indoor: ${JSON.stringify(ev.indoor)}; use true or leave it out`);
+  }
+  if (!PRICE_TIERS.includes(ev.priceTier)) {
+    fail('price', `"${ev.title}" (${ev.weekend}) needs a priceTier of ${PRICE_TIERS.join(', ')}`);
+  }
+  if ('priceEstimated' in ev && typeof ev.priceEstimated !== 'boolean') {
+    fail('price', `"${ev.title}" (${ev.weekend}) has a non-boolean priceEstimated`);
   }
 });
 
