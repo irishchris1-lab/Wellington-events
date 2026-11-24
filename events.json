@@ -1,0 +1,36 @@
+[
+ {
+  "id": "2026-11-28-tapa-day-te-papa",
+  "title": "Tapa: Pacific Histories in Cloth – making day",
+  "start": "2026-11-28T10:00",
+  "end": "2026-11-28T15:00",
+  "venue": "Te Papa Tongarewa",
+  "area": "Wellington City",
+  "category": "arts",
+  "free": true,
+  "family": true,
+  "rainy_day": true,
+  "blurb": "A day of hands-on tapa making, performance and community activities celebrating Pacific bark cloth and a new Te Papa Press book.",
+  "source_url": "https://www.tepapa.govt.nz/visit/event/tapa-pacific-histories-in-cloth-art-making-and-community",
+  "image": "images/events/tapa-making-day.jpg",
+  "image_credit": "AI-generated event illustration",
+  "verified_at": "2026-11-24"
+ },
+ {
+  "id": "2026-11-28-think-well-corner",
+  "title": "Think Well Corner",
+  "start": "2026-11-28T11:00",
+  "end": "2026-11-28T12:00",
+  "venue": "Te Matapihi ki te Ao Nui Central Library",
+  "area": "Wellington City",
+  "category": "community",
+  "free": true,
+  "family": false,
+  "rainy_day": true,
+  "blurb": "Free library talk on thinking clearly about other people's behaviour, with practical examples and group discussion.",
+  "source_url": "https://www.eventbrite.co.nz/e/think-well-corner-tickets-2004599007594",
+  "image": "images/events/think-well-corner.jpg",
+  "image_credit": "AI-generated event illustration",
+  "verified_at": "2026-11-24"
+ }
+]

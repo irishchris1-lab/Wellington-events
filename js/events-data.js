@@ -2360,6 +2360,7 @@ const STATIC_EVENTS = [
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'The final night of Aldous Harding’s New Zealand tour, playing the new album Train on the Island in full. Her strangeness lands best in a seated hall, and this is the last chance on home soil.',
     url: 'https://www.livenation.co.nz/event/aldous-harding-train-on-the-island-wellington-tickets-edp1670092',
+    img: 'images/events/aldous-harding-train-on-the-island',
     pick: true,
     label: '🎤 Final NZ Show',
     labelStyle: 'color:#7A3B8A',
