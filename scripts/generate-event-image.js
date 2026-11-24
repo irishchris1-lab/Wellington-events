@@ -203,8 +203,41 @@ function mic(body, grille, wave) {
     + `<rect x="${CX - 70}" y="${CY + 112}" width="140" height="18" rx="9" fill="${body}"/>`;
 }
 
+// Three fern fronds, koru-curled at the tip. Distinct from `blossoms` so two
+// nature events on the same weekend panel don't render identically.
+function fronds(frond, spine, spore) {
+  const one = (x, scale, tilt) => {
+    const len = 240 * scale;
+    let p = `<g transform="translate(${x} ${CY + 125}) rotate(${tilt})">`;
+    // spine, curling over at the top
+    p += `<path d="M 0 0 C 0 ${-len * 0.55} ${-len * 0.1} ${-len * 0.8} ${-len * 0.26} ${-len * 0.86}`
+       + ` C ${-len * 0.36} ${-len * 0.9} ${-len * 0.34} ${-len * 1.02} ${-len * 0.2} ${-len * 0.99}"`
+       + ` stroke="${spine}" stroke-width="${5 * scale}" fill="none" stroke-linecap="round"/>`;
+    // pinnae stepping up the spine, shortening toward the curl
+    for (let i = 0; i < 9; i++) {
+      const t = i / 9;
+      const y = -len * (0.1 + t * 0.68);
+      const x0 = -len * 0.06 * t * t * 3;
+      const w = (len * 0.3) * (1 - t * 0.72);
+      [-1, 1].forEach(d => {
+        p += `<path d="M ${x0} ${y} Q ${x0 + d * w * 0.6} ${y - w * 0.34} ${x0 + d * w} ${y - w * 0.1}`
+           + ` Q ${x0 + d * w * 0.55} ${y + w * 0.12} ${x0} ${y}" fill="${frond}" opacity="${0.95 - t * 0.2}"/>`;
+      });
+    }
+    return p + '</g>';
+  };
+  // spore dots scattered behind, like a cleared forest floor
+  let dots = '';
+  [[150, 300, 7], [660, 120, 6], [700, 330, 9], [110, 110, 5]].forEach(([x, y, r]) => {
+    dots += `<circle cx="${x}" cy="${y}" r="${r}" fill="${spore}" opacity="0.5"/>`;
+  });
+  return dots + one(CX - 150, 0.78, 14) + one(CX + 140, 0.72, -16) + one(CX, 1, -2);
+}
+
 // ── themes ────────────────────────────────────────────────────────────────
 const THEMES = {
+  fern:    { from: '#10402F', to: '#5E9B5A', bar: '#E8C86A',
+             art: () => fronds('#D9EBC7', '#F7F2EB', '#E8C86A') },
   spring:  { from: '#2E8B57', to: '#E8C86A', bar: '#1A6B3A',
              art: () => blossoms('#F7F2EB', '#E4A11B', '#1A6B3A') },
   irish:   { from: '#0B5F3A', to: '#D9A441', bar: '#F7F2EB',
