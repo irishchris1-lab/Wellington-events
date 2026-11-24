@@ -1383,11 +1383,6 @@ const SECTION_TITLES = {
       ?.addEventListener('click', () => { showSectionFromMenu('about'); closeInfoPopover(); });
     on('infoInstallBtn', 'click', () => { handleInstallClick(); closeInfoPopover(); });
 
-    // Contact email obfuscation
-    document.querySelectorAll('.contact-email').forEach(a =>
-      a.addEventListener('click', () => { a.href = 'mailto:' + atob('d2hhdHNvbndlbGx5QGdtYWlsLmNvbQ=='); })
-    );
-
     // Region filters
     document.querySelectorAll('.filter-btn[data-filter-region]').forEach(btn =>
       btn.addEventListener('click', () => filterRegion(btn.dataset.filterRegion))
