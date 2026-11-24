@@ -234,8 +234,32 @@ function fronds(frond, spine, spore) {
   return dots + one(CX - 150, 0.78, 14) + one(CX + 140, 0.72, -16) + one(CX, 1, -2);
 }
 
+// A single conifer under a star, with baubles scattered around it. Flat and
+// symmetrical so it still reads at 400px in a card.
+function conifer(tree, trunk, star, bauble) {
+  const tiers = [[0.0, 105, 62], [0.34, 128, 84], [0.70, 150, 104]]
+    .map(([t, w, h]) => {
+      const y = CY - 95 + t * 150;
+      return `<path d="M ${CX} ${y} L ${CX + w} ${y + h} L ${CX - w} ${y + h} Z" fill="${tree}"/>`;
+    }).join('');
+  const pt = (a, r) => {
+    const rad = (a - 90) * Math.PI / 180;
+    return `${(CX + Math.cos(rad) * r).toFixed(1)},${(CY - 128 + Math.sin(rad) * r).toFixed(1)}`;
+  };
+  let pts = '';
+  for (let i = 0; i < 10; i++) pts += pt(i * 36, i % 2 ? 13 : 32) + ' ';
+  let dots = '';
+  [[150, 150, 9], [660, 120, 7], [120, 330, 7], [690, 320, 10], [95, 215, 5], [710, 220, 6]]
+    .forEach(([x, y, r]) => { dots += `<circle cx="${x}" cy="${y}" r="${r}" fill="${bauble}" opacity="0.6"/>`; });
+  return dots + tiers
+    + `<rect x="${CX - 16}" y="${CY + 105}" width="32" height="42" fill="${trunk}"/>`
+    + `<polygon points="${pts.trim()}" fill="${star}"/>`;
+}
+
 // ── themes ────────────────────────────────────────────────────────────────
 const THEMES = {
+  christmas:{from: '#0E3B2E', to: '#B03030', bar: '#E8C86A',
+             art: () => conifer('#F7F2EB', '#8C6239', '#E8C86A', '#F2D27A') },
   fern:    { from: '#10402F', to: '#5E9B5A', bar: '#E8C86A',
              art: () => fronds('#D9EBC7', '#F7F2EB', '#E8C86A') },
   spring:  { from: '#2E8B57', to: '#E8C86A', bar: '#1A6B3A',

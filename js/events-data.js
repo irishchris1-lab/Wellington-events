@@ -2432,7 +2432,7 @@ const STATIC_EVENTS = [
   {
     title: 'Stokes Valley Christmas Parade & Market',
     type: 'festival', day: 'sat', weekend: '2026-12-05', region: 'lower-hutt',
-    time: 'Saturday 5 December · from 10:00 am',
+    time: 'Saturday 5 December · 10:00 am – 2:00 pm',
     venue: 'Speldhurst Park, Stokes Valley',
     description: 'A community Christmas parade followed by a market in the park — floats, stalls and kids’ activities, run by the Rotary Club of Hutt River Valley.',
     label: '🎄 Christmas Parade',
@@ -2442,15 +2442,40 @@ const STATIC_EVENTS = [
   {
     title: 'Upper Hutt Santa Parade',
     type: 'festival', day: 'sun', weekend: '2026-12-05', region: 'upper-hutt',
-    time: 'Sunday 6 December · start time to be confirmed',
+    time: 'Sunday 6 December · 3:00 pm – 4:30 pm',
     venue: 'Main St, Upper Hutt Central',
-    description: 'Upper Hutt’s Santa parade down Main Street. Check the organiser closer to the day — the published start time has not been confirmed.',
+    description: 'Upper Hutt’s Santa parade down Main Street — floats, bands and Santa bringing up the rear. Free, and an easy one to combine with a wander round the shops.',
     label: '🎅 Santa Parade',
     labelStyle: 'color:#B03030',
     family: 'Family',
     cost: 'Free',},
 
+  {
+    title: 'Christmas in Bethlehem',
+    type: 'festival', day: 'fri', weekend: '2026-12-05', region: 'lower-hutt',
+    time: 'Friday 4 December · 7:00 pm',
+    venue: 'Jackson Street, Petone (venue not named on the council listing)',
+    description: 'The opening night of Hutt City’s Summer in the Hutt programme — a free evening Christmas celebration on Jackson Street. The council calendar gives the date and time but not the venue, so check before heading down.',
+    url: 'https://events.huttcity.govt.nz/',
+    img: 'images/events/christmas-tree',
+    label: '🎄 Free · Christmas',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
+
   // ── 12–13 Dec 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Christmas Movie on the Lawn',
+    type: 'kids', day: 'sat', weekend: '2026-12-12', region: 'lower-hutt',
+    time: 'Saturday 12 December · 5:30 pm',
+    venue: 'Anzac Lawn, Riddiford Gardens, Lower Hutt',
+    description: 'A free outdoor screening of Elf on the lawn at Riddiford Gardens, part of Summer in the Hutt. Bring a rug and something warm for when the sun goes behind the hills.',
+    url: 'https://events.huttcity.govt.nz/',
+    img: 'images/events/christmas-tree',
+    label: '🎬 Free · Outdoor Film',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
   {
     title: 'A Christmas Cracker',
     type: 'festival', day: 'sat', weekend: '2026-12-12', region: 'wellington',
@@ -2515,6 +2540,31 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#B03030',
     family: 'Family',
     ticketed: true,},
+
+  {
+    title: 'Christmas on the Lawn',
+    type: 'festival', day: 'sat', weekend: '2026-12-19', region: 'lower-hutt',
+    time: 'Saturday 19 December · 3:00 pm – 7:00 pm',
+    venue: 'Anzac Lawn, Riddiford Gardens, Lower Hutt',
+    description: 'Hutt City’s big free Christmas afternoon — cultural performances, food stalls and a visit from Santa, with an artisan craft market alongside from 4pm and Nick Tansley’s pop-up carols caravan. The pick of the weekend if you want something free with the kids.',
+    url: 'https://events.huttcity.govt.nz/',
+    img: 'images/events/christmas-tree',
+    pick: true,
+    label: '🎄 Free · Christmas',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
+  {
+    title: 'Christmas in the Dog Park',
+    type: 'outdoor', day: 'sun', weekend: '2026-12-19', region: 'lower-hutt',
+    time: 'Sunday 20 December · from 10:00 am',
+    venue: 'Les Dalton Dog Park, Wainuiomata',
+    description: 'A Christmas morning out for the four-legged members of the whānau, run as part of Summer in the Hutt. Daft in the best way, and free.',
+    url: 'https://events.huttcity.govt.nz/',
+    label: '🐕 Free · Dog Friendly',
+    labelStyle: 'color:#C8901A',
+    family: 'Family',
+    cost: 'Free',},
 
   // ── 26–27 Dec 2026 ─────────────────────────────────────────────────────────
   {
