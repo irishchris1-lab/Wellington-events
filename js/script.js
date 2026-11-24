@@ -212,22 +212,24 @@ const SECTION_TITLES = {
     });
   }
 
+  const generatedImageCredit = '<span class="event-image-credit">AI-generated image</span>';
+
   // For locally-hosted images (path starts with "images/"), emit a <picture>
   // element with WebP source + JPEG fallback.  Pass useThumb=true to use the
   // 400 px thumbnail variant (highlights carousel).
-  function localImgHTML(base, altEsc, useThumb) {
+  function localImgHTML(base, altEsc, useThumb, generated) {
     const src = useThumb ? `${base}-thumb` : base;
-    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></picture></div>`;
+    return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></picture>${generated ? generatedImageCredit : ''}</div>`;
   }
 
-  function cardImgHTML(url, alt, useThumb) {
+  function cardImgHTML(url, alt, useThumb, generated) {
     if (!url) return '';
     const altEsc = (alt || '').replace(/"/g, '&quot;');
 
     // Local repo image — no external request, no srcset needed
     if (url.startsWith('images/')) {
       const base = url.replace(/\.(webp|jpe?g|png)$/i, '');
-      return localImgHTML(base, altEsc, useThumb);
+      return localImgHTML(base, altEsc, useThumb, generated);
     }
 
     const esc = url.replace(/"/g, '&quot;');
@@ -597,9 +599,9 @@ const SECTION_TITLES = {
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${ev.category === 'food' ? 'food' : 'events'}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${ev.category === 'food' ? 'food' : 'events'}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
-        ${ev.img ? cardImgHTML(ev.img, ev.title) : ''}
+        ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
           <div class="card-top">
             <div>
@@ -650,7 +652,8 @@ const SECTION_TITLES = {
         imgWrapHtml = '<div class="highlight-card-img"></div>';
       } else if (img.startsWith('images/')) {
         const base = img.replace(/\.(webp|jpe?g|png)$/i, '');
-        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture></div>`;
+        const credit = card.dataset.imgGenerated === '1' ? generatedImageCredit : '';
+        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture>${credit}</div>`;
       } else {
         imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
       }
