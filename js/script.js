@@ -881,6 +881,28 @@ const SECTION_TITLES = {
       if (chip) showTab(chip.dataset.panel);
     });
     document.querySelector('.tabs-inner')?.after(bar);
+
+    // Header link — the holidays are the season's big event
+    const cta = document.getElementById('holidayCta');
+    if (cta) {
+      cta.querySelector('.holiday-cta-text').textContent = `School holidays · ${SCHOOL_HOLIDAYS.label}`;
+      cta.hidden = false;
+      cta.addEventListener('click', e => { e.preventDefault(); openSchoolHolidays(); });
+    }
+    if (location.hash === '#school-holidays') openSchoolHolidays();
+  }
+
+  // Show the holidays tab and bring the weekend bar to the top of the screen
+  function openSchoolHolidays() {
+    const panels = [...document.querySelectorAll('.weekend-panel[data-holiday]')];
+    if (!panels.length) return;
+    if (!document.getElementById('section-events').classList.contains('active')) showSection('events');
+    const current = panels.find(p => p.classList.contains('active')) || panels[0];
+    showTab(current.id);
+    const bars = document.querySelectorAll('.filter-bar');
+    const above = bars[bars.length - 1];
+    const y = above ? above.getBoundingClientRect().bottom + window.scrollY : 0;
+    window.scrollTo({ top: y, behavior: 'smooth' });
   }
 
   // Fri–Mon label for a weekend panel, e.g. "18–21 Dec" or "29 Jan–1 Feb"
