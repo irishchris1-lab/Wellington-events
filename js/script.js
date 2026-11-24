@@ -620,19 +620,26 @@ const SECTION_TITLES = {
     if (ev.pick)     badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
     const badgesHtml = badgeParts.length ? `<div class="card-badges">${badgeParts.join('')}</div>` : '';
 
+    const mapUrl = safeUrl(ev.mapUrl);
+    const venue = escHtml(ev.venue || '');
+    const venueHtml = mapUrl ? `<a href="${escHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">${venue}</a>` : venue;
     const meta = [
       ev.time  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(ev.time)}</div>`  : '',
-      ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${escHtml(ev.venue)}</div>` : '',
+      ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${venueHtml}</div>` : '',
       ev.cost  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>`  : '',
     ].join('');
+    const detailsUrl = safeUrl(ev.url);
+    const detailsLabel = detailsUrl.startsWith('https://www.google.com/search?')
+      ? 'Search for event details'
+      : 'Find out more';
     const footer = [
-      safeUrl(ev.url) ? `<a class="card-link" href="${escHtml(safeUrl(ev.url))}" target="_blank" rel="noopener noreferrer">Find out more ↗<span class="card-link-domain">${escHtml(extractDomain(ev.url))}</span></a>` : '',
+      detailsUrl ? `<a class="card-link" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} ↗<span class="card-link-domain">${escHtml(extractDomain(detailsUrl))}</span></a>` : '',
       `<button class="add-to-plan-btn" aria-label="Add ${escHtml(ev.title)} to plan">+ Plan</button>`,
     ].join('');
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
@@ -941,7 +948,7 @@ const SECTION_TITLES = {
 
   // ── Day Selector ─────────────────────────────────────────────────────────────
 
-  const _DAY_OFFSET = { 'day-fri': -1, 'day-sat': 0, 'day-sun': 1, 'day-mon': 2 };
+  const _DAY_OFFSET = { 'day-fri': -1, 'day-sat': 0, 'day-sun': 1, 'day-mon': 2, 'day-tue': 3 };
   const _DAY_SHORT  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   let   _dsObserver = null;
 
@@ -1205,6 +1212,7 @@ const SECTION_TITLES = {
     { value: 'saturday', label: 'Saturday', short: 'Sat', offset: 0 },
     { value: 'sunday',   label: 'Sunday',   short: 'Sun', offset: 1 },
     { value: 'monday',   label: 'Monday',   short: 'Mon', offset: 2 },
+    { value: 'tuesday',  label: 'Tuesday',  short: 'Tue', offset: 3 },
   ];
   let currentPlanWeekend = null; // YYYY-MM-DD of the Saturday for the selected weekend
 
@@ -1282,7 +1290,7 @@ const SECTION_TITLES = {
       if (text.includes('📍')) data.location = text.replace('📍', '').trim();
     });
     // Day: data-day (generated cards) or the day heading above the grid (static HTML cards)
-    const dayMap = { fri: 'friday', sat: 'saturday', sun: 'sunday', mon: 'monday' };
+    const dayMap = { fri: 'friday', sat: 'saturday', sun: 'sunday', mon: 'monday', tue: 'tuesday' };
     const dayKey = cardEl.dataset.day
       || [...(cardEl.closest('.events-grid')?.previousElementSibling?.classList || [])]
            .map(c => c.replace('day-', '')).find(k => k in dayMap);
@@ -1837,7 +1845,7 @@ const SECTION_TITLES = {
       btn.addEventListener('click', function() { showTab(id, this); });
       tabsInner.appendChild(btn);
 
-      // Weekend panel with the same Fri–Mon day groups as the hardcoded panels.
+      // Weekend panel with day groups kept in the same order as the planner.
       // Empty groups are hidden by CSS (.day-label:has(+ .events-grid:empty)).
       const panel = document.createElement('div');
       panel.className = 'weekend-panel';
@@ -1845,10 +1853,10 @@ const SECTION_TITLES = {
       panel.setAttribute('role', 'tabpanel');
       panel.setAttribute('aria-labelledby', 'wtab-' + id);
       panel.setAttribute('data-weekend', satStr);
-      panel.innerHTML = [['fri', 'Friday', -1], ['sat', 'Saturday', 0], ['sun', 'Sunday', 1], ['mon', 'Monday', 2]]
-        .map(([key, name, offset]) => {
+      panel.innerHTML = PLAN_DAYS
+        .map(({ short, label, offset }) => {
           const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + offset);
-          return `<div class="day-label day-${key}"><span class="pip"></span>${name} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
+          return `<div class="day-label day-${short.toLowerCase()}"><span class="pip"></span>${label} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]}<span class="line"></span></div>` +
                  `<div class="events-grid"></div>`;
         }).join('');
       mainEl.appendChild(panel);

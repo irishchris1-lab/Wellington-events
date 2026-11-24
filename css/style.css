@@ -459,6 +459,8 @@
   }
   picture:not(:has(img.loaded)) + .event-image-credit { display: none; }
   .card:hover .card-img { transform: scale(1.04); }
+  .card.card-poster .card-img-wrap { aspect-ratio: 4 / 5; }
+  .card.card-poster .card-img { object-fit: contain; transform: none; }
   .card:not([data-img]) .card-img-wrap,
   .card[data-img=""] .card-img-wrap { display: none; }
 
