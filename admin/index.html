@@ -61,16 +61,6 @@
       </div>
     </div>
 
-    <!-- Section tabs -->
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchTab('events', this)">📅 Events</button>
-      <button class="admin-tab" onclick="switchTab('food', this)">☕ Food & Drink</button>
-      <button class="admin-tab" onclick="switchTab('walks', this)">🌿 Walks & Trails</button>
-      <button class="admin-tab" onclick="switchTab('parks', this)">🛝 Play Parks</button>
-      <button class="admin-tab" onclick="switchTab('activities', this)">🎯 Activities</button>
-      <button class="admin-tab" onclick="switchTab('markets', this)">🛒 Markets</button>
-    </div>
-
     <!-- Toolbar -->
     <div class="toolbar events-only">
       <div class="toolbar-filters">
@@ -161,47 +151,6 @@
           <button class="btn-primary" id="jsonImportBtn" onclick="importFromJSON()">Create Draft</button>
         </div>
       </div>
-    </div>
-
-    <!-- ── VENUE EDITOR SECTIONS ── -->
-    <div id="admin-section-food" class="hidden venue-section">
-      <div class="venue-section-header">
-        <h2 class="venue-section-title">☕ Food & Drink</h2>
-        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
-      </div>
-      <div class="venue-list" id="food-list"><p class="venue-status-msg">Loading…</p></div>
-    </div>
-
-    <div id="admin-section-walks" class="hidden venue-section">
-      <div class="venue-section-header">
-        <h2 class="venue-section-title">🌿 Walks & Trails</h2>
-        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
-      </div>
-      <div class="venue-list" id="walks-list"><p class="venue-status-msg">Loading…</p></div>
-    </div>
-
-    <div id="admin-section-parks" class="hidden venue-section">
-      <div class="venue-section-header">
-        <h2 class="venue-section-title">🛝 Play Parks</h2>
-        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
-      </div>
-      <div class="venue-list" id="parks-list"><p class="venue-status-msg">Loading…</p></div>
-    </div>
-
-    <div id="admin-section-activities" class="hidden venue-section">
-      <div class="venue-section-header">
-        <h2 class="venue-section-title">🎯 Activities</h2>
-        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
-      </div>
-      <div class="venue-list" id="activities-list"><p class="venue-status-msg">Loading…</p></div>
-    </div>
-
-    <div id="admin-section-markets" class="hidden venue-section">
-      <div class="venue-section-header">
-        <h2 class="venue-section-title">🛒 Markets</h2>
-        <p class="venue-section-hint">Edit venue details. Changes are saved to Firestore and applied to the public site on next page load.</p>
-      </div>
-      <div class="venue-list" id="markets-list"><p class="venue-status-msg">Loading…</p></div>
     </div>
 
   </div><!-- /dashboard -->
@@ -332,6 +281,14 @@
             <input type="checkbox" id="fPick">
             <span>🔥 Featured Pick (appears in This Weekend's Highlights)</span>
           </label>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="fCategory">Category *</label>
+          <select class="form-select" id="fCategory" required>
+            <option value="events">🗓 Events</option>
+            <option value="food">☕ Food &amp; Drink</option>
+          </select>
         </div>
 
         <div class="form-row form-row-check">

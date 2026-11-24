@@ -6,7 +6,6 @@
   },
   "scripts": {
     "validate": "node scripts/validate.js",
-    "process-image": "node scripts/process-image.js",
-    "migrate-images": "node scripts/migrate-images.js"
+    "process-image": "node scripts/process-image.js"
   }
 }

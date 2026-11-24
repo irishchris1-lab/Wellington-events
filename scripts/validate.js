@@ -10,6 +10,7 @@
  *  3. an event pointing at a local image whose files were never committed
  *  4. a service-worker shell entry that 404s, silently breaking precache
  *  5. an og:image / twitter:image that points at a file that doesn't exist
+ *  6. an event without a valid category, which the type filter would mis-file
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,7 +23,7 @@ const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 
 // ── 1. syntax ──────────────────────────────────────────────────────────
 const scripts = ['js/events-data.js', 'js/script.js', 'sw.js',
-                 'scripts/process-image.js', 'scripts/migrate-images.js',
+                 'scripts/process-image.js',
                  'scripts/generate-event-image.js', 'scripts/ai-event-image.js',
                  'scripts/import-event-image.js'];
 for (const f of scripts) {
@@ -100,6 +101,21 @@ for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:imag
   const rel = url.slice(site.length);
   if (!fs.existsSync(path.join(root, rel))) fail('share-image', `${tag} "${url}" has no file at ${rel}`);
 }
+
+// ── 6. every event has a category ──────────────────────────────────
+// The Events / Food & Drink filter reads `category`; Rainy Day reads `indoor`.
+const vm = require('vm');
+const sandbox = {};
+vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
+const CATEGORIES = ['events', 'food'];
+(sandbox.STATIC_EVENTS || []).forEach(ev => {
+  if (!CATEGORIES.includes(ev.category)) {
+    fail('category', `"${ev.title}" (${ev.weekend}) has category ${JSON.stringify(ev.category)}; use one of ${CATEGORIES.join(', ')}`);
+  }
+  if ('indoor' in ev && typeof ev.indoor !== 'boolean') {
+    fail('category', `"${ev.title}" (${ev.weekend}) has indoor: ${JSON.stringify(ev.indoor)}; use true or leave it out`);
+  }
+});
 
 // ── report ─────────────────────────────────────────────────────────────
 if (errors.length) {

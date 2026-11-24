@@ -293,11 +293,13 @@ function openModal(docId) {
     updateImgPreview();
     document.getElementById('fPick').checked   = ev.pick   || false;
     document.getElementById('fIndoor').checked = ev.indoor || false;
+    document.getElementById('fCategory').value = ev.category === 'food' ? 'food' : 'events';
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
     document.getElementById('fActive').checked = true;
     document.getElementById('fIndoor').checked = false;
+    document.getElementById('fCategory').value = 'events';
     updateImgPreview();
   }
 
@@ -647,6 +649,7 @@ async function handleFormSubmit(e) {
     active:      document.getElementById('fActive').checked,
     pick:        document.getElementById('fPick').checked,
     indoor:      document.getElementById('fIndoor').checked || false,
+    category:    document.getElementById('fCategory').value || 'events',
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
 
@@ -799,6 +802,7 @@ async function bulkImportDraftEvents() {
         img:         ev.img         || '',
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
+        category:    ev.category    || 'events',
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
@@ -848,6 +852,7 @@ async function editStaticEvent(staticId, btn) {
         img:         ev.img         || '',
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
+        category:    ev.category    || 'events',
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
@@ -1017,400 +1022,5 @@ async function saveAbout() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Save About';
-  }
-}
-
-// ── VENUE EDITOR ──────────────────────────────────────────────────────────────
-// Architecture: admin fetches index.html, parses venue cards, stores overrides
-// in Firestore `venues` collection. Main site applies overrides on load.
-
-let venueData = { food: null, walks: null, parks: null, activities: null, markets: null };
-
-function switchTab(tab, btn) {
-  document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('active', b === btn));
-  // Show/hide events-specific content
-  document.querySelectorAll('.events-only').forEach(el => {
-    el.style.display = tab === 'events' ? '' : 'none';
-  });
-  // Show/hide venue sections
-  ['food', 'walks', 'parks', 'activities', 'markets'].forEach(s => {
-    const el = document.getElementById('admin-section-' + s);
-    if (el) el.classList.toggle('hidden', s !== tab);
-  });
-  // Lazy-load venue data on first visit
-  if (tab !== 'events' && !venueData[tab]) loadVenueSection(tab);
-}
-
-// Produce a stable slug used as the Firestore document ID
-function venueSlug(name) {
-  return name.toLowerCase()
-    .replace(/[āáàä]/g, 'a').replace(/[ōóò]/g, 'o')
-    .replace(/[ūúù]/g, 'u').replace(/[īíì]/g, 'i').replace(/[ēé]/g, 'e')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-    .substring(0, 60);
-}
-
-async function loadVenueSection(section) {
-  const listEl = document.getElementById(section + '-list');
-  listEl.innerHTML = '<p class="venue-status-msg">Loading venues from main site…</p>';
-  try {
-    // Parse venue cards from the section's own HTML file (content is lazy-loaded,
-    // not embedded in index.html, so we fetch sections/{section}.html directly)
-    const res  = await fetch('../sections/' + section + '.html');
-    if (!res.ok) throw new Error('Could not load sections/' + section + '.html (' + res.status + ')');
-    const html = await res.text();
-    const doc  = new DOMParser().parseFromString(html, 'text/html');
-    const cards = [...doc.querySelectorAll('.venue-card')];
-    if (!cards.length) throw new Error('No venue cards found in sections/' + section + '.html');
-
-    // Fetch existing Firestore overrides for this section
-    const snap = await db.collection('venues').where('section', '==', section).get();
-    const overrides = {};
-    snap.docs.forEach(d => { overrides[d.id] = d.data(); });
-
-    // Build venue list, applying any saved overrides
-    const venues = cards.map(card => {
-      const rawName = (card.querySelector('.venue-name')?.textContent || '').trim();
-      const slug    = venueSlug(rawName);
-      const ov      = overrides[slug] || {};
-      const locRaw  = (card.querySelector('.venue-location')?.textContent || '').trim();
-      return {
-        slug,
-        name:        ov.name        ?? rawName,
-        description: ov.description ?? (card.querySelector('.venue-desc')?.textContent || '').trim(),
-        location:    ov.location    ?? locRaw.replace(/^\s*📍\s*/, ''),
-        rating:      ov.rating      ?? parseFloat((card.querySelector('.rating-score')?.textContent || '0')),
-        linkUrl:     ov.linkUrl     ?? (card.querySelector('.rating-link')?.getAttribute('href') || ''),
-        linkLabel:   ov.linkLabel   ?? (card.querySelector('.rating-link')?.textContent || '').trim(),
-        region:      ov.region      ?? (card.dataset.region || 'wellington'),
-        duration:    ov.duration    ?? (card.dataset.duration || ''),
-        img:         ov.img         ?? (card.dataset.img || ''),
-        section,
-        hasOverride: !!overrides[slug],
-        isDeleted:   ov.deleted === true,
-      };
-    });
-
-    venueData[section] = venues;
-    renderVenueList(section, venues);
-  } catch (err) {
-    listEl.innerHTML = '<p class="venue-status-msg" style="color:var(--rust)">Error: ' + esc(err.message) + '</p>';
-  }
-}
-
-function renderVenueList(section, venues) {
-  const listEl = document.getElementById(section + '-list');
-  if (!venues || !venues.length) {
-    listEl.innerHTML = '<p class="venue-status-msg">No venues found.</p>';
-    return;
-  }
-  listEl.innerHTML = venues.map((v, i) => {
-    const rating = typeof v.rating === 'number' ? v.rating.toFixed(1) : v.rating;
-    const meta   = [v.region, section === 'walks' && v.duration ? v.duration : '', '⭐ ' + rating]
-                     .filter(Boolean).join(' · ');
-    const editedBadge   = v.hasOverride && !v.isDeleted ? '<span class="badge-override">Edited</span>' : '';
-    const deletedBadge  = v.isDeleted ? '<span class="badge-override" style="background:#fee2e2;color:#b91c1c;border-color:#fca5a5">Hidden</span>' : '';
-    const editBtn       = !v.isDeleted ? `<button class="action-btn edit" onclick="toggleVenueEdit('${section}',${i})">Edit</button>` : '';
-    const deleteBtn     = !v.isDeleted ? `<button class="action-btn delete" onclick="deleteVenue('${section}',${i},'${v.slug}')">Delete</button>` : '';
-    const restoreBtn    = v.isDeleted  ? `<button class="action-btn edit" onclick="restoreVenueFromDeleted('${section}',${i},'${v.slug}')">Restore</button>` : '';
-    const revertBtn     = v.hasOverride && !v.isDeleted ? `<button class="action-btn delete" onclick="revertVenue('${section}',${i},'${v.slug}')">Revert</button>` : '';
-    return `<div class="venue-admin-card${v.hasOverride ? ' has-override' : ''}${v.isDeleted ? ' is-deleted' : ''}" id="vcard-${section}-${i}">
-      <div class="venue-admin-header">
-        <div class="venue-admin-info">
-          <span class="venue-admin-name">${esc(v.name)}</span>
-          <span class="venue-admin-meta">${esc(meta)}</span>
-        </div>
-        <div class="venue-admin-actions">
-          ${deletedBadge}${editedBadge}${editBtn}${deleteBtn}${restoreBtn}${revertBtn}
-        </div>
-      </div>
-      <div class="venue-edit-form hidden" id="vedit-${section}-${i}">
-        ${!v.isDeleted ? buildVenueForm(section, v, i) : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function buildVenueForm(section, v, i) {
-  const sel = (val, opts) => opts.map(([k, label]) =>
-    `<option value="${k}"${v[val] === k ? ' selected' : ''}>${label}</option>`).join('');
-
-  const regionOpts = sel('region', [
-    ['wellington','Wellington City'],['lower-hutt','Lower Hutt'],
-    ['upper-hutt','Upper Hutt'],['kapiti','Kāpiti Coast'],
-    ['porirua','Porirua'],['wairarapa','Wairarapa'],
-  ]);
-  const durOpts = sel('duration', [
-    ['under30','Under 30 min'],['under1','Under 1 hour'],
-    ['under2','Under 2 hours'],['over2','Over 2 hours'],
-  ]);
-
-  return `
-    <div class="venue-form-grid">
-      <div class="form-row">
-        <label class="form-label">Venue name</label>
-        <input class="form-input" id="vf-name-${section}-${i}" type="text" value="${escAttr(v.name)}">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Region</label>
-        <select class="form-select" id="vf-region-${section}-${i}">${regionOpts}</select>
-      </div>
-    </div>
-    <div class="form-row">
-      <label class="form-label">Description</label>
-      <textarea class="form-textarea" id="vf-desc-${section}-${i}" rows="3">${esc(v.description)}</textarea>
-    </div>
-    <div class="venue-form-grid">
-      <div class="form-row">
-        <label class="form-label">📍 Location text</label>
-        <input class="form-input" id="vf-location-${section}-${i}" type="text" value="${escAttr(v.location)}">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Rating (0–5)</label>
-        <input class="form-input" id="vf-rating-${section}-${i}" type="number" min="0" max="5" step="0.1" value="${v.rating}">
-      </div>
-    </div>
-    <div class="venue-form-grid">
-      <div class="form-row">
-        <label class="form-label">External link URL</label>
-        <input class="form-input" id="vf-linkUrl-${section}-${i}" type="url" value="${escAttr(v.linkUrl)}" placeholder="https://…">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Link label</label>
-        <input class="form-input" id="vf-linkLabel-${section}-${i}" type="text" value="${escAttr(v.linkLabel)}" placeholder="TripAdvisor reviews ↗">
-      </div>
-    </div>
-    ${section === 'walks' ? `<div class="form-row">
-      <label class="form-label">Duration</label>
-      <select class="form-select" id="vf-duration-${section}-${i}">${durOpts}</select>
-    </div>` : ''}
-    <div class="form-row">
-      <label class="form-label">Image</label>
-      <div class="img-field">
-        <div class="img-drop-zone"
-          onclick="document.getElementById('vf-imgFile-${section}-${i}').click()"
-          ondragover="event.preventDefault(); this.classList.add('drag-over')"
-          ondragleave="this.classList.remove('drag-over')"
-          ondrop="event.preventDefault(); this.classList.remove('drag-over'); handleVenueDrop(event,'${section}',${i})">
-          <input type="file" id="vf-imgFile-${section}-${i}" accept="image/*" class="img-file-input" onchange="handleVenueImageUpload('${section}',${i},this)">
-          <span class="drop-icon">📁</span>
-          <span class="drop-label">Click to choose photo, or drag &amp; drop</span>
-          <span class="drop-hint">Resized &amp; compressed automatically</span>
-        </div>
-        <span class="upload-status" id="vf-uploadStatus-${section}-${i}"></span>
-        <input class="form-input" id="vf-img-${section}-${i}" type="url" value="${escAttr(v.img || '')}" placeholder="https://… (auto-filled from upload, or paste URL)" oninput="updateVenueImgPreview('${section}',${i})">
-        <div class="img-preview-wrap${v.img ? '' : ' hidden'}" id="vf-imgPreviewWrap-${section}-${i}">
-          <img id="vf-imgPreview-${section}-${i}" src="${escAttr(v.img || '')}" alt="Preview" class="img-preview" onerror="this.closest('.img-preview-wrap').classList.add('hidden')">
-          <button type="button" class="img-clear-btn" onclick="clearVenueImg('${section}',${i})">✕ Remove</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button type="button" class="btn-secondary" onclick="toggleVenueEdit('${section}',${i})">Cancel</button>
-      <button type="button" class="btn-primary" onclick="saveVenueEdit('${section}',${i},'${v.slug}')">Save changes</button>
-    </div>`;
-}
-
-function toggleVenueEdit(section, idx) {
-  document.getElementById('vedit-' + section + '-' + idx)?.classList.toggle('hidden');
-}
-
-async function saveVenueEdit(section, idx, slug) {
-  const val = id => (document.getElementById(id)?.value || '').trim();
-  const pre  = `vf-${section}-${idx}-` .replace(/(\w+)-(\w+)-(\d+)/, 'vf-$1-$2-$3');
-
-  // Helper to build the field id
-  const fid = f => `vf-${f}-${section}-${idx}`;
-
-  const data = {
-    section,
-    name:        val(fid('name')),
-    description: val(fid('desc')),
-    location:    val(fid('location')),
-    rating:      Math.round(parseFloat(val(fid('rating')) || 0) * 10) / 10,
-    linkUrl:     val(fid('linkUrl')),
-    linkLabel:   val(fid('linkLabel')),
-    region:      val(fid('region')),
-    img:         val(fid('img')),
-    updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-  };
-  if (section === 'walks') data.duration = val(fid('duration'));
-
-  try {
-    await db.collection('venues').doc(slug).set(data, { merge: true });
-
-    // Update local state and re-render list
-    if (venueData[section]?.[idx]) {
-      Object.assign(venueData[section][idx], { ...data, hasOverride: true });
-    }
-    renderVenueList(section, venueData[section]);
-
-    // Flash the saved card green
-    requestAnimationFrame(() => {
-      const card = document.getElementById('vcard-' + section + '-' + idx);
-      if (card) { card.classList.add('save-flash'); setTimeout(() => card.classList.remove('save-flash'), 1800); }
-    });
-    showToast('Venue saved.');
-  } catch (err) {
-    showToast('Save failed: ' + err.message);
-  }
-}
-
-async function revertVenue(section, idx, slug) {
-  if (!confirm('Revert to the original values from the main site?')) return;
-  try {
-    await db.collection('venues').doc(slug).delete();
-    venueData[section] = null;
-    await loadVenueSection(section);
-    showToast('Venue reverted to original.');
-  } catch (err) {
-    showToast('Revert failed: ' + err.message);
-  }
-}
-
-// ── Venue photo upload helpers ────────────────────────────────────────────────
-
-function handleVenueDrop(event, section, idx) {
-  const file = event.dataTransfer.files[0];
-  if (!file) return;
-  handleVenueImageUpload(section, idx, { files: [file] });
-}
-
-function updateVenueImgPreview(section, idx) {
-  const uid  = section + '-' + idx;
-  const val  = (document.getElementById('vf-img-' + uid)?.value || '').trim();
-  const wrap = document.getElementById('vf-imgPreviewWrap-' + uid);
-  const img  = document.getElementById('vf-imgPreview-' + uid);
-  if (!wrap || !img) return;
-  if (val) { img.src = val; wrap.classList.remove('hidden'); }
-  else { wrap.classList.add('hidden'); }
-}
-
-function clearVenueImg(section, idx) {
-  const uid = section + '-' + idx;
-  const el = document.getElementById('vf-img-' + uid);
-  if (el) el.value = '';
-  document.getElementById('vf-imgPreviewWrap-' + uid)?.classList.add('hidden');
-}
-
-async function handleVenueImageUpload(section, idx, input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (typeof input.value === 'string') input.value = '';
-
-  const uid = section + '-' + idx;
-  const setStatus = (msg, cls) => {
-    const el = document.getElementById('vf-uploadStatus-' + uid);
-    if (!el) return;
-    el.textContent = msg;
-    el.className   = 'upload-status' + (cls ? ' ' + cls : ' uploading');
-  };
-
-  document.getElementById('vf-imgPreviewWrap-' + uid)?.classList.add('hidden');
-
-  if (isHeicFile(file)) {
-    setStatus('⚠ HEIC photos can\'t be processed here. On iPhone: open the photo → Share → "Save Image", then upload the saved JPEG.', 'error');
-    return;
-  }
-
-  let timedOut = false;
-  const overallTimer = setTimeout(() => {
-    timedOut = true;
-    setStatus('This is taking longer than expected. Try a smaller image or check your connection.', 'error');
-  }, 40000);
-
-  try {
-    setStatus('Reading file…');
-    const img = await loadImageFile(file);
-    if (timedOut) return;
-
-    if (img.naturalWidth < 800) {
-      setStatus(`⚠ Source is ${img.naturalWidth} × ${img.naturalHeight}px — ideally ≥ 800px. Processing anyway…`);
-      await new Promise(r => setTimeout(r, 700));
-    }
-    if (timedOut) return;
-
-    setStatus('Resizing…');
-    const cardCanvas = resizeToCanvas(img, 800);
-    if (timedOut) return;
-
-    setStatus('Compressing…');
-    const [cardWebp, cardJpeg] = await Promise.all([
-      canvasBlob(cardCanvas, 'image/webp', 0.82),
-      canvasBlob(cardCanvas, 'image/jpeg', 0.82),
-    ]);
-    if (timedOut) return;
-
-    const nameVal = document.getElementById('vf-name-' + uid)?.value.trim() || '';
-    const slug    = imageSlug(nameVal || file.name.replace(/\.[^.]+$/, ''));
-
-    let storageUrl = null;
-    let storageErrMsg = null;
-    try {
-      storageUrl = await uploadToStorage(cardJpeg, slug, msg => setStatus(msg));
-    } catch (storageErr) {
-      const code = storageErr.code || '';
-      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
-        storageErrMsg = `Permission denied (${code}).`;
-      } else if (code === 'storage/bucket-not-found' || code === 'storage/project-not-found') {
-        storageErrMsg = `Bucket not found (${code}).`;
-      } else if (code === 'storage/canceled') {
-        storageErrMsg = 'Upload timed out — check connection.';
-      } else {
-        storageErrMsg = storageErr.message || code || 'Unknown Storage error';
-      }
-      console.warn('Storage upload failed:', code, storageErr.message);
-    }
-    if (timedOut) return;
-
-    clearTimeout(overallTimer);
-
-    const previewUrl = URL.createObjectURL(cardWebp);
-    _pendingDownloadUrls.push(previewUrl);
-    const previewWrap = document.getElementById('vf-imgPreviewWrap-' + uid);
-    const previewImg  = document.getElementById('vf-imgPreview-' + uid);
-    if (previewWrap && previewImg) {
-      previewImg.src = previewUrl;
-      previewWrap.classList.remove('hidden');
-    }
-
-    if (storageUrl) {
-      const imgInput = document.getElementById('vf-img-' + uid);
-      if (imgInput) imgInput.value = storageUrl;
-      setStatus('✓ Done', 'success');
-    } else {
-      setStatus('⚠ Storage upload failed: ' + storageErrMsg + ' — paste a URL manually.', 'error');
-    }
-  } catch (err) {
-    clearTimeout(overallTimer);
-    if (!timedOut) setStatus('Error: ' + err.message, 'error');
-  }
-}
-
-async function deleteVenue(section, idx, slug) {
-  if (!confirm('Hide this venue from the main site?')) return;
-  try {
-    await db.collection('venues').doc(slug).set({ deleted: true, section }, { merge: true });
-    if (venueData[section]?.[idx]) {
-      venueData[section][idx].isDeleted  = true;
-      venueData[section][idx].hasOverride = true;
-    }
-    renderVenueList(section, venueData[section]);
-    showToast('Venue hidden from main site.');
-  } catch (err) {
-    showToast('Delete failed: ' + err.message);
-  }
-}
-
-async function restoreVenueFromDeleted(section, idx, slug) {
-  try {
-    await db.collection('venues').doc(slug).update({ deleted: false });
-    if (venueData[section]?.[idx]) {
-      venueData[section][idx].isDeleted = false;
-    }
-    renderVenueList(section, venueData[section]);
-    showToast('Venue restored.');
-  } catch (err) {
-    showToast('Restore failed: ' + err.message);
   }
 }

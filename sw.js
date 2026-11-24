@@ -1,10 +1,7 @@
-const CACHE = 'wow-v6';   // v6: drops error pages and opaque cross-origin entries cached by v5
+const CACHE = 'wow-v7';   // v7: venue sections removed; events-only site
 const SHELL = [
   '/', '/css/style.css', '/js/events-data.js', '/js/script.js',
-  '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png',
-  '/icons/ruin-gin.png',
-  '/sections/food.html', '/sections/walks.html', '/sections/parks.html',
-  '/sections/activities.html', '/sections/markets.html'
+  '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', e => {
