@@ -293,13 +293,13 @@ function openModal(docId) {
     updateImgPreview();
     document.getElementById('fPick').checked   = ev.pick   || false;
     document.getElementById('fIndoor').checked = ev.indoor || false;
-    document.getElementById('fCategory').value = ev.category === 'food' ? 'food' : 'events';
+    document.getElementById('fCategory').value = ev.category || '';
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
     document.getElementById('fActive').checked = true;
     document.getElementById('fIndoor').checked = false;
-    document.getElementById('fCategory').value = 'events';
+    document.getElementById('fCategory').value = '';
     updateImgPreview();
   }
 
@@ -636,7 +636,6 @@ async function handleFormSubmit(e) {
   const data = {
     title:       document.getElementById('fTitle').value.trim(),
     description: document.getElementById('fDesc').value.trim(),
-    category:    'events',
     type:        document.getElementById('fType').value,
     day:         document.getElementById('fDay').value,
     weekend:     weekendVal,
@@ -649,7 +648,7 @@ async function handleFormSubmit(e) {
     active:      document.getElementById('fActive').checked,
     pick:        document.getElementById('fPick').checked,
     indoor:      document.getElementById('fIndoor').checked || false,
-    category:    document.getElementById('fCategory').value || 'events',
+    category:    document.getElementById('fCategory').value,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
 
@@ -802,7 +801,7 @@ async function bulkImportDraftEvents() {
         img:         ev.img         || '',
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
-        category:    ev.category    || 'events',
+        category:    ev.category    || '',
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
@@ -841,7 +840,6 @@ async function editStaticEvent(staticId, btn) {
       const ref = await db.collection('events').add({
         title:       ev.title,
         description: ev.description || '',
-        category:    'events',
         type:        ev.type        || 'other',
         day:         ev.day         || 'sat',
         weekend:     ev.weekend     || '',
@@ -852,7 +850,7 @@ async function editStaticEvent(staticId, btn) {
         img:         ev.img         || '',
         pick:        ev.pick        || false,
         indoor:      ev.indoor      || false,
-        category:    ev.category    || 'events',
+        category:    ev.category    || '',
         tags:        [],
         active:      false,
         createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
@@ -955,7 +953,6 @@ async function importFromJSON() {
       await db.collection('events').add({
         title:       String(ev.title).trim(),
         description: String(ev.description || '').trim(),
-        category:    'events',
         type:        'other',
         day,
         weekend,

@@ -103,11 +103,12 @@ for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:imag
 }
 
 // ── 6. every event has a category ──────────────────────────────────
-// The Events / Food & Drink filter reads `category`; Rainy Day reads `indoor`.
+// The Show filter reads `category` (see EVENT_CATEGORIES in js/script.js);
+// Rainy Day reads `indoor`.
 const vm = require('vm');
 const sandbox = {};
 vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
-const CATEGORIES = ['events', 'food'];
+const CATEGORIES = ['music', 'festivals', 'sports', 'exhibitions', 'workshops', 'food'];
 (sandbox.STATIC_EVENTS || []).forEach(ev => {
   if (!CATEGORIES.includes(ev.category)) {
     fail('category', `"${ev.title}" (${ev.weekend}) has category ${JSON.stringify(ev.category)}; use one of ${CATEGORIES.join(', ')}`);

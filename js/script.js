@@ -92,9 +92,27 @@ const SECTION_TITLES = {
     about:   "About — What's On Wellington",
   };
 
-  // Event type filter. Every event has category 'events' or 'food';
-  // 'rainy' is not a category but "anything marked indoor".
-  const CATEGORIES = ['all', 'events', 'food', 'rainy'];
+  // Event categories, shown as the "Show" filter. Every event has exactly one.
+  // Keep in step with the filter buttons in index.html, the admin form and
+  // scripts/validate.js.
+  const EVENT_CATEGORIES = {
+    music:       'Concerts & Gigs',
+    festivals:   'Festivals & Lifestyle',
+    sports:      'Sports & Outdoors',
+    exhibitions: 'Exhibitions',
+    workshops:   'Workshops, Conferences & Classes',
+    food:        'Food & Drink',
+  };
+  // Events saved before categories existed fall back on their type
+  const TYPE_TO_CATEGORY = {
+    music: 'music', culture: 'music', festival: 'festivals', market: 'festivals',
+    outdoor: 'sports', kids: 'festivals', whanau: 'festivals', other: 'festivals',
+  };
+  function eventCategory(ev) {
+    return EVENT_CATEGORIES[ev.category] ? ev.category : (TYPE_TO_CATEGORY[ev.type] || 'festivals');
+  }
+  // Filter values: 'all', a category, or 'rainy' (anything marked indoor)
+  const CATEGORIES = ['all', ...Object.keys(EVENT_CATEGORIES), 'rainy'];
 
   let currentRegion = 'all';
   let currentCategory = 'all';
@@ -435,15 +453,11 @@ const SECTION_TITLES = {
   function cardMatchesFilters(card) {
     if (currentRegion !== 'all' && card.dataset.region !== currentRegion) return false;
     if (currentCategory === 'rainy') return card.dataset.indoor === '1';
-    if (currentCategory !== 'all') return (card.dataset.category || 'events') === currentCategory;
+    if (currentCategory !== 'all') return card.dataset.category === currentCategory;
     return true;
   }
 
-  const FILTER_EMPTY_TEXT = {
-    events: 'No events match',
-    food:   'No food & drink events',
-    rainy:  'No indoor events',
-  };
+
 
   function applyFilter() {
     const activePanel = document.querySelector('.weekend-panel.active');
@@ -470,7 +484,8 @@ const SECTION_TITLES = {
     // One message for the whole weekend, with a way back to everything
     activePanel.querySelector('.no-results')?.remove();
     if (anyCards && !anyVisible) {
-      const what = FILTER_EMPTY_TEXT[currentCategory] || 'No events match';
+      const what = currentCategory === 'rainy' ? 'No indoor events'
+        : EVENT_CATEGORIES[currentCategory] ? `No ${EVENT_CATEGORIES[currentCategory].toLowerCase()} events` : 'No events match';
       const where = currentRegion === 'all' ? '' : ' in this area';
       const msg = document.createElement('div');
       msg.className = 'no-results';
@@ -599,7 +614,7 @@ const SECTION_TITLES = {
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${ev.category === 'food' ? 'food' : 'events'}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">

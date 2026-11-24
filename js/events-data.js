@@ -15,7 +15,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Art Show 2026',
     type: 'culture', day: 'sat', weekend: '2026-02-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: 'Sat 10:00 am – 8:00 pm (runs 27 Feb–1 Mar)',
     venue: 'Tākina Convention Centre, 50 Cable St',
     description: 'Thousands of original works across painting, ceramics, jewellery, textiles and sculpture, plus live artist demonstrations. Kids under 16 free with a paying adult.',
@@ -31,7 +31,7 @@ const STATIC_EVENTS = [
   {
     title: '20 Summers Fest — Home Alone Records',
     type: 'music', day: 'sat', weekend: '2026-02-28', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Doors 1:00 pm · Gig from 1:15 pm',
     venue: 'Central Wellington (venue TBA)',
     description: 'Home Alone Records celebrates 20 years with 10+ acts including French for Rabbits, Lake South and Young Moon. All ages, tamariki under 12 free — a genuinely special afternoon of NZ music.',
@@ -46,7 +46,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Festival of the Arts 2026',
     type: 'culture', day: 'sat', weekend: '2026-02-28', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: '24 Feb – 15 Mar · Multiple sessions daily',
     venue: 'Wellington CBD — multiple venues',
     description: 'The 40th anniversary edition of NZ\'s premier arts festival — dance, music, theatre and free whānau zones with face-painting and storytelling. Free street performances at Civic Square all weekend.',
@@ -61,7 +61,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Art Show — Final Day',
     type: 'culture', day: 'sun', weekend: '2026-02-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: 'Sunday 10:00 am – 5:00 pm',
     venue: 'Tākina Convention Centre, 50 Cable St',
     description: 'Last chance to explore hundreds of original NZ artworks before the show closes. Live artist demonstrations and a beautiful gallery atmosphere at Tākina.',
@@ -77,7 +77,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Fringe Festival 2026',
     type: 'culture', day: 'sun', weekend: '2026-02-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Running until 7 March · Various times',
     venue: 'Multiple venues across Wellington',
     description: '178 shows across theatre, comedy, dance, circus and interactive performance. whānau-friendly showcases throughout — check the programme for family picks this weekend.',
@@ -94,7 +94,7 @@ const STATIC_EVENTS = [
   {
     title: 'Martinborough Fair 2026',
     type: 'festival', day: 'sat', weekend: '2026-03-07', region: 'wairarapa',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 8:00 am – 4:00 pm',
     venue: 'Martinborough Square, Martinborough',
     description: 'Nearly 500 stalls of handmade goods, jewellery, pottery, woodwork, clothing, plants and street food. Live music, big bubbles, face painting and all proceeds to local charities. A proper day out — worth the drive over the hill.',
@@ -109,7 +109,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Pride Parade 2026',
     type: 'festival', day: 'sat', weekend: '2026-03-07', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 5:30 pm – 7:00 pm',
     venue: 'Courtenay Place & Dixon Street, Te Aro',
     description: 'Wellington\'s iconic Pride Parade — music, performers, DJs and a joyful community atmosphere. An inclusive celebration welcoming all whānau to watch or march. Part of Wellington Pride Festival 6–22 March.',
@@ -125,7 +125,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Tramway Museum — Ride the Trams',
     type: 'outdoor', day: 'sun', weekend: '2026-03-07', region: 'kapiti',
-    category: 'events',
+    category: 'exhibitions',
     time: 'Sundays 11:00 am – 4:30 pm',
     venue: 'Queen Elizabeth Park, Paekakariki',
     description: 'Ride historic Wellington trams through beautiful Queen Elizabeth Park to the beach. Kids adore this — a true Wellington treasure delighting families for decades.',
@@ -140,7 +140,7 @@ const STATIC_EVENTS = [
   {
     title: 'Newtown Festival',
     type: 'festival', day: 'sun', weekend: '2026-03-07', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 8 March · 12pm – 6pm',
     venue: 'Riddiford St, Newtown, Wellington',
     description: 'Wellington\'s most beloved free community festival — live music on multiple stages, street food, stalls and arts celebrating Newtown\'s vibrant community. A genuine Wellington institution, perfect for all ages.',
@@ -157,7 +157,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Waterfront Parkrun',
     type: 'outdoor', day: 'sat', weekend: '2026-03-14', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 8:00 am (briefing 7:45 am)',
     venue: 'Frank Kitts Park, Wellington Waterfront',
     description: 'Free weekly 5km run/walk along Wellington\'s beautiful waterfront. All paces welcome — register once at parkrun.co.nz and run anywhere in the world forever.',
@@ -172,7 +172,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Phoenix Double Header',
     type: 'outdoor', day: 'sat', weekend: '2026-03-14', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 14 March · Check Ticketek for times',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'A rare A-League double header — two Phoenix games at Hnry Stadium on the same day. The Phoenix are pushing for finals football and home games have electric atmosphere. Great live sport for families — bring a scarf and your voice.',
@@ -187,7 +187,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Festival of the Arts — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-03-14', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: '14–15 March · Last chance weekend',
     venue: 'Wellington CBD — multiple venues',
     description: 'Final weekend of NZ\'s premier arts festival — don\'t miss your last chance to catch world-class performances, free Civic Square street acts and the whānau zones. Unmissable Wellington event.',
@@ -202,7 +202,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Lantern Festival — Year of the Horse',
     type: 'festival', day: 'sat', weekend: '2026-03-14', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Thu 12 – Sun 15 Mar · Nightly from 4 pm, until 10 pm Fri–Sun',
     venue: 'Wellington Botanic Garden Ki Paekākā',
     description: 'A magical journey of lights through the Botanic Garden — from the main gate up Pinehill Path, through the Herb Garden, and down through the Lady Norwood Rose Garden and the Dell. Hundreds of lanterns, live performances on the Dell Stage, and festive atmosphere for the whole whānau.',
@@ -216,7 +216,7 @@ const STATIC_EVENTS = [
   {
     title: 'Out in the City — Pride Family Fair',
     type: 'festival', day: 'sun', weekend: '2026-03-14', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday — all day (check wellingtonpridefestival.com)',
     venue: 'Odlins Plaza, Wellington Waterfront',
     description: 'Wellington Pride Festival\'s free all-ages family fair — live performances, food stalls, activities for tamariki and a joyful inclusive atmosphere on the waterfront. Part of Wellington Pride Festival 6–22 March.',
@@ -232,7 +232,7 @@ const STATIC_EVENTS = [
   {
     title: 'Te Matapihi ki te Ao Nui — Wellington Library Opening Weekend',
     type: 'culture', day: 'sat', weekend: '2026-03-14', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: '14–15 March · Opening celebration',
     venue: 'Te Matapihi ki te Ao Nui / Te Ngākau Civic Square, Wellington CBD',
     description: 'The grand reopening of Wellington Central Library and Te Ngākau Civic Square — explore new community spaces, exhibitions and events across the weekend. A celebration for the whole whānau. Free entry.',
@@ -247,7 +247,7 @@ const STATIC_EVENTS = [
   {
     title: 'Ōtaki International Kite Festival',
     type: 'festival', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
-    category: 'events',
+    category: 'festivals',
     time: '10:00 am – 4:00 pm',
     venue: 'Ōtaki Beach, Kāpiti Coast',
     description: 'Free annual kite festival with NZ Kite Association fliers — watch spectacular kites fill the sky above the beach. Hands-on fun for all ages.',
@@ -262,7 +262,7 @@ const STATIC_EVENTS = [
   {
     title: 'Kapiti Classic 2026',
     type: 'music', day: 'sat', weekend: '2026-03-14', region: 'kapiti',
-    category: 'events',
+    category: 'music',
     time: '11:00 am – 7:00 pm',
     venue: 'Kāpiti Coast (venue TBC)',
     description: 'Summer music festival celebrating nostalgic New Zealand acts — a day of classic Kiwi music and good vibes on the Kāpiti Coast.',
@@ -278,7 +278,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hutt City Autumn Festival',
     type: 'outdoor', day: 'sat', weekend: '2026-03-21', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 10:00 am – 4:00 pm',
     venue: 'Riddiford Gardens, Lower Hutt',
     description: 'Riddiford Gardens bursts into colour in autumn — a beautiful park full of mature trees turning gold and red. Bring a picnic, let the kids loose on the grass and enjoy the seasonal colours at their peak.',
@@ -293,7 +293,7 @@ const STATIC_EVENTS = [
   {
     title: 'St Patrick\'s Day Parade & Festival on the Waterfront',
     type: 'festival', day: 'sun', weekend: '2026-03-21', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 1:00 pm – 4:30 pm',
     venue: 'Queens Wharf, Wellington Waterfront',
     description: 'Wellington\'s beloved St Patrick\'s Day celebration — a colourful parade through the city followed by a free festival on the waterfront with live Irish music, dancing, food and family entertainment. A fantastic free afternoon out for all ages.',
@@ -309,7 +309,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Blackcaps v South Africa — T20 International',
     type: 'outdoor', day: 'sun', weekend: '2026-03-21', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 22 March · Check tickets for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'The Blackcaps take on South Africa in a T20 at Hnry Stadium. T20 is the most family-friendly cricket format — fast, exciting and done in about three hours. The stadium\'s covered stands and waterfront location make it a brilliant day out.',
@@ -338,7 +338,7 @@ const STATIC_EVENTS = [
   {
     title: 'Karaone Putiputi with The Tīwhas',
     type: 'culture', day: 'sat', weekend: '2026-03-21', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Check website for time',
     venue: 'Te Matapihi ki te Ao Nui, Te Ngākau Civic Square, Wellington CBD',
     description: 'A Pride celebration at Wellington\'s newly reopened library — make flower crowns (karaone putiputi) and enjoy live performances by The Tīwhas girl group. A joyful, family-friendly afternoon. Free.',
@@ -355,7 +355,7 @@ const STATIC_EVENTS = [
   {
     title: 'CubaDupa 2026 — Free Street Festival',
     type: 'music', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sat 28 & Sun 29 March · All day & evening',
     venue: 'Cuba Street & Cuba Quarter, Wellington CBD',
     description: 'NZ\'s largest outdoor arts and music festival — 12 stages, street theatre, LED dragons, Bollywood dancers, samba drummers, circus, food trucks and pop-up art. Completely free for the whole family.',
@@ -370,7 +370,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hurricanes v Reds',
     type: 'outdoor', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'The Hurricanes host the Queensland Reds at Hnry Stadium. Wellington\'s home Super Rugby games are always a fantastic atmosphere — the stadium is compact and loud, and the Hurricanes have a history of playing high-octane attacking rugby. Great live sport alongside CubaDupa this weekend.',
@@ -385,7 +385,7 @@ const STATIC_EVENTS = [
   {
     title: 'Māoriland Film Festival 2026',
     type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'kapiti',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: '24–28 March · 10:00 am – 10:00 pm daily',
     venue: 'Māoriland Hub, 68 Main Street, Ōtaki',
     description: 'The Southern Hemisphere\'s largest indigenous film festival — five days of indigenous cinema from around the world, including NZ premieres and special events. The 2026 theme is "light that reveals our legacies."',
@@ -400,7 +400,7 @@ const STATIC_EVENTS = [
   {
     title: 'Pātaka Art + Museum — IHI & Ongo Exhibition Openings',
     type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'porirua',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: '10:00 am – 5:00 pm · Opening events Sat 28 Mar',
     venue: 'Pātaka Art + Museum, cnr Norrie & Parumoana Streets, Porirua',
     description: 'Double exhibition opening at Pātaka — IHI explores inner force through three emerging Māori artists, while Ongo: (Re)sounding the Vā unpacks Pacific sound and space. Opening day includes a free walk-through and live performances. Free admission.',
@@ -415,7 +415,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Rocky Horror Show — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sat 2:30 pm matinee & 7:30 pm · Sun 1:00 pm (final show)',
     venue: 'St James Theatre, 77–87 Courtenay Place, Wellington',
     description: 'The iconic stage musical returns to NZ for the first time in 15 years — direct from the UK with a West End cast. Sweet Transvestite, Time Warp, Dammit Janet. Dress-up warmly encouraged. Final weekend.',
@@ -429,7 +429,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington City Orchestra — Louise Webster Violin Concerto',
     type: 'music', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: '3:00 pm – 4:45 pm',
     venue: 'St Andrew\'s on The Terrace, 30 The Terrace, Wellington',
     description: 'Conductor Justus Rozemond leads the orchestra with violinist Helene Pohl. Includes the NZ premiere of Louise Webster\'s violin concerto, Lili Boulanger, and Prokofiev\'s Romeo and Juliet Suite No. 2.',
@@ -443,7 +443,7 @@ const STATIC_EVENTS = [
   {
     title: 'Peach PRC — Wandering Spirit Tour',
     type: 'music', day: 'sat', weekend: '2026-03-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Doors 7:00 pm · Peach PRC 9:15 pm',
     venue: 'Shed 6, 4 Queens Wharf, Wellington',
     description: 'Australian pop artist Peach PRC headlines her NZ debut — theatrical boundary-pushing pop with 230M+ streams. Support from Sydney artist Salty. Licensed all-ages show on the Wellington waterfront.',
@@ -457,7 +457,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Superlative Artistry of Japan — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-03-28', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: 'Gallery hours — check website',
     venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
     description: 'Free travelling exhibition by the Embassy of Japan — closing this weekend. Captures Japan\'s monozukuri (craft) spirit across traditional kogei, elaborate Meiji-era works, contemporary craft and food art. Free entry.',
@@ -473,7 +473,7 @@ const STATIC_EVENTS = [
   {
     title: 'Armageddon Expo — Good Friday Opening Day',
     type: 'festival', day: 'fri', weekend: '2026-04-04', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Friday 3 April · 10:00 am – 4:00 pm',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Good Friday is Day 1 of Armageddon — NZ\'s biggest pop culture event. The opening day tends to be less crowded than Saturday, making it easier to get to the exhibits, panels and celebrity meet-and-greets. Andy Serkis and Renée O\'Connor are among the guest headliners. Running Friday to Sunday over Easter.',
@@ -488,7 +488,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wairarapa Balloon Festival — Good Friday Welcome Flight',
     type: 'outdoor', day: 'fri', weekend: '2026-04-04', region: 'wairarapa',
-    category: 'events',
+    category: 'festivals',
     time: 'Friday 3 April · 7:00 am – 8:30 am',
     venue: 'Carrington Park, Carterton, Wairarapa',
     description: 'The opening balloon ascension of the Wairarapa Balloon Festival — colourful hot air balloons lift off from Carrington Park as Wairarapa wakes up for Easter. Free to watch, weather-permitting. The festival continues across the Easter long weekend with morning flights and the spectacular Night Glow.',
@@ -503,7 +503,7 @@ const STATIC_EVENTS = [
   {
     title: 'Armageddon Expo Wellington 2026',
     type: 'festival', day: 'sat', weekend: '2026-04-04', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Check schedule for times',
     venue: 'TSB Arena, Wellington Waterfront',
     description: 'NZ\'s biggest pop culture event — gaming, anime, comics, cosplay competitions, celebrity meet-and-greets and esports. Guest headliners include Andy Serkis and Renee O\'Connor. Thousands of cosplayers roam the floor. A brilliant Easter weekend outing for kids and big kids alike.',
@@ -518,7 +518,7 @@ const STATIC_EVENTS = [
   {
     title: 'White Ferns v South Africa — 3rd ODI',
     type: 'outdoor', day: 'sat', weekend: '2026-04-04', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for time',
     venue: 'Basin Reserve, Wellington',
     description: 'The White Ferns face South Africa in the third One Day International at the iconic Basin Reserve. A fantastic live sport experience for families — Wellington\'s most beloved cricket ground with a great atmosphere on a long Easter weekend.',
@@ -533,7 +533,7 @@ const STATIC_EVENTS = [
   {
     title: 'Armageddon Expo — Easter Sunday',
     type: 'festival', day: 'sun', weekend: '2026-04-04', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Check schedule for times',
     venue: 'TSB Arena, Wellington Waterfront',
     description: 'Day two of Armageddon — often quieter than Saturday with still-full programming. Great chance for a second pass through the show floor, catching any panels or meet-and-greets you missed. Sunday also tends to have the best cosplay of the weekend.',
@@ -548,7 +548,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Brass Band National Championships — A & B Grade Finals',
     type: 'culture', day: 'sat', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'The pinnacle of New Zealand\'s brass band scene — A and B Grade bands from across the country compete at Michael Fowler Centre. Spectacular ensemble playing in a world-class concert hall. A surprisingly brilliant live music experience for families, with big sound and high drama.',
@@ -563,7 +563,7 @@ const STATIC_EVENTS = [
   {
     title: 'Ride the Cyclone — Circa Theatre',
     type: 'culture', day: 'sat', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Various sessions · Runs 11 Apr – 9 May',
     venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
     description: 'The cult Canadian musical about a high school choir who die on a rollercoaster — and must compete for the chance to return to life. Dark, hilarious and wildly inventive, Ride the Cyclone has become a phenomenon through social media. Circa\'s production is a rare NZ staging of one of the most talked-about musicals of recent years. Don\'t miss it.',
@@ -577,7 +577,7 @@ const STATIC_EVENTS = [
   {
     title: 'The BIG Easter Weekend at Ngā Manu',
     type: 'kids', day: 'fri', weekend: '2026-04-04', region: 'kapiti',
-    category: 'events',
+    category: 'festivals',
     time: '3–6 April · 10:00 am – 5:00 pm daily',
     venue: 'Ngā Manu Nature Reserve, Kauri Road, Waikanae',
     description: 'Family Easter fun at Ngā Manu Nature Reserve — Easter egg hunts with $3,000 in prizes among native birds and wildlife. A magical long-weekend adventure in one of Kāpiti\'s finest wildlife sanctuaries.',
@@ -592,7 +592,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wairarapa Balloon Festival — Easter Monday Farewell Flight',
     type: 'outdoor', day: 'mon', weekend: '2026-04-04', region: 'wairarapa',
-    category: 'events',
+    category: 'festivals',
     time: 'Monday 6 April · 7:00 am – 8:30 am',
     venue: 'Mystery location (announced day before), Wairarapa',
     description: 'The final balloon ascension of the Wairarapa Balloon Festival — traditionally launched from a surprise location announced the evening before. A beautiful way to end the Easter long weekend, watching hot air balloons drift over Wairarapa farmland in the morning light. Free to watch, weather permitting.',
@@ -622,7 +622,7 @@ const STATIC_EVENTS = [
   {
     title: 'Toi Art Saturdays: Sit and Sketch',
     type: 'culture', day: 'sat', weekend: '2026-04-04', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'workshops', indoor: true,
     time: '10:00 am – 1:00 pm',
     venue: 'Toi Art, Te Papa Tongarewa, 55 Cable Street',
     description: 'A free monthly drop-in drawing session inside Te Papa\'s stunning Toi Art gallery. Grab a pencil and spend the morning looking closely at artworks, joining short talks and sketching at your own pace. Open to all ages and skill levels — a calm, creative start to the Easter weekend.',
@@ -639,7 +639,7 @@ const STATIC_EVENTS = [
   {
     title: 'Ultra New Zealand 2026',
     type: 'festival', day: 'fri', weekend: '2026-04-11', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Friday 10 April · All day',
     venue: 'Wellington Waterfront',
     description: 'The inaugural ULTRA Music Festival in New Zealand comes to Wellington — one of the world\'s most iconic electronic music brands landing on the waterfront for the first time. Three main stages plus a dedicated drum and bass stage with artists including The Chainsmokers, DJ Snake, Zedd, Alison Wonderland, Pendulum (DJ Set), Oliver Heldens and more. 20,000+ expected.',
@@ -653,7 +653,7 @@ const STATIC_EVENTS = [
   {
     title: 'K-Pop Live — St James Theatre',
     type: 'music', day: 'mon', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Monday 13 April · 2:30 pm & 6:00 pm (two shows)',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'A one-hour live K-pop concert experience — authentic costumes, precision choreography and the biggest hits from BTS, Blackpink, Stray Kids and more. Choreographed by Rina Chae, this is a brilliant school holidays treat for K-pop fans of all ages. Two sessions available — book ahead.',
@@ -668,7 +668,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hurricanes v Blues',
     type: 'outdoor', day: 'sat', weekend: '2026-04-11', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Massive Super Rugby rivalry match — the Hurricanes host the Blues at Hnry Stadium. Blues vs Hurricanes is always one of the most electric games of the season. Loud, packed, and brilliant live sport.',
@@ -683,7 +683,7 @@ const STATIC_EVENTS = [
   {
     title: 'Porirua Grand Traverse',
     type: 'outdoor', day: 'sun', weekend: '2026-04-11', region: 'porirua',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 12 April · From 7:00 am',
     venue: 'Start/Finish: Kai Tahi Foodhall, 20 Parumoana St, Porirua',
     description: 'Wellington\'s biggest multisport festival — choose from a 9km fun run/walk to a full 58km challenge crossing Porirua Harbour, native bush, coastal farmland and hidden trails. Options for all ages and abilities.',
@@ -698,7 +698,7 @@ const STATIC_EVENTS = [
   {
     title: 'HELP! A Monster Ate My Story — Circa Theatre',
     type: 'kids', day: 'sat', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: '11:30 am & 1:30 pm (Sat); 1:30 pm & 3:30 pm (Sun)',
     venue: 'Circa Two, 1 Taranaki Street, Wellington',
     description: 'Ruth Paul\'s beloved picture book leaps off the page in this 50-minute musical stage show for children aged 3–9. Lion, Jellyfish, T-Rex and Kiwi team up to stop a mish-mash monster from eating their stories. Runs Tuesday 7 – Sunday 19 April with a relaxed performance (pre-show character meet-and-greet) on Wednesday 15 April at 11:30 am.',
@@ -713,7 +713,7 @@ const STATIC_EVENTS = [
   {
     title: 'Whānau Day: Breathe | Mauri Ora — Te Papa',
     type: 'culture', day: 'sat', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: '10:00 am – 2:00 pm',
     venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
     description: 'A free family day built around the dazzling Breathe | Mauri Ora digital art exhibition. Explore connections to te taiao through art-making, taonga puoro (Māori musical instruments), and a children\'s discovery trail. NZSL interpreters are available, making it fully accessible for Deaf whānau.',
@@ -744,7 +744,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSO Stories Alive! The Tortoise and the Hare',
     type: 'kids', day: 'sat', weekend: '2026-04-18', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: '10:30 am & 12:30 pm (both days)',
     venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
     description: 'Five NZSO musicians bring the classic fable to life in this lively 45-minute interactive concert designed for young children. Sing, clap, and watch the story unfold through live music and illustration in a perfect first live music experience. Runs Friday 17 and Saturday 18 April — book ahead as sessions fill fast.',
@@ -759,7 +759,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orchestra Wellington: Mozart Requiem',
     type: 'music', day: 'sat', weekend: '2026-04-18', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: '7:30 pm',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Orpheus Choir Wellington and Orchestra Wellington unite for a breathtaking double bill — Christopher Tin\'s soaring To Shiver the Sky (celebrating humanity\'s dream of flight) paired with Mozart\'s timeless and soul-stirring Requiem. A majestic evening of choral music at Wellington\'s finest concert hall.',
@@ -773,7 +773,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Saints v Manawatu Jets',
     type: 'outdoor', day: 'sun', weekend: '2026-04-11', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Check schedule for time',
     venue: 'TSB Arena, Wellington Waterfront',
     description: 'Wellington\'s beloved Saints host Manawatu Jets at TSB Arena in the Sal\'s NBL. Fast, high-energy basketball in a compact arena where every seat is close to the action. Saints games are brilliant family sport — loud, local and always entertaining.',
@@ -790,7 +790,7 @@ const STATIC_EVENTS = [
   {
     title: 'City Nature Challenge — ANZAC Weekend Bioblitz',
     type: 'outdoor', day: 'fri', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Friday 24 – Monday 27 April · Anytime',
     venue: 'Wellington region — wherever you find nature',
     description: 'Wellington joins 650+ cities worldwide in the City Nature Challenge — a 4-day bioblitz where anyone can document wild plants, animals and fungi using the free iNaturalist app. No expertise needed: photograph anything alive in a park, garden, beach or bush and it contributes to Wellington\'s tally. Great family activity across the whole ANZAC long weekend. Guided expert walks on Monday 27 April (see below).',
@@ -805,7 +805,7 @@ const STATIC_EVENTS = [
   {
     title: 'Faultline Ultra — Wellington Trail Races',
     type: 'outdoor', day: 'sat', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule',
     venue: 'Wellington City Centre & Trail Networks',
     description: 'Epic multi-distance trail running through Wellington\'s best trail networks across the ANZAC long weekend. From a beginner-friendly 6km to a 100-mile monster. The finish line in the city centre is a great free spectator spot to cheer runners home.',
@@ -820,7 +820,7 @@ const STATIC_EVENTS = [
   {
     title: 'ANZAC Day — Dawn Service & National Ceremony',
     type: 'other', day: 'sat', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: '6:00 am dawn service, 11:00 am national ceremony',
     venue: 'Pukeahu, Wellington',
     description: 'Wellington hosts New Zealand\'s national ANZAC Day commemorations. The 6am dawn service at Pukeahu is a deeply moving experience. The 11am National Commemoration Service is broadcast live on TVNZ 1 and RNZ. Also: wreath laying at the Cenotaph, Lambton Quay at 9am. Free and open to all.',
@@ -835,7 +835,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wrights Hill Fortress — ANZAC Day Open Day',
     type: 'culture', day: 'sat', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'exhibitions',
     time: '10:00 am – 4:00 pm',
     venue: 'Wrights Hill Fortress, 50 Wrights Hill Road, Karori',
     description: 'Explore 620 metres of authentic WWII underground tunnels, gun emplacements and history displays at this remarkable hillside fortress. Volunteer guides lead one-hour tours through the tunnels, or self-guide with a history pamphlet. A genuinely memorable piece of Wellington\'s wartime history — bring a torch and wear comfortable shoes.',
@@ -850,7 +850,7 @@ const STATIC_EVENTS = [
   {
     title: 'The King of Pop Show',
     type: 'music', day: 'sat', weekend: '2026-04-25', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'The Opera House, 111 Manners Street, Wellington',
     description: 'The world\'s most spectacular Michael Jackson tribute — a full live band, authentic costumes, flawless choreography and the complete Michael Jackson songbook from Off the Wall through Dangerous. A high-energy show that has toured internationally for years and thrills audiences of all ages.',
@@ -864,7 +864,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Warriors v Dolphins — ANZAC Day Match',
     type: 'outdoor', day: 'sat', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Wellington hosts the prestigious NRL ANZAC Round for the first time — a historic night with the Warriors facing the Dolphins, including a pre-game ANZAC ceremony. Only the fourth time the Warriors have played an ANZAC match on New Zealand soil. A brilliant way to finish ANZAC Day.',
@@ -879,7 +879,7 @@ const STATIC_EVENTS = [
   {
     title: 'Faultline Ultra — Day Two',
     type: 'outdoor', day: 'sun', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule',
     venue: 'Wellington City Centre & Trail Networks',
     description: 'The longer Faultline Ultra distances continue into Sunday — the 53km, 103km and 100-mile runners are still out on course. Head to the city-centre finish zone to cheer them across the line. Free to spectate.',
@@ -892,7 +892,7 @@ const STATIC_EVENTS = [
   {
     title: 'City Nature Challenge — Island Bay Rock Pool Walk',
     type: 'outdoor', day: 'mon', weekend: '2026-04-25', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Monday 27 April · 6:00 pm – 8:00 pm',
     venue: 'Taputeranga Marine Reserve, 194 The Esplanade, Island Bay',
     description: 'Explore the rock pools of Island Bay\'s marine reserve with experts from Mountains to Sea Wellington, Te Papa and Wellington City Council. Spot sea stars, crabs, fish and the occasional octopus at low tide. A brilliant whānau activity on the ANZAC Monday public holiday — no experience needed, just curiosity. Part of the global City Nature Challenge bioblitz weekend.',
@@ -909,7 +909,7 @@ const STATIC_EVENTS = [
   {
     title: 'Toi Art Saturdays: Sit and Sketch',
     type: 'culture', day: 'sat', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'workshops', indoor: true,
     time: '10:00 am – 1:00 pm',
     venue: 'Toi Art, Te Papa Tongarewa, 55 Cable Street',
     description: 'The monthly free drop-in drawing session inside Te Papa\'s stunning Toi Art gallery returns for May. Grab a pencil and spend the morning looking closely at artworks, joining short talks and sketching at your own pace. Open to all ages and skill levels.',
@@ -924,7 +924,7 @@ const STATIC_EVENTS = [
   {
     title: 'Aqua Nullius: Toe Fai! and Talaucaka — Circa Theatre',
     type: 'culture', day: 'sat', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Various sessions · Runs 2–16 May',
     venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
     description: 'Two interconnected Pasifika theatre works by Emele Ugavule — blending speculative sci-fi with Indigenous Oceanic storytelling. Set decades apart and linked through the journey of one woman navigating AI, ancestry and colonial power. A Studio Kiin production. Thought-provoking and original.',
@@ -938,7 +938,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hurricanes v Crusaders',
     type: 'outdoor', day: 'fri', weekend: '2026-05-02', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Friday 1 May · Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Hurricanes host the Crusaders in a massive Super Rugby clash — the great Wellington vs Canterbury rivalry at Hnry Stadium. Kids under 15 go free with a paying adult, making this one of the best-value family sports outings of the season. Book early as this one always sells out.',
@@ -953,7 +953,7 @@ const STATIC_EVENTS = [
   {
     title: 'Boney M — Final Curtain Tour',
     type: 'music', day: 'fri', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 1 May · Check schedule for time',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'The legendary disco icons bring their farewell world tour to Wellington — Ra Ra Rasputin, Rivers of Babylon, Brown Girl in the Ring and more, performed live at the beautifully restored St James Theatre. A guaranteed good time and a chance to see one of the 70s\' greatest acts one final time.',
@@ -967,7 +967,7 @@ const STATIC_EVENTS = [
   {
     title: 'Fat Freddy\'s Drop — Based On A True Story (21st Anniversary)',
     type: 'music', day: 'sat', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for times',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Wellington\'s own Fat Freddy\'s Drop perform their landmark debut album in full — Aotearoa\'s longest-charting album (111 weeks in the NZ Top 40). Three consecutive nights in their home city, also a tribute to founding member Chris \'MU\' Faiumu. An unmissable moment for any Wellington music fan.',
@@ -981,7 +981,7 @@ const STATIC_EVENTS = [
   {
     title: 'Best Foods Comedy Festival Gala — Opening Night',
     type: 'culture', day: 'sat', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'Q Theatre, Wellington',
     description: 'The annual Comedy Festival Gala brings together the best national and international comedians for a single highlight-reel night, hosted by Dai Henwood. The perfect way to sample the festival and decide which full shows to book. Always sells out fast.',
@@ -995,7 +995,7 @@ const STATIC_EVENTS = [
   {
     title: 'Fat Freddy\'s Drop — Final Night',
     type: 'music', day: 'sun', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'The final night of Fat Freddy\'s Drop\'s three-night homecoming run. Third nights traditionally go hardest — the band relaxed, the crowd knowing every word, and the horns section at full power. A very special send-off for an iconic album.',
@@ -1009,7 +1009,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ International Comedy Festival — Weekend Shows',
     type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for times',
     venue: 'Various Wellington venues',
     description: 'The NZ International Comedy Festival is in full swing — dozens of shows from local legends and international acts across Wellington venues all month. This weekend features Felicity Ward, David Correos and many more. Check the full programme to find your picks.',
@@ -1025,7 +1025,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Pink Floyd Experience — The Wall+',
     type: 'music', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 9 May · 8:00 pm',
     venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
     description: 'NZ\'s long-running Pink Floyd tribute brings The Wall to TSB Arena in full theatrical staging — the iconic album performed live with the construction and destruction of the wall set, opening with a set of classic Floyd anthems. An extraordinary sensory experience for any Floyd fan.',
@@ -1039,7 +1039,7 @@ const STATIC_EVENTS = [
   {
     title: 'Central Pulse vs Northern Mystics — ANZ Premiership',
     type: 'outdoor', day: 'sat', weekend: '2026-05-09', region: 'porirua',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Saturday 9 May · 7:00 pm',
     venue: 'Te Rauparaha Arena, 17 Parumoana St, Porirua',
     description: 'Wellington\'s Central Pulse host the Northern Mystics in the ANZ Premiership — top-flight women\'s netball at its finest. Fast, physical and brilliantly entertaining. Te Rauparaha Arena is a great compact venue where every seat is close to the court. Brilliant value family sport.',
@@ -1054,7 +1054,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSL Week: Whānau Fun at Te Papa',
     type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'workshops', indoor: true,
     time: 'Saturday 9 May · 10:00 am – 12:00 pm',
     venue: 'Te Papa Tongarewa, 55 Cable Street, Wellington',
     description: 'Free family activities on Te Papa\'s marae celebrating New Zealand Sign Language Week (4–10 May). Learn signs, explore Deaf culture, and celebrate NZSL as one of Aotearoa\'s three official languages. NZSL interpreters on hand. Open and welcoming for all whānau.',
@@ -1069,7 +1069,7 @@ const STATIC_EVENTS = [
   {
     title: '& Juliet — St James Theatre',
     type: 'culture', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Various sessions · Runs 9 May – 24 May',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'The smash-hit West End and Broadway musical asks: what if Juliet didn\'t die? Packed with anthems by Max Martin — Baby One More Time, Roar, Since U Been Gone, It\'s My Life and more — & Juliet is joyful, funny and wildly entertaining. Fresh from its award-winning London and New York runs, this is its New Zealand premiere.',
@@ -1083,7 +1083,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Better Home & Living Show',
     type: 'other', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Fri–Sat 10:00 am – 5:00 pm · Sun 10:00 am – 4:00 pm',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Wellington\'s biggest home improvement and lifestyle expo fills Hnry Stadium across the long weekend (Fri 8 – Sun 10 May). Hundreds of exhibitors across kitchens, building, renovation, heating, solar, interior design and more, plus free Ask An Expert presentations throughout. Great for anyone planning a reno or just looking for inspiration.',
@@ -1098,7 +1098,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ International Comedy Festival — Sunday Shows',
     type: 'culture', day: 'sun', weekend: '2026-05-09', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for times',
     venue: 'Various Wellington venues',
     description: 'A Comedy Festival show makes a brilliant Mother\'s Day treat — plenty of matinée and evening options this Sunday. Sashi Perera: Pear Tree runs this weekend, along with Ben Knight and David Correos. Check the programme for family-appropriate options.',
@@ -1114,7 +1114,7 @@ const STATIC_EVENTS = [
   {
     title: 'Modern God — Circa Theatre',
     type: 'culture', day: 'fri', weekend: '2026-05-16', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Various sessions · Runs 15–23 May',
     venue: 'Circa Theatre, 1 Taranaki Street, Wellington',
     description: 'Six social media influencers collide in this high-energy dance-theatre work exploring fame, consumerism and identity. A provocative and visually arresting production from Footnote New Zealand Dance, running across this weekend and the following weekend. Powerful and thought-provoking for older teens and adults.',
@@ -1128,7 +1128,7 @@ const STATIC_EVENTS = [
   {
     title: 'Central Pulse vs Magic — ANZ Premiership',
     type: 'outdoor', day: 'sun', weekend: '2026-05-16', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Sunday 17 May · 4:00 pm',
     venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
     description: 'Central Pulse host the Waikato Bay of Plenty Magic at the waterfront TSB Arena in the ANZ Premiership. Top-flight women\'s netball in Wellington city — fast, skilled and brilliant value family sport.',
@@ -1143,7 +1143,7 @@ const STATIC_EVENTS = [
   {
     title: '& Juliet — St James Theatre',
     type: 'culture', day: 'fri', weekend: '2026-05-16', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 15 May · 7:30 pm',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'In its second week at the St James, the smash-hit West End and Broadway musical continues its New Zealand premiere run. & Juliet asks: what if Juliet didn\'t die? Packed with Max Martin anthems — Baby One More Time, Roar, Since U Been Gone, It\'s My Life and more. Friday night performances run throughout the three-week season.',
@@ -1157,7 +1157,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ International Comedy Festival — Final Fortnight',
     type: 'culture', day: 'sat', weekend: '2026-05-16', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for times',
     venue: 'Various Wellington venues',
     description: 'The Comedy Festival\'s final fortnight — shows are filling up and the best ones are often sold out by now, so book early. This weekend features David Correos, Elouise Eftos: APHRODITE, and Sashi Perera: Pear Tree among many others. Check the website for full listings.',
@@ -1171,7 +1171,7 @@ const STATIC_EVENTS = [
   {
     title: 'Marlon Williams — Tā te Manawa Tour',
     type: 'music', day: 'sat', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Marlon Williams and the Yarra Benders perform ahead of a planned sabbatical from the spotlight — this is billed as his last Kiwi tour for the foreseeable future. An extraordinary performer at his peak, playing his Wellington home crowd. Sold out but worth checking for resale tickets.',
@@ -1185,7 +1185,7 @@ const STATIC_EVENTS = [
   {
     title: 'Zealandia — Twilight Wildlife Experience',
     type: 'outdoor', day: 'sat', weekend: '2026-05-16', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for tour times',
     venue: '53 Waiapu Rd, Karori',
     description: 'May is a brilliant time to visit Zealandia — the 500-acre predator-free sanctuary is home to kiwi, tuatara, kākā and rare waterfowl. Evening twilight tours give the best chance to spot kiwi in the wild. One of Wellington\'s most extraordinary experiences.',
@@ -1202,7 +1202,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSO: Titan — Gemma New & James Ehnes',
     type: 'music', day: 'fri', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 22 May · 6:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'Conductor Gemma New leads the NZSO with Grammy-winning violinist James Ehnes (Gramophone Artist of the Year 2021) in a stunning programme: a NZ premiere from Thomas Adès, the magnificent Korngold Violin Concerto, and Mahler\'s towering Symphony No. 1 "Titan". One of the great orchestral evenings of the Wellington year.',
@@ -1216,7 +1216,7 @@ const STATIC_EVENTS = [
   {
     title: 'Symphony in the Hutt — Free Community Concert',
     type: 'music', day: 'fri', weekend: '2026-05-23', region: 'lower-hutt',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 22 May · 7:00 pm',
     venue: 'Walter Nash Centre, Taita, Lower Hutt',
     description: 'Orchestra Wellington\'s annual free community concert — the orchestra performs alongside Arohanui Strings, the Sistema Hutt Valley youth programme, in a family-friendly gala programme of orchestral favourites. Free tickets available from Walter Nash Stadium reception. One of the most generous events in the Wellington music calendar.',
@@ -1231,7 +1231,7 @@ const STATIC_EVENTS = [
   {
     title: 'Tommy Emmanuel & Mike Dawes',
     type: 'music', day: 'fri', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 22 May · Check schedule for time',
     venue: 'The Opera House, 111 Manners Street, Wellington',
     description: 'Two of the world\'s greatest acoustic guitarists on the same stage — Tommy Emmanuel CGP and Mike Dawes in an evening of jaw-dropping fingerstyle guitar. Tommy is one of Australia\'s most beloved musicians; Mike Dawes is a virtuoso in the same league. An intimate night of extraordinary musicianship at the beautiful Opera House.',
@@ -1245,7 +1245,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ International Comedy Festival — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for times',
     venue: 'Various Wellington venues',
     description: 'The very last weekend of the NZ International Comedy Festival — Saturday night shows are the final chance to catch any acts you haven\'t seen yet. Last-chance performances from the full line-up before the curtain falls for 2026.',
@@ -1259,7 +1259,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hurricanes v Highlanders',
     type: 'outdoor', day: 'sat', weekend: '2026-05-23', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Check schedule for time',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Hurricanes host the Highlanders in what shapes up as a crucial Super Rugby fixture late in the season. Always a physical, passionate contest between two sides with proud rugby traditions. A great way to start a big Wellington weekend.',
@@ -1274,7 +1274,7 @@ const STATIC_EVENTS = [
   {
     title: 'Eddie Izzard — The Remix: The First 35 Years',
     type: 'culture', day: 'sun', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Check schedule for time',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Eddie Izzard closes out the NZ International Comedy Festival with a one-person show remixing and reimagining highlights from 35 years of sell-out shows — from 1993\'s The Ambassadors to 2019\'s Wunderbar. One of the great stand-up performers of a generation, live in Wellington.',
@@ -1288,7 +1288,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orpheus Choir Wellington — Glory (Carterton)',
     type: 'music', day: 'sun', weekend: '2026-05-23', region: 'wairarapa',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 24 May · 2:00 pm – 4:00 pm',
     venue: 'Wairarapa Events Centre, 50 Holloway St, Carterton',
     description: 'Orpheus Choir Wellington performs Vivaldi\'s luminous Gloria alongside Mozart\'s deeply moving Requiem, with soloists from the NZ School of Music. Conductor Brent Stewart leads the choir in a programme of stunning sacred choral music — a beautiful afternoon in the Wairarapa.',
@@ -1302,7 +1302,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Saints vs Bay Hawks — NBL Basketball',
     type: 'outdoor', day: 'mon', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Monday 25 May · 7:00 pm',
     venue: 'TSB Arena, 55 Cable Street, Wellington Waterfront',
     description: 'Wellington Saints host the Hawke\'s Bay Hawks in the Sal\'s NBL — New Zealand\'s premier domestic basketball competition. Fast, high-energy basketball in a compact arena where every seat is close to the action. A great way to end the long weekend.',
@@ -1319,7 +1319,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Art Show 2026',
     type: 'culture', day: 'fri', weekend: '2026-05-30', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: 'Fri 29 May from 9:00 am · Sat–Sun 10:00 am (runs 29–31 May)',
     venue: 'TSB Arena & Shed 6, Wellington Waterfront',
     description: 'Aotearoa\'s premier art fair fills the waterfront across the King\'s Birthday long weekend — over 4,000 original works from 300+ artists spanning painting, sculpture, photography and emerging talent. Shed 6 spotlights up-and-coming artists. A brilliant day out for anyone who loves original art or wants to find something special for home.',
@@ -1334,7 +1334,7 @@ const STATIC_EVENTS = [
   {
     title: 'Marlon Williams — Tā te Manawa (2nd Wellington Show)',
     type: 'music', day: 'fri', weekend: '2026-05-30', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 29 May · 7:00 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'A second Wellington date added after Saturday 23 May sold out — Marlon Williams and The Yarra Benders perform a double-set headline show ahead of his planned sabbatical from touring. Extraordinary live performer at his peak; this may be one of the last chances to see him for some time.',
@@ -1348,7 +1348,7 @@ const STATIC_EVENTS = [
   {
     title: 'Heathers the Musical — Opening Weekend',
     type: 'culture', day: 'sat', weekend: '2026-05-30', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Runs 28 May – 7 June · Various sessions',
     venue: 'The Opera House, 111 Manners Street, Wellington',
     description: 'The cult musical based on the 1988 dark comedy film opens at the Opera House. Darkly funny and sharply observed, with a killer rock score by Kevin Murphy and Laurence O\'Keefe. Directed by Andy Fickman. Runs through the King\'s Birthday long weekend. For older teens and adults.',
@@ -1362,7 +1362,7 @@ const STATIC_EVENTS = [
   {
     title: 'Upper Hutt Music Festival — TNT! Jazz Gala',
     type: 'music', day: 'fri', weekend: '2026-05-30', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 29 May · Check schedule for time',
     venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
     description: 'The Upper Hutt Music Festival opens with a 19-piece jazz big band featuring vocalist Lisa Tomlins. Part of a multi-day festival running 29 May – 2 June at Whirinaki Whare Taonga. The Warratahs play Sunday 31 May.',
@@ -1376,7 +1376,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Warratahs — Upper Hutt Music Festival',
     type: 'music', day: 'sun', weekend: '2026-05-30', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 31 May · Check schedule for time',
     venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
     description: 'The beloved NZ roots and country institution The Warratahs perform at the Upper Hutt Music Festival. One of Aotearoa\'s most enduring and warmly loved bands, with wide appeal across generations. A perfect Sunday evening show.',
@@ -1391,7 +1391,7 @@ const STATIC_EVENTS = [
   {
     title: 'Brewtown Record Convention — Aotearoa\'s Biggest Record Fair',
     type: 'culture', day: 'sun', weekend: '2026-05-30', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Sunday 31 May · From 10:00 am',
     venue: 'Brewtown, 27 Blenheim Street, Upper Hutt',
     description: 'The 4th annual Brewtown Record Convention — hundreds of thousands of new and pre-loved vinyl LPs, EPs, singles and music formats from multiple vendors. Books, posters, T-shirts and art too. Free entry and browsable in the craft brewery precinct. Combine with a beer and a burger for a perfect winter Sunday.',
@@ -1406,7 +1406,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orchestra Wellington — W:ELLINGTON',
     type: 'music', day: 'sat', weekend: '2026-05-30', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 30 May · 7:30 pm (pre-concert talk 6:30 pm)',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'Orchestra Wellington\'s "Collaborations" season concert — check their website for the full programme. Pre-concert talk in the Renouf Foyer from 6:30 pm for those wanting deeper context. A great Wellington winter evening out.',
@@ -1422,7 +1422,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSO: Romeo & Juliet — Barber & Prokofiev',
     type: 'music', day: 'fri', weekend: '2026-06-06', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 5 June · 6:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'Conductor Benjamin Northey leads the NZSO with cellist Li-Wei Qin in a programme of exquisite sweep: Samuel Barber\'s aching Cello Concerto, Prokofiev\'s selections from Romeo and Juliet, and a new work from Kenneth Young. Li-Wei Qin is one of the world\'s finest cellists — a very special Wellington evening.',
@@ -1436,7 +1436,7 @@ const STATIC_EVENTS = [
   {
     title: 'Sola Rosa — In the Mids Tour',
     type: 'music', day: 'sat', weekend: '2026-06-06', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 6 June · 7:00 pm',
     venue: 'San Fran, 171 Cuba Street, Wellington',
     description: 'Acclaimed NZ producer Andrew Spraggon (Sola Rosa) tours his tenth studio album In the Mids — seven collaborations with vocalists from across Aotearoa and Australia, performed live with a newly developed visual and lighting design. A Wellington institution returns to one of Wellington\'s best small venues.',
@@ -1450,7 +1450,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orpheus Choir Wellington — Glory (Kāpiti)',
     type: 'music', day: 'sat', weekend: '2026-06-06', region: 'kapiti',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 6 June · 7:00 pm',
     venue: 'Te Raukura ki Kāpiti, 32 Raumati Road, Raumati Beach',
     description: 'Orpheus Choir Wellington brings their Glory programme to the Kāpiti Coast — Vivaldi\'s radiant Gloria and Mozart\'s deeply moving Requiem, with soloists from the NZ School of Music. The Raumati Beach venue is a beautiful setting for an outstanding choral evening.',
@@ -1466,7 +1466,7 @@ const STATIC_EVENTS = [
   {
     title: 'Mana Moana Pōneke — Matariki Water Screen',
     type: 'culture', day: 'sat', weekend: '2026-06-13', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Weekend evenings 12–15 June · Part of a 7–22 June season',
     venue: 'Whairepo Lagoon, Wellington Waterfront',
     description: 'Indigenous short films by Māori and Pasifika artists are projected onto a stunning water screen made from millions of water droplets at the waterfront lagoon. Part of Wellington\'s Matariki festival season. Completely free and unlike anything else — an unforgettable visual experience in the crisp winter air.',
@@ -1481,7 +1481,7 @@ const STATIC_EVENTS = [
   {
     title: 'Matariki Market at Wharewaka',
     type: 'market', day: 'sun', weekend: '2026-06-13', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 14 June · 10:00 am – 3:00 pm',
     venue: 'Te Wharewaka o Pōneke, 2 Taranaki Street, Wellington Waterfront',
     description: 'A beautiful Māori and Tangata Moana creative market at the waterfront — original art, pounamu, handmade taonga, vintage clothing and more. Karaka Cafe next door for coffee and kai. A wonderful way to celebrate Matariki season and support Māori and Pasifika creators.',
@@ -1498,7 +1498,7 @@ const STATIC_EVENTS = [
   {
     title: 'Matariki Ahi Kā — Wellington Waterfront Festival',
     type: 'festival', day: 'fri', weekend: '2026-06-20', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Friday 19 – Monday 22 June · 6:00 pm – 9:00 pm each evening',
     venue: 'Wellington Waterfront, Barnett Street area',
     description: 'Wellington\'s most spectacular free annual event — a journey through Past, Present and Future across the waterfront. Fire installations, large-scale projections onto buildings and water, live performances, interactive storytelling, traditional Māori games, kai from food trucks, and a ceremonial procession each evening at 7:40 pm. Running all four evenings of the long Matariki weekend. Completely free.',
@@ -1514,7 +1514,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Opera — The Marriage of Figaro',
     type: 'culture', day: 'fri', weekend: '2026-06-20', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Fri 19 June 7:30 pm · Sun 21 June 2:30 pm',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'Mozart\'s beloved comic masterpiece performed by NZ Opera with Orchestra Wellington — the Wellington premiere of a production originally planned for 2021 and delayed by COVID. Directed by Lindy Hume, conducted by James Judd, with a stellar NZ cast. Two performances at the beautifully restored St James.',
@@ -1528,7 +1528,7 @@ const STATIC_EVENTS = [
   {
     title: 'Winter Solstice at Stonehenge Aotearoa',
     type: 'outdoor', day: 'sun', weekend: '2026-06-20', region: 'wairarapa',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 21 June · From 4:00 pm (sunset ~4:30 pm)',
     venue: 'Stonehenge Aotearoa, 51 Ahiaruhe Road, Carterton, Wairarapa',
     description: 'Watch the sun set over the winter heel stone at Aotearoa\'s own astronomical henge on the longest night of the year. Introduction from 4:00 pm covering the history and purpose of the site — a moving and memorable way to mark the winter solstice. Small group event, book ahead.',
@@ -1545,7 +1545,7 @@ const STATIC_EVENTS = [
   {
     title: 'Engelbert Humperdinck — The Celebration Tour',
     type: 'music', day: 'fri', weekend: '2026-06-27', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 26 June · 7:00 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'At 89, British pop legend Engelbert Humperdinck returns to New Zealand for the first time since 2019 — performing his timeless classics (Release Me, The Last Waltz, A Man Without Love) with his full band. An extraordinary evening for fans of a true entertainer who has sold over 150 million records worldwide.',
@@ -1559,7 +1559,7 @@ const STATIC_EVENTS = [
   {
     title: 'Te Wehi — I\'m Home NZ Album Tour',
     type: 'music', day: 'fri', weekend: '2026-06-27', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 26 June · Check schedule for time',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'Acclaimed NZ Māori singer Te Wehi celebrates the release of her debut album I\'m Home with a national tour. A powerful voice and deeply personal music rooted in Māori language and culture — a beautiful Wellington evening for music lovers.',
@@ -1573,7 +1573,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orchestra Wellington — Virtuosi',
     type: 'music', day: 'sat', weekend: '2026-06-27', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 27 June · 7:30 pm (pre-concert talk 6:30 pm)',
     venue: 'Michael Fowler Centre, 111 Wakefield Street, Wellington',
     description: 'Orchestra Wellington\'s Collaborations season finale — check their website for the programme, which will be announced closer to the date. Pre-concert talk from 6:30 pm for context and insight. A great closing event to a rich Wellington winter music season.',
@@ -1587,7 +1587,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Marathon 2026',
     type: 'outdoor', day: 'sun', weekend: '2026-06-27', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 28 June · From 7:00 am',
     venue: 'Start: Hnry Stadium Walkway, Wellington Waterfront',
     description: 'The 39th Wellington Marathon — a flat, scenic harbour course past Te Papa, along Oriental Parade and out to Scorching Bay. Options from the Kids\' Magic Mile to Full Marathon. Around 4,000 runners from 20+ countries. A brilliant spectator event along the waterfront even if you\'re not running — cheer the field home.',
@@ -1604,7 +1604,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Saints v Auckland Tuatara — NBL Basketball',
     type: 'outdoor', day: 'mon', weekend: '2026-04-25', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Monday 27 April · 5:00 pm',
     venue: 'TSB Arena, 50 Cable St, Wellington',
     description: 'Wellington Saints host the Auckland Tuatara in this ANZAC Week NBL home game at TSB Arena. Fast-paced professional basketball in a great atmosphere — the Saints are Wellington\'s team in NZ\'s premier basketball league.',
@@ -1621,7 +1621,7 @@ const STATIC_EVENTS = [
   {
     title: 'Fat Freddy\'s Drop — Based On A True Story (Opening Night)',
     type: 'music', day: 'fri', weekend: '2026-05-02', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 1 May · Doors 7:00 pm · Show 7:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield St, Wellington',
     description: 'Three-night Wellington homecoming — Fat Freddy\'s Drop perform their landmark debut album \'Based On A True Story\' in full for the first time ever, to mark its 21st anniversary. Opening night of three. All ages.',
@@ -1638,7 +1638,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hurricanes v Moana Pasifika — Super Rugby Pacific',
     type: 'outdoor', day: 'sat', weekend: '2026-05-09', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 9 May · 5:05 pm',
     venue: 'Hnry Stadium, 105 Waterloo Quay, Wellington',
     description: 'Hurricanes host Moana Pasifika at Hnry Stadium in Super Rugby Pacific Round 13. A fiercely physical matchup featuring some of the Pacific\'s best rugby talent — great atmosphere under lights.',
@@ -1655,7 +1655,7 @@ const STATIC_EVENTS = [
   {
     title: 'Not In Our Neighbourhood — Circa Theatre',
     type: 'culture', day: 'sat', weekend: '2026-05-23', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sat 23 May – Sat 13 Jun · Tue–Sat 7:00 pm · Sun 4:00 pm',
     venue: 'Circa Theatre, 1 Taranaki St, Te Aro, Wellington',
     description: 'A new New Zealand play told through a filmmaker\'s lens, following a group of women whose lives intersect at a moment of neighbourhood conflict. Part of Circa\'s 2026 season — sharp, contemporary storytelling.',
@@ -1672,7 +1672,7 @@ const STATIC_EVENTS = [
   {
     title: 'Julia — Circa Theatre (Preview & Opening)',
     type: 'culture', day: 'fri', weekend: '2026-05-30', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Fri 29 May (preview) · Sat 30 May (opens) · 7:00 pm',
     venue: 'Circa One, 1 Taranaki St, Te Aro, Wellington',
     description: 'Lara Macgregor plays Julia Gillard in the moment of her landmark 2012 misogyny speech. Written by Joanna Murray-Smith — gripping, urgent, and darkly funny. 100 minutes. Runs 29 May to 27 Jun. Ages 13+.',
@@ -1687,7 +1687,7 @@ const STATIC_EVENTS = [
   {
     title: 'Sean Kelly & The Super 8\'s — Upper Hutt Music Festival',
     type: 'music', day: 'sat', weekend: '2026-05-30', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 30 May · 7:30 pm',
     venue: 'Whirinaki Whare Taonga, 836 Fergusson Dr, Upper Hutt',
     description: 'Irish singer Sean Kelly with Jono Lonie (fiddle/mandolin) and Maree Limpus (cello) bring an evening of Celtic and folk warmth to Upper Hutt as part of the Music Festival. Intimate and uplifting.',
@@ -1704,7 +1704,7 @@ const STATIC_EVENTS = [
   {
     title: 'Come Together — Born to Run (Springsteen Night)',
     type: 'music', day: 'fri', weekend: '2026-06-06', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 5 June · 8:00 pm',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'NZ\'s acclaimed \'Come Together\' tribute series performs Springsteen\'s Born to Run album in full, plus a second set of classics. Featuring Milan Borich, Adam McGrath, Jennie Skulander, Jon Toogood (Shihad) and the full band.',
@@ -1719,7 +1719,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Baby Expo 2026',
     type: 'kids', day: 'sat', weekend: '2026-06-06', region: 'lower-hutt',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Sat–Sun 6–7 June · 9:00 am – 4:00 pm',
     venue: 'Lower Hutt Events Centre, 30 Laings Rd, Lower Hutt',
     description: 'Annual baby and parenting expo with products, services, and expert advice for expectant parents and families. Prams, nursery, sleep, feeding, clothing, healthcare — everything in one place.',
@@ -1734,7 +1734,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Saints v Otago Nuggets — NBL Basketball',
     type: 'outdoor', day: 'sun', weekend: '2026-06-06', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Sunday 7 June · 3:00 pm',
     venue: 'TSB Arena, 50 Cable St, Wellington',
     description: 'Wellington Saints host the Otago Nuggets in a Sal\'s NBL home fixture. Fast-paced professional basketball with a passionate home crowd at TSB Arena.',
@@ -1751,7 +1751,7 @@ const STATIC_EVENTS = [
   {
     title: 'Te Hau o Matariki — Ngāti Toa Rangatira at Te Papa',
     type: 'culture', day: 'sat', weekend: '2026-06-13', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Saturday 13 June · 11:00 am – 4:00 pm',
     venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
     description: 'A free day of music, storytelling, and art from Ngāti Toa Rangatira as part of Matariki at Te Papa. Drop in to connect with the stories of the people of the Kāpiti and Cook Strait region.',
@@ -1766,7 +1766,7 @@ const STATIC_EVENTS = [
   {
     title: 'Kids\' Concert — Konohete a ngā tamariki (Te Papa)',
     type: 'kids', day: 'sun', weekend: '2026-06-13', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 14 June · 2:00 pm – 4:00 pm',
     venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
     description: 'A joyful children\'s concert performed by tamariki from six Wellington early childhood centres, celebrating Matariki at Te Papa. Singing, waiata and performances — free, all welcome.',
@@ -1783,7 +1783,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Saints v Nelson Giants — NBL Basketball',
     type: 'outdoor', day: 'fri', weekend: '2026-06-27', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Friday 26 June · 7:30 pm',
     venue: 'TSB Arena, 50 Cable St, Wellington',
     description: 'Wellington Saints host the Nelson Giants in a Friday night Sal\'s NBL home game. Great live sport for the family — fast-paced basketball at TSB Arena.',
@@ -1798,7 +1798,7 @@ const STATIC_EVENTS = [
   {
     title: 'Kaumatua Kapa Haka — Te Papa Matariki',
     type: 'culture', day: 'sat', weekend: '2026-06-27', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Sat–Sun 27–28 June · 10:00 am – 4:00 pm',
     venue: 'Te Papa Tongarewa, 55 Cable St, Wellington',
     description: 'Two days of kapa haka and waiata performed by kaumātua (elders) as part of Matariki at Te Papa. A deeply moving celebration of Māori song and movement by experienced performers. Free with museum entry.',
@@ -1827,7 +1827,7 @@ const STATIC_EVENTS = [
   {
     title: 'Parkrun Waitangi Park',
     type: 'outdoor', day: 'sat', weekend: '2026-08-08', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: '8:00 am every Saturday',
     venue: 'Waitangi Park, Te Aro',
     description: 'Free 5 km timed run/walk along the waterfront. All paces welcome — bring the kids.',
@@ -1850,7 +1850,7 @@ const STATIC_EVENTS = [
   {
     title: 'FASHION FEST — Wellington',
     type: 'market', day: 'sat', weekend: '2026-08-15', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Saturday 15 August · 11:00 am – 4:00 pm',
     venue: 'Shed 6, Queens Wharf',
     description: "NZ's largest sustainable fashion market and the first FASHION FEST from My Walk in Wardrobe. Sought-after thrift vendors turn the traditional market into an immersive fashion experience, alongside local tattoo artists, barbers, braiders and piercers, plus food, chill-out zones and a bar (18+). Whether you're clearing your closet or hunting your next favourite find, there's something for everyone.",
@@ -1864,7 +1864,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSO: Myths & Legends',
     type: 'culture', day: 'sat', weekend: '2026-08-15', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 15 August · 7:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'The New Zealand Symphony Orchestra under Pietari Inkinen plays a programme of heart-stirring Finnish works: Sibelius’ Pohjola’s Daughter and Lemminkäinen Suite, framing the Aotearoa premiere of Magnus Lindberg’s Violin Concerto No. 2 with NZSO concertmaster Vesa-Matti Leppänen as soloist.',
@@ -1875,7 +1875,7 @@ const STATIC_EVENTS = [
   {
     title: 'Plini',
     type: 'music', day: 'sat', weekend: '2026-08-15', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 15 August · doors from 7:00 pm',
     venue: 'San Fran, 171 Cuba St, Te Aro',
     description: 'Australian instrumental prog guitarist Plini brings the ‘An Unnameable Desire’ Australia & New Zealand tour to Cuba St, with UK math-rock favourites Delta Sleep and Australia’s nightdive in support.',
@@ -1897,7 +1897,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orchestra Wellington: Creation',
     type: 'culture', day: 'sat', weekend: '2026-08-22', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 22 August · 7:30 pm (pre-concert talk 6:30 pm, Renouf Foyer)',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'Milhaud’s jazz-age ballet La Création du Monde staged with Ballet Collective Aotearoa sharing the stage rather than playing from the pit, plus Bartók’s Concerto for Two Pianos, Percussion and Orchestra with the John Psathas Group, and Nielsen’s Symphony No. 4 “The Inextinguishable”.',
@@ -1961,7 +1961,7 @@ const STATIC_EVENTS = [
   {
     title: 'Great Sounds Great Festival',
     type: 'music', day: 'sat', weekend: '2026-09-05', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 5 September · from 3:00 pm, one night only',
     venue: 'Ten venues across the Te Aro / Cuba St precinct',
     description: "Eyegum Music Collective takes over Te Aro for one night — 40 artists across ten neighbouring venues on a single wristband. Bic Runga, Beastwars, Pitch Black, Silicon, Mokotron, MĀ, Hemi Hemingway, Amamelia and Savage, plus poets Chris Tse, Dani Yourukova and Jackson McCarthy. Venues include San Fran, Meow, Meow Nui, Valhalla, Rogue & Vagabond, Bedlam & Squalor, Hotel Bristol and St Peter's on Willis.",
@@ -1974,7 +1974,7 @@ const STATIC_EVENTS = [
   {
     title: 'Spring Flora Guided Walk',
     type: 'outdoor', day: 'sat', weekend: '2026-09-05', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 5 September · 11:00 am – 12:30 pm',
     venue: "Wellington Botanic Garden, Founders' Entrance, 101 Glenmore St",
     description: 'A botanist-led wander through the spring blooms as part of the Garden’s Te Wā o te Kōanga Spring Festival. Gentle pace, big payoff — happy hunting grounds for plant-curious kids. Booking essential.',
@@ -1989,7 +1989,7 @@ const STATIC_EVENTS = [
   {
     title: 'Happy Mondays',
     type: 'music', day: 'sat', weekend: '2026-09-12', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 12 September · from 9:00 pm',
     venue: 'Meow Nui, 92 Vivian St, Te Aro',
     description: "Madchester legends Happy Mondays bring their 35th-anniversary tour for Pills 'n' Thrills and Bellyaches to Wellington. R18. Note: tickets sold out — a waitlist is open via the promoter.",
@@ -2001,7 +2001,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Daffodil Express',
     type: 'outdoor', day: 'sun', weekend: '2026-09-12', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 13 September · departs Wellington from 8:00 am',
     venue: 'Wellington Railway Station (also Petone, Waterloo & Upper Hutt)',
     description: 'A Steam Incorporated heritage excursion hauled by a coal-fired steam locomotive, running to the Carterton Daffodil Festival. At the daffodil fields you can pick your own bunch for $5 (cash preferred), raising funds for Wellington Free Ambulance and Whānau Āwhina Plunket Wairarapa.',
@@ -2014,7 +2014,7 @@ const STATIC_EVENTS = [
   {
     title: 'Pollination in Motion',
     type: 'kids', day: 'sat', weekend: '2026-09-12', region: 'wellington',
-    category: 'events',
+    category: 'workshops',
     time: 'Saturday 12 September · 10:00 am – 2:00 pm',
     venue: 'Discovery Garden Te Kaapuia o Te Waoku, Wellington Botanic Garden',
     description: 'Drop-in family activities exploring how bees, birds and wind move pollen around the Garden — part of the Spring Festival. Free, hands-on and built for curious tamariki.',
@@ -2027,7 +2027,7 @@ const STATIC_EVENTS = [
   {
     title: 'Bee in the City Trail',
     type: 'outdoor', day: 'mon', weekend: '2026-09-12', region: 'wellington',
-    category: 'events',
+    category: 'exhibitions',
     time: 'From Monday 14 September · Trail open daily through 8 November',
     venue: 'Locations across central Wellington',
     description: '30+ giant bee sculptures by NZ artists — plus dozens more decorated by local schools — turn the city into a free outdoor art gallery in support of Life Flight. A great excuse for a bee-spotting wander with the kids over the coming weeks.',
@@ -2041,7 +2041,7 @@ const STATIC_EVENTS = [
   {
     title: 'Upper Hutt Spring Festival',
     type: 'festival', day: 'sat', weekend: '2026-09-12', region: 'upper-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 12 September · from 9:00 am',
     venue: 'Main Street, Upper Hutt',
     description: 'Main Street closes for Upper Hutt\'s big day out — stalls, food, bargains and entertainment from mid-morning. Run by the Upper Hutt Women\'s Centre as its annual fundraiser, always the second Saturday in September, and squarely aimed at families.',
@@ -2054,7 +2054,7 @@ const STATIC_EVENTS = [
   {
     title: 'Irish Cultural Festival',
     type: 'culture', day: 'sat', weekend: '2026-09-12', region: 'upper-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 12 September · 11:00 am – 4:00 pm',
     venue: 'Brewtown, Upper Hutt',
     description: 'A day of Irish culture in Brewtown\'s courtyard precinct — music, dance and food. Handy if you are already heading to Upper Hutt for the Spring Festival on Main Street the same day.',
@@ -2066,7 +2066,7 @@ const STATIC_EVENTS = [
   {
     title: 'Colossal — Orchestra Wellington',
     type: 'music', day: 'sat', weekend: '2026-09-12', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 12 September · 7:30 pm · Pre-concert talk 6:30 pm, Renouf Foyer',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Orchestra Wellington\'s biggest collaboration of the year: Berlioz\'s Requiem (Grande Messe des Morts) with the Orpheus Choir, Te Kōkī Orchestra, four regional brass bands and tenor Kyle Stegall. Opens with the world premiere of Joshua Pearson\'s Digital Fenua: Fakatili Te Kiloga Fou, written on what rising seas mean for Tuvalu.',
@@ -2081,7 +2081,7 @@ const STATIC_EVENTS = [
   {
     title: 'Reece Mastin: The New Dawn Tour',
     type: 'music', day: 'sat', weekend: '2026-09-19', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 19 September · 7:30 pm',
     venue: 'San Fran, 171 Cuba St, Te Aro',
     description: 'Australian-raised rocker and X Factor winner Reece Mastin plays Cuba St on The New Dawn Tour, a heavier turn built around his newer material alongside the hits.',
@@ -2090,7 +2090,7 @@ const STATIC_EVENTS = [
   {
     title: 'World of WearableArt Show: GLO!',
     type: 'culture', day: 'fri', weekend: '2026-09-19', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'From Thursday 17 September · Running through 4 October',
     venue: 'TSB Arena, Queens Wharf, Wellington',
     description: 'The world-famous wearable art competition returns with GLO! — arena-scale spectacle pairing extraordinary garments with live music and aerial choreography. A dazzling night out for the whole family; check the show schedule for session times.',
@@ -2105,7 +2105,7 @@ const STATIC_EVENTS = [
   {
     title: "Ōtari Open Day",
     type: 'outdoor', day: 'sat', weekend: '2026-09-19', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 19 September · 10:00 am – 2:00 pm',
     venue: "Ōtari-Wilton's Bush, 160 Wilton Rd, Wilton",
     description: "Self-guided exploration of native bush and the forest canopy walkway as Ōtari-Wilton's Bush marks its centenary — part of the Botanic Garden's Spring Festival. Free entry to Wellington's only public garden dedicated to native plants.",
@@ -2118,7 +2118,7 @@ const STATIC_EVENTS = [
   {
     title: 'Garden Performers — Shakespeare Globe',
     type: 'culture', day: 'sun', weekend: '2026-09-19', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Sunday 20 September · 9:30 am – 3:00 pm',
     venue: 'Display Garden, Wellington Botanic Garden',
     description: 'Roving outdoor performances bring Shakespeare to the flowerbeds as part of the Spring Festival — a playful, family-friendly taste of theatre among the roses.',
@@ -2133,7 +2133,7 @@ const STATIC_EVENTS = [
   {
     title: 'Matilda the Musical',
     type: 'culture', day: 'sat', weekend: '2026-09-26', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Season runs 23 Sep – 11 Oct · Evenings 7:30 pm, matinees Sat 2:00 pm & Sun 4:00 pm',
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: "Roald Dahl's story of the small girl with a very big imagination, with songs by Tim Minchin. This premiere Wellington season is staged by Capital Theatre Trust and G&T Productions.",
@@ -2146,7 +2146,7 @@ const STATIC_EVENTS = [
   {
     title: 'Carlucci Carnival',
     type: 'music', day: 'sat', weekend: '2026-09-26', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Saturday 26 September · 3:00 pm – 10:00 pm',
     venue: 'Carlucci Land, 281 Happy Valley Rd, Happy Valley',
     description: 'A multi-stage electronic music festival held among the recycled-scrap sculptures and mini golf of Carl Gifford’s Carlucci Land — an afternoon-into-night session of dance in one of Wellington’s strangest outdoor venues. Line-up TBA.',
@@ -2157,7 +2157,7 @@ const STATIC_EVENTS = [
   {
     title: 'Back to the Future Guided Walk',
     type: 'outdoor', day: 'sat', weekend: '2026-09-26', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 26 September · 1:30 pm – 3:00 pm',
     venue: 'Wellington Botanic Garden (Cable Car Lookout)',
     description: "A guided look at how the Botanic Garden is adapting for a changing climate, closing out the Garden's Spring Festival programme. Booking essential.",
@@ -2170,7 +2170,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Wild Ones',
     type: 'kids', day: 'sun', weekend: '2026-09-26', region: 'wellington',
-    category: 'events',
+    category: 'workshops',
     time: 'Sunday 27 September · 10:00 am – 12:00 pm',
     venue: 'Discovery Garden Te Kaapuia o Te Waoku, Wellington Botanic Garden',
     description: "A hands-on family programme exploring Wellington's wild backyard neighbours — insects, birds and other garden dwellers — closing out the Botanic Garden's Spring Festival. Free, drop-in, and built for little explorers.",
@@ -2184,7 +2184,7 @@ const STATIC_EVENTS = [
   {
     title: 'World of WearableArt: GLO! — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-10-03', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 3 & Sunday 4 October · season closes Sunday',
     venue: 'TSB Arena, Queens Wharf, Wellington',
     description: "Last chance to see this year's WOW show, GLO! — arena-scale wearable art with live music and aerial choreography. The season ends on Sunday 4 October, so this weekend is it until next year.",
@@ -2198,7 +2198,7 @@ const STATIC_EVENTS = [
   {
     title: 'Matilda the Musical',
     type: 'culture', day: 'sat', weekend: '2026-10-03', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'School holiday season · on until Sunday 11 October',
     venue: 'St James Theatre, Courtenay Place',
     description: "Matilda's first-ever Wellington season: Roald Dahl's story with Tim Minchin's songs, brought to the St James by Capital Theatre Trust and G&T Productions. An all-local cast, including some seriously talented young performers — a proper school holidays outing.",
@@ -2212,7 +2212,7 @@ const STATIC_EVENTS = [
   {
     title: 'Witi Ihimaera Smiler — The Star Path Launch',
     type: 'culture', day: 'sat', weekend: '2026-10-03', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'workshops', indoor: true,
     time: 'Saturday 3 October · 1:00 pm',
     venue: 'Te Matapihi ki te Ao Nui, 65 Victoria St',
     description: "Witi Ihimaera Smiler launches The Star Path, a return to the world of The Whale Rider. An afternoon with one of Aotearoa's great storytellers at the central library — one for anyone who grew up with Paikea's story.",
@@ -2225,7 +2225,7 @@ const STATIC_EVENTS = [
   {
     title: 'Well Made Craft Festival',
     type: 'market', day: 'sat', weekend: '2026-10-10', region: 'upper-hutt',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Saturday 10 October · from 10:00 am',
     venue: 'Whirinaki Whare Taonga, 836 Fergusson Drive, Upper Hutt',
     description: 'Handmade craft stalls where you can meet the makers, plus demonstrations, hands-on workshops — anything from sourdough to needle felting — artisan food and face painting. A relaxed one for the last weekend of the school holidays.',
@@ -2237,7 +2237,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hutt Valley Diwali',
     type: 'festival', day: 'sat', weekend: '2026-10-10', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 10 October · from 5:00 pm',
     venue: 'Chilton Saint James School, 124 Waterloo Rd, Lower Hutt',
     description: "The Hutt Valley's annual Diwali celebration of the festival of lights, back at Chilton Saint James School for 2026. An evening community festival to round off the school holidays.",
@@ -2248,7 +2248,7 @@ const STATIC_EVENTS = [
   {
     title: 'Matilda the Musical — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-10-10', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Closes Sunday 11 October',
     venue: 'St James Theatre, Courtenay Place',
     description: "The last weekend of Matilda's first Wellington season — Roald Dahl's story with Tim Minchin's songs and an all-local cast. It closes on Sunday, the last day of the school holidays.",
@@ -2261,7 +2261,7 @@ const STATIC_EVENTS = [
   {
     title: 'Che Fu & The Kratez — 25 Years of Navigator',
     type: 'music', day: 'sun', weekend: '2026-10-10', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 11 October · 8:00 pm',
     venue: 'Michael Fowler Centre, Wellington',
     description: 'Che Fu performs Navigator — the 2001 album that debuted at No. 1 and went multi-platinum — plus career favourites, with The Kratez and special guests Aaradhna, Betty-Anne and King Kapisi. A landmark of Aotearoa music, 25 years on.',
@@ -2276,7 +2276,7 @@ const STATIC_EVENTS = [
   {
     title: 'Björn Again — ABBA Forever Tour',
     type: 'music', day: 'sun', weekend: '2026-10-17', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 18 October · 7:30 pm',
     venue: 'The Opera House, Wellington',
     description: 'The only ABBA-endorsed tribute show, more than 7,000 shows and 35 years in — Waterloo, SOS, Super Trouper, Dancing Queen and the rest, for one night only. Singalong material for every generation in the family.',
@@ -2291,7 +2291,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Heritage Festival',
     type: 'culture', day: 'sat', weekend: '2026-10-24', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Opens Saturday 24 October · runs until 15 November',
     venue: 'Venues across the Wellington region',
     description: "More than 160 events over three weeks exploring the region's history — tours, talks and events from the central city out to the Hutt. Opens on Labour Weekend; browse the programme and pick a few.",
@@ -2304,7 +2304,7 @@ const STATIC_EVENTS = [
   {
     title: 'The Witches Market',
     type: 'market', day: 'sat', weekend: '2026-10-24', region: 'upper-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 24 October · 2:00 pm till late',
     venue: 'Brewtown Greenspace, Upper Hutt',
     description: "Brewtown's one-day celebration of the mystical, magical and otherworldly returns — curated market stalls in the Greenspace from mid-afternoon into the evening. Good timing for Halloween inspiration.",
@@ -2317,7 +2317,7 @@ const STATIC_EVENTS = [
   {
     title: 'Mangaroa Farms Spring Festival',
     type: 'festival', day: 'sat', weekend: '2026-10-31', region: 'upper-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 31 October · 10:00 am – 3:00 pm',
     venue: 'Mangaroa Farms, 98 Whitemans Valley Road, Upper Hutt',
     description: 'A day on the farm to welcome kōanga (spring) — garden and farm tours, workshops, live music, kids’ activities and local food and produce. Free entry; registration requested at mangaroa.org.',
@@ -2330,7 +2330,7 @@ const STATIC_EVENTS = [
   {
     title: 'RNZB: The Sleeping Beauty',
     type: 'culture', day: 'sun', weekend: '2026-10-31', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 1 November · Wellington season runs to Sat 7 November',
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: 'The Royal New Zealand Ballet dances the Tchaikovsky classic with the New Zealand Symphony Orchestra in the pit — full-scale, properly grand storybook ballet. A good first ballet for children.',
@@ -2344,7 +2344,7 @@ const STATIC_EVENTS = [
   {
     title: 'High Tide Festival 2026',
     type: 'music', day: 'sat', weekend: '2026-11-07', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Saturday 7 November · gates 12:30 pm – 10:30 pm',
     venue: 'Waitangi Park, Te Aro',
     description: 'The waterfront dance festival returns for a full day across multiple stages, with NZ-exclusive sets from house heavyweight MK, UK drum-and-bass duo Hybrid Minds with Tempza, and hip-hop MC Ocean Wisdom, plus Fred V, Turno, Wax Motif and P Money x Whiney. R18.',
@@ -2357,7 +2357,7 @@ const STATIC_EVENTS = [
   {
     title: 'Go Green Expo',
     type: 'other', day: 'sat', weekend: '2026-11-07', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Saturday 7 & Sunday 8 November',
     venue: 'TSB Arena, Queens Wharf',
     description: 'Two days of sustainable living under one roof — eco products, natural health, plant-based food and workshops. An easy, low-key waterfront outing with kids in tow.',
@@ -2369,7 +2369,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Heritage Festival',
     type: 'culture', day: 'sat', weekend: '2026-11-07', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Runs 24 October – 15 November · Various times',
     venue: 'Venues across the Wellington region',
     description: 'More than 160 events across Wellington City, the Hutt Valley, Porirua, Kāpiti and the Wairarapa — guided walks, open buildings, talks and tours, many of them free. Browse the programme and pick a couple close to home.',
@@ -2382,7 +2382,7 @@ const STATIC_EVENTS = [
   {
     title: 'RNZB: The Sleeping Beauty — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-11-07', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Closing Saturday 7 November · 1:30 pm matinee',
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: 'Last chance to catch the Royal New Zealand Ballet’s Sleeping Beauty with the NZSO before the Wellington season closes. The Saturday matinee is the easiest session to do with younger children.',
@@ -2409,7 +2409,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Heritage Festival — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-11-14', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Closing weekend — festival ends Sunday 15 November',
     venue: 'Venues across the Wellington region',
     description: 'Last weekend of the region-wide heritage programme. Final walks, talks and open buildings before it wraps on Sunday — many events are free but booking is often required.',
@@ -2421,7 +2421,7 @@ const STATIC_EVENTS = [
   {
     title: 'Stonehenge Aotearoa — Heritage Tour & Stargazing',
     type: 'outdoor', day: 'sat', weekend: '2026-11-14', region: 'wairarapa',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 14 November · 7:00 pm until late',
     venue: 'Stonehenge Aotearoa, Ahiaruhe, Carterton',
     description: 'A guided evening tour of the full-scale modern henge on the Wairarapa plains, staying on after dark for stargazing under some of the region’s clearest skies. Part of the Wellington Heritage Festival.',
@@ -2435,7 +2435,7 @@ const STATIC_EVENTS = [
   {
     title: 'Stan Walker: A Symphonic Experience',
     type: 'music', day: 'fri', weekend: '2026-11-21', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 20 November · 7:30 pm',
     venue: 'TSB Arena, Queens Wharf',
     description: 'Stan Walker reworks his catalogue with a full orchestra behind him — waiata, soul and the big singles given the symphonic treatment on the waterfront.',
@@ -2447,7 +2447,7 @@ const STATIC_EVENTS = [
   {
     title: 'Hoodoo Gurus',
     type: 'music', day: 'fri', weekend: '2026-11-21', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 20 November',
     venue: 'Meow Nui, 92 Vivian St, Te Aro',
     description: 'Australian power-pop institution Hoodoo Gurus bring four decades of hooks to Meow Nui.',
@@ -2456,7 +2456,7 @@ const STATIC_EVENTS = [
   {
     title: 'Courtney Barnett — Creature of Habit Tour',
     type: 'music', day: 'sun', weekend: '2026-11-21', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 22 November · 7:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'The Melbourne songwriter’s deadpan, guitar-driven storytelling in a seated hall — touring Creature of Habit.',
@@ -2467,7 +2467,7 @@ const STATIC_EVENTS = [
   {
     title: 'Jesus Christ Superstar',
     type: 'culture', day: 'sat', weekend: '2026-11-21', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Season runs 18–28 November · Evening and matinee sessions',
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: 'Lloyd Webber and Rice’s rock opera on the St James stage — the score that gave us Gethsemane and Superstar, played loud. Best for older kids and teens.',
@@ -2481,7 +2481,7 @@ const STATIC_EVENTS = [
   {
     title: 'Great Southern BioBlitz — Zealandia',
     type: 'outdoor', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Friday 27 – Monday 30 November · sanctuary hours',
     venue: 'Zealandia Te Māra a Tāne, 53 Waiapu Rd, Karori',
     description: 'The southern hemisphere’s biggest bioblitz turns the sanctuary into a four-day biodiversity treasure hunt. Photograph whatever wild plants, birds, insects and fungi you find, log them on iNaturalist, and they count toward a global species tally — genuinely good fun with kids, and free daily mini-talks on the species you’re most likely to spot. Taking part costs nothing; normal sanctuary admission applies.',
@@ -2495,7 +2495,7 @@ const STATIC_EVENTS = [
   {
     title: 'Orchestra Wellington: Oceans',
     type: 'culture', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 28 November · 7:30 pm (pre-concert talk 6:30 pm, Renouf Foyer)',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'Ravel’s Tzigane with concertmaster Amalia Hall, Beethoven’s Triple Concerto with NZTrio, and the world premiere of Victoria Kelly’s Ocean — written by the orchestra’s composer-in-residence after a trip to Antarctica, with soprano Madeleine Pierard.',
@@ -2509,7 +2509,7 @@ const STATIC_EVENTS = [
   {
     title: 'An Audience with Sir Tony Robinson',
     type: 'culture', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'workshops', indoor: true,
     time: 'Saturday 28 November · 7:30 pm',
     venue: 'The Opera House, 111–113 Manners St',
     description: 'Baldrick himself, back for a regional encore after selling out earlier in the year. Stories from Blackadder and Time Team, readings from his first novel, and audience questions.',
@@ -2521,7 +2521,7 @@ const STATIC_EVENTS = [
   {
     title: 'Around the World in 20 Plants — Guided Walk',
     type: 'outdoor', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 28 November · 1:30 pm – 2:30 pm',
     venue: 'Wellington Botanic Garden ki Paekākā — meet at Founders’ Entrance',
     description: 'An hour on twenty plants and what they mean to the countries they came from, finishing at the Herb Garden Lookout. Part of the Great Southern BioBlitz weekend, and an easy one to pair with Zealandia.',
@@ -2535,7 +2535,7 @@ const STATIC_EVENTS = [
   {
     title: 'Aldous Harding: Train on the Island',
     type: 'music', day: 'sun', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Sunday 29 November · evening (listings vary between 7:30 and 8:00 pm — check your ticket)',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'The final night of Aldous Harding’s New Zealand tour, playing the new album Train on the Island in full. Her strangeness lands best in a seated hall, and this is the last chance on home soil.',
@@ -2549,7 +2549,7 @@ const STATIC_EVENTS = [
   {
     title: 'Cornelia Parker',
     type: 'culture', day: 'sun', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'exhibitions', indoor: true,
     time: 'Open daily · exhibition runs to 7 March 2027',
     venue: 'City Gallery Wellington Te Whare Toi, Civic Square',
     description: 'The reopened City Gallery’s first show fills the building with more than fifty works by the British artist — suspended sculpture, installation, video and a new series of paintings on glass. A good rainy-Sunday option in the middle of town.',
@@ -2562,7 +2562,7 @@ const STATIC_EVENTS = [
   {
     title: 'Dermot Kennedy — The Weight of the Woods',
     type: 'music', day: 'fri', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 27 November',
     venue: 'TSB Arena, Queens Wharf',
     description: 'The Irish singer-songwriter returns to Wellington on The Weight of the Woods tour — big, raw-voiced folk-pop in an arena setting.',
@@ -2574,7 +2574,7 @@ const STATIC_EVENTS = [
   {
     title: 'Cat Power — The Greatest 20th Anniversary',
     type: 'music', day: 'fri', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 27 November · 8:00 pm',
     venue: 'The Opera House, 111–113 Manners St',
     description: 'Chan Marshall plays The Greatest in full for its twentieth anniversary — the Memphis soul record that reframed her songwriting, in one of the city’s best rooms.',
@@ -2585,7 +2585,7 @@ const STATIC_EVENTS = [
   {
     title: 'Johnsonville Rotary Christmas Market',
     type: 'market', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 28 November · from 10:00 am',
     venue: '34 Johnsonville Rd, Johnsonville',
     description: 'The northern suburbs’ Christmas market — craft and gift stalls, food and a gentle start to the festive season. Run by the Rotary Club of Johnsonville.',
@@ -2597,7 +2597,7 @@ const STATIC_EVENTS = [
   {
     title: 'Jesus Christ Superstar — Final Weekend',
     type: 'culture', day: 'sat', weekend: '2026-11-28', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Closing weekend — season ends Saturday 28 November',
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: 'Final performances of the rock opera at the St James before the season closes on Saturday night.',
@@ -2612,7 +2612,7 @@ const STATIC_EVENTS = [
   {
     title: 'Thorndon Fair',
     type: 'market', day: 'sun', weekend: '2026-12-05', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 6 December · 10:00 am – 3:00 pm',
     venue: 'Tinakori Rd & Hill St, Thorndon',
     description: 'Wellington’s biggest street fair takes over Tinakori Road — 250+ stalls of food, craft, plants and bric-a-brac, live music and a proper neighbourhood atmosphere. Free to wander; go early for parking.',
@@ -2627,7 +2627,7 @@ const STATIC_EVENTS = [
   {
     title: 'Stokes Valley Christmas Parade & Market',
     type: 'festival', day: 'sat', weekend: '2026-12-05', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 5 December · 10:00 am – 2:00 pm',
     venue: 'Speldhurst Park, Stokes Valley',
     description: 'A community Christmas parade followed by a market in the park — floats, stalls and kids’ activities, run by the Rotary Club of Hutt River Valley.',
@@ -2640,7 +2640,7 @@ const STATIC_EVENTS = [
   {
     title: 'Upper Hutt Santa Parade',
     type: 'festival', day: 'sun', weekend: '2026-12-05', region: 'upper-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 6 December · 3:00 pm – 4:30 pm',
     venue: 'Main St, Upper Hutt Central',
     description: 'Upper Hutt’s Santa parade down Main Street — floats, bands and Santa bringing up the rear. Free, and an easy one to combine with a wander round the shops.',
@@ -2654,7 +2654,7 @@ const STATIC_EVENTS = [
   {
     title: 'Christmas in Bethlehem',
     type: 'festival', day: 'fri', weekend: '2026-12-05', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Friday 4 December · 7:00 pm',
     venue: 'Jackson Street, Petone (venue not named on the council listing)',
     description: 'The opening night of Hutt City’s Summer in the Hutt programme — a free evening Christmas celebration on Jackson Street. The council calendar gives the date and time but not the venue, so check before heading down.',
@@ -2669,7 +2669,7 @@ const STATIC_EVENTS = [
   {
     title: 'Come Together — Big End of Year Bash: Festival Anthems',
     type: 'music', day: 'fri', weekend: '2026-12-05', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 4 December · evening (check ticket for start time)',
     venue: 'St James Theatre, 77 Courtenay Place, Wellington',
     description: 'The Come Together crew’s annual end-of-year show, this time a tribute to the great rock festival sets — Hendrix, Led Zeppelin, Pink Floyd, Queen, U2 and more. Jon Toogood, Milan Borich, Jennie Skulander and Seamus Johnson front the band.',
@@ -2686,7 +2686,7 @@ const STATIC_EVENTS = [
   {
     title: 'Christmas Movie on the Lawn',
     type: 'kids', day: 'sat', weekend: '2026-12-12', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 12 December · 5:30 pm',
     venue: 'Anzac Lawn, Riddiford Gardens, Lower Hutt',
     description: 'A free outdoor screening of Elf on the lawn at Riddiford Gardens, part of Summer in the Hutt. Bring a rug and something warm for when the sun goes behind the hills.',
@@ -2700,7 +2700,7 @@ const STATIC_EVENTS = [
   {
     title: 'A Christmas Cracker',
     type: 'festival', day: 'sat', weekend: '2026-12-12', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 12 December · 11:00 am – 5:00 pm',
     venue: 'Waitangi Park, Te Aro',
     description: "The city council's free Christmas day out on the waterfront, and these days the replacement for the old Santa parade. Santa's Grotto and a wish-list mailbox, plus face painting, caricatures, Christmas craft stations, ice skating, a foam pit and roving performers. Food trucks on site.",
@@ -2715,7 +2715,7 @@ const STATIC_EVENTS = [
   {
     title: 'Candlelight: Christmas Carols on Strings',
     type: 'culture', day: 'sat', weekend: '2026-12-12', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 12 December · from 6:30 pm',
     venue: 'Wellington Cathedral of St Paul, 45 Molesworth St',
     description: 'Carols arranged for string quartet and played by candlelight in the cathedral — a calm, genuinely atmospheric hour in the middle of the December rush.',
@@ -2728,7 +2728,7 @@ const STATIC_EVENTS = [
   {
     title: 'Greytown Rotary Santa Parade',
     type: 'festival', day: 'sat', weekend: '2026-12-12', region: 'wairarapa',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 12 December · 2:00 pm',
     venue: 'Main St, Greytown',
     description: 'Greytown’s main street closes for the Rotary Santa parade — small-town Christmas at its best, and an easy excuse for a day trip over the hill.',
@@ -2743,7 +2743,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZSO: Handel’s Messiah',
     type: 'culture', day: 'sat', weekend: '2026-12-19', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Saturday 19 December · 7:30 pm',
     venue: 'Michael Fowler Centre, 111 Wakefield St',
     description: 'The New Zealand Symphony Orchestra’s Christmas Messiah, directed from the harpsichord by Erin Helyard, with soloists Samantha Clarke, Ashlyn Tymms, Kyle Stegall and Andrew O’Connor. The Hallelujah Chorus in a full concert hall is hard to beat this close to Christmas.',
@@ -2756,7 +2756,7 @@ const STATIC_EVENTS = [
   {
     title: 'North Pole Express',
     type: 'kids', day: 'sat', weekend: '2026-12-19', region: 'kapiti',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 19 December · 10:00 am session',
     venue: 'Paraparaumu Train Station, Kāpiti Coast',
     description: 'A short festive train ride up the Kāpiti line to meet Santa, with singing and treats along the way. Aimed squarely at younger children; sessions sell out, so book ahead.',
@@ -2769,7 +2769,7 @@ const STATIC_EVENTS = [
   {
     title: 'North Pole Express',
     type: 'kids', day: 'sun', weekend: '2026-12-19', region: 'kapiti',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 20 December · 1:00 pm & 5:00 pm sessions',
     venue: 'Paraparaumu Train Station, Kāpiti Coast',
     description: 'Sunday sessions of the festive Santa train on the Kāpiti line. The late-afternoon run is the quieter of the two if you have small children.',
@@ -2783,7 +2783,7 @@ const STATIC_EVENTS = [
   {
     title: 'Christmas on the Lawn',
     type: 'festival', day: 'sat', weekend: '2026-12-19', region: 'lower-hutt',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 19 December · 3:00 pm – 7:00 pm',
     venue: 'Anzac Lawn, Riddiford Gardens, Lower Hutt',
     description: 'Hutt City’s big free Christmas afternoon — cultural performances, food stalls and a visit from Santa, with an artisan craft market alongside from 4pm and Nick Tansley’s pop-up carols caravan. The pick of the weekend if you want something free with the kids.',
@@ -2798,7 +2798,7 @@ const STATIC_EVENTS = [
   {
     title: 'Christmas in the Dog Park',
     type: 'outdoor', day: 'sun', weekend: '2026-12-19', region: 'lower-hutt',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 20 December · from 10:00 am',
     venue: 'Les Dalton Dog Park, Wainuiomata',
     description: 'A Christmas morning out for the four-legged members of the whānau, run as part of Summer in the Hutt. Daft in the best way, and free.',
@@ -2814,7 +2814,7 @@ const STATIC_EVENTS = [
   {
     title: 'Pick Your Own Lavender',
     type: 'outdoor', day: 'sat', weekend: '2026-12-26', region: 'wairarapa',
-    category: 'events',
+    category: 'sports',
     time: 'Open daily 26–31 December · from 10:00 am',
     venue: 'Lavender Abbey, 351 Dalefield Road, Carterton',
     description: 'The lavender rows open over the Christmas break for pick-your-own. A gentle, good-smelling excuse to get out of the house in the dead week between Christmas and New Year, and an easy day trip over the hill.',
@@ -2826,7 +2826,7 @@ const STATIC_EVENTS = [
   {
     title: 'Sensory Hour — Huia Pool',
     type: 'kids', day: 'sun', weekend: '2026-12-26', region: 'lower-hutt',
-    category: 'events', indoor: true,
+    category: 'sports', indoor: true,
     time: 'Sunday 27 December · 4:30 pm',
     venue: 'Huia Pool & Fitness, Lower Hutt',
     description: 'A quieter hour at the pool with lights, music and noise dialled down — run for tamariki and whānau who find a busy pool overwhelming. Worth knowing about in the middle of the school holidays.',
@@ -2840,7 +2840,7 @@ const STATIC_EVENTS = [
   {
     title: 'New Year’s Eve on the Waterfront',
     type: 'festival', day: 'fri', weekend: '2027-01-02', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Thursday 31 December · food trucks from 3:00 pm, music 8:00 pm – midnight',
     venue: 'Whairepo Lagoon & Odlins Plaza, Frank Kitts Park',
     description: 'The council’s free New Year party on the waterfront. Food trucks open at Odlins Plaza from 3pm, live music from 8pm, then a kids’ countdown with a short burst of fireworks at 9:30pm so younger ones can celebrate and still get to bed. Music runs on to the midnight countdown and the main fireworks over the harbour.',
@@ -2857,7 +2857,7 @@ const STATIC_EVENTS = [
   {
     title: 'Race of Champions — Nations Cup',
     type: 'other', day: 'sat', weekend: '2027-01-09', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Saturday 9 January · check Ticketek for session times',
     venue: 'Hnry Stadium, Wellington',
     description: 'The Race of Champions comes to New Zealand for the first time, with a tarmac circuit built inside the stadium and drivers going head to head in identical cars. Saturday is the team Nations Cup. Sebastian Vettel, Valtteri Bottas, Chaz Mostert and Hayden Paddon are confirmed so far.',
@@ -2873,7 +2873,7 @@ const STATIC_EVENTS = [
   {
     title: 'Race of Champions — Champion of Champions',
     type: 'other', day: 'sun', weekend: '2027-01-09', region: 'wellington',
-    category: 'events',
+    category: 'sports',
     time: 'Sunday 10 January · check Ticketek for session times',
     venue: 'Hnry Stadium, Wellington',
     description: 'Day two is the individual competition — drivers knocked out head to head until one is crowned Champion of Champions. A weekend pass covers both days.',
@@ -2890,7 +2890,7 @@ const STATIC_EVENTS = [
   {
     title: 'Gardens Magic Concert Series',
     type: 'music', day: 'sat', weekend: '2027-01-16', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Nightly 12–31 January · 7:00 pm – 9:15 pm',
     venue: 'Soundshell, Wellington Botanic Garden ki Paekākā',
     description: 'Free open-air concerts every evening in the Botanic Garden through late January, paired with the Gardens Magic light display after dark. Bring a picnic rug and get there early for a good spot.',
@@ -2905,7 +2905,7 @@ const STATIC_EVENTS = [
   {
     title: 'Gardens Magic Concert Series',
     type: 'music', day: 'sat', weekend: '2027-01-23', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Nightly until 31 January · 7:00 pm – 9:15 pm',
     venue: 'Soundshell, Wellington Botanic Garden ki Paekākā',
     description: 'Free nightly concerts in the Botanic Garden, with the light display following after dark. A Wellington summer institution and one of the best free nights out with kids.',
@@ -2919,7 +2919,7 @@ const STATIC_EVENTS = [
   {
     title: 'Gardens Magic — Final Weekend',
     type: 'music', day: 'sat', weekend: '2027-01-30', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Final nights — season ends Sunday 31 January',
     venue: 'Soundshell, Wellington Botanic Garden ki Paekākā',
     description: 'Last chance for the free evening concerts and the light display before Gardens Magic wraps for another summer.',
@@ -2935,7 +2935,7 @@ const STATIC_EVENTS = [
   {
     title: 'Summer Meltdown',
     type: 'music', day: 'sat', weekend: '2027-01-23', region: 'upper-hutt',
-    category: 'events',
+    category: 'music',
     time: 'Saturday 23 January · all day (check ticket for gate times)',
     venue: 'Brewtown, Upper Hutt',
     description: 'A one-day, all-ages festival at Brewtown over Wellington Anniversary weekend, with SIX60 headlining and Katchafire, The Black Seeds, Troy Kingi, Ria Hall and Tiki Taane on the bill. A strong NZ line-up for a summer afternoon.',
@@ -2953,7 +2953,7 @@ const STATIC_EVENTS = [
   {
     title: 'Te Rā o Waitangi',
     type: 'festival', day: 'sat', weekend: '2027-02-06', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 6 February · 12:00 pm – 6:00 pm',
     venue: 'Waitangi Park, Te Aro',
     description: 'Wellington’s free Waitangi Day celebration on the waterfront — music, kapa haka and performance, stalls and kai, with Cohen Holloway as MC. Te Tiriti and Me sessions also run in suburban community centres through the day.',
@@ -2966,7 +2966,7 @@ const STATIC_EVENTS = [
   {
     title: 'System Of A Down with Faith No More',
     type: 'music', day: 'sun', weekend: '2027-02-06', region: 'wellington',
-    category: 'events',
+    category: 'music',
     time: 'Sunday 7 February · evening (check Ticketek for times)',
     venue: 'Hnry Stadium, Wellington',
     description: 'System Of A Down’s only New Zealand show, their first in Wellington and their first in Aotearoa in over a decade, with Faith No More in support. A career-spanning set on Waitangi weekend.',
@@ -2982,7 +2982,7 @@ const STATIC_EVENTS = [
   {
     title: 'Wellington Pasifika Festival',
     type: 'festival', day: 'sat', weekend: '2027-02-13', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 13 February · 11:00 am – 5:00 pm',
     venue: 'Waitangi Park, Te Aro',
     description: 'A free day of Pacific music, dance and food on the waterfront — an opening ceremony, traditional and contemporary performance, craft stalls, workshops and a Kids’ Zone.',
@@ -2995,7 +2995,7 @@ const STATIC_EVENTS = [
   {
     title: 'NZ Fringe Festival 2027',
     type: 'culture', day: 'sat', weekend: '2027-02-13', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'festivals', indoor: true,
     time: 'Runs 12 February – 6 March · various times',
     venue: 'Multiple venues across Wellington',
     description: 'Three weeks of independent theatre, comedy, dance, circus and odd little shows in odd little places. Opens the same weekend as the Pasifika Festival — check the programme for whānau-friendly picks.',
@@ -3008,7 +3008,7 @@ const STATIC_EVENTS = [
   {
     title: 'K Motionz: Crowd Control',
     type: 'music', day: 'fri', weekend: '2027-02-20', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 19 February · night (check Moshtix for times)',
     venue: 'TSB Arena, Queens Wharf',
     description: 'Birmingham drum and bass producer K Motionz brings his interactive Crowd Control show, where the audience steers what comes next. 18+.',
@@ -3021,7 +3021,7 @@ const STATIC_EVENTS = [
   {
     title: 'Beth Orton',
     type: 'music', day: 'fri', weekend: '2027-03-13', region: 'wellington',
-    category: 'events', indoor: true,
+    category: 'music', indoor: true,
     time: 'Friday 12 March · evening (check Ticketmaster for times)',
     venue: 'Te Whare Whakarauika Wellington Town Hall',
     description: 'The English singer-songwriter plays the Town Hall, touring her 2026 album The Ground Above. A solo show from one of the defining voices of folktronica.',
@@ -3034,7 +3034,7 @@ const STATIC_EVENTS = [
   {
     title: 'CubaDupa 2027',
     type: 'festival', day: 'sat', weekend: '2027-03-20', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Saturday 20 March · 12:00 pm – midnight',
     venue: 'Cuba St and surrounding streets, Te Aro',
     description: 'Wellington’s huge free street festival takes over Cuba St and its neighbours — stages on every corner, street food, circus, costume and the city at its most itself. Busy and loud, but genuinely good with kids during the day.',
@@ -3047,7 +3047,7 @@ const STATIC_EVENTS = [
   {
     title: 'CubaDupa 2027 — Sunday',
     type: 'festival', day: 'sun', weekend: '2027-03-20', region: 'wellington',
-    category: 'events',
+    category: 'festivals',
     time: 'Sunday 21 March · 11:00 am – 6:00 pm',
     venue: 'Cuba St and surrounding streets, Te Aro',
     description: 'Day two of the free street festival, finishing early evening. The calmer of the two days and the better one for a family wander.',
