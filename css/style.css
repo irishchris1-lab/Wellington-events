@@ -128,9 +128,19 @@
   h1 em { font-style: italic; color: var(--gold); }
   .header-sub { margin-top: 8px; font-size: 13.5px; color: rgba(255,255,255,0.72); line-height: 1.55; max-width: 540px; }
   .header-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin-top: 12px; }
+  .header-mailing-link {
+    display: inline-flex; align-items: center; min-height: 44px;
+    color: #fff; font-size: 13px; font-weight: 700; text-underline-offset: 3px;
+  }
+  .header-mailing-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
   .social-icon-link {
     display: inline-grid; place-items: center; flex-shrink: 0;
     width: 44px; height: 44px; border-radius: 50%; color: #fff;
+  }
+  .social-icon-link svg {
+    width: 28px; height: 28px; padding: 2px; border-radius: 7px; color: #fff;
+    background: radial-gradient(circle at 24% 108%, #ffdc80, #fcaf45 24%, #f56040 42%, transparent 68%),
+      linear-gradient(145deg, #405de6, #833ab4 35%, #e1306c 70%, #fd1d1d);
   }
   .social-icon-link:hover { background: rgba(255,255,255,0.15); }
   .social-icon-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
