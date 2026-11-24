@@ -30,13 +30,10 @@ jobs:
       - name: Run pre-deploy checks
         run: node scripts/validate.js
 
-  deploy:
+  upload:
     needs: validate
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
@@ -44,6 +41,14 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: .          # static site, served straight from the repo root
+
+  deploy:
+    needs: upload
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
