@@ -1827,7 +1827,7 @@ const SECTION_TITLES = {
     );
 
     // Event type filter
-    document.querySelectorAll('.filter-btn[data-filter-category]').forEach(btn =>
+    document.querySelectorAll('[data-filter-category]').forEach(btn =>
       btn.addEventListener('click', () => filterCategory(btn.dataset.filterCategory))
     );
 

@@ -199,17 +199,6 @@
 </div>
 <div class="info-popover-overlay" id="infoPopoverOverlay"></div>
 
-<!-- ── EVENT TYPE FILTER ── -->
-<div class="filter-bar type-bar" role="region" aria-label="Filter by type">
-  <div class="filter-inner">
-    <span class="filter-label">Show:</span>
-    <button class="filter-btn active" aria-pressed="true"  data-filter-category="all">All</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-category="events"><span aria-hidden="true">🗓</span> Events</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-category="food"><span aria-hidden="true">☕</span> Food &amp; Drink</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-category="rainy"><span aria-hidden="true">🌧</span> Rainy Day</button>
-  </div>
-</div>
-
 <!-- ── AREA FILTER ── -->
 <div class="filter-bar" role="region" aria-label="Filter by area">
   <div class="filter-inner">
@@ -265,6 +254,15 @@
 </nav>
 
 <main id="main-content" tabindex="-1">
+
+<!-- ── EVENT TYPE FILTER ── -->
+<div class="type-filter" role="group" aria-label="Filter by type">
+  <span class="type-filter-label">Show</span>
+  <button class="type-filter-btn active" aria-pressed="true"  data-filter-category="all">All</button>
+  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="events"><span aria-hidden="true">🗓</span> Events</button>
+  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="food"><span aria-hidden="true">☕</span> Food &amp; Drink</button>
+  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="rainy"><span aria-hidden="true">🌧</span> Rainy Day</button>
+</div>
 
 <!-- ── THIS WEEKEND'S PICKS — compact editorial rail, sits in the results area ── -->
 <section class="highlights-section" id="highlights-section" style="display:none" aria-label="This weekend's picks">
