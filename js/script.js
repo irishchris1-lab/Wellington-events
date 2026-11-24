@@ -562,6 +562,77 @@ const SECTION_TITLES = {
     whanau:   { strip: 'strip-whanau',   label: '<span aria-hidden="true">👨‍👩‍👧</span> whānau' },
   };
 
+  // ── Event links & sharing ────────────────────────────────────────────────────
+  // Every event gets a stable id from its title and date, e.g.
+  // "dermot-kennedy-the-weight-of-the-woods-2026-11-27", so ?e=<id> can open
+  // that event's card directly. Shared links use it.
+  const DAY_OFFSETS = { fri: -1, sat: 0, sun: 1, mon: 2, tue: 3 };
+
+  function eventSlug(ev) {
+    const name = String(ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60).replace(/-$/, '');
+    if (!ev.weekend) return name;
+    const [y, m, d] = ev.weekend.split('-').map(Number);
+    const date = new Date(y, m - 1, d + (DAY_OFFSETS[ev.day] ?? 0));
+    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return `${name}-${iso}`;
+  }
+
+  function eventLink(card) {
+    return `${location.origin}${location.pathname}?e=${encodeURIComponent(card.dataset.eventId)}`;
+  }
+
+  const SHARE_ICON = '<svg class="share-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
+
+  function trackShare(method, card) {
+    try { if (typeof gtag === 'function') gtag('event', 'share', { method, content_type: 'event', item_id: card.dataset.eventId }); } catch (e) {}
+  }
+
+  // Phones: the native share sheet (Messenger, WhatsApp, Messages…).
+  // Elsewhere: copy the link.
+  async function shareEvent(card) {
+    const url = eventLink(card);
+    const title = card.querySelector('.card-title')?.textContent.trim() || "What's On Wellington";
+    let when = card.querySelector('.meta-row')?.textContent.replace('🕐', '').trim() || '';
+    // Times like "5:00 pm" need the date in front to make sense in a message
+    if (!MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.weekend) {
+      const [y, m, d] = card.dataset.weekend.split('-').map(Number);
+      const date = new Date(y, m - 1, d + (DAY_OFFSETS[card.dataset.day] ?? 0));
+      const day = date.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long' });
+      when = when ? `${day} · ${when}` : day;
+    }
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: when ? `${title} — ${when}` : title, url });
+        trackShare('native', card);
+      } catch (e) { /* closed the share sheet */ }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copied — paste it anywhere to share');
+      trackShare('copy', card);
+    } catch (e) {
+      window.prompt('Copy this link to share the event:', url);
+      trackShare('prompt', card);
+    }
+  }
+
+  // ?e=<id>: open that event once its card exists. Firestore events arrive
+  // after the static ones, so this is retried when they load.
+  let pendingEventLink = new URLSearchParams(location.search).get('e');
+
+  function openLinkedEvent() {
+    if (!pendingEventLink) return;
+    const card = [...document.querySelectorAll('.card[data-event-id]')]
+      .find(c => c.dataset.eventId === pendingEventLink && !c.classList.contains('dedup-hidden'));
+    if (!card) return;
+    pendingEventLink = null;
+    const panel = card.closest('.weekend-panel');
+    if (panel && !panel.classList.contains('active')) showTab(panel.id);
+    scrollToPickCard(card);
+  }
+
   function buildEventCardHTML(ev) {
     const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region  = ev.region || 'all';
@@ -602,13 +673,15 @@ const SECTION_TITLES = {
     const detailsLabel = detailsUrl.startsWith('https://www.google.com/search?')
       ? 'Search for details'
       : 'View event';
-    const footer = detailsUrl
+    const eventId = eventSlug(ev);
+    const footer = (detailsUrl
       ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
-      : '';
+      : '') +
+      `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
     const tierClass = ev.pick ? 'card-featured' : 'card-standard';
     const tierAttr  = ev.pick ? 'featured'      : 'standard';
     return `
-      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-category="${eventCategory(ev)}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
@@ -623,7 +696,7 @@ const SECTION_TITLES = {
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${ev.description ? `<div class="card-desc" id="${titleId}-more">${escHtml(ev.description)}</div>` : `<div id="${titleId}-more" hidden></div>`}
         </div>
-        ${footer ? `<div class="card-footer">${footer}</div>` : ''}
+        <div class="card-footer">${footer}</div>
       </article>`;
   }
 
@@ -1071,6 +1144,7 @@ const SECTION_TITLES = {
         setEagerImages();       // re-run after Firestore cards are injected
         const evSection = document.getElementById('section-events');
         if (evSection) observeCards(evSection);
+        openLinkedEvent();
       }, err => console.warn('Firestore events error:', err));
   }
 
@@ -1209,6 +1283,13 @@ const SECTION_TITLES = {
     toggleCard(card);
   });
 
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.share-btn');
+    if (!btn) return;
+    const card = btn.closest('.card');
+    if (card) shareEvent(card);
+  });
+
   function bindEventListeners() {
     const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
 
@@ -1286,6 +1367,7 @@ const SECTION_TITLES = {
     }, 0);
     buildHighlightsRow();
     loadStaticEvents();         // inject STATIC_EVENTS into weekend panels
+    openLinkedEvent();          // ?e=<event id> from a shared link
     enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge
 
     // ── HERO WEATHER ──

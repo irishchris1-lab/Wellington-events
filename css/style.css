@@ -500,6 +500,15 @@
   }
   .event-btn:hover { background: #0d6b7c; }
   .event-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
+    background: none; border: 1.5px solid rgba(11,85,99,0.25); color: var(--teal);
+    font: 600 13px 'DM Sans', sans-serif; padding: 8px 14px; border-radius: 20px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .share-btn:hover { border-color: var(--teal); background: rgba(11,85,99,0.05); }
+  .share-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .share-icon { flex-shrink: 0; }
 
   /* Strip colours per category */
   .strip-festival { background: linear-gradient(90deg, #C8901A, #e0ad40); }
