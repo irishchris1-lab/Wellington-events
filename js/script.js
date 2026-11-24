@@ -403,6 +403,7 @@ const SECTION_TITLES = {
     if (dir === 1)  panel.classList.add('slide-right');
     if (dir === -1) panel.classList.add('slide-left');
     markActiveTab(panel)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    buildHighlightsRow();
     // Show/hide the "past weekend" banner and muted-link state
     const isPast = !!panel.dataset.pastWeekend;
     const banner = document.getElementById('pastWeekendBanner');
@@ -654,11 +655,19 @@ const SECTION_TITLES = {
     const section = document.getElementById('highlights-section');
     if (!track || !section) return;
 
-    // First non-past weekend panel = "this weekend"
-    const panel = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
-      .find(p => !p.dataset.pastWeekend)
-      || document.querySelector('.weekend-panel');
+    // Picks follow the weekend being viewed
+    const panel = document.querySelector('.weekend-panel.active')
+      || document.querySelector('.weekend-panel[data-weekend]:not([data-past-weekend])');
     if (!panel) { section.style.display = 'none'; return; }
+
+    const thisWeekend = [...document.querySelectorAll('.weekend-panel[data-weekend]')]
+      .find(p => !p.dataset.pastWeekend);
+    const eyebrow = section.querySelector('.highlights-eyebrow');
+    if (eyebrow) {
+      eyebrow.textContent = panel === thisWeekend
+        ? "🔥 This Weekend's Picks"
+        : `🔥 Picks for ${weekendRangeLabel(panel)}`;
+    }
 
     const picks = [...panel.querySelectorAll('.card:not(.dedup-hidden)')]
       .filter(c => (c.querySelector('.badge-hot') || c.dataset.pick === '1') && cardMatchesFilters(c));
