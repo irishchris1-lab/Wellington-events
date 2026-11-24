@@ -2463,6 +2463,19 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Free',},
 
+  {
+    title: 'Come Together — Big End of Year Bash: Festival Anthems',
+    type: 'music', day: 'fri', weekend: '2026-12-05', region: 'wellington',
+    time: 'Friday 4 December · evening (check ticket for start time)',
+    venue: 'St James Theatre, 77 Courtenay Place, Wellington',
+    description: 'The Come Together crew’s annual end-of-year show, this time a tribute to the great rock festival sets — Hendrix, Led Zeppelin, Pink Floyd, Queen, U2 and more. Jon Toogood, Milan Borich, Jennie Skulander and Seamus Johnson front the band.',
+    url: 'https://www.wellingtonnz.com/visit/events/come-together-big-end-of-year-bash-2026-festival-anthems',
+    label: '🎸 Rock Tribute',
+    labelStyle: 'color:#7A3B8A',
+    family: 'Teens+',
+    ticketed: true,
+    cost: 'Ticketed — Ticketmaster',},
+
   // ── 12–13 Dec 2026 ─────────────────────────────────────────────────────────
   {
     title: 'Christmas Movie on the Lawn',
@@ -2600,6 +2613,33 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Free',},
 
+  // ── 9–10 Jan 2027 ──────────────────────────────────────────────────────────
+  {
+    title: 'Race of Champions — Nations Cup',
+    type: 'other', day: 'sat', weekend: '2027-01-09', region: 'wellington',
+    time: 'Saturday 9 January · check Ticketek for session times',
+    venue: 'Hnry Stadium, Wellington',
+    description: 'The Race of Champions comes to New Zealand for the first time, with a tarmac circuit built inside the stadium and drivers going head to head in identical cars. Saturday is the team Nations Cup. Sebastian Vettel, Valtteri Bottas, Chaz Mostert and Hayden Paddon are confirmed so far.',
+    url: 'https://www.raceofchampions.com/roc-new-zealand',
+    pick: true,
+    label: '🏁 Motorsport',
+    labelStyle: 'color:#B03030',
+    family: 'Family',
+    ticketed: true,
+    cost: 'Day GA from $49 · Weekend pass from $74 (Ticketek)',},
+  {
+    title: 'Race of Champions — Champion of Champions',
+    type: 'other', day: 'sun', weekend: '2027-01-09', region: 'wellington',
+    time: 'Sunday 10 January · check Ticketek for session times',
+    venue: 'Hnry Stadium, Wellington',
+    description: 'Day two is the individual competition — drivers knocked out head to head until one is crowned Champion of Champions. A weekend pass covers both days.',
+    url: 'https://www.raceofchampions.com/roc-new-zealand',
+    label: '🏁 Motorsport',
+    labelStyle: 'color:#B03030',
+    family: 'Family',
+    ticketed: true,
+    cost: 'Day GA from $49 · Weekend pass from $74 (Ticketek)',},
+
   // ── Jan 2027 — Gardens Magic ───────────────────────────────────────────────
   {
     title: 'Gardens Magic Concert Series',
@@ -2636,6 +2676,48 @@ const STATIC_EVENTS = [
     family: 'Family',
     cost: 'Free',},
 
+  // ── 23–24 Jan 2027 ─────────────────────────────────────────────────────────
+  {
+    title: 'Summer Meltdown',
+    type: 'music', day: 'sat', weekend: '2027-01-23', region: 'upper-hutt',
+    time: 'Saturday 23 January · all day (check ticket for gate times)',
+    venue: 'Brewtown, Upper Hutt',
+    description: 'A one-day, all-ages festival at Brewtown over Wellington Anniversary weekend, with SIX60 headlining and Katchafire, The Black Seeds, Troy Kingi, Ria Hall and Tiki Taane on the bill. A strong NZ line-up for a summer afternoon.',
+    url: 'https://www.brewtown.co.nz/event/meltdown/',
+    pick: true,
+    label: '🎶 Music Festival',
+    labelStyle: 'color:#7A3B8A',
+    family: 'All Ages',
+    ticketed: true,
+    cost: 'Ticketed — Flicket',},
+
+  // ── Waitangi weekend 2027 ──────────────────────────────────────────────────
+  {
+    title: 'Te Rā o Waitangi',
+    type: 'festival', day: 'sat', weekend: '2027-02-06', region: 'wellington',
+    time: 'Saturday 6 February · 12:00 pm – 6:00 pm',
+    venue: 'Waitangi Park, Te Aro',
+    description: 'Wellington’s free Waitangi Day celebration on the waterfront — music, kapa haka and performance, stalls and kai, with Cohen Holloway as MC. Te Tiriti and Me sessions also run in suburban community centres through the day.',
+    url: 'https://wellington.govt.nz/news-and-events/events-and-festivals/waitangi-day',
+    pick: true,
+    label: '🌿 Free · Waitangi Day',
+    labelStyle: 'color:#1A6B3A',
+    family: 'Family',
+    cost: 'Free',},
+  {
+    title: 'System Of A Down with Faith No More',
+    type: 'music', day: 'sun', weekend: '2027-02-06', region: 'wellington',
+    time: 'Sunday 7 February · evening (check Ticketek for times)',
+    venue: 'Hnry Stadium, Wellington',
+    description: 'System Of A Down’s only New Zealand show, their first in Wellington and their first in Aotearoa in over a decade, with Faith No More in support. A career-spanning set on Waitangi weekend.',
+    url: 'https://www.wellingtonnz.com/visit/events/system-of-a-down',
+    pick: true,
+    label: '🤘 Stadium Gig',
+    labelStyle: 'color:#7A3B8A',
+    family: 'Teens+',
+    ticketed: true,
+    cost: 'Ticketed — Ticketek',},
+
   // ── Feb–Mar 2027 — big free fixtures ───────────────────────────────────────
   {
     title: 'Wellington Pasifika Festival',
@@ -2649,6 +2731,42 @@ const STATIC_EVENTS = [
     labelStyle: 'color:#C4522A',
     family: 'Family',
     cost: 'Free',},
+  {
+    title: 'NZ Fringe Festival 2027',
+    type: 'culture', day: 'sat', weekend: '2027-02-13', region: 'wellington',
+    time: 'Runs 12 February – 6 March · various times',
+    venue: 'Multiple venues across Wellington',
+    description: 'Three weeks of independent theatre, comedy, dance, circus and odd little shows in odd little places. Opens the same weekend as the Pasifika Festival — check the programme for whānau-friendly picks.',
+    url: 'https://www.fringe.co.nz',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/WPG_Fringe_2018.jpg/960px-WPG_Fringe_2018.jpg',
+    label: '🎭 Fringe Festival',
+    labelStyle: 'color:#5B4A8A',
+    family: 'Family',
+    cost: 'Mix of free & ticketed',},
+  {
+    title: 'K Motionz: Crowd Control',
+    type: 'music', day: 'fri', weekend: '2027-02-20', region: 'wellington',
+    time: 'Friday 19 February · night (check Moshtix for times)',
+    venue: 'TSB Arena, Queens Wharf',
+    description: 'Birmingham drum and bass producer K Motionz brings his interactive Crowd Control show, where the audience steers what comes next. 18+.',
+    url: 'https://moshtix.co.nz/v2/event/k-motionz-crowd-control-wellington/201015',
+    label: '🎧 Drum & Bass · 18+',
+    labelStyle: 'color:#7A3B8A',
+    family: 'Adults',
+    ticketed: true,
+    cost: 'Ticketed — Moshtix · 18+',},
+  {
+    title: 'Beth Orton',
+    type: 'music', day: 'fri', weekend: '2027-03-13', region: 'wellington',
+    time: 'Friday 12 March · evening (check Ticketmaster for times)',
+    venue: 'Te Whare Whakarauika Wellington Town Hall',
+    description: 'The English singer-songwriter plays the Town Hall, touring her 2026 album The Ground Above. A solo show from one of the defining voices of folktronica.',
+    url: 'https://www.wellingtonnz.com/visit/events/beth-orton',
+    label: '🎤 Singer-Songwriter',
+    labelStyle: 'color:#7A3B8A',
+    family: 'Adults',
+    ticketed: true,
+    cost: 'Ticketed — Ticketmaster',},
   {
     title: 'CubaDupa 2027',
     type: 'festival', day: 'sat', weekend: '2027-03-20', region: 'wellington',
