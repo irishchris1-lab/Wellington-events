@@ -817,11 +817,14 @@ const SECTION_TITLES = {
     return today >= tuesday;
   }
 
-  // A panel is past once its last day is over. Generated panels date their
-  // day labels; the older hand-written ones fall back to the Fri–Mon rule.
+  // Ordinary weekends roll over on the Tuesday (weekendIsPast), even though
+  // their panel also lists Tuesday events. A school-holiday week stays current
+  // until its last day, so midweek holiday events stay on "this week".
   function panelIsPast(panel) {
+    const sat = panel.dataset.weekend;
+    const inHolidays = sat >= SCHOOL_HOLIDAYS.firstWeekend && sat <= SCHOOL_HOLIDAYS.lastWeekend;
     const labels = panel.querySelectorAll('.day-label[data-date]');
-    if (!labels.length) return weekendIsPast(panel.dataset.weekend);
+    if (!inHolidays || !labels.length) return weekendIsPast(sat);
     return _ds(new Date()) > labels[labels.length - 1].dataset.date;
   }
 
