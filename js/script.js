@@ -83,6 +83,9 @@
     }
   });
 
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
 const SECTION_TITLES = {
     events:     "Events This Weekend — What's On Wellington",
     food:       "Family Cafés & Restaurants — What's On Wellington",
@@ -98,17 +101,6 @@ const SECTION_TITLES = {
   let walkTopRatedOnly = false;
   let kidFriendlyFilter = 'all';
   const loadedSections = new Set(['events', 'planner']);
-
-  // ── imgix ──
-  // Set IMGIX_HOST once your subdomain is configured (e.g. 'wow.imgix.net').
-  // Leave empty to serve images directly (works fine; just no auto-WebP or resizing).
-  const IMGIX_HOST = '';
-
-  function imgixSrc(url, w) {
-    if (!url) return '';
-    if (!IMGIX_HOST) return url;
-    return `https://${IMGIX_HOST}/${encodeURIComponent(url)}?auto=format,compress&fit=crop&ar=16:9&w=${w}`;
-  }
 
   // Generate a 2-stop srcset from a Wikimedia thumb URL by swapping the width token.
   // Input:  .../thumb/a/ab/File.jpg/960px-File.jpg
@@ -242,14 +234,19 @@ const SECTION_TITLES = {
     }
 
     const esc = url.replace(/"/g, '&quot;');
-    let srcsetAttr = '';
-    if (IMGIX_HOST) {
-      srcsetAttr = ` srcset="${imgixSrc(url,400)} 400w,${imgixSrc(url,700)} 700w,${imgixSrc(url,1000)} 1000w" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
-    } else {
-      const ws = wikimediaSrcset(url);
-      if (ws) srcsetAttr = ` srcset="${ws}" sizes="(max-width:640px) calc(100vw - 32px), 400px"`;
-    }
-    return `<div class="card-img-wrap"><img class="card-img" src="${IMGIX_HOST ? imgixSrc(url,700) : esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></div>`;
+    const ws = wikimediaSrcset(url);
+    const srcsetAttr = ws ? ` srcset="${ws}" sizes="(max-width:640px) calc(100vw - 32px), 400px"` : '';
+    return `<div class="card-img-wrap"><img class="card-img" src="${esc}"${srcsetAttr} width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></div>`;
+  }
+
+  // Hide each venue grid (and its heading) whose cards are all filtered out
+  function syncGridVisibility(sectionSelector) {
+    document.querySelectorAll(sectionSelector + ' .venue-grid').forEach(grid => {
+      const hasVisible = !!grid.querySelector('.venue-card:not(.hidden)');
+      const label = grid.previousElementSibling;
+      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
+      grid.style.display = hasVisible ? '' : 'none';
+    });
   }
 
   // ── FOOD: kid-friendly filter ──
@@ -270,12 +267,7 @@ const SECTION_TITLES = {
       const kidMatch = kidFriendlyFilter === 'all' || card.dataset.kidfriendly === 'true';
       card.classList.toggle('hidden', !(regionMatch && kidMatch));
     });
-    document.querySelectorAll('#section-food .venue-grid').forEach(grid => {
-      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
-      const label = grid.previousElementSibling;
-      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
-      grid.style.display = hasVisible ? '' : 'none';
-    });
+    syncGridVisibility('#section-food');
   }
 
   // ── WALKS: top-rated toggle ──
@@ -306,12 +298,7 @@ const SECTION_TITLES = {
       const ratingMatch = !walkTopRatedOnly || rating >= 4.5;
       card.classList.toggle('hidden', !(regionMatch && durationMatch && ratingMatch));
     });
-    document.querySelectorAll('#section-walks .venue-grid').forEach(grid => {
-      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
-      const label = grid.previousElementSibling;
-      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
-      grid.style.display = hasVisible ? '' : 'none';
-    });
+    syncGridVisibility('#section-walks');
   }
 
   function applyActivityFilters() {
@@ -319,15 +306,10 @@ const SECTION_TITLES = {
       const regionMatch = currentRegion === 'all' || card.dataset.region === currentRegion;
       card.classList.toggle('hidden', !regionMatch);
     });
-    document.querySelectorAll('#section-activities .venue-grid').forEach(grid => {
-      const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
-      const label = grid.previousElementSibling;
-      if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
-      grid.style.display = hasVisible ? '' : 'none';
-    });
+    syncGridVisibility('#section-activities');
   }
 
-  // ── CHANGE 3: Focus trap helpers ──
+  // ── Focus trap helpers ──
   const FOCUSABLE = 'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
   function trapFocus(el) {
@@ -423,7 +405,7 @@ const SECTION_TITLES = {
     if (btn) showSection(section, btn);
   }
 
-  // ── CHANGE 5: URL hash state ──
+  // ── URL state (?s=section&r=region) ──
   function updateHash(section, region) {
     try {
       const params = new URLSearchParams();
@@ -453,6 +435,8 @@ const SECTION_TITLES = {
       main.innerHTML = await res.text();
       enhanceStaticImages(main);
       enhanceCardLinks(main);
+      injectAddButtons();
+      updateAddButtons();
       enhanceCardAccessibility(main);
     } catch (e) {
       main.innerHTML = '<p style="padding:2rem;color:#999">Unable to load. Please refresh.</p>';
@@ -680,17 +664,11 @@ const SECTION_TITLES = {
     applyFoodFilters();
     applyWalkFilters();
     applyActivityFilters();
-    ['section-parks', 'section-markets'].forEach(sectionId => {
-      document.querySelectorAll('#' + sectionId + ' .venue-grid').forEach(grid => {
-        const hasVisible = grid.querySelectorAll('.venue-card:not(.hidden)').length > 0;
-        const label = grid.previousElementSibling;
-        if (label && label.classList.contains('day-label')) label.style.display = hasVisible ? '' : 'none';
-        grid.style.display = hasVisible ? '' : 'none';
-      });
-    });
+    syncGridVisibility('#section-parks');
+    syncGridVisibility('#section-markets');
   }
 
-  // ── CHANGE 5: Restore state from URL on load ──
+  // ── Restore state from URL on load ──
   document.addEventListener('DOMContentLoaded', () => {
     const { section, region } = readHash();
 
@@ -738,7 +716,9 @@ const SECTION_TITLES = {
   //  1. Go to https://console.firebase.google.com
   //  2. Create a project → Add a web app → copy the config
   //  3. Authentication → Sign-in methods → Enable Google
-  //  4. Firestore Database → Create database (test mode)
+  //  4. Firestore Database → Create database. Lock it down with security
+  //     rules: the admin email check in admin/admin.js is client-side only,
+  //     so the rules are what actually stop strangers writing events.
   //  5. Paste your config values below and deploy
   // ═══════════════════════════════════════════════════════
   const firebaseConfig = {
@@ -946,7 +926,6 @@ const SECTION_TITLES = {
 
   // Update tab button labels dynamically from panel data-weekend attributes
   function updateTabLabels() {
-    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     let visibleCount = 0;
     document.querySelectorAll('.tabs-inner .tab-btn').forEach(btn => {
       if (btn.dataset.pastWeekend) return; // past tabs get their own labels from the date
@@ -1263,7 +1242,7 @@ const SECTION_TITLES = {
 
           // Rating
           const ratingEl = card.querySelector('.rating-score');
-          if (ratingEl && ov.rating !== undefined) ratingEl.textContent = ov.rating.toFixed(1);
+          if (ratingEl && Number.isFinite(Number(ov.rating))) ratingEl.textContent = Number(ov.rating).toFixed(1);
 
           // Region
           if (ov.region) card.dataset.region = ov.region;
@@ -1274,7 +1253,7 @@ const SECTION_TITLES = {
           // Link
           const linkEl = card.querySelector('.rating-link');
           if (linkEl) {
-            if (ov.linkUrl)   linkEl.href        = ov.linkUrl;
+            if (safeUrl(ov.linkUrl)) linkEl.href = safeUrl(ov.linkUrl);
             if (ov.linkLabel) linkEl.textContent = ov.linkLabel;
           }
 
@@ -1407,6 +1386,14 @@ const SECTION_TITLES = {
   //  PLANNER — Data & Persistence
   // ═══════════════════════════════════════
   let planItems = []; // Array of { id, title, time, location, category, day, weekendStart, section, region, addedAt }
+
+  // Plan days, in weekend order, with their offset from the Saturday
+  const PLAN_DAYS = [
+    { value: 'friday',   label: 'Friday',   short: 'Fri', offset: -1 },
+    { value: 'saturday', label: 'Saturday', short: 'Sat', offset: 0 },
+    { value: 'sunday',   label: 'Sunday',   short: 'Sun', offset: 1 },
+    { value: 'monday',   label: 'Monday',   short: 'Mon', offset: 2 },
+  ];
   let currentPlanWeekend = null; // YYYY-MM-DD of the Saturday for the selected weekend
 
   // ── Weekend helpers ──
@@ -1432,18 +1419,16 @@ const SECTION_TITLES = {
   }
 
   function formatWeekendLabel(sat, sun) {
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const satStr = sat.getDate() + ' ' + months[sat.getMonth()];
+    const satStr = sat.getDate() + ' ' + MONTHS_SHORT[sat.getMonth()];
     const sunStr = sun.getMonth() === sat.getMonth()
       ? sun.getDate() + ''
-      : sun.getDate() + ' ' + months[sun.getMonth()];
+      : sun.getDate() + ' ' + MONTHS_SHORT[sun.getMonth()];
     return satStr + '–' + sunStr;
   }
 
   // Returns all non-past weekends sourced directly from the DOM panels
   // (includes both hardcoded and dynamically generated panels)
   function getAllWeekends() {
-    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return [...document.querySelectorAll('.weekend-panel[data-weekend]')]
       .map(p => {
         const satStr = p.dataset.weekend;
@@ -1451,8 +1436,8 @@ const SECTION_TITLES = {
         const sat = new Date(y, m - 1, d);
         const sun = new Date(y, m - 1, d + 1);
         const label = sun.getMonth() === sat.getMonth()
-          ? `${sat.getDate()}–${sun.getDate()} ${MONTHS[sat.getMonth()]}`
-          : `${sat.getDate()} ${MONTHS[sat.getMonth()]}–${sun.getDate()} ${MONTHS[sun.getMonth()]}`;
+          ? `${sat.getDate()}–${sun.getDate()} ${MONTHS_SHORT[sat.getMonth()]}`
+          : `${sat.getDate()} ${MONTHS_SHORT[sat.getMonth()]}–${sun.getDate()} ${MONTHS_SHORT[sun.getMonth()]}`;
         return { key: satStr, sat, sun, label };
       })
       .filter(w => !weekendIsPast(w.key))
@@ -1587,6 +1572,15 @@ const SECTION_TITLES = {
     }
   }
 
+  function readLocalPlan() {
+    try {
+      const items = JSON.parse(localStorage.getItem('wow_plan') || '[]');
+      return Array.isArray(items) ? items : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   async function loadPlan() {
     if (firebaseReady && currentUser) {
       try {
@@ -1595,21 +1589,19 @@ const SECTION_TITLES = {
           planItems = doc.data().items;
         } else {
           // Check localStorage for items added before sign-in
-          const local = localStorage.getItem('wow_plan');
-          if (local) {
-            planItems = JSON.parse(local);
+          const local = readLocalPlan();
+          if (local.length) {
+            planItems = local;
             await savePlan(); // migrate to Firestore
             localStorage.removeItem('wow_plan');
           }
         }
       } catch (e) {
         console.warn('Firestore load failed', e);
-        const local = localStorage.getItem('wow_plan');
-        planItems = local ? JSON.parse(local) : [];
+        planItems = readLocalPlan();
       }
     } else {
-      const local = localStorage.getItem('wow_plan');
-      planItems = local ? JSON.parse(local) : [];
+      planItems = readLocalPlan();
     }
     renderPlan();
     updateAddButtons();
@@ -1639,16 +1631,15 @@ const SECTION_TITLES = {
     emptyEl.style.display = 'none';
     if (exportWrap) exportWrap.style.display = '';
 
-    const saturday = weekendItems.filter(i => i.day === 'saturday');
-    const sunday   = weekendItems.filter(i => i.day === 'sunday');
-
     let html = renderWeekendPicker(allWeekends);
 
     if (weekendItems.length === 0) {
       html += '<p class="plan-weekend-empty">Nothing planned for this weekend yet — browse and tap <strong>+ Plan</strong> to add something.</p>';
     } else {
-      if (saturday.length > 0) html += renderDaySection('Saturday', saturday);
-      if (sunday.length > 0)   html += renderDaySection('Sunday', sunday);
+      PLAN_DAYS.forEach(d => {
+        const items = weekendItems.filter(i => planDay(i) === d.value);
+        if (items.length) html += renderDaySection(d, items);
+      });
     }
 
     html += renderSuggestions(weekendItems);
@@ -1672,7 +1663,6 @@ const SECTION_TITLES = {
   }
 
   function renderWeekendPicker(weekends) {
-    const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     // Group by year-month
     const groups = [];
     weekends.forEach(w => {
@@ -1763,13 +1753,18 @@ const SECTION_TITLES = {
     }
   }
 
-  function renderDaySection(dayLabel, items) {
-    const dayValue = dayLabel.toLowerCase();
-    const otherDay = dayValue === 'saturday' ? 'sunday' : 'saturday';
-    const otherLabel = dayValue === 'saturday' ? 'Sun' : 'Sat';
+  // Items saved before Friday/Monday existed, or with an unknown day, sit on Saturday
+  function planDay(item) {
+    return PLAN_DAYS.some(d => d.value === item.day) ? item.day : 'saturday';
+  }
+
+  function renderDaySection(day, items) {
+    const dayValue = day.value;
+    const options = PLAN_DAYS.map(d =>
+      `<option value="${d.value}"${d.value === dayValue ? ' selected' : ''}>${d.short}</option>`).join('');
 
     let html = `<div class="plan-day-section">
-      <div class="plan-day-title"><span class="pip"></span>${dayLabel}<span class="line"></span></div>
+      <div class="plan-day-title"><span class="pip"></span>${day.label}<span class="line"></span></div>
       <div class="plan-items">`;
 
     items.forEach((item, idx) => {
@@ -1785,9 +1780,8 @@ const SECTION_TITLES = {
               ${item.location ? '<span>📍 ' + escHtml(item.location) + '</span>' : ''}
             </div>
           </div>
-          <select class="plan-day-select" onchange="changeDay('${item.id}', this.value)" title="Move to another day">
-            <option value="saturday" ${dayValue === 'saturday' ? 'selected' : ''}>Sat</option>
-            <option value="sunday" ${dayValue === 'sunday' ? 'selected' : ''}>Sun</option>
+          <select class="plan-day-select" onchange="changeDay('${item.id}', this.value)" title="Move to another day" aria-label="Day">
+            ${options}
           </select>
           <button class="plan-item-remove" onclick="removeFromPlan('${item.id}')" title="Remove">✕</button>
         </div>`;
@@ -1827,35 +1821,20 @@ const SECTION_TITLES = {
   function sharePlan() {
     if (planItems.length === 0) { showToast('Nothing to share yet'); return; }
     let text = '🗓 My Wellington Weekend Plan\n\n';
-    // Group by weekend
-    const weekendKeys = [...new Set(planItems.map(i => i.weekendStart))].sort();
+    const line = i => `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`;
     const allWeekends = getAllWeekends();
+    const weekendKeys = [...new Set(planItems.map(i => i.weekendStart || ''))].sort();
     weekendKeys.forEach(key => {
       const wInfo = allWeekends.find(w => w.key === key);
       if (wInfo) text += '🗓 ' + wInfo.label + '\n';
-      const saturday = planItems.filter(i => i.weekendStart === key && i.day === 'saturday');
-      const sunday   = planItems.filter(i => i.weekendStart === key && i.day === 'sunday');
-      if (saturday.length) {
-        text += '📅 SATURDAY\n';
-        saturday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
+      PLAN_DAYS.forEach(d => {
+        const items = planItems.filter(i => (i.weekendStart || '') === key && planDay(i) === d.value);
+        if (!items.length) return;
+        text += '📅 ' + d.label.toUpperCase() + '\n';
+        items.forEach(i => { text += line(i); });
         text += '\n';
-      }
-      if (sunday.length) {
-        text += '📅 SUNDAY\n';
-        sunday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
-        text += '\n';
-      }
+      });
     });
-    const saturday = planItems.filter(i => !i.weekendStart && i.day === 'saturday');
-    const sunday   = planItems.filter(i => !i.weekendStart && i.day === 'sunday');
-    if (saturday.length) {
-      text += '📅 SATURDAY\n';
-      saturday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
-    }
-    if (sunday.length) {
-      text += '📅 SUNDAY\n';
-      sunday.forEach(i => { text += `• ${i.title}${i.time ? ' — ' + i.time : ''}${i.location ? ' @ ' + i.location : ''}\n`; });
-    }
     text += '\nPlanned on whatsonwellington.co.nz';
 
     if (navigator.share) {
@@ -1911,11 +1890,9 @@ const SECTION_TITLES = {
   function getItemDateParts(item) {
     if (!item.weekendStart) return null;
     const [y, mo, d] = item.weekendStart.split('-').map(Number);
-    let year = y, month = mo, day = d;
-    if (item.day === 'sunday') {
-      const dt = new Date(year, month - 1, day + 1); // handles month boundary
-      year = dt.getFullYear(); month = dt.getMonth() + 1; day = dt.getDate();
-    }
+    const offset = PLAN_DAYS.find(pd => pd.value === planDay(item)).offset;
+    const dt = new Date(y, mo - 1, d + offset); // Date handles month boundaries
+    const year = dt.getFullYear(), month = dt.getMonth() + 1, day = dt.getDate();
     const t = parseTimeRange(item.time);
     return {
       year, month, day,
@@ -2016,7 +1993,6 @@ const SECTION_TITLES = {
       btn.textContent = '+ Plan';
       const cardTitle = footer.closest('.card')?.querySelector('.card-title')?.textContent?.trim();
       if (cardTitle) btn.setAttribute('aria-label', `Add ${cardTitle} to plan`);
-      btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.card')); };
       footer.prepend(btn);
     });
     // Venue cards (food, walks, parks)
@@ -2027,7 +2003,6 @@ const SECTION_TITLES = {
       btn.textContent = '+ Plan';
       const venueName = footer.closest('.venue-card')?.querySelector('.venue-name, .card-title')?.textContent?.trim();
       if (venueName) btn.setAttribute('aria-label', `Add ${venueName} to plan`);
-      btn.onclick = function(e) { e.preventDefault(); addToPlan(this.closest('.venue-card')); };
       footer.prepend(btn);
     });
   }
@@ -2112,7 +2087,7 @@ const SECTION_TITLES = {
     }
   });
 
-  // ── Generate weekend tabs + panels for all remaining Saturdays in 2026 ──
+  // ── Generate weekend tabs + panels for the next 18 months ──
   function generateRemainingWeekends() {
     const existingPanels = [...document.querySelectorAll('.weekend-panel[data-weekend]')];
     if (existingPanels.length === 0) return;
@@ -2121,8 +2096,6 @@ const SECTION_TITLES = {
     const mainEl    = document.querySelector('#section-events main');
     if (!tabsInner || !mainEl) return;
 
-    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
     // Start one week after the last existing hardcoded panel
     const lastSat = existingPanels[existingPanels.length - 1].dataset.weekend;
@@ -2176,7 +2149,6 @@ const SECTION_TITLES = {
     }
   }
 
-  // ── Inject buttons and load guest plan on startup ──
   // Toggle compact cards open/closed on click (skip if clicking a link or button)
   document.addEventListener('click', e => {
     const card = e.target.closest('.card-compact');
@@ -2188,7 +2160,11 @@ const SECTION_TITLES = {
   // Event delegation for dynamically-generated plan/suggestion buttons
   document.addEventListener('click', e => {
     const planBtn = e.target.closest('.add-to-plan-btn');
-    if (planBtn) { addToPlan(planBtn.closest('.card')); return; }
+    if (planBtn) {
+      const card = planBtn.closest('.card, .venue-card');
+      if (card) addToPlan(card);
+      return;
+    }
     const suggBtn = e.target.closest('.suggestion-add-btn');
     if (suggBtn) { addToPlanByTitle(suggBtn); }
   });
@@ -2318,14 +2294,9 @@ const SECTION_TITLES = {
     injectAddButtons();
     loadStaticEvents();         // inject STATIC_EVENTS into weekend panels
     enhanceCardAccessibility(); // ARIA roles, labelledby, meta icon aria-hidden, pick badge, plan btn labels
-    // If Firebase is not configured, load from localStorage immediately
-    // If Firebase IS configured, onAuthStateChanged handles it after sign-in
-    if (!firebaseReady) {
-      loadPlan().then(() => { renderPlan(); updateAddButtons(); });
-    } else {
-      // Still load localStorage for guests who haven't signed in yet
-      loadPlan().then(() => { renderPlan(); updateAddButtons(); });
-    }
+    // Load the guest plan from localStorage now; if the user is signed in,
+    // onAuthStateChanged reloads it from Firestore.
+    loadPlan();
 
     // ── HERO WEATHER ──
     (function initWeatherStrip() {
