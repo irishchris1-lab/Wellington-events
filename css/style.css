@@ -127,6 +127,17 @@
   h1 { font-family: 'Fraunces', serif; font-size: clamp(26px,4.4vw,40px); font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; }
   h1 em { font-style: italic; color: var(--gold); }
   .header-sub { margin-top: 8px; font-size: 13.5px; color: rgba(255,255,255,0.72); line-height: 1.55; max-width: 540px; }
+  .header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+  .header-actions .holiday-cta { margin-top: 0; }
+  .header-submit-event {
+    display: inline-flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 0 5px;
+    box-sizing: border-box; max-width: 100%; min-height: 44px; padding: 7px 14px;
+    background: #fff; color: #172d29; border-radius: 20px; text-decoration: none;
+    font-size: 14px; font-weight: 700; line-height: 1.35;
+  }
+  .header-submit-event span { text-decoration: underline; text-underline-offset: 2px; }
+  .header-submit-event:hover { background: #fff0cd; }
+  .header-submit-event:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
   .header-connect { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .header-mailing-link {
     display: inline-flex; align-items: center; min-height: 44px;
