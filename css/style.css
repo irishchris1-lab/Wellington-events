@@ -192,43 +192,94 @@
 
   /* ── DATE FILTERS ── */
   .tabs-bar { background: #0A4750; border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
-  .tabs-inner { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; overflow-x: auto; scrollbar-width: none; }
-  .tabs-inner::-webkit-scrollbar { display: none; }
+  .date-carousel { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; }
+  .date-presets {
+    display: flex; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    scroll-snap-type: x proximity; scroll-behavior: smooth;
+  }
+  .date-presets::-webkit-scrollbar { display: none; }
+  .date-carousel-arrow {
+    width: 32px; height: 40px; flex-shrink: 0; border: none; border-radius: 6px;
+    background: transparent; color: #fff; cursor: pointer; font: 600 24px/1 'DM Sans', sans-serif;
+  }
+  .date-carousel-arrow:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+  .date-carousel-arrow:disabled { opacity: 0.35; cursor: default; }
   .tab-btn {
     background: none; border: none; border-bottom: 3px solid transparent;
     color: rgba(255,255,255,0.78); font-family: 'DM Sans', sans-serif;
     font-size: 11.5px; font-weight: 600; letter-spacing: 0.07em;
     text-transform: uppercase; padding: 12px 18px; cursor: pointer;
-    white-space: nowrap; flex-shrink: 0; transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap; flex-shrink: 0; scroll-snap-align: start; transition: color 0.2s, border-color 0.2s;
   }
   .tab-btn:hover { color: #fff; }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-  .custom-dates {
-    max-width: 1080px; margin: 0 auto; padding: 8px 28px;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 160px)) auto;
-    justify-content: start; align-items: end; gap: 8px 12px;
-    color: #fff; font-size: 12px; font-weight: 600;
+  .calendar-dialog {
+    width: min(390px, calc(100% - 24px)); max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px); margin: auto; padding: 16px;
+    border: 1px solid rgba(11,85,99,0.14); border-radius: 16px;
+    background: var(--cream); color: #1a2a2a; box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+    overflow: auto; overscroll-behavior: contain;
   }
-  .custom-dates[hidden] { display: none; }
-  .custom-dates label { min-width: 0; display: grid; gap: 4px; }
-  .custom-dates input, .custom-dates button {
-    min-width: 0; min-height: 36px; padding: 5px 8px; border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.38); font: inherit;
+  .calendar-dialog::backdrop { background: rgba(19,35,37,0.55); }
+  body:has(.calendar-dialog[open]) { overflow: hidden; }
+  .calendar-dialog-header, .calendar-month-nav, .calendar-dialog-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
-  .custom-dates input { width: 100%; color: var(--teal); background: #fff; }
-  .custom-dates button { background: #FFD77A; color: #283b3d; cursor: pointer; }
+  .calendar-dialog-header h2, .calendar-month-nav h3 {
+    color: var(--teal); font-family: 'Fraunces', serif;
+  }
+  .calendar-dialog-header h2 { font-size: 23px; }
+  .calendar-month-nav h3 { font-size: 18px; text-align: center; }
+  .calendar-instructions { color: #506061; font-size: 12px; line-height: 1.45; margin-bottom: 8px; }
+  .calendar-control {
+    width: 38px; height: 38px; flex-shrink: 0; cursor: pointer;
+    color: var(--teal); background: #fff; border: 1px solid rgba(11,85,99,0.15);
+    border-radius: 50%; font: 600 22px/1 'DM Sans', sans-serif;
+  }
+  .calendar-control:disabled { opacity: 0.3; cursor: default; }
+  .calendar-control:hover:not(:disabled) { background: #e6f2ee; }
+  .calendar-grid {
+    width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0 3px;
+    margin: 4px 0 8px;
+  }
+  .calendar-grid th {
+    padding-bottom: 4px; color: #506061; font-size: 10px; text-transform: uppercase;
+  }
+  .calendar-grid td { height: 38px; text-align: center; }
+  .calendar-grid .in-range { background: #d9eee5; }
+  .calendar-grid .range-start, .calendar-grid .in-range.week-start { border-radius: 24px 0 0 24px; }
+  .calendar-grid .range-end, .calendar-grid .in-range.week-end { border-radius: 0 24px 24px 0; }
+  .calendar-grid .range-start.range-end { background: none; }
+  .calendar-day {
+    width: 100%; max-width: 38px; height: 38px; cursor: pointer; border-radius: 50%;
+    border: 1px solid transparent; background: transparent; color: #1a2a2a;
+    font: 600 14px 'DM Sans', sans-serif;
+  }
+  .outside-month .calendar-day { color: #5a6969; }
+  .calendar-day[aria-current="date"] { border-color: var(--jade); }
+  .calendar-day:hover { background: #e6f2ee; }
+  .range-start .calendar-day, .range-end .calendar-day { background: var(--teal); color: #fff; }
+  .calendar-dialog-footer {
+    border-top: 1px solid rgba(11,85,99,0.14); padding-top: 12px; flex-wrap: wrap; gap: 8px 12px;
+  }
+  #calendarSelection { flex: 1; color: var(--teal); font-size: 12px; font-weight: 700; }
+  .calendar-apply {
+    min-height: 44px; padding: 8px 16px; border: none; border-radius: 22px;
+    color: #fff; background: var(--teal); cursor: pointer; font: 700 13px 'DM Sans', sans-serif;
+  }
+  .calendar-apply:hover { background: var(--teal2); }
+  .calendar-dialog button:focus-visible { outline: 2px solid var(--teal2); outline-offset: 2px; }
   .date-range-summary {
-    max-width: 1080px; margin: 0 auto; padding: 7px 28px 9px;
+    max-width: 1080px; margin: 0 auto; padding: 4px 28px 7px;
     color: rgba(255,255,255,0.86); font-size: 12px; font-weight: 600;
   }
   @media (max-width: 700px) {
-    .date-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .date-presets .tab-btn { padding: 10px 4px; white-space: normal; letter-spacing: 0.02em; }
-    .custom-dates, .date-range-summary { padding-left: 16px; padding-right: 16px; }
+    .date-carousel { padding: 0 8px; }
+    .date-presets .tab-btn { padding: 11px 10px; letter-spacing: 0.02em; }
+    .date-range-summary { padding-left: 16px; padding-right: 16px; }
   }
-  @media (max-width: 440px) {
-    .custom-dates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .custom-dates button { grid-column: 1 / -1; justify-self: start; }
+  @media (prefers-reduced-motion: reduce) {
+    .date-presets { scroll-behavior: auto; }
   }
 
   /* ── REGION FILTERS ── */
@@ -522,7 +573,6 @@
     .eyebrow { display: none; }             /* identity carried by the H1 on small screens */
     .header-auth-area { justify-content: flex-start; }
     main { padding: 16px 16px 64px; }
-    .tabs-inner { padding: 0 16px; }
     .filter-inner { padding-left: 16px; padding-right: 16px; }
     .events-grid { margin-bottom: 20px; }
     .day-label { margin-bottom: 12px; }
@@ -671,8 +721,7 @@
 :focus-visible { outline: 3px solid #4fc58f; outline-offset: 2px; border-radius: 3px; }
 
 /* Tabs bar buttons get a white ring against the dark background */
-.tab-btn:focus-visible,
-.custom-dates :focus-visible { outline-color: #fff; }
+.tab-btn:focus-visible, .date-carousel-arrow:focus-visible { outline-color: #fff; outline-offset: -3px; }
 
 /* Filter and action buttons */
 .filter-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }

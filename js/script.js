@@ -324,6 +324,9 @@ const SECTION_TITLES = {
   const CALENDAR_DAY_LABEL = new Intl.DateTimeFormat('en-NZ', {
     timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long',
   });
+  const CALENDAR_MONTH_LABEL = new Intl.DateTimeFormat('en-NZ', {
+    timeZone: 'UTC', month: 'long', year: 'numeric',
+  });
 
   let datePreset = 'next-7';
   let customRange = null;
@@ -414,7 +417,42 @@ const SECTION_TITLES = {
     setPressed('[data-filter-region]', b => b.dataset.filterRegion === currentRegion);
     setPressed('[data-filter-category]', b => b.dataset.filterCategory === currentCategory);
     setPressed('[data-filter-free]', () => freeOnly);
+    const previous = document.querySelector('[data-date-filter].active');
     setPressed('[data-date-filter]', b => b.dataset.dateFilter === datePreset);
+    if (previous?.dataset.dateFilter !== datePreset) revealDatePreset();
+  }
+
+  function revealDatePreset() {
+    const track = document.getElementById('datePresets');
+    const active = track.querySelector('.tab-btn.active');
+    if (!active) return;
+    const viewport = track.getBoundingClientRect();
+    const button = active.getBoundingClientRect();
+    const offset = Math.min(0, button.left - viewport.left) || Math.max(0, button.right - viewport.right);
+    if (offset) track.scrollBy({ left: offset, behavior: 'instant' });
+  }
+
+  function setupDateCarousel() {
+    const track = document.getElementById('datePresets');
+    const back = document.getElementById('datePresetsBack');
+    const forward = document.getElementById('datePresetsForward');
+    const updateArrows = () => {
+      const fullWidth = track.clientWidth + back.offsetWidth + forward.offsetWidth;
+      const overflow = track.scrollWidth > fullWidth + 1;
+      back.hidden = forward.hidden = !overflow;
+      back.disabled = track.scrollLeft < 1;
+      forward.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+    };
+    const resize = () => {
+      updateArrows();
+      revealDatePreset();
+    };
+    back.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.8 }));
+    forward.addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.8 }));
+    track.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', resize);
+    document.fonts?.ready.then(resize);
+    updateArrows();
   }
 
   function filterEvents() {
@@ -429,46 +467,118 @@ const SECTION_TITLES = {
     freeOnly = false;
   }
 
-  function setCustomDatesOpen(open) {
-    const form = document.getElementById('customDates');
-    form.hidden = !open;
-    document.querySelector('[data-date-filter="custom"]').setAttribute('aria-expanded', String(open));
-    const end = document.getElementById('dateTo');
-    end.setCustomValidity('');
-    if (open) {
-      const range = customRange || selectedRange();
-      const start = document.getElementById('dateFrom');
-      start.value = range.start;
-      end.value = range.end;
-      start.focus();
+  let pickedRange, pickerFocus, pickingEnd;
+
+  function shiftPickerMonth(date, offset) {
+    const day = calendarDay(date);
+    const dayOfMonth = day.getUTCDate();
+    // Find the last day of the target month before clamping the focused date.
+    day.setUTCMonth(day.getUTCMonth() + offset + 1, 0);
+    day.setUTCDate(Math.min(dayOfMonth, day.getUTCDate()));
+    const result = day.toISOString().slice(0, 10);
+    return isCalendarDate(result) ? result : date;
+  }
+
+  function renderDatePicker(focusDay = false) {
+    const monthStart = pickerFocus.slice(0, 7) + '-01';
+    const month = calendarDay(monthStart);
+    const offset = (month.getUTCDay() + 6) % 7; // Monday-first
+    document.getElementById('calendarMonth').textContent = CALENDAR_MONTH_LABEL.format(month);
+    document.getElementById('previousCalendarMonth').disabled = shiftPickerMonth(pickerFocus, -1) === pickerFocus;
+    document.getElementById('nextCalendarMonth').disabled = shiftPickerMonth(pickerFocus, 1) === pickerFocus;
+    const { start, end } = pickedRange;
+    const weeks = [];
+    for (let row = 0; row < 6; row++) {
+      const cells = [];
+      for (let col = 0; col < 7; col++) {
+        const iso = addCalendarDays(monthStart, row * 7 + col - offset);
+        if (!isCalendarDate(iso)) {
+          cells.push('<td></td>');
+          continue;
+        }
+        const day = calendarDay(iso);
+        const selected = start <= iso && iso <= end;
+        const classes = [
+          iso.slice(0, 7) !== monthStart.slice(0, 7) ? 'outside-month' : '',
+          selected ? 'in-range' : '',
+          iso === start ? 'range-start' : '',
+          iso === end ? 'range-end' : '',
+          col === 0 ? 'week-start' : '',
+          col === 6 ? 'week-end' : '',
+        ].filter(Boolean).join(' ');
+        cells.push(`<td class="${classes}" aria-selected="${selected}">
+          <button type="button" class="calendar-day" data-picker-date="${iso}" tabindex="${iso === pickerFocus ? '0' : '-1'}"
+            aria-label="${CALENDAR_DAY_LABEL.format(day)} ${day.getUTCFullYear()}"${iso === currentToday ? ' aria-current="date"' : ''}>${day.getUTCDate()}</button>
+        </td>`);
+      }
+      weeks.push(`<tr>${cells.join('')}</tr>`);
+    }
+    const grid = document.getElementById('calendarDays');
+    grid.innerHTML = weeks.join('');
+    document.getElementById('calendarSelection').textContent =
+      CALENDAR_DATE_LABEL.formatRange?.(calendarDay(start), calendarDay(end)) ?? rangeLabel(pickedRange);
+    if (focusDay) grid.querySelector('[tabindex="0"]')?.focus();
+  }
+
+  function showDatePicker() {
+    currentToday = aucklandToday();
+    pickedRange = { ...(customRange || selectedRange()) };
+    pickerFocus = pickedRange.start;
+    pickingEnd = false;
+    renderDatePicker();
+    document.getElementById('customDates').showModal();
+    document.querySelector('[data-date-filter="custom"]').setAttribute('aria-expanded', 'true');
+    document.querySelector('#calendarDays [tabindex="0"]')?.focus();
+  }
+
+  function choosePickerDate(date) {
+    if (pickingEnd) {
+      const first = pickedRange.start;
+      pickedRange = date < first ? { start: date, end: first } : { start: first, end: date };
+    } else {
+      pickedRange = { start: date, end: date };
+    }
+    pickingEnd = !pickingEnd;
+    pickerFocus = date;
+    renderDatePicker(true);
+  }
+
+  function handleCalendarKeys(event) {
+    const date = event.target.dataset.pickerDate;
+    if (!date) return;
+    const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[event.key];
+    let next;
+    if (offset) {
+      next = addCalendarDays(date, offset);
+    } else if (event.key === 'Home' || event.key === 'End') {
+      const dayOfWeek = (calendarDay(date).getUTCDay() + 6) % 7;
+      next = addCalendarDays(date, (event.key === 'Home' ? 0 : 6) - dayOfWeek);
+    } else if (event.key === 'PageUp' || event.key === 'PageDown') {
+      next = shiftPickerMonth(date, (event.key === 'PageUp' ? -1 : 1) * (event.shiftKey ? 12 : 1));
+    } else {
+      return;
+    }
+    event.preventDefault();
+    if (isCalendarDate(next)) {
+      pickerFocus = next;
+      renderDatePicker(true);
     }
   }
 
   function changeDatePreset(preset) {
     if (preset === 'custom') {
-      setCustomDatesOpen(document.getElementById('customDates').hidden);
+      showDatePicker();
       return;
     }
     datePreset = preset;
-    setCustomDatesOpen(false);
     filterEvents();
   }
 
-  function applyCustomDates(event) {
-    event.preventDefault();
-    const start = document.getElementById('dateFrom').value;
-    const endInput = document.getElementById('dateTo');
-    const end = endInput.value;
-    if (!isCalendarDate(start) || !isCalendarDate(end) || end < start) {
-      endInput.setCustomValidity('Choose an end date on or after the start date.');
-      endInput.reportValidity();
-      return;
-    }
+  function applyCustomDates() {
     datePreset = 'custom';
-    customRange = { start, end };
-    setCustomDatesOpen(false);
+    customRange = pickedRange;
+    document.getElementById('customDates').close();
     filterEvents();
-    document.querySelector('[data-date-filter="custom"]').focus();
   }
 
   function eventMatchesFilters(ev) {
@@ -922,8 +1032,31 @@ const SECTION_TITLES = {
     document.querySelectorAll('[data-date-filter]').forEach(btn =>
       btn.addEventListener('click', () => changeDatePreset(btn.dataset.dateFilter))
     );
-    on('customDates', 'submit', applyCustomDates);
-    on('customDates', 'input', () => document.getElementById('dateTo').setCustomValidity(''));
+    setupDateCarousel();
+    const dialog = document.getElementById('customDates');
+    on('closeCalendar', 'click', () => dialog.close());
+    on('customDates', 'close', () => {
+      document.querySelector('[data-date-filter="custom"]').setAttribute('aria-expanded', 'false');
+    });
+    on('customDates', 'click', e => {
+      if (e.target !== dialog) return;
+      const { left, right, top, bottom } = dialog.getBoundingClientRect();
+      if (e.clientX < left || e.clientX > right || e.clientY < top || e.clientY > bottom) dialog.close();
+    });
+    on('previousCalendarMonth', 'click', () => {
+      pickerFocus = shiftPickerMonth(pickerFocus, -1);
+      renderDatePicker();
+    });
+    on('nextCalendarMonth', 'click', () => {
+      pickerFocus = shiftPickerMonth(pickerFocus, 1);
+      renderDatePicker();
+    });
+    on('calendarDays', 'click', e => {
+      const button = e.target.closest('[data-picker-date]');
+      if (button) choosePickerDate(button.dataset.pickerDate);
+    });
+    on('calendarDays', 'keydown', handleCalendarKeys);
+    on('applyCalendarDates', 'click', applyCustomDates);
     on('calendarResults', 'click', e => {
       if (e.target.closest('.no-results-reset')) {
         resetEventFilters();
@@ -947,7 +1080,6 @@ const SECTION_TITLES = {
       e.preventDefault();
       datePreset = 'custom';
       customRange = SCHOOL_HOLIDAYS;
-      setCustomDatesOpen(false);
       showSection('events');
       filterEvents();
       document.getElementById('eventDateFilters').scrollIntoView();

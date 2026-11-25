@@ -212,21 +212,49 @@
 ═══════════════════════════════════════ -->
 <div class="app-section active" id="section-events">
 <nav class="tabs-bar" id="eventDateFilters" aria-label="Event dates" tabindex="-1">
-  <div class="tabs-inner date-presets" role="group" aria-label="Select event dates">
-    <button type="button" class="tab-btn active" data-date-filter="next-7" aria-pressed="true">Next 7 Days</button>
-    <button type="button" class="tab-btn" data-date-filter="today" aria-pressed="false">Today</button>
-    <button type="button" class="tab-btn" data-date-filter="tomorrow" aria-pressed="false">Tomorrow</button>
-    <button type="button" class="tab-btn" data-date-filter="this-weekend" aria-pressed="false">This Weekend</button>
-    <button type="button" class="tab-btn" data-date-filter="next-weekend" aria-pressed="false">Next Weekend</button>
-    <button type="button" class="tab-btn" data-date-filter="custom" aria-pressed="false" aria-expanded="false" aria-controls="customDates">Custom Dates</button>
+  <div class="date-carousel">
+    <button type="button" class="date-carousel-arrow" id="datePresetsBack" aria-label="Scroll date filters left" aria-controls="datePresets" hidden>‹</button>
+    <div class="date-presets" id="datePresets" role="group" aria-label="Select event dates">
+      <button type="button" class="tab-btn active" data-date-filter="next-7" aria-pressed="true">Next 7 Days</button>
+      <button type="button" class="tab-btn" data-date-filter="today" aria-pressed="false">Today</button>
+      <button type="button" class="tab-btn" data-date-filter="tomorrow" aria-pressed="false">Tomorrow</button>
+      <button type="button" class="tab-btn" data-date-filter="this-weekend" aria-pressed="false">This Weekend</button>
+      <button type="button" class="tab-btn" data-date-filter="next-weekend" aria-pressed="false">Next Weekend</button>
+      <button type="button" class="tab-btn" data-date-filter="custom" aria-pressed="false" aria-expanded="false" aria-haspopup="dialog" aria-controls="customDates">Custom Dates</button>
+    </div>
+    <button type="button" class="date-carousel-arrow" id="datePresetsForward" aria-label="Scroll date filters right" aria-controls="datePresets" hidden>›</button>
   </div>
-  <form class="custom-dates" id="customDates" hidden>
-    <label for="dateFrom">From <input type="date" id="dateFrom" required></label>
-    <label for="dateTo">To <input type="date" id="dateTo" required></label>
-    <button type="submit">Apply dates</button>
-  </form>
   <p class="date-range-summary" id="dateRangeSummary" aria-live="polite" aria-atomic="true"></p>
 </nav>
+
+<dialog class="calendar-dialog" id="customDates" aria-labelledby="calendarTitle" aria-describedby="calendarInstructions">
+  <div class="calendar-dialog-header">
+    <h2 id="calendarTitle">Custom dates</h2>
+    <button type="button" class="calendar-control" id="closeCalendar" aria-label="Close calendar">×</button>
+  </div>
+  <p class="calendar-instructions" id="calendarInstructions">Choose one date, or choose a second date for a range.</p>
+  <div class="calendar-month-nav">
+    <button type="button" class="calendar-control" id="previousCalendarMonth" aria-label="Previous month">‹</button>
+    <h3 id="calendarMonth" aria-live="polite"></h3>
+    <button type="button" class="calendar-control" id="nextCalendarMonth" aria-label="Next month">›</button>
+  </div>
+  <table class="calendar-grid" role="grid" aria-labelledby="calendarMonth" aria-multiselectable="true">
+    <thead><tr>
+      <th scope="col" aria-label="Monday">Mon</th>
+      <th scope="col" aria-label="Tuesday">Tue</th>
+      <th scope="col" aria-label="Wednesday">Wed</th>
+      <th scope="col" aria-label="Thursday">Thu</th>
+      <th scope="col" aria-label="Friday">Fri</th>
+      <th scope="col" aria-label="Saturday">Sat</th>
+      <th scope="col" aria-label="Sunday">Sun</th>
+    </tr></thead>
+    <tbody id="calendarDays"></tbody>
+  </table>
+  <div class="calendar-dialog-footer">
+    <p id="calendarSelection" aria-live="polite" aria-atomic="true"></p>
+    <button type="button" class="calendar-apply" id="applyCalendarDates">Apply dates</button>
+  </div>
+</dialog>
 
 <main id="main-content" tabindex="-1">
 
