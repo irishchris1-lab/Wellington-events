@@ -571,7 +571,10 @@
     .header-inner { padding: 12px 16px 16px; }
     .header-top { margin-bottom: 10px; }
     .eyebrow { display: none; }             /* identity carried by the H1 on small screens */
-    .header-auth-area { justify-content: flex-start; }
+    .header-auth-area { flex: 1; }
+    .header-connect { margin-inline-start: auto; gap: 0; }
+    .header-connect .header-mailing-link { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.86); }
+    .header-connect .social-icon-link svg { width: 20px; height: 20px; padding: 1px; border-radius: 5px; }
     main { padding: 16px 16px 64px; }
     .filter-inner { padding-left: 16px; padding-right: 16px; }
     .events-grid { margin-bottom: 20px; }
@@ -787,7 +790,7 @@
   border-left: 1px solid rgba(255,255,255,0.25);
 }
 /* On small screens keep only the day temps — message is supporting detail */
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .hero-weather-message { display: none; }
 }
 @media (max-width: 380px) {

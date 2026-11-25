@@ -316,7 +316,6 @@ const SECTION_TITLES = {
     showSection(section);
   }
 
-  const DATE_PRESETS = ['next-7', 'today', 'tomorrow', 'this-weekend', 'next-weekend', 'custom'];
   const SCHOOL_HOLIDAYS = { start: '2026-12-19', end: '2027-02-02' };
   const CALENDAR_DATE_LABEL = new Intl.DateTimeFormat('en-NZ', {
     timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric',
@@ -328,24 +327,40 @@ const SECTION_TITLES = {
     timeZone: 'UTC', month: 'long', year: 'numeric',
   });
 
-  let datePreset = 'next-7';
+  let datePreset = 'this-week';
   let customRange = null;
   let currentToday = aucklandToday();
 
   function selectedRange() {
     if (datePreset === 'custom') return customRange;
-    const today = currentToday;
-    if (datePreset === 'today') return { start: today, end: today };
-    if (datePreset === 'tomorrow') {
-      const tomorrow = addCalendarDays(today, 1);
-      return { start: tomorrow, end: tomorrow };
+    const daysUntilSunday = (7 - calendarDay(currentToday).getUTCDay()) % 7;
+    const sunday = addCalendarDays(currentToday, daysUntilSunday);
+    if (datePreset === 'next-week') {
+      return { start: addCalendarDays(sunday, 1), end: addCalendarDays(sunday, 7) };
     }
-    if (datePreset === 'this-weekend' || datePreset === 'next-weekend') {
-      const saturday = weekendForDate(today);
-      const start = datePreset === 'next-weekend' ? addCalendarDays(saturday, 7) : saturday;
-      return { start, end: addCalendarDays(start, 1) };
+    return { start: currentToday, end: sunday };
+  }
+
+  // Open saved links to the former presets with their dates selected in the calendar.
+  function legacyDateRange(preset, today) {
+    switch (preset) {
+      case 'next-7':
+        return { start: today, end: addCalendarDays(today, 6) };
+      case 'today':
+        return { start: today, end: today };
+      case 'tomorrow': {
+        const tomorrow = addCalendarDays(today, 1);
+        return { start: tomorrow, end: tomorrow };
+      }
+      case 'this-weekend':
+      case 'next-weekend': {
+        const saturday = weekendForDate(today);
+        const start = preset === 'next-weekend' ? addCalendarDays(saturday, 7) : saturday;
+        return { start, end: addCalendarDays(start, 1) };
+      }
+      default:
+        return null;
     }
-    return { start: today, end: addCalendarDays(today, 6) };
   }
 
   function rangeLabel({ start, end }) {
@@ -360,7 +375,7 @@ const SECTION_TITLES = {
     if (currentRegion !== 'all') params.set('r', currentRegion);
     if (currentCategory !== 'all') params.set('c', currentCategory);
     if (freeOnly) params.set('free', '1');
-    if (datePreset !== 'next-7') params.set('dates', datePreset);
+    if (datePreset !== 'this-week') params.set('dates', datePreset);
     if (datePreset === 'custom') {
       params.set('from', customRange.start);
       params.set('to', customRange.end);
@@ -382,12 +397,19 @@ const SECTION_TITLES = {
     }
     if (CATEGORIES.includes(params.get('c'))) currentCategory = params.get('c');
     freeOnly = params.get('free') === '1';
+    const preset = params.get('dates');
     const from = params.get('from'), to = params.get('to');
-    if (params.get('dates') === 'custom' && isCalendarDate(from) && isCalendarDate(to) && from <= to) {
+    if (preset === 'next-week') {
+      datePreset = preset;
+    } else if (preset === 'custom' && isCalendarDate(from) && isCalendarDate(to) && from <= to) {
       datePreset = 'custom';
       customRange = { start: from, end: to };
-    } else if (DATE_PRESETS.includes(params.get('dates')) && params.get('dates') !== 'custom') {
-      datePreset = params.get('dates');
+    } else {
+      const legacyRange = legacyDateRange(preset, currentToday);
+      if (legacyRange) {
+        datePreset = 'custom';
+        customRange = legacyRange;
+      }
     }
     if (location.hash === '#school-holidays') {
       datePreset = 'custom';
