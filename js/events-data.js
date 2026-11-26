@@ -2689,6 +2689,19 @@ const STATIC_EVENTS = [
 
   // ── 28–29 Nov 2026 ─────────────────────────────────────────────────────────
   {
+    title: 'Murder at the Manor — Cluedunnit Dinner',
+    type: 'culture', day: 'fri', date: '2026-11-27', weekend: '2026-11-28', region: 'wellington',
+    category: 'food', indoor: true,
+    priceTier: '$$$',
+    occurrences: ['2026-11-27', '2026-11-28'],
+    startTime: '19:00', endTime: '22:00',
+    time: 'Fri 27 & Sat 28 November · 7:00 pm (Humanitix)',
+    venue: 'Lambton Ballroom, InterContinental Wellington, 2 Grey Street',
+    description: 'A 1920s murder mystery over a three-course dinner. Question characters as they visit your table and piece together the clues with your fellow diners. For late availability and to confirm arrival time, check with the hotel at cluedunnitwellington@ihg.com.',
+    url: 'https://events.humanitix.com/cluedunnit-or-murder-at-the-manor-murder-mystery-dinner-the-intercontinental-wellington-nz',
+    ticketed: true,
+    cost: '$250 per person',},
+  {
     title: 'Great Southern BioBlitz — Zealandia',
     type: 'outdoor', day: 'sat', weekend: '2026-11-28', region: 'wellington',
     category: 'sports',
