@@ -912,16 +912,12 @@ const SECTION_TITLES = {
   }
 
   function eventPanelHTML(ev, panelId, titleId, pick = false) {
-    const id = eventSlug(ev);
     const title = escHtml(ev.title);
-    return `<div class="event-panel${pick ? ' event-panel-pick' : ''}" id="${panelId}" role="region" aria-labelledby="${titleId}" hidden${pick ? ` data-event-id="${escHtml(id)}"` : ''}>
+    const actions = sourceEventLink(ev, 'Event website') + (pick ? shareButtonHTML(title) : '');
+    return `<div class="event-panel${pick ? ' event-panel-pick' : ''}" id="${panelId}" role="region" aria-labelledby="${titleId}" hidden${pick ? ` data-event-id="${escHtml(eventSlug(ev))}"` : ''}>
       ${pick ? `<div class="event-panel-header"><h3 class="card-title" id="${titleId}">${title}</h3><button type="button" class="event-panel-close" data-event-dismiss aria-controls="${panelId}">Hide details</button></div>` : ''}
       ${eventDetailsHTML(ev)}
-      <div class="event-panel-actions">
-        ${sourceEventLink(ev, 'Event website')}
-        <a class="event-page-link" href="${eventHref(id)}">Open event page</a>
-        ${pick ? shareButtonHTML(title) : ''}
-      </div>
+      ${actions ? `<div class="event-panel-actions">${actions}</div>` : ''}
     </div>`;
   }
 
