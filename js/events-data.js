@@ -2680,6 +2680,8 @@ const STATIC_EVENTS = [
     venue: 'St James Theatre, 77–87 Courtenay Pl',
     description: 'Lloyd Webber and Rice’s rock opera on the St James stage — the score that gave us Gethsemane and Superstar, played loud. Best for older kids and teens.',
     url: 'https://www.stjames.co.nz/',
+    img: 'images/events/jesus-christ-superstar',
+    imgGenerated: true,
     pick: true,
     label: '🎤 Rock Opera',
     labelStyle: 'color:#8C2F39',
@@ -2982,7 +2984,20 @@ const STATIC_EVENTS = [
     ticketed: true,
     cost: 'Ticketed — Ticketmaster',},
 
-  // ── 12–13 Dec 2026 ─────────────────────────────────────────────────────────
+  // ── 11–13 Dec 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Vinyl DJ Night at Green Land Cafe and Bar',
+    type: 'music', day: 'fri', date: '2026-12-11', weekend: '2026-12-12', region: 'wellington',
+    category: 'music', indoor: true,
+    priceTier: 'Free',
+    startTime: '16:00',
+    time: 'Friday 11 December · from 4:00 pm',
+    venue: 'Green Land Cafe and Bar, 23 Kate Sheppard Place, Pipitea, Wellington 6011',
+    mapUrl: 'https://www.google.com/maps/dir/?api=1&destination=23+Kate+Sheppard+Place%2C+Pipitea%2C+Wellington+6011%2C+New+Zealand',
+    description: 'Drop by Green Land Cafe and Bar from 4 pm for a DJ spinning vinyl records all night long. Entry is free.',
+    img: 'images/events/green-land-vinyl-dj-night',
+    imgGenerated: true,
+    cost: 'Free entry',},
   {
     title: 'The Great Christmas Market',
     type: 'market', day: 'sat', weekend: '2026-12-12', region: 'wellington',

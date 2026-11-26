@@ -861,7 +861,7 @@ const SECTION_TITLES = {
     const eventId = eventSlug(ev);
     const footer = (detailsUrl
       ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
-      : '') +
+      : detail ? '' : `<a class="event-btn" href="${eventHref(eventId)}">Event details <span aria-hidden="true">→</span></a>`) +
       `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
     const tierAttr = ev.pick && !past ? 'featured' : 'standard';
     const titleTag = detail ? 'h2' : 'div';
