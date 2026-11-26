@@ -31,38 +31,15 @@ let unsubscribeSnap = null;
 let showPast        = false;
 let firstLoad       = true;
 
-// True from Tuesday 00:00 after a Fri–Mon block
-function weekendIsPast(satDateStr) {
-  return isCalendarDate(satDateStr) && aucklandToday() >= addCalendarDays(satDateStr, 3);
-}
-
-function eventIsPast(ev) {
-  const date = eventDate(ev);
-  return Boolean(date && date < aucklandToday());
+function isPastListing(ev, now = Date.now()) {
+  return eventIsPast(eventSchedule(ev), now);
 }
 
 function toggleShowPast(btn) {
   showPast = !showPast;
   btn.textContent = showPast ? 'Hide past' : 'Show past';
+  populateWeekendFilter();
   applyFilters();
-}
-
-async function deletePastEvents(btn) {
-  const past = allEvents.filter(e => !e._static && weekendIsPast(e.weekend) && eventIsPast(e));
-  if (!past.length) { showToast('No past events to delete'); return; }
-  if (!confirm(`Delete ${past.length} past event${past.length === 1 ? '' : 's'} from Firestore?`)) return;
-  btn.disabled = true;
-  btn.textContent = '…';
-  try {
-    const batch = db.batch();
-    past.forEach(e => batch.delete(db.collection('events').doc(e.id)));
-    await batch.commit();
-    showToast(`${past.length} past event${past.length === 1 ? '' : 's'} deleted`);
-  } catch (err) {
-    showToast('Delete failed: ' + err.message);
-  }
-  btn.disabled = false;
-  btn.textContent = '🗑 Delete past';
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -139,8 +116,14 @@ function subscribeToEvents() {
   if (unsubscribeSnap) unsubscribeSnap();
   unsubscribeSnap = db.collection('events')
     .onSnapshot(snapshot => {
+      const curated = new Map((typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
+        .map(ev => [`${(ev.title || '').trim()}|${eventDate(ev)}`, ev]));
       allEvents = snapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .map(doc => {
+          const ev = doc.data();
+          const original = curated.get(`${(ev.title || '').trim()}|${eventDate(ev)}`);
+          return { ...eventScheduleFields(original || {}), ...ev, id: doc.id };
+        })
         .sort((a, b) => {
           const w = (a.weekend || '').localeCompare(b.weekend || '');
           return w !== 0 ? w : (a.title || '').localeCompare(b.title || '');
@@ -167,7 +150,7 @@ function subscribeToEvents() {
       populateWeekendFilter();
       if (firstLoad) {
         firstLoad = false;
-        const upcoming = allEvents.filter(e => e.weekend && !eventIsPast(e)).map(e => e.weekend).sort()[0];
+        const upcoming = allEvents.filter(e => e.weekend && !isPastListing(e)).map(e => e.weekend).sort()[0];
         if (upcoming) document.getElementById('weekendFilter').value = upcoming;
       }
       applyFilters();
@@ -198,21 +181,23 @@ function updateStats() {
 function populateWeekendFilter() {
   const sel     = document.getElementById('weekendFilter');
   const current = sel.value;
-  const weekends = [...new Set(allEvents.map(e => e.weekend).filter(Boolean))].sort();
+  const now = Date.now();
+  const weekends = [...new Set(allEvents.filter(ev => showPast || !isPastListing(ev, now))
+    .map(ev => ev.weekend).filter(Boolean))].sort();
   sel.innerHTML = '<option value="">All weekends</option>' +
     weekends.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${formatWeekend(w)}</option>`).join('');
 }
 
 function formatWeekend(isoSat) {
   if (!isoSat) return isoSat;
-  const sat = new Date(isoSat + 'T00:00:00');
-  const sun = new Date(sat); sun.setDate(sun.getDate() + 1);
+  const sat = calendarDay(isoSat);
+  const sun = calendarDay(addCalendarDays(isoSat, 1));
   const fmt = (d, showMonth) => {
-    const day = d.getDate();
-    const mon = d.toLocaleString('en-NZ', { month: 'short' });
+    const day = d.getUTCDate();
+    const mon = d.toLocaleString('en-NZ', { month: 'short', timeZone: 'UTC' });
     return showMonth ? `${day} ${mon}` : `${day}`;
   };
-  const sameMon = sat.getMonth() === sun.getMonth();
+  const sameMon = sat.getUTCMonth() === sun.getUTCMonth();
   return sameMon ? `${fmt(sat, false)}–${fmt(sun, true)}` : `${fmt(sat, true)}–${fmt(sun, true)}`;
 }
 
@@ -222,9 +207,10 @@ function applyFilters() {
   const weekend = document.getElementById('weekendFilter').value;
   const region  = document.getElementById('regionFilter').value;
   const status  = document.getElementById('statusFilter').value;
+  const now = Date.now();
 
   filteredEvents = allEvents.filter(ev => {
-    if (!showPast && eventIsPast(ev)) return false;
+    if (!showPast && isPastListing(ev, now)) return false;
     if (weekend && ev.weekend !== weekend) return false;
     if (region  && ev.region  !== region)  return false;
     if (status === 'active' && !ev.active)  return false;
@@ -280,6 +266,10 @@ function openModal(docId) {
     document.getElementById('fDesc').value     = ev.description || '';
     document.getElementById('fType').value     = ev.type     || '';
     document.getElementById('fDate').value     = eventDate(ev);
+    const end = readEventDateTime(ev.end);
+    document.getElementById('fEndDate').value  = end?.date || ev.endDate || '';
+    document.getElementById('fEndTime').value  = end?.time?.slice(0, 5) || eventClock(ev.endTime).slice(0, 5);
+    document.getElementById('fDaily').checked = ev.daily === true;
     document.getElementById('fRegion').value   = ev.region   || '';
     document.getElementById('fTags').value     = (ev.tags || []).join(', ');
     document.getElementById('fVenue').value    = ev.venue    || '';
@@ -296,6 +286,9 @@ function openModal(docId) {
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
+    document.getElementById('fEndDate').value = '';
+    document.getElementById('fEndTime').value = '';
+    document.getElementById('fDaily').checked = false;
     document.getElementById('fActive').checked = true;
     document.getElementById('fIndoor').checked = false;
     document.getElementById('fCategory').value = '';
@@ -628,6 +621,16 @@ async function handleFormSubmit(e) {
     return;
   }
   const existing = allEvents.find(ev => ev.id === editingDocId);
+  const endDate = document.getElementById('fEndDate').value;
+  const endTime = document.getElementById('fEndTime').value;
+  const daily = document.getElementById('fDaily').checked;
+  const startChanged = existing && eventDate(existing) !== date;
+  const start = (!startChanged && readEventDateTime(existing?.start)?.date) || date;
+  if (endDate && endDate < start) {
+    showToast('The end date must be on or after the event date.');
+    return;
+  }
+  const previousEnd = readEventDateTime(existing?.end);
   const { day, weekend } = isCalendarDate(existing?.weekend) && eventDate(existing) === date
     ? existing : dateToWeekend(date);
 
@@ -639,6 +642,9 @@ async function handleFormSubmit(e) {
     date,
     day,
     weekend,
+    endDate,
+    endTime,
+    daily,
     region:      document.getElementById('fRegion').value,
     tags,
     venue:       document.getElementById('fVenue').value.trim(),
@@ -653,6 +659,8 @@ async function handleFormSubmit(e) {
     priceEstimated: priceTier !== '' && document.getElementById('fPriceEstimated').checked,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
+  if (startChanged && existing.start) data.start = '';
+  if (previousEnd && (endDate !== previousEnd.date || endTime !== (previousEnd.time?.slice(0, 5) || ''))) data.end = '';
 
   btn.disabled    = true;
   btn.textContent = 'Saving…';
@@ -888,8 +896,9 @@ function dateToWeekend(dateStr) {
 
 function adminEventSchedule(ev) {
   const date = eventDate(ev);
-  if (isCalendarDate(ev.weekend)) return { date, weekend: ev.weekend, day: ev.day || 'sat' };
-  return { date, ...(date ? dateToWeekend(date) : { weekend: '', day: 'sat' }) };
+  const legacy = isCalendarDate(ev.weekend) ? { weekend: ev.weekend, day: ev.day || 'sat' }
+    : date ? dateToWeekend(date) : { weekend: '', day: 'sat' };
+  return { ...eventScheduleFields(ev), date, ...legacy };
 }
 
 async function importFromJSON() {
@@ -943,6 +952,7 @@ async function importFromJSON() {
         title:       String(ev.title).trim(),
         description: String(ev.description || '').trim(),
         type:        'other',
+        ...eventScheduleFields(ev),
         date:        ev.date,
         day,
         weekend,

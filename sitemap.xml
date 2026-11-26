@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- The homepage is the indexable event catalogue. Event share URLs stay out of the sitemap. -->
   <url>
     <loc>https://whatsonwellington.co.nz/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
   </url>
 </urlset>

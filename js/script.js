@@ -88,6 +88,7 @@ const MONTHS_FULL  = ['January','February','March','April','May','June','July','
 const SECTION_TITLES = {
     events:  "Wellington Events — What's On Wellington",
     about:   "About — What's On Wellington",
+    event:   "Event details — What's On Wellington",
   };
 
   // Event categories, shown as the "Show" filter. Every event has exactly one.
@@ -124,6 +125,8 @@ const SECTION_TITLES = {
     .map(ev => [legacyEventKey(ev), ev.date]));
   let calendarEvents = staticEvents;
   let calendarReady = false;
+  let liveEventsLoaded = false;
+  const scheduleCache = new WeakMap();
 
   let currentRegion = 'all';
   let currentCategory = 'all';
@@ -131,6 +134,11 @@ const SECTION_TITLES = {
 
   function eventListingKey(ev) {
     return `${(ev.title || '').trim()}|${eventDate(ev)}`;
+  }
+
+  function scheduleFor(ev) {
+    if (!scheduleCache.has(ev)) scheduleCache.set(ev, eventSchedule(ev));
+    return scheduleCache.get(ev);
   }
 
   function legacyEventKey(ev) {
@@ -330,6 +338,9 @@ const SECTION_TITLES = {
   let datePreset = 'this-week';
   let customRange = null;
   let currentToday = aucklandToday();
+  let currentSection = 'events';
+  let refreshTimer, nextRefresh;
+  const linkedEventId = new URLSearchParams(location.search).get('e');
 
   function selectedRange() {
     if (datePreset === 'custom') return customRange;
@@ -370,6 +381,7 @@ const SECTION_TITLES = {
 
   // Save the selected view without turning relative presets into stale dates.
   function updateHash(section) {
+    if (section === 'event') return;
     const params = new URLSearchParams();
     if (section !== 'events') params.set('s', section);
     if (currentRegion !== 'all') params.set('r', currentRegion);
@@ -380,7 +392,6 @@ const SECTION_TITLES = {
       params.set('from', customRange.start);
       params.set('to', customRange.end);
     }
-    if (pendingEventLink) params.set('e', pendingEventLink);
     // The selector also works when the page is opened directly from disk.
     const query = params.toString();
     try {
@@ -390,7 +401,7 @@ const SECTION_TITLES = {
 
   function readHash() {
     const params = new URLSearchParams(location.search);
-    const section = Object.hasOwn(SECTION_TITLES, params.get('s')) ? params.get('s') : 'events';
+    const section = params.get('s') === 'about' ? 'about' : 'events';
     const region = params.get('r');
     if ([...document.querySelectorAll('[data-filter-region]')].some(b => b.dataset.filterRegion === region)) {
       currentRegion = region;
@@ -415,16 +426,27 @@ const SECTION_TITLES = {
       datePreset = 'custom';
       customRange = SCHOOL_HOLIDAYS;
     }
-    return section;
+    return linkedEventId ? 'event' : section;
   }
 
   function showSection(section) {
+    currentSection = section;
     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
     document.getElementById('section-' + section).classList.add('active');
     document.querySelectorAll('.filter-bar').forEach(bar => bar.hidden = section !== 'events');
     document.title = SECTION_TITLES[section];
+    const eventRobots = document.getElementById('eventRobots');
+    if (section !== 'event' && eventRobots) {
+      eventRobots.remove();
+      const canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      canonical.href = document.querySelector('meta[property="og:url"]').content;
+      document.head.append(canonical);
+    }
+    document.querySelector('.skip-link').href = section === 'event' ? '#event-detail-content' : '#main-content';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updateHash(section);
+    renderEventView();
   }
 
   function setPressed(selector, isActive) {
@@ -478,10 +500,52 @@ const SECTION_TITLES = {
   }
 
   function filterEvents() {
-    currentToday = aucklandToday();
-    syncFilterControls();
-    renderCalendar();
+    renderEventView();
     updateHash('events');
+  }
+
+  function renderEventView() {
+    const now = Date.now();
+    const previousToday = currentToday;
+    currentToday = aucklandToday(now);
+    if (datePreset === 'custom' && customRange.start < currentToday) {
+      if (customRange.end < currentToday) {
+        datePreset = 'this-week';
+        customRange = null;
+      } else {
+        customRange = { ...customRange, start: currentToday };
+      }
+      updateHash(currentSection);
+    }
+
+    const dialog = document.getElementById('customDates');
+    if (dialog.open && currentToday !== previousToday) {
+      pickedRange = { start: laterDate(pickedRange.start), end: laterDate(pickedRange.end) };
+      pickerFocus = laterDate(pickerFocus);
+      renderDatePicker(Boolean(document.activeElement.dataset.pickerDate));
+    }
+    document.getElementById('holidayCta').hidden = currentToday > SCHOOL_HOLIDAYS.end;
+
+    if (currentSection === 'event') renderLinkedEvent(now);
+    if (currentSection === 'events') {
+      syncFilterControls();
+      renderCalendar(now);
+    }
+
+    nextRefresh = aucklandInstant(addCalendarDays(currentToday, 1));
+    for (const event of calendarEvents) {
+      for (const period of scheduleFor(event)) {
+        const end = period.daily && currentToday >= period.start && currentToday <= period.last
+          ? period.expiry(currentToday) : period.endsAt;
+        if (end > now && end < nextRefresh) nextRefresh = end;
+      }
+    }
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(renderEventView, Math.max(1, nextRefresh - Date.now()));
+  }
+
+  function laterDate(date) {
+    return date < currentToday ? currentToday : date;
   }
 
   function resetEventFilters() {
@@ -506,7 +570,7 @@ const SECTION_TITLES = {
     const month = calendarDay(monthStart);
     const offset = (month.getUTCDay() + 6) % 7; // Monday-first
     document.getElementById('calendarMonth').textContent = CALENDAR_MONTH_LABEL.format(month);
-    document.getElementById('previousCalendarMonth').disabled = shiftPickerMonth(pickerFocus, -1) === pickerFocus;
+    document.getElementById('previousCalendarMonth').disabled = monthStart.slice(0, 7) <= currentToday.slice(0, 7);
     document.getElementById('nextCalendarMonth').disabled = shiftPickerMonth(pickerFocus, 1) === pickerFocus;
     const { start, end } = pickedRange;
     const weeks = [];
@@ -514,7 +578,7 @@ const SECTION_TITLES = {
       const cells = [];
       for (let col = 0; col < 7; col++) {
         const iso = addCalendarDays(monthStart, row * 7 + col - offset);
-        if (!isCalendarDate(iso)) {
+        if (!isCalendarDate(iso) || iso < currentToday) {
           cells.push('<td></td>');
           continue;
         }
@@ -543,8 +607,9 @@ const SECTION_TITLES = {
   }
 
   function showDatePicker() {
-    currentToday = aucklandToday();
+    if (Date.now() >= nextRefresh) renderEventView();
     pickedRange = { ...(customRange || selectedRange()) };
+    pickedRange = { start: laterDate(pickedRange.start), end: laterDate(pickedRange.end) };
     pickerFocus = pickedRange.start;
     pickingEnd = false;
     renderDatePicker();
@@ -582,7 +647,7 @@ const SECTION_TITLES = {
     }
     event.preventDefault();
     if (isCalendarDate(next)) {
-      pickerFocus = next;
+      pickerFocus = laterDate(next);
       renderDatePicker(true);
     }
   }
@@ -666,7 +731,11 @@ const SECTION_TITLES = {
   }
 
   function eventLink(card) {
-    return `${location.origin}${location.pathname}?e=${encodeURIComponent(card.dataset.eventId)}`;
+    return new URL(eventHref(card.dataset.eventId), location.href).href;
+  }
+
+  function eventHref(id) {
+    return `?e=${encodeURIComponent(id)}`;
   }
 
   const SHARE_ICON = '<svg class="share-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
@@ -703,34 +772,52 @@ const SECTION_TITLES = {
     }
   }
 
-  // ?e=<id>: open that event once its card exists. Firestore events arrive
-  // after the static ones, so this is retried when they load.
-  let pendingEventLink = new URLSearchParams(location.search).get('e');
-
-  function openLinkedEvent() {
-    if (!pendingEventLink) return false;
-    const event = calendarEvents.find(ev => eventSlug(ev) === pendingEventLink);
-    if (!event) return false;
-    pendingEventLink = null;
-
-    const date = eventDate(event);
-    const { start, end } = selectedRange();
-    if (date && (date < start || date > end)) {
-      datePreset = 'custom';
-      customRange = { start: date, end: date };
+  function renderLinkedEvent(now) {
+    const detail = document.getElementById('eventDetail');
+    const event = calendarEvents.find(ev => eventSlug(ev) === linkedEventId);
+    if (!event) {
+      const loading = firebaseReady && !liveEventsLoaded;
+      detail.innerHTML = `<p role="status">${loading ? 'Loading event…' : 'Event details are unavailable.'}</p>`;
+      return;
     }
-    if (!eventMatchesFilters(event)) resetEventFilters();
-    showSection('events');
-    syncFilterControls();
-    renderCalendar();
 
-    const card = [...document.querySelectorAll('#calendarResults .card')]
-      .find(c => c.dataset.eventId === eventSlug(event));
-    if (card) scrollToPickCard(card);
-    return true;
+    const schedule = scheduleFor(event);
+    const past = eventIsPast(schedule, now);
+    const dates = schedule.flatMap(period => [period.start, period.end]).sort();
+    const dateLabel = dates.length ? rangeLabel({ start: dates[0], end: dates.at(-1) }) : '';
+    document.title = `${event.title}${past ? ' (Past event)' : ''} — What's On Wellington`;
+    detail.innerHTML = (past ? '<p class="event-detail-status" role="status">Past event · This event has ended.</p>' : '') +
+      buildEventCardHTML(event, { detail: true, past, dateLabel }) +
+      (past ? buildRecommendations(event, now) : '');
   }
 
-  function buildEventCardHTML(ev) {
+  function buildRecommendations(pastEvent, now) {
+    const category = eventCategory(pastEvent);
+    const seriesTitle = event => String(event.title || '').replace(/\s+[–—-]\s+(?:opening weekend|final weekend|final day)$/i, '');
+    const pastTitle = seriesTitle(pastEvent);
+    const candidates = calendarEvents.flatMap(event => {
+      const date = nextEventDate(scheduleFor(event), currentToday, '9999-12-31', now);
+      if (!date) return [];
+      const title = seriesTitle(event);
+      const relevance = (title === pastTitle ? 4 : 0) +
+        (eventCategory(event) === category ? 2 : 0) + (event.region === pastEvent.region ? 1 : 0);
+      return [{ event, title, date, relevance }];
+    }).sort((a, b) => b.relevance - a.relevance || a.date.localeCompare(b.date));
+    const seen = new Set();
+    const suggestions = [];
+    for (const { event, title, date } of candidates) {
+      if (!title || seen.has(title)) continue;
+      seen.add(title);
+      suggestions.push(`<li><a href="${eventHref(eventSlug(event))}">${escHtml(event.title)}
+        <time datetime="${date}">${CALENDAR_DATE_LABEL.format(calendarDay(date))}</time></a></li>`);
+      if (suggestions.length === 3) break;
+    }
+    return suggestions.length ? `<section class="event-recommendations" aria-labelledby="recommendations-heading">
+      <h2 id="recommendations-heading">Upcoming events you might like</h2><ul>${suggestions.join('')}</ul>
+    </section>` : '';
+  }
+
+  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev) } = {}) {
     const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region  = ev.region || 'all';
     const idSuffix = ev._static ? escHtml(ev._staticId || 'sx') : escHtml(ev.id || 'fx');
@@ -754,43 +841,43 @@ const SECTION_TITLES = {
     // Price is also shown on collapsed mobile cards.
     const badgeParts = [priceBadge(price.tier, price.estimated)];
     if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
-    if (ev.ticketed) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
+    if (ev.ticketed && !past) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
     if (ev.family)   badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
-    if (ev.pick)     badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
+    if (ev.pick && !past) badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
     const badgesHtml = badgeParts.length ? `<div class="card-badges">${badgeParts.join('')}</div>` : '';
 
     const mapUrl = safeUrl(ev.mapUrl);
     const venue = escHtml(ev.venue || '');
     const venueHtml = mapUrl ? `<a href="${escHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">${venue}</a>` : venue;
     const meta = [
+      dateLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📅</span>${escHtml(dateLabel)}</div>` : '',
       ev.time  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(ev.time)}</div>`  : '',
       ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${venueHtml}</div>` : '',
       ev.cost  ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>`  : '',
     ].join('');
     const detailsUrl = safeUrl(ev.url);
-    const detailsLabel = detailsUrl.startsWith('https://www.google.com/search?')
-      ? 'Search for details'
-      : 'View event';
+    const detailsLabel = past ? 'Original event details' :
+      detailsUrl.startsWith('https://www.google.com/search?') ? 'Search for details' : 'View event';
     const eventId = eventSlug(ev);
     const footer = (detailsUrl
       ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
       : '') +
       `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
-    const tierClass = ev.pick ? 'card-featured' : 'card-standard';
-    const tierAttr  = ev.pick ? 'featured'      : 'standard';
+    const tierAttr = ev.pick && !past ? 'featured' : 'standard';
+    const titleTag = detail ? 'h2' : 'div';
     return `
-      <article class="card ${tierClass}${ev.imgPoster ? ' card-poster' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${eventDate(ev)}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card card-${tierAttr}${ev.imgPoster ? ' card-poster' : ''}${detail ? ' open revealed' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${listingDate}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick && !past ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
           <div class="card-top">
             <div>
               <div class="card-cat"${catStyle}>${catLabel}</div>
-              <div class="card-title" id="${titleId}">${escHtml(ev.title)}</div>
+              <${titleTag} class="card-title" id="${titleId}">${escHtml(ev.title)}</${titleTag}>
             </div>
             ${badgesHtml}
           </div>
-          <button type="button" class="card-toggle" aria-expanded="false" aria-controls="${titleId}-more" aria-label="Show details for ${escHtml(ev.title)}"></button>
+          ${detail ? '' : `<button type="button" class="card-toggle" aria-expanded="false" aria-controls="${titleId}-more" aria-label="Show details for ${escHtml(ev.title)}"></button>`}
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${ev.description ? `<div class="card-desc" id="${titleId}-more">${escHtml(ev.description)}</div>` : `<div id="${titleId}-more" hidden></div>`}
         </div>
@@ -868,7 +955,7 @@ const SECTION_TITLES = {
       .replace(/"/g, '&quot;');
   }
 
-  function renderCalendar() {
+  function renderCalendar(now) {
     const results = document.getElementById('calendarResults');
     const openId = results.querySelector('.card.open')?.dataset.eventId;
     const { start, end } = selectedRange();
@@ -876,8 +963,8 @@ const SECTION_TITLES = {
     let datesHaveEvents = false;
 
     for (const ev of calendarEvents) {
-      const day = eventDate(ev);
-      if (!day || day < start || day > end) continue;
+      const day = nextEventDate(scheduleFor(ev), start, end, now);
+      if (!day) continue;
       datesHaveEvents = true;
       if (!eventMatchesFilters(ev)) continue;
       if (!groups.has(day)) groups.set(day, []);
@@ -891,7 +978,7 @@ const SECTION_TITLES = {
       const weekday = CALENDAR_DAY_LABEL.formatToParts(d).find(part => part.type === 'weekday').value;
       return `<div class="day-label day-${weekday.slice(0, 3).toLowerCase()}" id="day-${iso}" data-date="${iso}">
         <span class="pip"></span><h2>${CALENDAR_DAY_LABEL.format(d)}</h2><span class="line"></span>
-      </div><div class="events-grid">${groups.get(iso).map(buildEventCardHTML).join('')}</div>`;
+      </div><div class="events-grid">${groups.get(iso).map(ev => buildEventCardHTML(ev, { listingDate: iso })).join('')}</div>`;
     }).join('');
 
     if (!dates.length) {
@@ -937,13 +1024,18 @@ const SECTION_TITLES = {
       const liveEvents = snapshot.docs.map(doc => {
         const ev = doc.data();
         const date = isCalendarDate(ev.date) ? ev.date : (legacyEventDates.get(legacyEventKey(ev)) || eventDate(ev));
-        return { ...ev, id: doc.id, date };
+        const curated = curatedEvents.get(eventListingKey({ ...ev, date }));
+        return { ...eventScheduleFields(curated || {}), ...ev, id: doc.id, date };
       });
       const liveKeys = new Set(liveEvents.map(eventListingKey));
       calendarEvents = [...staticEvents.filter(ev => !liveKeys.has(eventListingKey(ev))), ...liveEvents];
-      if (!calendarReady) return;
-      if (!openLinkedEvent()) renderCalendar();
-    }, err => console.warn('Firestore events error:', err));
+      liveEventsLoaded = true;
+      if (calendarReady) renderEventView();
+    }, err => {
+      console.warn('Firestore events error:', err);
+      liveEventsLoaded = true;
+      if (calendarReady && currentSection === 'event') renderEventView();
+    });
   }
 
   function loadAboutContent() {
@@ -1066,7 +1158,7 @@ const SECTION_TITLES = {
       if (e.clientX < left || e.clientX > right || e.clientY < top || e.clientY > bottom) dialog.close();
     });
     on('previousCalendarMonth', 'click', () => {
-      pickerFocus = shiftPickerMonth(pickerFocus, -1);
+      pickerFocus = laterDate(shiftPickerMonth(pickerFocus, -1));
       renderDatePicker();
     });
     on('nextCalendarMonth', 'click', () => {
@@ -1096,14 +1188,12 @@ const SECTION_TITLES = {
     });
 
     const holidayLink = document.getElementById('holidayCta');
-    holidayLink.hidden = currentToday > SCHOOL_HOLIDAYS.end;
     holidayLink.querySelector('.holiday-cta-text').textContent = 'School holidays · 19 Dec – 2 Feb';
     holidayLink.addEventListener('click', e => {
       e.preventDefault();
       datePreset = 'custom';
       customRange = SCHOOL_HOLIDAYS;
       showSection('events');
-      filterEvents();
       document.getElementById('eventDateFilters').scrollIntoView();
     });
 
@@ -1120,21 +1210,11 @@ const SECTION_TITLES = {
     bindEventListeners();
     const section = readHash();
     calendarReady = true;
-    if (!openLinkedEvent()) {
-      showSection(section);
-      syncFilterControls();
-      renderCalendar();
-    }
+    showSection(section);
 
-    // Refresh relative dates when Auckland rolls into the next day.
-    const refreshDay = () => {
-      const today = aucklandToday();
-      if (today === currentToday) return;
-      currentToday = today;
-      renderCalendar();
-    };
-    setInterval(refreshDay, 60_000);
-    document.addEventListener('visibilitychange', refreshDay);
+    const refreshIfDue = () => { if (Date.now() >= nextRefresh) renderEventView(); };
+    document.addEventListener('visibilitychange', refreshIfDue);
+    window.addEventListener('pageshow', refreshIfDue);
 
     // ── HERO WEATHER ──
     (function initWeatherStrip() {

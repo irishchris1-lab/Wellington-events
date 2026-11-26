@@ -108,7 +108,10 @@ for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:imag
 const vm = require('vm');
 const sandbox = {};
 vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
-const { isCalendarDate, eventDate } = vm.runInNewContext(read('js/event-dates.js') + '\n({ isCalendarDate, eventDate })');
+const {
+  isCalendarDate, eventDate, eventSchedule, eventIsPast, nextEventDate, aucklandInstant,
+} = vm.runInNewContext(read('js/event-dates.js') +
+  '\n({ isCalendarDate, eventDate, eventSchedule, eventIsPast, nextEventDate, aucklandInstant })');
 const CATEGORIES = ['music', 'festivals', 'sports', 'exhibitions', 'workshops', 'food'];
 const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
 (sandbox.STATIC_EVENTS || []).forEach(ev => {
@@ -130,6 +133,37 @@ const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
     fail('price', `"${ev.title}" (${ev.weekend}) has a non-boolean priceEstimated`);
   }
 });
+
+// ── 7. event expiry uses Wellington time and each occurrence's own schedule ──
+const date = '2026-11-28';
+const sunday = '2026-11-29';
+const close = Date.parse('2026-11-28T02:00:00Z'); // 3 pm NZDT
+const checks = [
+  ['exact end instant', { date, end: '2026-11-28T15:00' }, close],
+  ['offset end instant', { date, end: '2026-11-28T02:00:00Z' }, close],
+  ['legacy time range', { date, time: '10 am – 3 pm' }, close],
+  ['date-only fallback', { date, time: 'Starts at 10 am' }, Date.parse('2026-11-28T11:00:00Z')],
+  ['overnight time range', { date, time: '8 pm – 1 am' }, Date.parse('2026-11-28T12:00:00Z')],
+  ['multi-day event', { date: '2026-11-27', endDate: date, endTime: '15:00' }, close],
+  ['daily run', { date: '2026-11-27', endDate: date, endTime: '15:00', daily: true }, close],
+  ['separate occurrences', { date, occurrences: [{ date, endTime: '15:00' }, sunday] }, Date.parse('2026-11-29T11:00:00Z')],
+];
+for (const [name, ev, end] of checks) {
+  const schedule = eventSchedule(ev);
+  if (eventIsPast(schedule, end - 1) || !eventIsPast(schedule, end)) {
+    fail('expiry', `${name} must expire at ${new Date(end).toISOString()}`);
+  }
+}
+const daily = eventSchedule({ date, endDate: sunday, endTime: '15:00', daily: true });
+if (nextEventDate(daily, date, date, close) || nextEventDate(daily, date, sunday, close) !== sunday) {
+  fail('expiry', 'a completed daily session must advance to the next available date');
+}
+const sparse = eventSchedule({ date, occurrences: [date, '2026-11-30'] });
+if (nextEventDate(sparse, sunday, sunday, close)) fail('expiry', 'a recurring event must skip dates without a session');
+if (aucklandInstant('2026-04-05', '02:30:00') !== Date.parse('2026-04-04T14:30:00Z') ||
+    aucklandInstant('2026-09-27', '02:30:00') !== Date.parse('2026-09-26T14:30:00Z')) {
+  fail('expiry', 'daylight saving transitions must use the correct Wellington instant');
+}
 
 // ── report ─────────────────────────────────────────────────────────────
 if (errors.length) {

@@ -18,6 +18,17 @@
 <meta name="keywords" content="Wellington family events, Wellington kids activities, Wellington cafes kids, Wellington walks children, Hutt Valley family, Kāpiti family events, Wellington weekend, Wellington zoo, Staglands, Zealandia, things to do Wellington">
 <meta name="author" content="What's On Wellington">
 <link rel="canonical" href="https://whatsonwellington.co.nz/">
+<script>
+  if (new URLSearchParams(location.search).get('e')) {
+    // Direct links are shareable views of the catalogue, including after expiry.
+    const robots = document.createElement('meta');
+    robots.id = 'eventRobots';
+    robots.name = 'robots';
+    robots.content = 'noindex, follow';
+    document.head.append(robots);
+    document.querySelector('link[rel="canonical"]').remove();
+  }
+</script>
 
 <!-- ── Open Graph (Facebook, WhatsApp) ── -->
 <meta property="og:type" content="website">
@@ -156,11 +167,11 @@
         </button>
       </div>
     </div>
-    <h1>What's on in <em>Wellington?</em><span class="festive-star" aria-hidden="true">✦</span></h1>
+    <h1>What's on <em>Wellington</em><span class="festive-star" aria-hidden="true">✦</span></h1>
     <p class="header-sub">Santa parades, carols, summer festivals and family days out across the region — pick dates and an area to start.</p>
     <div class="header-actions">
-      <a class="header-submit-event" href="mailto:whatsonwelly@gmail.com?subject=New%20Wellington%20event&amp;body=Event%20name%3A%0D%0ADate%20and%20time%3A%0D%0AVenue%3A%0D%0AEvent%20link%3A%0D%0ADetails%3A%0D%0A">Got an event coming up? <span>Drop us a message.</span></a>
-      <a class="holiday-cta" id="holidayCta" href="#school-holidays" hidden><span aria-hidden="true">🎄</span> <span class="holiday-cta-text">School holidays guide</span> <span aria-hidden="true">→</span></a>
+      <a class="header-action header-submit-event" href="mailto:whatsonwelly@gmail.com?subject=New%20Wellington%20event&amp;body=Event%20name%3A%0D%0ADate%20and%20time%3A%0D%0AVenue%3A%0D%0AEvent%20link%3A%0D%0ADetails%3A%0D%0A"><span>Got an event coming up? <span class="header-submit-event-label">Drop us a message.</span></span></a>
+      <a class="header-action holiday-cta" id="holidayCta" href="#school-holidays" hidden><span aria-hidden="true">🎄</span> <span class="holiday-cta-text">School holidays guide</span> <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </header>
@@ -286,6 +297,13 @@
 </main>
 
 </div><!-- /section-events -->
+
+<div class="app-section" id="section-event">
+  <main class="event-detail" id="event-detail-content" tabindex="-1">
+    <a class="event-detail-back" href="./">← Browse upcoming events</a>
+    <div id="eventDetail"></div>
+  </main>
+</div>
 
 <!-- ══════════════════════════════════════
      ABOUT SECTION
