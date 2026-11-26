@@ -141,6 +141,32 @@ const SECTION_TITLES = {
     return scheduleCache.get(ev);
   }
 
+  const MAX_WEEKLY_PICKS = 3;
+  // Keys are Wellington Mondays; values are event slugs in editorial order.
+  // An explicit week replaces legacy pick flags for that week, without filling empty slots.
+  const EDITORIAL_PICKS_BY_WEEK = Object.freeze({
+  });
+
+  function pickWeekStart(date) {
+    return addCalendarDays(date, -((calendarDay(date).getUTCDay() + 6) % 7));
+  }
+
+  function weeklyPickIds(week) {
+    const weekEnd = addCalendarDays(week, 6);
+    const weekStart = aucklandInstant(week);
+    const approved = EDITORIAL_PICKS_BY_WEEK[week];
+    const candidates = calendarEvents.flatMap(ev => {
+      if (!approved && !ev.pick) return [];
+      const date = nextEventDate(scheduleFor(ev), week, weekEnd, weekStart);
+      return date ? [{ id: eventSlug(ev), date }] : [];
+    });
+    const eligible = new Set(candidates.map(({ id }) => id));
+    const ordered = approved
+      ? approved.filter(id => eligible.has(id))
+      : candidates.sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id)).map(({ id }) => id);
+    return new Set([...new Set(ordered)].slice(0, MAX_WEEKLY_PICKS));
+  }
+
   function legacyEventKey(ev) {
     return `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
   }
@@ -786,8 +812,10 @@ const SECTION_TITLES = {
     const dates = schedule.flatMap(period => [period.start, period.end]).sort();
     const dateLabel = dates.length ? rangeLabel({ start: dates[0], end: dates.at(-1) }) : '';
     document.title = `${event.title}${past ? ' (Past event)' : ''} — What's On Wellington`;
+    const nextDate = past ? '' : nextEventDate(schedule, currentToday, '9999-12-31', now);
+    const picked = Boolean(nextDate && weeklyPickIds(pickWeekStart(nextDate)).has(eventSlug(event)));
     detail.innerHTML = (past ? '<p class="event-detail-status" role="status">Past event · This event has ended.</p>' : '') +
-      buildEventCardHTML(event, { detail: true, past, dateLabel }) +
+      buildEventCardHTML(event, { detail: true, past, dateLabel, picked }) +
       (past ? buildRecommendations(event, now) : '');
   }
 
@@ -817,7 +845,7 @@ const SECTION_TITLES = {
     </section>` : '';
   }
 
-  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev) } = {}) {
+  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev), picked = false } = {}) {
     const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region  = ev.region || 'all';
     const idSuffix = ev._static ? escHtml(ev._staticId || 'sx') : escHtml(ev.id || 'fx');
@@ -843,7 +871,7 @@ const SECTION_TITLES = {
     if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
     if (ev.ticketed && !past) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
     if (ev.family)   badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
-    if (ev.pick && !past) badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
+    if (picked && !past) badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
     const badgesHtml = badgeParts.length ? `<div class="card-badges">${badgeParts.join('')}</div>` : '';
 
     const mapUrl = safeUrl(ev.mapUrl);
@@ -863,10 +891,10 @@ const SECTION_TITLES = {
       ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
       : detail ? '' : `<a class="event-btn" href="${eventHref(eventId)}">Event details <span aria-hidden="true">→</span></a>`) +
       `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
-    const tierAttr = ev.pick && !past ? 'featured' : 'standard';
+    const tierAttr = picked && !past ? 'featured' : 'standard';
     const titleTag = detail ? 'h2' : 'div';
     return `
-      <article class="card card-${tierAttr}${ev.imgPoster ? ' card-poster' : ''}${detail ? ' open revealed' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${listingDate}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${ev.pick && !past ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+      <article class="card card-${tierAttr}${ev.imgPoster ? ' card-poster' : ''}${detail ? ' open revealed' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${listingDate}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${picked && !past ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
         ${stripHtml}
         ${ev.img ? cardImgHTML(ev.img, ev.title, false, ev.imgGenerated) : ''}
         <div class="card-body">
@@ -961,6 +989,17 @@ const SECTION_TITLES = {
     const { start, end } = selectedRange();
     const groups = new Map();
     let datesHaveEvents = false;
+    const picksByWeek = new Map();
+    const displayedPickIds = new Set();
+    const isPicked = (ev, date) => {
+      const week = pickWeekStart(date);
+      if (!picksByWeek.has(week)) picksByWeek.set(week, weeklyPickIds(week));
+      const id = eventSlug(ev);
+      const key = week + '|' + id;
+      if (!picksByWeek.get(week).has(id) || displayedPickIds.has(key)) return false;
+      displayedPickIds.add(key);
+      return true;
+    };
 
     for (const ev of calendarEvents) {
       const day = nextEventDate(scheduleFor(ev), start, end, now);
@@ -978,7 +1017,7 @@ const SECTION_TITLES = {
       const weekday = CALENDAR_DAY_LABEL.formatToParts(d).find(part => part.type === 'weekday').value;
       return `<div class="day-label day-${weekday.slice(0, 3).toLowerCase()}" id="day-${iso}" data-date="${iso}">
         <span class="pip"></span><h2>${CALENDAR_DAY_LABEL.format(d)}</h2><span class="line"></span>
-      </div><div class="events-grid">${groups.get(iso).map(ev => buildEventCardHTML(ev, { listingDate: iso })).join('')}</div>`;
+      </div><div class="events-grid">${groups.get(iso).map(ev => buildEventCardHTML(ev, { listingDate: iso, picked: isPicked(ev, iso) })).join('')}</div>`;
     }).join('');
 
     if (!dates.length) {
