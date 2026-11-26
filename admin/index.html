@@ -141,7 +141,7 @@
       </button>
       <div class="about-panel-body hidden" id="jsonPanelBody">
         <p class="about-panel-hint">Paste a single JSON object or an array of objects. Accepted fields: <code>title</code> (required), <code>date</code> YYYY-MM-DD (required), <code>time</code>, <code>location</code>, <code>description</code>. Events are saved as drafts with type <em>General Event</em> and region <em>Wellington City</em> — edit afterwards to refine.</p>
-        <p class="about-panel-hint">Optional schedule fields include <code>endDate</code> (YYYY-MM-DD), <code>endTime</code> (24-hour Wellington time), <code>daily</code> (true), and <code>occurrences</code> (an array of dates or objects with their own <code>date</code> and <code>endTime</code>).</p>
+        <p class="about-panel-hint">Optional schedule fields include <code>scheduleType</code> (one-off, multi-day, recurring or ongoing), <code>endDate</code>, <code>startTime</code> and <code>endTime</code> (24-hour Wellington time), and <code>daysOfOperation</code> (e.g. ["mon", "thu"]). Use <code>openingHours</code> for weekday overrides (e.g. {"thu": {"closes": "21:00"}}) or <code>occurrences</code> for specific dates and sessions.</p>
         <div class="form-row">
           <label class="form-label" for="jsonInput">JSON</label>
           <textarea class="form-textarea" id="jsonInput" rows="8" placeholder='{"title": "My Event", "date": "2026-03-07", "time": "10am–4pm", "location": "Frank Kitts Park", "description": "..."}'></textarea>
@@ -189,7 +189,7 @@
             </select>
           </div>
           <div class="form-row">
-            <label class="form-label" for="fDate">Event date *</label>
+            <label class="form-label" for="fDate">Start date *</label>
             <input class="form-input" id="fDate" type="date" required>
           </div>
         </div>
@@ -218,23 +218,53 @@
             <input class="form-input" id="fVenue" type="text" placeholder="e.g. Frank Kitts Park">
           </div>
           <div class="form-row">
-            <label class="form-label" for="fTime">Time</label>
-            <input class="form-input" id="fTime" type="text" placeholder="e.g. 10am–4pm">
+            <label class="form-label" for="fTime">Schedule notes</label>
+            <input class="form-input" id="fTime" type="text" placeholder="e.g. Check public-holiday hours">
           </div>
         </div>
 
         <div class="form-grid">
           <div class="form-row">
+            <label class="form-label" for="fScheduleType">Schedule</label>
+            <select class="form-select" id="fScheduleType" onchange="syncScheduleForm()">
+              <option value="one-off">One-off</option>
+              <option value="multi-day">Multi-day</option>
+              <option value="recurring">Recurring</option>
+              <option value="ongoing">Ongoing exhibition or attraction</option>
+            </select>
+          </div>
+          <div class="form-row">
             <label class="form-label" for="fEndDate">End date</label>
             <input class="form-input" id="fEndDate" type="date">
           </div>
+        </div>
+        <div class="form-grid">
           <div class="form-row">
-            <label class="form-label" for="fEndTime">End time (Wellington)</label>
+            <label class="form-label" for="fStartTime">Opening time (Wellington)</label>
+            <input class="form-input" id="fStartTime" type="time">
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="fEndTime">Closing time (Wellington)</label>
             <input class="form-input" id="fEndTime" type="time">
           </div>
         </div>
-        <div class="form-row">
-          <label><input id="fDaily" type="checkbox"> Repeats daily through the end date</label>
+        <fieldset class="form-row" id="fOperatingDays" hidden>
+          <legend class="form-label">Days of operation</legend>
+          <div class="schedule-days">
+            <label class="check-label"><input type="checkbox" value="mon"> Mon</label>
+            <label class="check-label"><input type="checkbox" value="tue"> Tue</label>
+            <label class="check-label"><input type="checkbox" value="wed"> Wed</label>
+            <label class="check-label"><input type="checkbox" value="thu"> Thu</label>
+            <label class="check-label"><input type="checkbox" value="fri"> Fri</label>
+            <label class="check-label"><input type="checkbox" value="sat"> Sat</label>
+            <label class="check-label"><input type="checkbox" value="sun"> Sun</label>
+          </div>
+          <p class="form-hint">Choose the days it opens. Leave blank for every day on a recurring or ongoing schedule.</p>
+        </fieldset>
+        <div class="form-row" id="fOccurrenceRow" hidden>
+          <label class="form-label" for="fOccurrences">Specific dates (optional)</label>
+          <textarea class="form-textarea" id="fOccurrences" rows="3" placeholder="One YYYY-MM-DD date per line"></textarea>
+          <p class="form-hint">Specific dates take precedence over the weekly schedule.</p>
         </div>
 
         <div class="form-row">
@@ -300,8 +330,13 @@
         <div class="form-row form-row-check">
           <label class="check-label">
             <input type="checkbox" id="fPick">
-            <span>🔥 Featured Pick (appears in This Weekend's Highlights)</span>
+            <span>🔥 Feature in Weekend Picks</span>
           </label>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="fPickWeek">Picks week (optional)</label>
+          <input class="form-input" id="fPickWeek" type="date">
+          <p class="form-hint">Choose any date in the Wellington week you want to feature this event.</p>
         </div>
 
         <div class="form-row">

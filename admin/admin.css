@@ -429,6 +429,11 @@ body {
   flex-direction: column;
   gap: .3rem;
 }
+.form-row[hidden] { display: none; }
+fieldset.form-row { min-width: 0; border: 0; }
+.schedule-days { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
+.schedule-days .check-label { min-height: 32px; }
+.form-hint { color: var(--muted); font-size: .78rem; line-height: 1.5; }
 
 .form-label {
   font-size: .82rem;

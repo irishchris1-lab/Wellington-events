@@ -8,7 +8,8 @@
 //   title, description, type, day, weekend, region, venue, time, url, img, pick
 // Optional schedule fields use Wellington dates and times. Keep the original date
 // or weekend/day for existing links. Use start/end for exact dates or timestamps,
-// endDate/endTime for closing, daily for repeated hours, or occurrences for a list of sessions.
+// endDate/endTime for closing, daysOfOperation for weekly hours, openingHours for
+// weekday overrides, or occurrences for dated sessions. Keep publicId stable.
 //
 // The admin "Import drafts" button imports any unimported events here into
 // Firestore so they can be edited and managed via the admin interface.
@@ -2775,10 +2776,12 @@ const STATIC_EVENTS = [
     ticketed: true,},
   {
     title: 'Cornelia Parker',
+    publicId: 'cornelia-parker-2026-11-29', scheduleType: 'ongoing',
     type: 'culture', day: 'sun', weekend: '2026-11-28', region: 'wellington',
     category: 'exhibitions', indoor: true,
     priceTier: '$',
     start: '2026-10-10', endDate: '2027-03-07', daily: true,
+    startTime: '10:00', endTime: '17:00', openingHours: { thu: { closes: '21:00' } },
     time: '10 October 2026 – 7 March 2027 · 10am–5pm daily, Thursdays until 9pm',
     venue: 'City Gallery Wellington Te Whare Toi, 67 Victoria Street',
     description: 'Cornelia Parker’s first solo public-gallery exhibition in Aotearoa fills the gallery with more than 50 works, including suspended installations, sculpture, video and paintings on glass. Guided tours and multi-passes are available. The gallery notes low lighting, tight passages, artwork on the floor and content warnings; large-print guides are available. Image: Cold Dark Matter: An Exploded View (1991). Photo: Tate. © Cornelia Parker.',
@@ -3332,6 +3335,9 @@ const STATIC_EVENTS = [
   // ── 26–27 Dec 2026 ─────────────────────────────────────────────────────────
   {
     title: "Pick Your Own Lavender",
+    publicId: "pick-your-own-lavender-2026-12-26",
+    scheduleType: "ongoing",
+    start: "2026-12-19",
     type: "outdoor",
     day: "sat",
     weekend: "2026-12-26",
@@ -3340,6 +3346,9 @@ const STATIC_EVENTS = [
     priceTier: "$",
     endDate: "2026-12-31",
     daily: true,
+    startTime: "10:00",
+    endTime: "15:00",
+    occurrences: ["2026-12-19", "2026-12-20", "2026-12-26", "2026-12-27", "2026-12-28", "2026-12-29", "2026-12-30", "2026-12-31"],
     time: "19–20 & 26–31 December · 10am–3pm",
     venue: "Lavender Abbey, 351 Dalefield Road, Carterton",
     description: "Pick your own lavender at Lavender Abbey. English lavender only on 19–20 December. The farm reopens for picking on Boxing Day, with parking and wheelchair access.",
@@ -3472,6 +3481,7 @@ const STATIC_EVENTS = [
     cost: 'Free',},
   {
     title: 'Gardens Magic — Kids Garden Trail',
+    publicId: 'gardens-magic-kids-garden-trail-2027-01-12', scheduleType: 'ongoing',
     type: 'kids', day: 'tue', date: '2027-01-12', weekend: '2027-01-09', region: 'wellington',
     category: 'sports',
     priceTier: 'Free',
@@ -3738,6 +3748,8 @@ const STATIC_EVENTS = [
   // ── December 2026 editorial additions ──────────────────────────────
   {
     title: "Diagrammatica",
+    publicId: "diagrammatica-2026-12-01",
+    scheduleType: "ongoing",
     type: "culture",
     category: "exhibitions",
     region: "wellington",
@@ -3838,6 +3850,8 @@ const STATIC_EVENTS = [
   },
   {
     title: "Unwrapped: Whittaker’s since 1896",
+    publicId: "unwrapped-whittaker-s-since-1896-2026-08-08",
+    scheduleType: "ongoing",
     type: "culture",
     category: "exhibitions",
     region: "porirua",

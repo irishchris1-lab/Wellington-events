@@ -5,6 +5,8 @@ const AUCKLAND_DATE_FORMAT = new Intl.DateTimeFormat('en-NZ', {
   hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
 });
 const EVENT_DAY_OFFSETS = { fri: -1, sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thu: 5 };
+const EVENT_WEEKDAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+const EVENT_SCHEDULE_TYPES = ['one-off', 'multi-day', 'recurring', 'ongoing'];
 const DAY_MS = 86_400_000;
 
 function aucklandDateTime(now) {
@@ -40,6 +42,38 @@ function eventDate(ev) {
     return addCalendarDays(ev.weekend, offset);
   }
   return readEventDateTime(ev.start)?.date || '';
+}
+
+function legacyEventSlug(ev) {
+  const name = String(ev.slugTitle || ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60).replace(/-$/, '');
+  const date = eventDate(ev);
+  return date ? `${name}-${date}` : name;
+}
+
+function eventSlug(ev) {
+  return typeof ev.publicId === 'string' && /^[\w-]+$/.test(ev.publicId) ? ev.publicId : legacyEventSlug(ev);
+}
+
+function eventWeekStart(date) {
+  return addCalendarDays(date, -((calendarDay(date).getUTCDay() + 6) % 7));
+}
+
+function eventStartDate(ev) {
+  return readEventDateTime(ev.start)?.date || eventDate(ev);
+}
+
+function eventEndDate(ev) {
+  return readEventDateTime(ev.end)?.date || (isCalendarDate(ev.endDate) ? ev.endDate : '');
+}
+
+function eventScheduleType(ev) {
+  if (EVENT_SCHEDULE_TYPES.includes(ev.scheduleType)) return ev.scheduleType;
+  const start = eventStartDate(ev);
+  const end = eventEndDate(ev);
+  if (start && ev.category === 'exhibitions' && end > addCalendarDays(start, 6)) return 'ongoing';
+  if (ev.occurrences?.length || ev.daysOfOperation?.length) return 'recurring';
+  return end > start ? 'multi-day' : 'one-off';
 }
 
 function weekendForDate(iso) {
@@ -119,37 +153,52 @@ function legacyEventHours(label) {
   return {};
 }
 
-function eventPeriod(ev, date) {
+function eventPeriod(ev, date, { days = null, openEnded = false, opens, closes } = {}) {
   const startStamp = readEventDateTime(ev.start);
-  const start = startStamp?.date || date;
-  if (!start) return null;
+  const first = startStamp?.date || date;
+  if (!first) return null;
   const suppliedEnd = readEventDateTime(ev.end);
-  const endStamp = suppliedEnd?.date >= start ? suppliedEnd : null;
+  const endStamp = suppliedEnd?.date >= first ? suppliedEnd : null;
   const endDate = endStamp?.date || (isCalendarDate(ev.endDate) ? ev.endDate : '');
-  const last = endDate >= start ? endDate : start;
-  const daily = ev.daily === true && last > start;
+  const finalDay = endDate >= first ? endDate : first;
+  const start = days ? operatingDate(first, days) : first;
+  const last = openEnded ? null : days ? operatingDate(finalDay, days, -1) : finalDay;
+  if (last && last < start) return null;
   const hours = legacyEventHours(ev.time);
-  const opening = startStamp?.time || eventClock(ev.startTime) || hours.start;
-  const closing = endStamp?.time || eventClock(ev.endTime) || hours.end;
+  const opening = opens || startStamp?.time || eventClock(ev.startTime) || hours.start || '';
+  const closing = closes || endStamp?.time || eventClock(ev.endTime) || hours.end || '';
   const overnight = !closing || closing === '24:00:00' ||
-    ((daily || !endDate || endDate === start) && !endStamp?.time && opening && closing < opening);
+    ((days || !endDate || endDate === first) && (days || !endStamp?.time) &&
+      (closing === '00:00:00' || (opening && closing < opening)));
   const expiry = day => aucklandInstant(overnight ? addCalendarDays(day, 1) : day,
     closing && closing !== '24:00:00' ? closing : '00:00:00');
-  const explicitEnd = endStamp?.time && endDate >= start && !daily;
-  let endsAt = explicitEnd ? endStamp.instant ?? (expiry(last) + (endStamp.milliseconds || 0)) : expiry(last);
-  if (endsAt <= aucklandInstant(start, opening && opening !== '24:00:00' ? opening : undefined, false)) {
-    endsAt = aucklandInstant(addCalendarDays(last, 1));
+  const explicitEnd = endStamp?.time && !days;
+  const startsAt = startStamp?.instant !== undefined && !days ? startStamp.instant
+    : aucklandInstant(start, opening && opening !== '24:00:00' ? opening : undefined, false) + (startStamp?.milliseconds || 0);
+  let endsAt = Infinity;
+  if (last) {
+    endsAt = explicitEnd ? endStamp.instant ?? (expiry(last) + (endStamp.milliseconds || 0)) : expiry(last);
+    if (endsAt <= startsAt) endsAt = aucklandInstant(addCalendarDays(last, 1));
+    if (!Number.isFinite(endsAt)) return null;
   }
-  if (!Number.isFinite(endsAt)) return null;
-  return { start, last, end: aucklandToday(endsAt - 1), endsAt, daily, expiry };
+  return { start, last, end: last ? aucklandToday(endsAt - 1) : null, startsAt, endsAt, days, opening, closing, overnight, expiry };
+}
+
+function operatingDate(date, days, direction = 1) {
+  const weekday = calendarDay(date).getUTCDay();
+  for (let offset = 0; offset < 7; offset++) {
+    if (days.includes(EVENT_WEEKDAYS[(weekday + offset * direction + 7) % 7])) {
+      return addCalendarDays(date, offset * direction);
+    }
+  }
 }
 
 function eventScheduleFields(ev) {
-  const fields = ['start', 'startTime', 'end', 'endDate', 'endTime', 'daily', 'occurrences'];
+  const fields = ['publicId', 'scheduleType', 'start', 'startTime', 'end', 'endDate', 'endTime', 'daily', 'occurrences',
+    'daysOfOperation', 'openingHours', 'pickWeek'];
   return Object.fromEntries(fields.filter(field => Object.hasOwn(ev, field)).map(field => [field, ev[field]]));
 }
 
-// Each dated listing is one occurrence unless it supplies a daily run or explicit sessions.
 function eventSchedule(ev) {
   if (Array.isArray(ev.occurrences) && ev.occurrences.length) {
     const periods = ev.occurrences.map(session => {
@@ -158,6 +207,23 @@ function eventSchedule(ev) {
       return eventPeriod({ time: ev.time, startTime: ev.startTime, endTime: ev.endTime, ...session }, eventDate(session));
     }).filter(Boolean);
     if (periods.length) return periods;
+  }
+  const type = eventScheduleType(ev);
+  const chosenDays = EVENT_WEEKDAYS.filter(day => Array.isArray(ev.daysOfOperation) && ev.daysOfOperation.includes(day));
+  const repeating = ev.daily === true || chosenDays.length || ev.openingHours || type === 'recurring' ||
+    (type === 'ongoing' && !readEventDateTime(ev.end)?.time);
+  if (repeating) {
+    const days = chosenDays.length ? chosenDays : EVENT_WEEKDAYS;
+    const hoursByDay = new Map();
+    for (const day of days) {
+      const opens = eventClock(ev.openingHours?.[day]?.opens);
+      const closes = eventClock(ev.openingHours?.[day]?.closes);
+      const key = `${opens}|${closes}`;
+      if (!hoursByDay.has(key)) hoursByDay.set(key, { opens, closes, days: [] });
+      hoursByDay.get(key).days.push(day);
+    }
+    const openEnded = !eventEndDate(ev) && (type === 'ongoing' || type === 'recurring');
+    return [...hoursByDay.values()].map(hours => eventPeriod(ev, eventDate(ev), { ...hours, openEnded })).filter(Boolean);
   }
   const period = eventPeriod(ev, eventDate(ev));
   return period ? [period] : [];
@@ -172,8 +238,31 @@ function nextEventDate(periods, start, end, now) {
   for (const period of periods) {
     if (period.endsAt <= now) continue;
     let day = period.start > start ? period.start : start;
-    if (period.daily && day <= period.last && period.expiry(day) <= now) day = addCalendarDays(day, 1);
-    if (day <= end && day <= period.end && (!next || day < next)) next = day;
+    if (period.days) day = nextOperatingDay(period, day, now);
+    if (day && day <= end && (!period.end || day <= period.end) && (!next || day < next)) next = day;
   }
   return next;
+}
+
+function nextOperatingDay(period, start, now) {
+  const today = aucklandToday(now);
+  const day = start > today ? start : today;
+  const overnight = period.overnight && period.closing && !['00:00:00', '24:00:00'].includes(period.closing);
+  if (overnight) {
+    const previous = addCalendarDays(day, -1);
+    if (previous >= period.start && (!period.last || previous <= period.last) &&
+        period.days.includes(EVENT_WEEKDAYS[calendarDay(previous).getUTCDay()]) && period.expiry(previous) > now) return day;
+  }
+  let session = operatingDate(day, period.days);
+  if (session === today && period.expiry(session) <= now) {
+    session = operatingDate(addCalendarDays(session, 1), period.days);
+  }
+  return !period.last || session <= period.last ? session : '';
+}
+
+function eventScheduleRange(periods) {
+  if (!periods.length) return null;
+  const start = periods.map(period => period.start).sort()[0];
+  const end = periods.some(period => !period.last) ? null : periods.map(period => period.last).sort().at(-1);
+  return { start, end };
 }

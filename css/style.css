@@ -610,6 +610,24 @@
   .event-recommendations li + li { border-top: 1px solid rgba(11,85,99,0.12); }
   .event-recommendations time { display: block; font-size: 13px; color: var(--muted); }
 
+  .on-now-section { margin-bottom: 24px; }
+  .on-now-section .highlights-eyebrow { margin-bottom: 10px; }
+  .on-now-section .events-grid { margin-bottom: 0; gap: 10px; }
+  .card.on-now-card { display: grid; grid-template-columns: 100px minmax(0, 1fr); border-radius: 8px; cursor: default; }
+  .card.on-now-card:not([data-img]) { grid-template-columns: minmax(0, 1fr); }
+  .on-now-card .card-img-wrap { aspect-ratio: auto; min-height: 88px; }
+  .card.on-now-card .card-body { min-width: 0; padding: 10px 12px; }
+  .card.on-now-card .card-title { font-size: 15px; }
+  .on-now-card .card-meta { margin-bottom: 0; gap: 2px; }
+  .on-now-card .card-cat { margin-bottom: 3px; }
+  .on-now-card .badge:not(.badge-price) { display: none; }
+  .on-now-card .event-image-credit { padding: 1px 3px; right: 3px; font-size: 8px; }
+  .card-title a { color: inherit; text-underline-offset: 2px; }
+  .event-until { gap: 3px; color: var(--teal); font-weight: 700; }
+  .event-sessions { margin-bottom: 12px; color: var(--teal); font-size: 13px; }
+  .event-sessions summary { cursor: pointer; font-weight: 700; }
+  .event-sessions ul { margin: 6px 0 0 18px; line-height: 1.6; }
+
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 48px 20px; color: #bbb; }
 

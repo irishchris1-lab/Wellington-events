@@ -116,12 +116,13 @@ function subscribeToEvents() {
   if (unsubscribeSnap) unsubscribeSnap();
   unsubscribeSnap = db.collection('events')
     .onSnapshot(snapshot => {
-      const curated = new Map((typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
-        .map(ev => [`${(ev.title || '').trim()}|${eventDate(ev)}`, ev]));
+      const staticEvents = typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS;
+      const curated = new Map(staticEvents.map(ev => [`${(ev.title || '').trim()}|${eventDate(ev)}`, ev]));
+      const curatedById = new Map(staticEvents.map(ev => [eventSlug(ev), ev]));
       allEvents = snapshot.docs
         .map(doc => {
           const ev = doc.data();
-          const original = curated.get(`${(ev.title || '').trim()}|${eventDate(ev)}`);
+          const original = curatedById.get(ev.publicId) || curated.get(`${(ev.title || '').trim()}|${eventDate(ev)}`);
           return { ...eventScheduleFields(original || {}), ...ev, id: doc.id };
         })
         .sort((a, b) => {
@@ -134,9 +135,10 @@ function subscribeToEvents() {
         const firestoreKeys = new Set(
           allEvents.map(e => `${(e.title || '').trim()}|${e.weekend || ''}|${e.day || 'sat'}`)
         );
+        const firestoreIds = new Set(allEvents.map(eventSlug));
         STATIC_EVENTS.forEach((ev, i) => {
           const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
-          if (!firestoreKeys.has(key) && !hiddenStaticKeys.has(key)) {
+          if (!firestoreKeys.has(key) && !firestoreIds.has(eventSlug(ev)) && !hiddenStaticKeys.has(key)) {
             allEvents.push({ ...ev, ...adminEventSchedule(ev), id: `static-${i}`, _static: true, _staticId: i, active: true });
           }
         });
@@ -150,7 +152,9 @@ function subscribeToEvents() {
       populateWeekendFilter();
       if (firstLoad) {
         firstLoad = false;
-        const upcoming = allEvents.filter(e => e.weekend && !isPastListing(e)).map(e => e.weekend).sort()[0];
+        const today = aucklandToday();
+        const upcoming = allEvents.filter(e => e.weekend >= weekendForDate(today) && !isPastListing(e))
+          .map(e => e.weekend).sort()[0];
         if (upcoming) document.getElementById('weekendFilter').value = upcoming;
       }
       applyFilters();
@@ -211,7 +215,8 @@ function applyFilters() {
 
   filteredEvents = allEvents.filter(ev => {
     if (!showPast && isPastListing(ev, now)) return false;
-    if (weekend && ev.weekend !== weekend) return false;
+    if (weekend && ev.weekend !== weekend && (eventScheduleType(ev) !== 'ongoing' ||
+        !nextEventDate(eventSchedule(ev), weekend, addCalendarDays(weekend, 1), showPast ? aucklandInstant(weekend) : now))) return false;
     if (region  && ev.region  !== region)  return false;
     if (status === 'active' && !ev.active)  return false;
     if (status === 'draft'  && ev.active)   return false;
@@ -250,6 +255,22 @@ function renderTable() {
 }
 
 // ── Modal (add / edit) ─────────────────────────────────────────────────────────
+function syncScheduleForm() {
+  const type = document.getElementById('fScheduleType').value;
+  document.getElementById('fOperatingDays').hidden = type === 'one-off';
+  document.getElementById('fOccurrenceRow').hidden = type !== 'recurring' && type !== 'ongoing';
+  document.getElementById('fEndDate').required = type === 'multi-day';
+}
+
+function occurrenceDate(session) {
+  return typeof session === 'string' ? session : session && eventStartDate(session);
+}
+
+function inputClock(value) {
+  const clock = eventClock(value);
+  return clock === '24:00:00' ? '00:00' : clock.slice(0, 5);
+}
+
 function openModal(docId) {
   editingDocId = docId || null;
   const title  = document.getElementById('modalTitle');
@@ -265,11 +286,16 @@ function openModal(docId) {
     document.getElementById('fTitle').value    = ev.title    || '';
     document.getElementById('fDesc').value     = ev.description || '';
     document.getElementById('fType').value     = ev.type     || '';
-    document.getElementById('fDate').value     = eventDate(ev);
+    document.getElementById('fDate').value     = eventStartDate(ev);
+    document.getElementById('fScheduleType').value = eventScheduleType(ev);
+    const start = readEventDateTime(ev.start);
     const end = readEventDateTime(ev.end);
     document.getElementById('fEndDate').value  = end?.date || ev.endDate || '';
-    document.getElementById('fEndTime').value  = end?.time?.slice(0, 5) || eventClock(ev.endTime).slice(0, 5);
-    document.getElementById('fDaily').checked = ev.daily === true;
+    document.getElementById('fStartTime').value = inputClock(start?.time || ev.startTime);
+    document.getElementById('fEndTime').value   = inputClock(end?.time || ev.endTime);
+    const days = ev.daysOfOperation?.length ? ev.daysOfOperation : ev.daily ? EVENT_WEEKDAYS : [];
+    document.querySelectorAll('#fOperatingDays input').forEach(input => { input.checked = days.includes(input.value); });
+    document.getElementById('fOccurrences').value = [...new Set((ev.occurrences || []).map(occurrenceDate).filter(Boolean))].sort().join('\n');
     document.getElementById('fRegion').value   = ev.region   || '';
     document.getElementById('fTags').value     = (ev.tags || []).join(', ');
     document.getElementById('fVenue').value    = ev.venue    || '';
@@ -281,20 +307,19 @@ function openModal(docId) {
     document.getElementById('fActive').checked = ev.active !== false;
     updateImgPreview();
     document.getElementById('fPick').checked   = ev.pick   || false;
+    document.getElementById('fPickWeek').value = ev.pickWeek || '';
     document.getElementById('fIndoor').checked = ev.indoor || false;
     document.getElementById('fCategory').value = ev.category || '';
   } else {
     title.textContent = 'Add Event';
     btn.textContent   = 'Save Event';
-    document.getElementById('fEndDate').value = '';
-    document.getElementById('fEndTime').value = '';
-    document.getElementById('fDaily').checked = false;
     document.getElementById('fActive').checked = true;
     document.getElementById('fIndoor').checked = false;
     document.getElementById('fCategory').value = '';
     updateImgPreview();
   }
 
+  syncScheduleForm();
   document.getElementById('modalOverlay').classList.remove('hidden');
   document.getElementById('fTitle').focus();
 }
@@ -621,30 +646,48 @@ async function handleFormSubmit(e) {
     return;
   }
   const existing = allEvents.find(ev => ev.id === editingDocId);
+  const scheduleType = document.getElementById('fScheduleType').value;
+  const startTime = document.getElementById('fStartTime').value;
   const endDate = document.getElementById('fEndDate').value;
   const endTime = document.getElementById('fEndTime').value;
-  const daily = document.getElementById('fDaily').checked;
-  const startChanged = existing && eventDate(existing) !== date;
-  const start = (!startChanged && readEventDateTime(existing?.start)?.date) || date;
-  if (endDate && endDate < start) {
-    showToast('The end date must be on or after the event date.');
+  if ((endDate && endDate < date) || (scheduleType === 'multi-day' && endDate <= date)) {
+    showToast(scheduleType === 'multi-day' ? 'Choose an end date after the start date.' : 'The end date must be on or after the start date.');
     return;
   }
+  const daysOfOperation = scheduleType === 'one-off' ? [] : [...document.querySelectorAll('#fOperatingDays input:checked')].map(input => input.value);
+  const rawDates = ['recurring', 'ongoing'].includes(scheduleType) ? document.getElementById('fOccurrences').value.trim() : '';
+  const sessionDates = rawDates ? [...new Set(rawDates.split(/[\s,]+/))].sort() : [];
+  if (sessionDates.some(day => !isCalendarDate(day) || day < date || (endDate && day > endDate))) {
+    showToast('Use YYYY-MM-DD session dates within the event’s date range.');
+    return;
+  }
+  const existingSessions = Array.isArray(existing?.occurrences) ? existing.occurrences : [];
+  const occurrences = sessionDates.flatMap(day => {
+    const sessions = existingSessions.filter(session => occurrenceDate(session) === day);
+    return sessions.length ? sessions : [day];
+  });
+  const previousStart = readEventDateTime(existing?.start);
   const previousEnd = readEventDateTime(existing?.end);
-  const { day, weekend } = isCalendarDate(existing?.weekend) && eventDate(existing) === date
+  const sameStart = existing && eventStartDate(existing) === date;
+  const { day, weekend } = isCalendarDate(existing?.weekend) && sameStart
     ? existing : dateToWeekend(date);
-
+  const pick = document.getElementById('fPick').checked;
+  const pickDate = document.getElementById('fPickWeek').value;
   const priceTier = document.getElementById('fPriceTier').value;
   const data = {
     title:       document.getElementById('fTitle').value.trim(),
     description: document.getElementById('fDesc').value.trim(),
     type:        document.getElementById('fType').value,
-    date,
+    date:        sameStart ? eventDate(existing) : date,
     day,
     weekend,
+    scheduleType,
+    startTime:   existing?.startTime && startTime === inputClock(existing.startTime) ? existing.startTime : startTime,
     endDate,
-    endTime,
-    daily,
+    endTime:     existing?.endTime && endTime === inputClock(existing.endTime) ? existing.endTime : endTime,
+    daily:       false,
+    daysOfOperation,
+    occurrences,
     region:      document.getElementById('fRegion').value,
     tags,
     venue:       document.getElementById('fVenue').value.trim(),
@@ -652,26 +695,32 @@ async function handleFormSubmit(e) {
     url:         document.getElementById('fUrl').value.trim(),
     img:         document.getElementById('fImg').value.trim(),
     active:      document.getElementById('fActive').checked,
-    pick:        document.getElementById('fPick').checked,
+    pick,
+    pickWeek:    pick && isCalendarDate(pickDate) ? eventWeekStart(pickDate) : '',
     indoor:      document.getElementById('fIndoor').checked || false,
     category:    document.getElementById('fCategory').value,
     priceTier,
     priceEstimated: priceTier !== '' && document.getElementById('fPriceEstimated').checked,
     updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
   };
-  if (startChanged && existing.start) data.start = '';
-  if (previousEnd && (endDate !== previousEnd.date || endTime !== (previousEnd.time?.slice(0, 5) || ''))) data.end = '';
+  if (previousStart && (!sameStart || startTime !== inputClock(previousStart.time || existing.startTime))) data.start = date;
+  if (previousEnd && (endDate !== previousEnd.date || endTime !== inputClock(previousEnd.time || existing.endTime))) data.end = '';
+  if (scheduleType === 'one-off' && existing?.openingHours) data.openingHours = null;
+  if (!eventSchedule({ ...existing, ...data }).length) {
+    showToast('Choose at least one operating date within the event’s date range.');
+    return;
+  }
 
   btn.disabled    = true;
   btn.textContent = 'Saving…';
 
   try {
     if (editingDocId) {
+      if (existing) data.publicId = eventSlug(existing);
       await db.collection('events').doc(editingDocId).update(data);
       showToast('Event updated.');
     } else {
-      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('events').add(data);
+      await createEvent(data);
       showToast('Event added.');
     }
     closeModal();
@@ -681,6 +730,15 @@ async function handleFormSubmit(e) {
     btn.disabled    = false;
     btn.textContent = editingDocId ? 'Save Changes' : 'Save Event';
   }
+}
+
+async function createEvent(data) {
+  const ref = db.collection('events').doc();
+  await ref.set({
+    ...data,
+    publicId: `event-${ref.id}`,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
 }
 
 // ── Delete ─────────────────────────────────────────────────────────────────────
@@ -791,9 +849,9 @@ async function bulkImportDraftEvents() {
       const key = (ev.title || '').trim().toLowerCase();
       const isDupe = existing.docs.some(d => {
         const data = d.data();
-        return (data.title || '').trim().toLowerCase() === key &&
+        return eventSlug(data) === eventSlug(ev) || ((data.title || '').trim().toLowerCase() === key &&
                (eventDate(data) === eventDate(ev) ||
-                 (!data.date && data.weekend === ev.weekend && data.day === ev.day));
+                 (!data.date && data.weekend === ev.weekend && data.day === ev.day)));
       });
 
       if (isDupe) { skipped++; continue; }
@@ -840,10 +898,10 @@ async function editStaticEvent(staticId, btn) {
     // Check local allEvents first (already synced from Firestore) to avoid a query
     const titleKey = (ev.title || '').trim().toLowerCase();
     const existing = allEvents.find(e =>
-      !e._static &&
+      !e._static && (eventSlug(e) === eventSlug(ev) || (
       (e.title || '').trim().toLowerCase() === titleKey &&
       (eventDate(e) === eventDate(ev) ||
-        (!e.date && e.weekend === ev.weekend && e.day === ev.day))
+        (!e.date && e.weekend === ev.weekend && e.day === ev.day))))
     );
     let docId;
     if (existing) {
@@ -890,7 +948,7 @@ function toggleJsonPanel(btn) {
 
 // Given a YYYY-MM-DD date string, return the Saturday `weekend` key and `day`
 function dateToWeekend(dateStr) {
-  const day = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][calendarDay(dateStr).getUTCDay()];
+  const day = EVENT_WEEKDAYS[calendarDay(dateStr).getUTCDay()];
   return { weekend: addCalendarDays(dateStr, -EVENT_DAY_OFFSETS[day]), day };
 }
 
@@ -898,7 +956,7 @@ function adminEventSchedule(ev) {
   const date = eventDate(ev);
   const legacy = isCalendarDate(ev.weekend) ? { weekend: ev.weekend, day: ev.day || 'sat' }
     : date ? dateToWeekend(date) : { weekend: '', day: 'sat' };
-  return { ...eventScheduleFields(ev), date, ...legacy };
+  return { ...eventScheduleFields(ev), publicId: eventSlug(ev), date, ...legacy };
 }
 
 async function importFromJSON() {
@@ -929,13 +987,28 @@ async function importFromJSON() {
   // Validate required fields
   for (let i = 0; i < events.length; i++) {
     const ev = events[i];
-    if (!ev.title || typeof ev.title !== 'string' || !ev.title.trim()) {
+    if (!ev || typeof ev.title !== 'string' || !ev.title.trim()) {
       resultEl.textContent = `Event ${i + 1}: missing or invalid "title".`;
       resultEl.classList.add('json-import-error');
       return;
     }
     if (!isCalendarDate(ev.date)) {
       resultEl.textContent = `Event ${i + 1}: "date" must be YYYY-MM-DD (got "${ev.date}").`;
+      resultEl.classList.add('json-import-error');
+      return;
+    }
+    const start = eventStartDate(ev);
+    const end = eventEndDate(ev);
+    const invalidDays = ev.daysOfOperation != null && (!Array.isArray(ev.daysOfOperation) ||
+      ev.daysOfOperation.some(day => !EVENT_WEEKDAYS.includes(day)));
+    const invalidSessions = ev.occurrences != null && (!Array.isArray(ev.occurrences) || ev.occurrences.some(session => {
+      const day = occurrenceDate(session);
+      return !isCalendarDate(day) || day < start || (end && day > end);
+    }));
+    if ((ev.scheduleType && !EVENT_SCHEDULE_TYPES.includes(ev.scheduleType)) || (ev.endDate && !isCalendarDate(ev.endDate)) ||
+        (end && end < start) || (ev.scheduleType === 'multi-day' && end <= start) || invalidDays || invalidSessions ||
+        (ev.startTime && !eventClock(ev.startTime)) || (ev.endTime && !eventClock(ev.endTime)) || !eventSchedule(ev).length) {
+      resultEl.textContent = `Event ${i + 1}: check the schedule type, dates, times and operating days.`;
       resultEl.classList.add('json-import-error');
       return;
     }
@@ -948,7 +1021,7 @@ async function importFromJSON() {
   try {
     for (const ev of events) {
       const { weekend, day } = dateToWeekend(ev.date);
-      await db.collection('events').add({
+      await createEvent({
         title:       String(ev.title).trim(),
         description: String(ev.description || '').trim(),
         type:        'other',
@@ -963,7 +1036,6 @@ async function importFromJSON() {
         img:         '',
         tags:        [],
         active:      false,
-        createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
       });
       created++;

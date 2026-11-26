@@ -109,11 +109,13 @@ const vm = require('vm');
 const sandbox = {};
 vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
 const {
-  isCalendarDate, eventDate, eventSchedule, eventIsPast, nextEventDate, aucklandInstant,
+  EVENT_SCHEDULE_TYPES, EVENT_WEEKDAYS, isCalendarDate, eventDate, eventSlug, eventSchedule,
+  eventIsPast, nextEventDate, aucklandInstant,
 } = vm.runInNewContext(read('js/event-dates.js') +
-  '\n({ isCalendarDate, eventDate, eventSchedule, eventIsPast, nextEventDate, aucklandInstant })');
+  '\n({ EVENT_SCHEDULE_TYPES, EVENT_WEEKDAYS, isCalendarDate, eventDate, eventSlug, eventSchedule, eventIsPast, nextEventDate, aucklandInstant })');
 const CATEGORIES = ['music', 'festivals', 'sports', 'exhibitions', 'workshops', 'food'];
 const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
+const eventIds = new Set();
 (sandbox.STATIC_EVENTS || []).forEach(ev => {
   if (!CATEGORIES.includes(ev.category)) {
     fail('category', `"${ev.title}" (${ev.weekend}) has category ${JSON.stringify(ev.category)}; use one of ${CATEGORIES.join(', ')}`);
@@ -123,6 +125,16 @@ const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
   } else if (!eventDate(ev)) {
     fail('date', `"${ev.title}" needs a valid date or a legacy weekend date`);
   }
+  const id = eventSlug(ev);
+  if (eventIds.has(id)) fail('event URL', `"${ev.title}" shares its event ID ${id} with another listing`);
+  eventIds.add(id);
+  if ('scheduleType' in ev && !EVENT_SCHEDULE_TYPES.includes(ev.scheduleType)) {
+    fail('schedule', `"${ev.title}" has an invalid schedule type`);
+  }
+  if ('daysOfOperation' in ev && (!Array.isArray(ev.daysOfOperation) || ev.daysOfOperation.some(day => !EVENT_WEEKDAYS.includes(day)))) {
+    fail('schedule', `"${ev.title}" has invalid operating days`);
+  }
+  if (!eventSchedule(ev).length) fail('schedule', `"${ev.title}" has no valid operating dates`);
   if ('indoor' in ev && typeof ev.indoor !== 'boolean') {
     fail('category', `"${ev.title}" (${ev.weekend}) has indoor: ${JSON.stringify(ev.indoor)}; use true or leave it out`);
   }
@@ -170,6 +182,29 @@ if (nextEventDate(sparse, sunday, sunday, close)) fail('expiry', 'a recurring ev
 if (aucklandInstant('2026-04-05', '02:30:00') !== Date.parse('2026-04-04T14:30:00Z') ||
     aucklandInstant('2026-09-27', '02:30:00') !== Date.parse('2026-09-26T14:30:00Z')) {
   fail('expiry', 'daylight saving transitions must use the correct Wellington instant');
+}
+
+const lateExhibition = eventSchedule({
+  date: '2026-11-23', endDate: sunday, scheduleType: 'ongoing', daysOfOperation: ['mon', 'thu'],
+  startTime: '10:00', endTime: '17:00', openingHours: { thu: { closes: '21:00' } },
+});
+const thursday = '2026-11-26';
+const thursdayClose = Date.parse('2026-11-26T08:00:00Z');
+if (nextEventDate(lateExhibition, thursday, thursday, thursdayClose - 1) !== thursday ||
+    nextEventDate(lateExhibition, '2026-11-27', sunday, thursdayClose - 1) ||
+    !eventIsPast(lateExhibition, thursdayClose)) {
+  fail('schedule', 'weekday overrides must govern availability and the final close when the season ends on a closed day');
+}
+const indefinite = eventSchedule({ date, scheduleType: 'ongoing', daysOfOperation: ['sat'], endTime: '17:00' });
+if (eventIsPast(indefinite, thursdayClose) || nextEventDate(indefinite, sunday, '2026-12-05', thursdayClose) !== '2026-12-05') {
+  fail('schedule', 'open-ended events must continue on their operating days');
+}
+const overnightWeekly = eventSchedule({ date, endDate: date, scheduleType: 'recurring', daysOfOperation: ['sat'], startTime: '20:00', endTime: '01:00' });
+if (nextEventDate(overnightWeekly, sunday, sunday, Date.parse('2026-11-28T11:30:00Z')) !== sunday) {
+  fail('schedule', 'a live overnight session must remain available the following morning');
+}
+if (eventSlug({ title: 'Renamed exhibition', date, publicId: 'stable-exhibition-link' }) !== 'stable-exhibition-link') {
+  fail('event URL', 'an assigned public ID must survive title and date changes');
 }
 
 // ── report ─────────────────────────────────────────────────────────────
