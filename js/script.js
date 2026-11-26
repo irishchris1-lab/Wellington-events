@@ -302,6 +302,8 @@ const SECTION_TITLES = {
     const panel = document.getElementById('dropdownPanel');
     document.getElementById('dropdownMenu').classList.add('open');
     panel.classList.add('open');
+    panel.inert = false;
+    panel.removeAttribute('aria-hidden');
     btn.setAttribute('aria-expanded', 'true');
     btn.setAttribute('aria-label', 'Close menu');
     trapFocus(panel);
@@ -319,6 +321,8 @@ const SECTION_TITLES = {
     releaseFocus(panel);
     if (panel._escHandler) document.removeEventListener('keydown', panel._escHandler);
     btn.focus();
+    panel.inert = true;
+    panel.setAttribute('aria-hidden', 'true');
   }
 
   let cardObserver;
@@ -496,6 +500,8 @@ const SECTION_TITLES = {
   function syncFilterControls() {
     setPressed('[data-filter-region]', b => b.dataset.filterRegion === currentRegion);
     setPressed('[data-filter-category]', b => b.dataset.filterCategory === currentCategory);
+    document.getElementById('categoryFilterValue').textContent =
+      EVENT_CATEGORIES[currentCategory] || (currentCategory === 'rainy' ? 'Rainy Day' : 'All');
     const slider = document.getElementById('priceFilter');
     const priceLabel = PRICE_FILTER_LABELS[maxPriceLevel];
     slider.value = maxPriceLevel;
@@ -1195,9 +1201,31 @@ const SECTION_TITLES = {
     document.querySelectorAll('[data-filter-region]').forEach(btn =>
       btn.addEventListener('click', () => { currentRegion = btn.dataset.filterRegion; filterEvents(); })
     );
-    document.querySelectorAll('[data-filter-category]').forEach(btn =>
-      btn.addEventListener('click', () => { currentCategory = btn.dataset.filterCategory; filterEvents(); })
-    );
+    const categoryMenu = document.getElementById('categoryFilter');
+    const categoryTrigger = categoryMenu.querySelector('summary');
+    const closeCategoryMenu = () => {
+      categoryMenu.open = false;
+      categoryTrigger.focus({ preventScroll: true });
+    };
+    categoryMenu.querySelectorAll('[data-filter-category]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentCategory = btn.dataset.filterCategory;
+        filterEvents();
+        closeCategoryMenu();
+      });
+    });
+    categoryMenu.addEventListener('keydown', e => {
+      if (e.key !== 'Escape' || !categoryMenu.open) return;
+      e.preventDefault();
+      e.stopPropagation();
+      closeCategoryMenu();
+    });
+    categoryMenu.addEventListener('focusout', e => {
+      if (e.relatedTarget && !categoryMenu.contains(e.relatedTarget)) categoryMenu.open = false;
+    });
+    document.addEventListener('click', e => {
+      if (categoryMenu.open && !categoryMenu.contains(e.target)) categoryMenu.open = false;
+    });
     on('priceFilter', 'input', e => { maxPriceLevel = e.target.valueAsNumber; filterEvents(); });
     document.querySelectorAll('[data-date-filter]').forEach(btn =>
       btn.addEventListener('click', () => changeDatePreset(btn.dataset.dateFilter))
@@ -1231,7 +1259,7 @@ const SECTION_TITLES = {
       if (e.target.closest('.no-results-reset')) {
         resetEventFilters();
         filterEvents();
-        document.querySelector('[data-filter-category="all"]').focus();
+        categoryTrigger.focus();
         return;
       }
       const pill = e.target.closest('.day-pill');

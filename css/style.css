@@ -14,8 +14,8 @@
   /* ── HAMBURGER BUTTON ── */
   .hamburger-btn {
     background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 8px; padding: 10px; cursor: pointer;
-    display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;
+    border-radius: 8px; width: 44px; height: 44px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex-shrink: 0;
     transition: background 0.2s;
   }
   .hamburger-btn:hover { background: rgba(255,255,255,0.25); }
@@ -45,10 +45,11 @@
     position: fixed; top: 0; right: -340px; width: 320px; max-width: 90vw;
     height: 100%; background: #fff; z-index: 1000;
     box-shadow: -8px 0 40px rgba(0,0,0,0.18);
-    transition: right 0.3s ease; overflow-y: auto;
+    transition: right 0.3s ease; overflow-y: auto; overscroll-behavior: contain;
     display: flex; flex-direction: column;
   }
   .dropdown-panel.open { right: 0; }
+  body:has(.dropdown-panel.open) { overflow: hidden; }
   .dropdown-header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 20px 20px 16px; border-bottom: 1px solid #f0eeea;
@@ -57,7 +58,7 @@
   .dropdown-title { color: #fff; font-weight: 700; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; }
   .dropdown-close {
     background: rgba(255,255,255,0.2); border: none; color: #fff;
-    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
     font-size: 14px; display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
   }
@@ -118,6 +119,7 @@
     display: flex; justify-content: space-between; align-items: center;
     gap: 12px; margin-bottom: 14px;
   }
+  .header-auth-area { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
   .eyebrow {
     font-size: 10px; font-weight: 600; letter-spacing: 0.3em;
     text-transform: uppercase; color: rgba(255,255,255,0.55);
@@ -127,24 +129,16 @@
   h1 { font-family: 'Fraunces', serif; font-size: clamp(26px,4.4vw,40px); font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; }
   h1 em { font-style: italic; color: var(--gold); }
   .header-sub { margin-top: 8px; font-size: 13.5px; color: rgba(255,255,255,0.72); line-height: 1.55; max-width: 540px; }
-  .header-actions {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-    grid-auto-rows: 1fr; gap: 8px 12px; max-width: 640px; margin-top: 12px;
-  }
-  .header-action {
-    display: flex; justify-content: center; align-items: center; gap: 6px;
+  .holiday-cta {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
     min-height: 44px; padding: 8px 14px; border-radius: 999px;
+    background: #FFD77A; color: #6E1016;
     font-size: 13px; font-weight: 700; line-height: 1.35; text-align: center; text-decoration: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.18); transition: background-color 0.15s, box-shadow 0.15s;
   }
-  .header-action[hidden] { display: none; }
-  .header-action:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.22); }
-  .header-action:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 999px; }
-  .header-submit-event { background: #fff; color: #172d29; }
-  .header-submit-event-label { display: inline-block; text-decoration: underline; text-underline-offset: 2px; }
-  .header-submit-event:hover { background: #fff0cd; }
-  .holiday-cta { background: #FFD77A; color: #6E1016; }
-  .holiday-cta:hover { background: #ffe4a3; }
+  .holiday-cta[hidden] { display: none; }
+  .holiday-cta:hover { background: #ffe4a3; box-shadow: 0 4px 14px rgba(0,0,0,0.22); }
+  .holiday-cta:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 999px; }
   .header-connect { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .header-mailing-link {
     display: inline-flex; align-items: center; min-height: 44px;
@@ -316,25 +310,47 @@
   .filter-btn .region-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
   /* ── CATEGORY AND PRICE FILTERS ── */
-  .event-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; margin-bottom: 14px; }
-  .type-filter { display: flex; flex: 1 1 460px; flex-wrap: wrap; align-items: center; gap: 6px; }
-  .type-filter-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #8a9a9a; margin-right: 2px; flex-shrink: 0; }
-  .type-filter-btn {
-    background: none; border: 1px solid rgba(11,85,99,0.18); color: var(--teal);
-    font: 600 11px 'DM Sans', sans-serif; padding: 5px 11px; border-radius: 14px;
-    cursor: pointer; white-space: nowrap; transition: background 0.2s, border-color 0.2s;
+  .event-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 14px; }
+  .category-filter { position: relative; width: min(100%, 160px); }
+  .category-filter-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    min-height: 48px; padding: 6px 12px; list-style: none; cursor: pointer;
+    color: var(--teal); border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
   }
-  .type-filter-btn:hover { border-color: var(--teal); }
-  .type-filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
-  .type-filter-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .category-filter-trigger::-webkit-details-marker { display: none; }
+  .category-filter-trigger::after {
+    content: ''; width: 7px; height: 7px; flex: none; margin-right: 2px;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
+  }
+  .category-filter[open] .category-filter-trigger::after { transform: translateY(2px) rotate(-135deg); }
+  .category-filter-trigger:hover, .category-filter[open] .category-filter-trigger { border-color: var(--teal); }
+  .category-filter-trigger:focus-visible, .type-filter-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .category-filter-caption, .price-filter-caption { display: grid; gap: 2px; }
+  .category-filter-caption { min-width: 0; }
+  .category-filter-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .type-filter-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #526767; }
+  .type-filter {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
+    width: min(270px, calc(100vw - 32px)); max-height: min(370px, 55dvh); overflow-y: auto; overscroll-behavior: contain;
+    padding: 6px; background: #fff; border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+  }
+  .category-filter:not([open]) .type-filter { display: none; }
+  .type-filter-btn {
+    display: block; width: 100%; min-height: 44px; padding: 8px 10px; border: none; border-radius: 8px;
+    background: none; color: var(--teal); text-align: left; font: 600 13px 'DM Sans', sans-serif; cursor: pointer;
+  }
+  .type-filter-btn:hover { background: #eef5f4; }
+  .type-filter-btn.active { background: var(--teal); color: #fff; }
+  .type-filter-btn:focus-visible { outline-offset: -2px; }
+  .type-filter-btn.active:focus-visible { outline-color: #fff; }
 
   .price-filter {
     display: flex; align-items: center; gap: 12px; width: min(100%, 246px);
     padding: 0 12px 4px; border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
   }
-  .price-filter-caption { display: grid; gap: 2px; min-width: 72px; }
-  .price-filter-caption label { color: var(--muted); }
-  .price-filter-value { color: var(--teal); font-size: 12px; font-weight: 700; }
+  .price-filter-caption { min-width: 72px; }
+  .price-filter-value, .category-filter-value { color: var(--teal); font-size: 12px; font-weight: 700; }
   .price-filter-slider { flex: 1; min-width: 0; }
   .price-filter-slider input { display: block; width: 100%; height: 44px; margin: 0; accent-color: var(--teal); cursor: pointer; }
   .price-filter-slider input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
@@ -620,18 +636,17 @@
     .header-inner { padding: 12px 16px 16px; }
     .header-top { margin-bottom: 10px; }
     .eyebrow { display: none; }             /* identity carried by the H1 on small screens */
-    .header-auth-area { flex: 1; }
-    .header-connect { margin-inline-start: auto; gap: 0; }
-    .header-connect .header-mailing-link { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.86); }
+    .header-auth-area { flex: 1; flex-wrap: nowrap; column-gap: 6px; }
+    .header-connect { margin-inline-start: auto; gap: 0; flex-shrink: 1; min-width: 0; }
+    .header-connect .header-mailing-link { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.86); text-align: end; text-wrap: balance; }
     .header-connect .social-icon-link svg { width: 20px; height: 20px; padding: 1px; border-radius: 5px; }
+    .category-filter { width: min(100%, 118px); }
+    .price-filter { width: min(100%, 212px); }
     main { padding: 16px 16px 64px; }
     .filter-inner { padding-left: 16px; padding-right: 16px; }
     .events-grid { margin-bottom: 20px; }
     .day-label { margin-bottom: 12px; }
   }
-
-  /* ── AUTH BUTTON (header) ── */
-  .header-auth-area { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
 
   /* ── LOGIN MODAL ── */
 
@@ -780,7 +795,6 @@
 
 /* ══ RESPONSIVE ══ */
 @media (max-width: 767px) {
-  .hamburger-btn      { display: none; }
   #headerInstallBtn   { display: none !important; }
 }
 @media (min-width: 768px) {
@@ -839,10 +853,10 @@
   border-left: 1px solid rgba(255,255,255,0.25);
 }
 /* On small screens keep only the day temps — message is supporting detail */
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   .hero-weather-message { display: none; }
 }
-@media (max-width: 380px) {
+@media (max-width: 420px) {
   .hero-weather { gap: 6px; padding: 4px 8px; }
   .hero-weather-day { display: grid; grid-template-columns: auto auto; justify-items: center; gap: 2px; }
   .hero-weather-day-label { grid-column: 1 / -1; }
