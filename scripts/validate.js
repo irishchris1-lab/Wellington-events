@@ -126,8 +126,15 @@ const PRICE_TIERS = ['Free', '$', '$$', '$$$'];
   if ('indoor' in ev && typeof ev.indoor !== 'boolean') {
     fail('category', `"${ev.title}" (${ev.weekend}) has indoor: ${JSON.stringify(ev.indoor)}; use true or leave it out`);
   }
-  if (!PRICE_TIERS.includes(ev.priceTier)) {
+  if (ev.priceUnknown === true) {
+    if ('priceTier' in ev || 'priceEstimated' in ev || !ev.cost) {
+      fail('price', `"${ev.title}" needs a note and no price tier when its price is unknown`);
+    }
+  } else if (!PRICE_TIERS.includes(ev.priceTier)) {
     fail('price', `"${ev.title}" (${ev.weekend}) needs a priceTier of ${PRICE_TIERS.join(', ')}`);
+  }
+  if ('priceUnknown' in ev && typeof ev.priceUnknown !== 'boolean') {
+    fail('price', `"${ev.title}" has a non-boolean priceUnknown`);
   }
   if ('priceEstimated' in ev && typeof ev.priceEstimated !== 'boolean') {
     fail('price', `"${ev.title}" (${ev.weekend}) has a non-boolean priceEstimated`);
