@@ -2702,6 +2702,17 @@ const STATIC_EVENTS = [
     ticketed: true,
     cost: '$250 per person',},
   {
+    title: 'Little Locals — Onslow Tavern Block Party',
+    type: 'kids', day: 'sat', date: '2026-11-28', weekend: '2026-11-28', region: 'wellington',
+    category: 'festivals',
+    priceTier: 'Free', family: 'Family',
+    startTime: '10:30', endTime: '15:30',
+    time: 'Saturday 28 November · 10:30 am – 3:30 pm',
+    venue: 'Onslow Tavern, 35 Agra Crescent, Khandallah',
+    description: 'Bring the whānau for brunch from 10:30 am and check out the new playground. Rainbow Circus offers free face painting from 12:30 to 3:30 pm, with limited spots. Brunch is available to buy. Garden bar is walk-in only.',
+    url: 'https://stayhappening.com/e/little-locals-onslow-tavern-block-party-E2IT04DXOL9',
+    cost: 'Free face painting · Brunch available to buy',},
+  {
     title: 'Traditional Irish Music Concert — Kris and Pat',
     type: 'music', day: 'sat', date: '2026-11-28', weekend: '2026-11-28', region: 'wellington',
     category: 'music', indoor: true,
