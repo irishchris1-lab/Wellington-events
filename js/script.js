@@ -177,6 +177,7 @@ const SECTION_TITLES = {
   }
 
   function eventPrice(ev) {
+    if (ev.priceUnknown === true) return { tier: 'Unknown', estimated: false };
     if (Object.hasOwn(PRICE_LABELS, ev.priceTier)) {
       return { tier: ev.priceTier, estimated: ev.priceEstimated === true };
     }
@@ -203,6 +204,7 @@ const SECTION_TITLES = {
   }
 
   function priceBadge(tier, estimated) {
+    if (tier === 'Unknown') return '<span class="badge badge-price badge-ticketed" title="Price not confirmed">Price TBC</span>';
     const style = tier === 'Free' ? 'badge-free' : 'badge-ticketed';
     return `<span class="badge badge-price ${style}" title="${PRICE_LABELS[tier]}${estimated ? ' (estimated)' : ''}">${tier}${estimated ? ' <abbr title="Estimated">est.</abbr>' : ''}</span>`;
   }
@@ -708,7 +710,10 @@ const SECTION_TITLES = {
 
   function eventMatchesFilters(ev) {
     if (currentRegion !== 'all' && ev.region !== currentRegion) return false;
-    if (maxPriceLevel < MAX_PRICE_LEVEL && PRICE_TIERS.indexOf(eventPrice(ev).tier) > maxPriceLevel) return false;
+    if (maxPriceLevel < MAX_PRICE_LEVEL) {
+      const tierIndex = PRICE_TIERS.indexOf(eventPrice(ev).tier);
+      if (tierIndex < 0 || tierIndex > maxPriceLevel) return false;
+    }
     if (currentCategory === 'rainy') return ev.indoor === true;
     return currentCategory === 'all' || eventCategory(ev) === currentCategory;
   }
@@ -762,7 +767,7 @@ const SECTION_TITLES = {
   // "dermot-kennedy-the-weight-of-the-woods-2026-11-27", so ?e=<id> can open
   // that event's card directly. Shared links use it.
   function eventSlug(ev) {
-    const name = String(ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    const name = String(ev.slugTitle || ev.title || 'event').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60).replace(/-$/, '');
     const iso = eventDate(ev);
     return iso ? `${name}-${iso}` : name;
