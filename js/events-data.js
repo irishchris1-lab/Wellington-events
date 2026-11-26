@@ -2809,8 +2809,7 @@ const STATIC_EVENTS = [
     venue: 'TSB Arena, Queens Wharf',
     description: 'The Irish singer-songwriter returns to Wellington on The Weight of the Woods tour — big, raw-voiced folk-pop in an arena setting.',
     url: 'https://www.livenation.co.nz/event/dermot-kennedy-the-weight-of-the-woods-tour-wellington-tickets-edp1670664',
-    img: 'images/events/dermot-kennedy',
-    imgGenerated: true,
+    img: 'images/events/dermot-kennedy-tour-poster',
     pick: true,
     ticketed: true,},
   {
