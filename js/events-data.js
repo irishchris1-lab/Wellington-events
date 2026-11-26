@@ -2702,6 +2702,18 @@ const STATIC_EVENTS = [
     ticketed: true,
     cost: '$250 per person',},
   {
+    title: 'Traditional Irish Music Concert — Kris and Pat',
+    type: 'music', day: 'sat', date: '2026-11-28', weekend: '2026-11-28', region: 'wellington',
+    category: 'music', indoor: true,
+    priceTier: '$',
+    startTime: '19:00',
+    time: 'Saturday 28 November · doors 7:00 pm · first session 7:30 pm',
+    venue: 'Wellington Irish Society clubrooms, 122 Wilton Road, Wilton',
+    description: 'Kris and Pat play an evening of traditional Irish music at the Wellington Irish Society clubrooms. All ticket proceeds go directly to the musicians. Book through the Facebook event or email secretary@wellingtonirishsociety.com.',
+    url: 'https://www.facebook.com/events/1442473107404916/',
+    ticketed: true,
+    cost: '$10 entry',},
+  {
     title: 'Great Southern BioBlitz — Zealandia',
     type: 'outdoor', day: 'sat', weekend: '2026-11-28', region: 'wellington',
     category: 'sports',
