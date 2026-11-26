@@ -1,4 +1,4 @@
-const CACHE = 'wow-v12';   // v12: homepage section order and shared tiles
+const CACHE = 'wow-v13';   // v13: inline event details
 const SHELL = [
   '/', '/css/style.css', '/js/event-dates.js', '/js/event-catalogue.js', '/js/events-data.js', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'

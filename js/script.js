@@ -358,14 +358,10 @@ const SECTION_TITLES = {
     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
     document.getElementById('section-' + section).classList.add('active');
     document.title = SECTION_TITLES[section];
-    const eventRobots = document.getElementById('eventRobots');
-    if (section !== 'event' && eventRobots) {
+    if (section !== 'event') {
       renderEventStructuredData();
-      eventRobots.remove();
-      const canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      canonical.href = document.querySelector('meta[property="og:url"]').content;
-      document.head.append(canonical);
+      document.getElementById('eventRobots')?.remove();
+      document.querySelector('link[rel="canonical"]').href = document.querySelector('meta[property="og:url"]').content;
     }
     document.querySelector('.skip-link').href = section === 'event' ? '#event-detail-content' : '#main-content';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -461,6 +457,7 @@ const SECTION_TITLES = {
       syncFilterControls();
       renderWeekendPicks(now);
       renderCalendar(now);
+      restoreExpandedEvent();
     }
 
     nextRefresh = aucklandInstant(addCalendarDays(currentToday, 1));
@@ -675,6 +672,23 @@ const SECTION_TITLES = {
     return `?e=${encodeURIComponent(id)}`;
   }
 
+  function canonicalEventUrl(id) {
+    return new URL(eventHref(id), document.querySelector('meta[property="og:url"]').content).href;
+  }
+
+  function updateEventIndexing(id, indexable) {
+    document.querySelector('link[rel="canonical"]').href = canonicalEventUrl(id);
+    const robots = document.getElementById('eventRobots');
+    if (indexable) robots?.remove();
+    else if (!robots) {
+      const directive = document.createElement('meta');
+      directive.id = 'eventRobots';
+      directive.name = 'robots';
+      directive.content = 'noindex, follow';
+      document.head.append(directive);
+    }
+  }
+
   const SHARE_ICON = '<svg class="share-icon" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
 
   function trackShare(method, card) {
@@ -717,6 +731,7 @@ const SECTION_TITLES = {
     if (!event) {
       renderEventStructuredData();
       const loading = firebaseReady && !liveEventsLoaded;
+      if (!loading) updateEventIndexing(linkedEventId, false);
       detail.innerHTML = `<p role="status">${loading ? 'Loading event…' : 'Event details are unavailable.'}</p>`;
       return;
     }
@@ -729,14 +744,13 @@ const SECTION_TITLES = {
 
     const schedule = scheduleFor(event);
     const past = eventIsPast(schedule, now);
-    const dates = eventScheduleRange(schedule);
-    const dateLabel = dates ? dates.end ? rangeLabel(dates) : `From ${rangeLabel({ start: dates.start, end: dates.start })}` : '';
     document.title = `${event.title}${past ? ' (Past event)' : ''} — What's On Wellington`;
     const nextDate = past ? '' : nextEventDate(schedule, currentToday, '9999-12-31', now);
     const picked = Boolean(nextDate && weeklyPickIds(eventWeekStart(nextDate)).has(eventSlug(event)));
     detail.innerHTML = (past ? '<p class="event-detail-status" role="status">Past event · This event has ended.</p>' : '') +
-      buildEventCardHTML(event, { detail: true, past, dateLabel, picked }) +
+      buildEventCardHTML(event, { detail: true, past, picked }) +
       (past ? buildRecommendations(event, now) : '');
+    updateEventIndexing(id, !past && schedule.length > 0);
     renderEventStructuredData(past ? null : event, schedule);
   }
 
@@ -797,7 +811,7 @@ const SECTION_TITLES = {
       script?.remove();
       return;
     }
-    const url = new URL(eventHref(eventSlug(event)), document.querySelector('meta[property="og:url"]').content).href;
+    const url = canonicalEventUrl(eventSlug(event));
     const data = {
       '@context': 'https://schema.org',
       '@type': eventCategory(event) === 'exhibitions' ? 'ExhibitionEvent' : 'Event',
@@ -861,11 +875,63 @@ const SECTION_TITLES = {
     </section>` : '';
   }
 
-  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev), picked = false } = {}) {
+  function eventVenueHTML(ev) {
+    const mapUrl = safeUrl(ev.mapUrl);
+    const venue = escHtml(ev.venue || '');
+    return mapUrl && venue ? `<a href="${escHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">${venue}</a>` : venue;
+  }
+
+  function eventDetailsHTML(ev, past = false) {
+    const schedule = scheduleFor(ev);
+    const dates = eventScheduleRange(schedule);
+    const dateLabel = dates ? (dates.end ? rangeLabel(dates) : `From ${rangeLabel({ start: dates.start, end: dates.start })}`) : '';
+    const structuredHours = scheduleHoursLabel(schedule);
+    const timeLabel = (ev.scheduleType && (ev.startTime || ev.endTime || ev.daysOfOperation?.length || ev.openingHours)
+      ? structuredHours : '') || ev.time || structuredHours;
+    const meta = [
+      eventScheduleType(ev) === 'ongoing' && !past ? `<div class="meta-row event-until">${listingDateHTML(ev)}</div>` : '',
+      dateLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📅</span>${escHtml(dateLabel)}</div>` : '',
+      timeLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(timeLabel)}</div>` : '',
+      ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${eventVenueHTML(ev)}</div>` : '',
+      ev.cost ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>` : '',
+    ].join('');
+    return `${meta ? `<div class="card-meta">${meta}</div>` : ''}
+      ${schedule.length && ev.occurrences?.length ? sessionDatesHTML(schedule) : ''}
+      ${ev.description ? `<div class="card-desc">${escHtml(ev.description)}</div>` : ''}`;
+  }
+
+  function sourceEventLink(ev, label, past = false) {
+    const url = safeUrl(ev.url);
+    if (!url) return '';
+    const text = past ? 'Original event details' : url.startsWith('https://www.google.com/search?') ? 'Search for details' : label;
+    return `<a class="event-btn" href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${text} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(url))} in a new tab)</span></a>`;
+  }
+
+  function shareButtonHTML(title) {
+    return `<button type="button" class="share-btn" aria-label="Share ${title}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
+  }
+
+  function eventPanelHTML(ev, panelId, titleId, pick = false) {
+    const id = eventSlug(ev);
+    const title = escHtml(ev.title);
+    return `<div class="event-panel${pick ? ' event-panel-pick' : ''}" id="${panelId}" role="region" aria-labelledby="${titleId}" hidden${pick ? ` data-event-id="${escHtml(id)}"` : ''}>
+      ${pick ? `<div class="event-panel-header"><h3 class="card-title" id="${titleId}">${title}</h3><button type="button" class="event-panel-close" data-event-dismiss aria-controls="${panelId}">Hide details</button></div>` : ''}
+      ${eventDetailsHTML(ev)}
+      <div class="event-panel-actions">
+        ${sourceEventLink(ev, 'Event website')}
+        <a class="event-page-link" href="${eventHref(id)}">Open event page</a>
+        ${pick ? shareButtonHTML(title) : ''}
+      </div>
+    </div>`;
+  }
+
+  function buildEventCardHTML(ev, { detail = false, past = false, listingDate = eventDate(ev), picked = false } = {}) {
     const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region  = ev.region || 'all';
     const idSuffix = ev._static ? escHtml(ev._staticId || 'sx') : escHtml(ev.id || 'fx');
     const titleId  = `card-title-${idSuffix}`;
+    const panelId  = `card-details-${idSuffix}`;
+    const toggleAttrs = `data-event-toggle aria-expanded="false" aria-controls="${panelId}"`;
     const idAttr   = ev._static
       ? `data-static="${escHtml(ev._staticId || '')}"`
       : `data-firestore="${escHtml(ev.id || '')}"`;
@@ -891,37 +957,21 @@ const SECTION_TITLES = {
     }
     const badgesHtml = `<div class="card-badges">${badgeParts.join('')}</div>`;
 
-    const mapUrl = safeUrl(ev.mapUrl);
     const venue = escHtml(ev.venue || '');
-    const venueHtml = mapUrl ? `<a href="${escHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">${venue}</a>` : venue;
     const ongoing = eventScheduleType(ev) === 'ongoing';
     const schedule = scheduleFor(ev);
-    const structuredHours = detail ? scheduleHoursLabel(schedule) : '';
-    const timeLabel = (ev.scheduleType && (ev.startTime || ev.endTime || ev.daysOfOperation?.length || ev.openingHours)
-      ? structuredHours : '') || ev.time || structuredHours;
     const weekday = !detail && !ongoing ? EVENT_WEEKDAYS[calendarDay(listingDate).getUTCDay()] : '';
     const period = weekday && schedule.find(slot => slot.start <= listingDate &&
       (!slot.end || listingDate <= slot.end) && (!slot.days || slot.days.includes(weekday)));
     const hours = period?.opening && formatEventClock(period.opening);
-    const meta = detail ? [
-      ongoing && !past ? `<div class="meta-row event-until">${listingDateHTML(ev, listingDate)}</div>` : '',
-      dateLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📅</span>${escHtml(dateLabel)}</div>` : '',
-      timeLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(timeLabel)}</div>` : '',
-      ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${venueHtml}</div>` : '',
-      ev.cost ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>` : '',
-    ].join('') : `<div class="meta-row${ongoing ? ' event-until' : ''}"><span class="meta-icon" aria-hidden="true">📅</span><span class="meta-text">${listingDateHTML(ev, listingDate)}${hours ? ` · ${escHtml(hours)}` : ''}</span></div>
-      ${venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span><span class="meta-text" title="${venue}">${venueHtml}</span></div>` : ''}`;
-    const detailsUrl = safeUrl(ev.url);
-    const detailsLabel = past ? 'Original event details' :
-      detailsUrl.startsWith('https://www.google.com/search?') ? 'Search for details' : 'View event';
+    const meta = detail ? '' : `<div class="meta-row${ongoing ? ' event-until' : ''}"><span class="meta-icon" aria-hidden="true">📅</span><span class="meta-text">${listingDateHTML(ev, listingDate)}${hours ? ` · ${escHtml(hours)}` : ''}</span></div>
+      ${venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span><span class="meta-text" title="${venue}">${eventVenueHTML(ev)}</span></div>` : ''}`;
     const eventId = eventSlug(ev);
-    const footer = (detailsUrl
-      ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
-      : detail ? '' : `<a class="event-btn" href="${eventHref(eventId)}">Event details <span aria-hidden="true">→</span></a>`) +
-      `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
     const tierAttr = detail && picked && !past ? 'featured' : 'standard';
     const title = escHtml(ev.title);
-    const titleHTML = detail ? title : `<a href="${eventHref(eventId)}" title="${title}">${title}</a>`;
+    const titleHTML = `<a href="${eventHref(eventId)}" title="${title}" ${toggleAttrs}>${title}</a>`;
+    const action = detail ? sourceEventLink(ev, 'View event', past)
+      : `<button type="button" class="event-btn card-toggle" ${toggleAttrs} aria-describedby="${titleId}"><span>View event</span><span class="card-toggle-icon" aria-hidden="true"></span></button>`;
     const image = ev.img ? cardImgHTML(ev.img, detail ? ev.title : '', !detail && !ev.imgPoster, ev.imgGenerated)
       : detail ? '' : '<div class="card-img-wrap img-failed" aria-hidden="true"></div>';
     return `
@@ -930,16 +980,16 @@ const SECTION_TITLES = {
         ${image}
         <div class="card-body">
           <div class="card-top">
-            ${detail ? `<div><div class="card-cat"${catStyle}>${catLabel}</div><h2 class="card-title" id="${titleId}">${titleHTML}</h2></div>`
+            ${detail ? `<div><div class="card-cat"${catStyle}>${catLabel}</div><h2 class="card-title" id="${titleId}">${title}</h2></div>`
               : `<div class="card-cat"${catStyle}>${catLabel}</div>`}
             ${badgesHtml}
           </div>
           ${detail ? '' : `<div class="card-title" id="${titleId}">${titleHTML}</div>`}
-          ${meta ? `<div class="card-meta">${meta}</div>` : ''}
-          ${detail && schedule.length && ev.occurrences?.length ? sessionDatesHTML(schedule) : ''}
-          ${detail && !ev.description ? '' : `<div class="card-desc">${escHtml(ev.description)}</div>`}
+          ${detail ? eventDetailsHTML(ev, past)
+            : `<div class="card-meta">${meta}</div><div class="card-desc">${escHtml(ev.description)}</div>`}
         </div>
-        <div class="card-footer">${footer}</div>
+        <div class="card-footer">${action}${shareButtonHTML(title)}</div>
+        ${detail ? '' : eventPanelHTML(ev, panelId, titleId)}
       </article>`;
   }
 
@@ -948,25 +998,32 @@ const SECTION_TITLES = {
   function renderWeekendPicks(now) {
     const week = eventWeekStart(currentToday);
     const byId = new Map(calendarEvents.map(ev => [eventSlug(ev), ev]));
-    const html = [...weeklyPickIds(week, now)].map(id => {
+    const cards = [];
+    const panels = [];
+    for (const id of weeklyPickIds(week, now)) {
       const event = byId.get(id);
       const date = eventDateInWeek(scheduleFor(event), week, now);
       const title = escHtml(event.title);
       const price = eventPrice(event, curatedEvents);
       const image = cardImgHTML(event.img, '', true, event.imgGenerated) || '<div class="card-img-wrap" aria-hidden="true"></div>';
-      return `<a class="highlight-card" href="${eventHref(id)}" title="${title}">
+      const panelId = `pick-details-${escHtml(id)}`;
+      cards.push(`<a class="highlight-card" href="${eventHref(id)}" title="${title}" data-event-toggle aria-expanded="false" aria-controls="${panelId}">
         ${image}
         <div class="highlight-card-body">
           <div class="highlight-card-title">${title}</div>
           <div class="highlight-card-meta"><span>${listingDateHTML(event, date)}</span>${priceBadge(price.tier, price.estimated)}</div>
         </div>
-      </a>`;
-    }).join('');
-    if (renderedWeekendPicks !== html) {
-      document.getElementById('highlightsTrack').innerHTML = html;
-      renderedWeekendPicks = html;
+      </a>`);
+      panels.push(eventPanelHTML(event, panelId, `${panelId}-title`, true));
     }
-    document.getElementById('highlights-section').hidden = !html;
+    const cardsHTML = cards.join('');
+    const panelsHTML = panels.join('');
+    if (renderedWeekendPicks !== cardsHTML + panelsHTML) {
+      document.getElementById('highlightsTrack').innerHTML = cardsHTML;
+      document.getElementById('highlightsDetails').innerHTML = panelsHTML;
+      renderedWeekendPicks = cardsHTML + panelsHTML;
+    }
+    document.getElementById('highlights-section').hidden = !cards.length;
   }
 
   function escHtml(str) {
@@ -1093,15 +1150,63 @@ const SECTION_TITLES = {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
+  let expandedEventPanel = '';
+
+  function eventPanelControls(panel) {
+    const section = panel.closest('.card-listing, #highlights-section');
+    return [...section.querySelectorAll('[data-event-toggle]')]
+      .filter(control => control.getAttribute('aria-controls') === panel.id);
+  }
+
+  function setEventPanelExpanded(panel, expanded) {
+    panel.hidden = !expanded;
+    for (const control of eventPanelControls(panel)) {
+      control.setAttribute('aria-expanded', String(expanded));
+      if (control.matches('.card-toggle')) control.firstElementChild.textContent = expanded ? 'Hide details' : 'View event';
+    }
+  }
+
+  function restoreExpandedEvent() {
+    if (!expandedEventPanel) return;
+    const panel = document.getElementById(expandedEventPanel);
+    if (panel) setEventPanelExpanded(panel, true);
+    else expandedEventPanel = '';
+  }
+
+  function toggleEventDetails(event) {
+    const control = event.target.closest('[data-event-toggle], [data-event-dismiss]');
+    if (!control || event.defaultPrevented) return;
+    if (control.matches('a') && (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)) return;
+    const panel = document.getElementById(control.getAttribute('aria-controls'));
+    if (!panel) return;
+    event.preventDefault();
+
+    const dismiss = control.hasAttribute('data-event-dismiss');
+    const anchor = dismiss ? eventPanelControls(panel)[0] : control;
+    const before = anchor.getBoundingClientRect().top;
+    const previous = expandedEventPanel && document.getElementById(expandedEventPanel);
+    const expand = panel.hidden && !dismiss;
+    if (previous && previous !== panel) setEventPanelExpanded(previous, false);
+    setEventPanelExpanded(panel, expand);
+    expandedEventPanel = expand ? panel.id : '';
+    if (dismiss) anchor.focus({ preventScroll: true });
+
+    // Closing another event above this one can move the selected card.
+    const offset = anchor.getBoundingClientRect().top - before;
+    if (offset) window.scrollBy({ top: offset, behavior: 'instant' });
+  }
+
   document.addEventListener('click', e => {
     const btn = e.target.closest('.share-btn');
     if (!btn) return;
-    const card = btn.closest('.card');
+    const card = btn.closest('[data-event-id]');
     if (card) shareEvent(card);
   });
 
   function bindEventListeners() {
     const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
+
+    on('main-content', 'click', toggleEventDetails);
 
     // Header
     on('headerInstallBtn', 'click', () => handleInstallClick());

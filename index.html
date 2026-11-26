@@ -19,14 +19,10 @@
 <meta name="author" content="What's On Wellington">
 <link rel="canonical" href="https://whatsonwellington.co.nz/">
 <script>
-  if (new URLSearchParams(location.search).get('e')) {
-    // Direct links are shareable views of the catalogue, including after expiry.
-    const robots = document.createElement('meta');
-    robots.id = 'eventRobots';
-    robots.name = 'robots';
-    robots.content = 'noindex, follow';
-    document.head.append(robots);
-    document.querySelector('link[rel="canonical"]').remove();
+  const requestedEvent = new URLSearchParams(location.search).get('e');
+  if (requestedEvent) {
+    const canonical = document.querySelector('link[rel="canonical"]');
+    canonical.href += '?e=' + encodeURIComponent(requestedEvent);
   }
 </script>
 
@@ -212,6 +208,7 @@
 <section id="highlights-section" aria-labelledby="picksHeading" hidden>
   <h2 class="home-section-heading" id="picksHeading">Weekend Picks</h2>
   <div class="highlights-track" id="highlightsTrack"></div>
+  <div id="highlightsDetails"></div>
 </section>
 
 <section class="upcoming-section" aria-labelledby="upcomingHeading">
