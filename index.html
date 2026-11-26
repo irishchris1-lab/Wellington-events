@@ -213,30 +213,48 @@
 
 <section class="upcoming-section" aria-labelledby="upcomingHeading">
 <h2 class="home-section-heading" id="upcomingHeading">Upcoming Events</h2>
-<nav class="tabs-bar" id="eventDateFilters" aria-label="Event dates" tabindex="-1">
-  <div class="date-carousel">
-    <button type="button" class="date-carousel-arrow" id="datePresetsBack" aria-label="Scroll date filters left" aria-controls="datePresets" hidden>‹</button>
-    <div class="date-presets" id="datePresets" role="group" aria-label="Select event dates">
-      <button type="button" class="tab-btn active" data-date-filter="this-week" aria-pressed="true">This Week</button>
-      <button type="button" class="tab-btn" data-date-filter="next-week" aria-pressed="false">Next Week</button>
-      <button type="button" class="tab-btn" data-date-filter="custom" aria-pressed="false" aria-expanded="false" aria-haspopup="dialog" aria-controls="customDates">Custom Dates</button>
-    </div>
-    <button type="button" class="date-carousel-arrow" id="datePresetsForward" aria-label="Scroll date filters right" aria-controls="datePresets" hidden>›</button>
+<div class="event-filter-banner" id="eventDateFilters" role="group" aria-label="Upcoming event filters" tabindex="-1">
+  <div class="date-presets" id="datePresets" role="group" aria-label="Event dates" aria-describedby="dateRangeSummary">
+    <button type="button" class="date-preset" data-date-filter="this-week" aria-pressed="true">This Week</button>
+    <button type="button" class="date-preset" data-date-filter="next-week" aria-pressed="false">Next Week</button>
+    <button type="button" class="date-preset" data-date-filter="custom" aria-pressed="false" aria-expanded="false" aria-haspopup="dialog" aria-controls="customDates">Custom Dates</button>
   </div>
   <p class="date-range-summary" id="dateRangeSummary" aria-live="polite" aria-atomic="true"></p>
-</nav>
 
-<div class="filter-bar" role="group" aria-label="Filter by area">
-  <div class="filter-inner">
-    <span class="filter-label">Area:</span>
-    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all">🗺 All regions</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
-  </div>
+  <label class="event-filter-field filter-location">
+    <span>Location</span>
+    <select id="regionFilter">
+      <option value="all" selected>All regions</option>
+      <option value="wellington">Wellington City</option>
+      <option value="lower-hutt">Lower Hutt</option>
+      <option value="upper-hutt">Upper Hutt</option>
+      <option value="kapiti">Kāpiti Coast</option>
+      <option value="porirua">Porirua</option>
+      <option value="wairarapa">Wairarapa</option>
+    </select>
+  </label>
+  <label class="event-filter-field filter-category">
+    <span>Category</span>
+    <select id="categoryFilter">
+      <option value="all" selected>All categories</option>
+      <option value="music">Concerts &amp; Gigs</option>
+      <option value="festivals">Festivals &amp; Lifestyle</option>
+      <option value="sports">Sports &amp; Outdoors</option>
+      <option value="exhibitions">Exhibitions</option>
+      <option value="workshops">Workshops, Conferences &amp; Classes</option>
+      <option value="food">Food &amp; Drink</option>
+      <option value="rainy">Rainy Day</option>
+    </select>
+  </label>
+  <label class="event-filter-field filter-price">
+    <span>Price</span>
+    <select id="priceFilter">
+      <option value="3" selected>Any Price</option>
+      <option value="0">Free Only</option>
+      <option value="1">Under $30</option>
+      <option value="2">Under $80</option>
+    </select>
+  </label>
 </div>
 
 <dialog class="calendar-dialog" id="customDates" aria-labelledby="calendarTitle" aria-describedby="calendarInstructions">
@@ -267,44 +285,6 @@
     <button type="button" class="calendar-apply" id="applyCalendarDates">Apply dates</button>
   </div>
 </dialog>
-
-<!-- ── CATEGORY AND PRICE FILTERS ── -->
-<div class="event-filters">
-  <details class="category-filter" id="categoryFilter">
-    <summary class="category-filter-trigger">
-      <span class="category-filter-caption">
-        <span class="type-filter-label">Category</span>
-        <span class="category-filter-value" id="categoryFilterValue">All</span>
-      </span>
-    </summary>
-    <div class="type-filter" role="group" aria-label="Event categories">
-      <button class="type-filter-btn active" aria-pressed="true"  data-filter-category="all">All categories</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="music"><span aria-hidden="true">🎤</span> Concerts &amp; Gigs</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="festivals"><span aria-hidden="true">🎪</span> Festivals &amp; Lifestyle</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="sports"><span aria-hidden="true">🏃</span> Sports &amp; Outdoors</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="exhibitions"><span aria-hidden="true">🖼</span> Exhibitions</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="workshops"><span aria-hidden="true">✏️</span> Workshops, Conferences &amp; Classes</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="food"><span aria-hidden="true">☕</span> Food &amp; Drink</button>
-      <button class="type-filter-btn"        aria-pressed="false" data-filter-category="rainy"><span aria-hidden="true">🌧</span> Rainy Day</button>
-    </div>
-  </details>
-  <div class="price-filter">
-    <div class="price-filter-caption">
-      <label class="type-filter-label" for="priceFilter">Max price</label>
-      <span class="price-filter-value" id="priceFilterValue">Any price</span>
-    </div>
-    <div class="price-filter-slider">
-      <input id="priceFilter" type="range" min="0" max="3" step="1" value="3" list="priceFilterStops" aria-valuetext="Any price">
-      <datalist id="priceFilterStops">
-        <option value="0"></option>
-        <option value="1"></option>
-        <option value="2"></option>
-        <option value="3"></option>
-      </datalist>
-      <div class="price-filter-stops" aria-hidden="true"><span>Free</span><span>$</span><span>$$</span><span>$$$</span></div>
-    </div>
-  </div>
-</div>
 
 <div id="calendarResults"></div>
 </section>

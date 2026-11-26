@@ -189,20 +189,7 @@
     .highlight-card:hover .highlight-card-title { text-decoration: underline; }
   }
 
-  /* ── DATE FILTERS ── */
-  .tabs-bar { background: #0A4750; border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
-  .date-carousel { max-width: 1080px; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; }
-  .date-presets {
-    display: flex; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;
-    scroll-snap-type: x proximity; scroll-behavior: smooth;
-  }
-  .date-presets::-webkit-scrollbar { display: none; }
-  .date-carousel-arrow {
-    width: 32px; height: 40px; flex-shrink: 0; border: none; border-radius: 6px;
-    background: transparent; color: #fff; cursor: pointer; font: 600 24px/1 'DM Sans', sans-serif;
-  }
-  .date-carousel-arrow:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
-  .date-carousel-arrow:disabled { opacity: 0.35; cursor: default; }
+  /* ── ADMIN WEEK TABS ── */
   .tab-btn {
     background: none; border: none; border-bottom: 3px solid transparent;
     color: rgba(255,255,255,0.78); font-family: 'DM Sans', sans-serif;
@@ -212,6 +199,77 @@
   }
   .tab-btn:hover { color: #fff; }
   .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  /* ── UPCOMING EVENT FILTERS ── */
+  .event-filter-banner {
+    --filter-border: rgba(11,85,99,0.16);
+    --filter-active: #e6f2ee;
+    --filter-control-height: 44px;
+    display: grid; align-items: center; gap: 4px 6px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: 'dates dates' 'range location' 'category price';
+    margin-bottom: 8px; padding: 6px;
+    background: #fbfaf7; border: 1px solid var(--filter-border); border-radius: 12px;
+  }
+  .event-filter-banner:focus-visible, .event-filter-banner :is(button, select):focus-visible {
+    outline: 2px solid var(--teal); outline-offset: 2px;
+  }
+  .date-presets {
+    grid-area: dates; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.14fr);
+    background: #fff; border: 1px solid var(--filter-border); border-radius: 8px;
+  }
+  .date-preset {
+    min-height: var(--filter-control-height); padding: 4px;
+    background: transparent; border: 0; border-radius: 7px; color: #42595a;
+    font: 600 13px/1.2 'DM Sans', sans-serif; cursor: pointer;
+  }
+  .date-preset:hover, .date-preset[aria-pressed="true"] { background: var(--filter-active); color: var(--teal); }
+  .date-preset[aria-pressed="true"] { box-shadow: inset 0 0 0 1px rgba(11,85,99,0.2); }
+  .date-range-summary { grid-area: range; padding-inline: 4px; color: #526767; font-size: 12px; font-weight: 600; line-height: 1.35; }
+
+  .filter-location { grid-area: location; }
+  .filter-category { grid-area: category; }
+  .filter-price { grid-area: price; }
+  .event-filter-field { position: relative; min-width: 0; align-self: start; }
+  .event-filter-field > span {
+    position: absolute; top: 6px; inset-inline-start: 10px; pointer-events: none;
+    color: #526767; font: 700 10px/1.15 'DM Sans', sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .event-filter-field::after {
+    content: ''; width: 6px; height: 6px; position: absolute; top: calc(50% - 4px); inset-inline-end: 10px;
+    border: solid var(--teal); border-width: 0 2px 2px 0; transform: rotate(45deg); pointer-events: none;
+  }
+  .event-filter-field > select {
+    display: block; width: 100%; min-height: var(--filter-control-height); appearance: none;
+    padding: 17px 21px 5px 9px; color: #1a2a2a; background: #fff;
+    border: 1px solid var(--filter-border); border-radius: 8px;
+    font: 600 16px/1.2 'DM Sans', sans-serif; cursor: pointer; text-overflow: ellipsis;
+  }
+  .event-filter-field > select:hover { border-color: var(--teal); }
+  .event-filter-field > select.is-filtered {
+    color: var(--teal); background: var(--filter-active); border-color: rgba(11,85,99,0.38);
+  }
+  @media (max-width: 360px) {
+    .event-filter-field > select { padding-inline-end: 17px; }
+    .event-filter-field::after { inset-inline-end: 7px; }
+  }
+  @media (min-width: 420px) {
+    .event-filter-banner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 0.88fr);
+      grid-template-areas: 'dates dates range' 'location category price';
+    }
+  }
+  @media (min-width: 620px) {
+    .event-filter-banner {
+      padding: 10px; gap: 6px 8px;
+    }
+  }
+  @media (min-width: 860px) {
+    .event-filter-banner {
+      grid-template-columns: minmax(270px, 1.65fr) repeat(3, minmax(0, 1fr));
+      grid-template-areas: 'dates location category price' 'range location category price';
+    }
+  }
+
   .calendar-dialog {
     width: min(390px, calc(100% - 24px)); max-height: calc(100vh - 24px);
     max-height: calc(100dvh - 24px); margin: auto; padding: 16px;
@@ -268,84 +326,6 @@
   }
   .calendar-apply:hover { background: var(--teal2); }
   .calendar-dialog button:focus-visible { outline: 2px solid var(--teal2); outline-offset: 2px; }
-  .date-range-summary {
-    max-width: 1080px; margin: 0 auto; padding: 4px 28px 7px;
-    color: rgba(255,255,255,0.86); font-size: 12px; font-weight: 600;
-  }
-  @media (max-width: 700px) {
-    .date-carousel { padding: 0 8px; }
-    .date-presets .tab-btn { padding: 11px 10px; letter-spacing: 0.02em; }
-    .date-range-summary { padding-left: 16px; padding-right: 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .date-presets { scroll-behavior: auto; }
-  }
-
-  /* ── REGION FILTERS ── */
-  .filter-bar { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.07); }
-  .filter-inner { max-width: 1080px; margin: 0 auto; padding: 9px 28px; display: flex; gap: 8px; align-items: center; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
-  .filter-inner::-webkit-scrollbar { display: none; }
-  .filter-label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #8a9a9a; margin-right: 4px; flex-shrink: 0; }
-  .filter-btn {
-    background: none; border: 1.5px solid rgba(11,85,99,0.2); color: var(--teal);
-    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-    padding: 8px 14px; border-radius: 20px; cursor: pointer; white-space: nowrap;
-    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-  }
-  .filter-btn:hover { border-color: var(--teal); background: rgba(11,85,99,0.05); }
-  .filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
-  .filter-btn .region-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
-  /* ── CATEGORY AND PRICE FILTERS ── */
-  .event-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 14px; }
-  .category-filter { position: relative; width: min(100%, 160px); }
-  .category-filter-trigger {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    min-height: 48px; padding: 6px 12px; list-style: none; cursor: pointer;
-    color: var(--teal); border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
-  }
-  .category-filter-trigger::-webkit-details-marker { display: none; }
-  .category-filter-trigger::after {
-    content: ''; width: 7px; height: 7px; flex: none; margin-right: 2px;
-    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg);
-  }
-  .category-filter[open] .category-filter-trigger::after { transform: translateY(2px) rotate(-135deg); }
-  .category-filter-trigger:hover, .category-filter[open] .category-filter-trigger { border-color: var(--teal); }
-  .category-filter-trigger:focus-visible, .type-filter-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-  .category-filter-caption, .price-filter-caption { display: grid; gap: 2px; }
-  .category-filter-caption { min-width: 0; }
-  .category-filter-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .type-filter-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #526767; }
-  .type-filter {
-    position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
-    width: min(270px, calc(100vw - 32px)); max-height: min(370px, 55dvh); overflow-y: auto; overscroll-behavior: contain;
-    padding: 6px; background: #fff; border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.14);
-  }
-  .category-filter:not([open]) .type-filter { display: none; }
-  .type-filter-btn {
-    display: block; width: 100%; min-height: 44px; padding: 8px 10px; border: none; border-radius: 8px;
-    background: none; color: var(--teal); text-align: left; font: 600 13px 'DM Sans', sans-serif; cursor: pointer;
-  }
-  .type-filter-btn:hover { background: #eef5f4; }
-  .type-filter-btn.active { background: var(--teal); color: #fff; }
-  .type-filter-btn:focus-visible { outline-offset: -2px; }
-  .type-filter-btn.active:focus-visible { outline-color: #fff; }
-
-  .price-filter {
-    display: flex; align-items: center; gap: 12px; width: min(100%, 246px);
-    padding: 0 12px 4px; border: 1px solid rgba(11,85,99,0.18); border-radius: 12px;
-  }
-  .price-filter-caption { min-width: 72px; }
-  .price-filter-value, .category-filter-value { color: var(--teal); font-size: 12px; font-weight: 700; }
-  .price-filter-slider { flex: 1; min-width: 0; }
-  .price-filter-slider input { display: block; width: 100%; height: 44px; margin: 0; accent-color: var(--teal); cursor: pointer; }
-  .price-filter-slider input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-  .price-filter-stops {
-    display: flex; justify-content: space-between; margin-top: -8px; padding: 0 2px;
-    color: var(--muted); font-size: 10px; font-weight: 700; pointer-events: none;
-  }
-
   .no-results { text-align: center; padding: 48px 16px; color: var(--muted); }
   .no-results p { font-size: 15px; margin-bottom: 14px; }
   .no-results-reset {
@@ -552,15 +532,6 @@
     margin-bottom: 8px; color: var(--teal);
     font: 700 clamp(20px, 3vw, 24px)/1.2 'Fraunces', serif;
   }
-  .event-home .tabs-bar { border-radius: 8px 8px 0 0; }
-  .event-home .date-carousel { padding-inline: 6px; }
-  .event-home .date-presets .tab-btn { min-height: 40px; padding-block: 8px; }
-  .event-home .date-range-summary { padding: 2px 14px 6px; }
-  .event-home .filter-bar { border-radius: 0 0 8px 8px; }
-  .event-home .filter-inner { padding: 5px 10px; }
-  .event-home .filter-btn { min-height: 34px; padding: 5px 11px; }
-  .event-home .event-filters { margin: 8px 0 12px; }
-  .event-home .category-filter-trigger, .event-home .price-filter { min-height: 48px; }
   .event-home .day-label { margin-bottom: 8px; letter-spacing: 0.16em; }
   .event-home .no-results { text-align: left; padding: 12px 0 0; }
   .event-home .no-results p { margin-bottom: 0; }
@@ -629,13 +600,6 @@
 
   @media (max-width: 600px) {
     .card-listing.card-poster .card-img { object-fit: cover; }
-    .event-home .event-filters { display: grid; grid-template-columns: minmax(0, 118px) minmax(0, 212px); gap: 8px; }
-    .event-home .category-filter, .event-home .price-filter { width: 100%; }
-    .event-home .price-filter { gap: 6px; padding-inline: 8px; }
-    .event-home .price-filter-caption { min-width: 0; }
-  }
-  @media (max-width: 360px) {
-    .event-home .date-presets .tab-btn { padding-inline: 6px; }
   }
   @media (min-width: 601px) {
     .event-home .events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -691,10 +655,7 @@
     .header-connect .social-icon-link svg { width: 20px; height: 20px; padding: 1px; border-radius: 5px; }
   }
   @media (max-width: 600px) {
-    .category-filter { width: min(100%, 118px); }
-    .price-filter { width: min(100%, 212px); }
     main { padding: 16px 16px 64px; }
-    .filter-inner { padding-left: 16px; padding-right: 16px; }
     .events-grid { margin-bottom: 20px; }
     .day-label { margin-bottom: 12px; }
   }
@@ -839,10 +800,8 @@
 :focus-visible { outline: 3px solid #4fc58f; outline-offset: 2px; border-radius: 3px; }
 
 /* Tabs bar buttons get a white ring against the dark background */
-.tab-btn:focus-visible, .date-carousel-arrow:focus-visible { outline-color: #fff; outline-offset: -3px; }
+.tab-btn:focus-visible { outline-color: #fff; outline-offset: -3px; }
 
-/* Filter and action buttons */
-.filter-btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
 
 /* ══ RESPONSIVE ══ */
 @media (max-width: 767px) {

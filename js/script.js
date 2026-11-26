@@ -95,7 +95,6 @@ const SECTION_TITLES = {
   const CATEGORIES = ['all', ...Object.keys(EVENT_CATEGORIES), 'rainy'];
   const PRICE_TIERS = Object.keys(PRICE_LABELS);
   const MAX_PRICE_LEVEL = PRICE_TIERS.length - 1;
-  const PRICE_FILTER_LABELS = ['Free only', 'Under $30', 'Under $80', 'Any price'];
   const staticEvents = (typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
     .map((ev, i) => ({ ...ev, _static: true, _staticId: `s${i}` }));
   const curatedEvents = new Map(staticEvents.map(ev => [eventListingKey(ev), ev]));
@@ -325,7 +324,7 @@ const SECTION_TITLES = {
     const params = new URLSearchParams(location.search);
     const section = params.get('s') === 'about' ? 'about' : 'events';
     const region = params.get('r');
-    if ([...document.querySelectorAll('[data-filter-region]')].some(b => b.dataset.filterRegion === region)) {
+    if ([...document.getElementById('regionFilter').options].some(option => option.value === region)) {
       currentRegion = region;
     }
     if (CATEGORIES.includes(params.get('c'))) currentCategory = params.get('c');
@@ -369,60 +368,22 @@ const SECTION_TITLES = {
     renderEventView();
   }
 
-  function setPressed(selector, isActive) {
-    document.querySelectorAll(selector).forEach(b => {
-      const active = isActive(b);
-      b.classList.toggle('active', active);
-      b.setAttribute('aria-pressed', String(active));
-    });
-  }
-
   function syncFilterControls() {
-    setPressed('[data-filter-region]', b => b.dataset.filterRegion === currentRegion);
-    setPressed('[data-filter-category]', b => b.dataset.filterCategory === currentCategory);
-    document.getElementById('categoryFilterValue').textContent =
-      EVENT_CATEGORIES[currentCategory] || (currentCategory === 'rainy' ? 'Rainy Day' : 'All');
-    const slider = document.getElementById('priceFilter');
-    const priceLabel = PRICE_FILTER_LABELS[maxPriceLevel];
-    slider.value = maxPriceLevel;
-    slider.setAttribute('aria-valuetext', priceLabel);
-    document.getElementById('priceFilterValue').textContent = priceLabel;
-    const previous = document.querySelector('[data-date-filter].active');
-    setPressed('[data-date-filter]', b => b.dataset.dateFilter === datePreset);
-    if (previous?.dataset.dateFilter !== datePreset) revealDatePreset();
-  }
+    for (const [id, value] of [
+      ['regionFilter', currentRegion], ['categoryFilter', currentCategory], ['priceFilter', maxPriceLevel],
+    ]) {
+      const select = document.getElementById(id);
+      select.value = String(value);
+      select.classList.toggle('is-filtered', select.selectedOptions[0]?.defaultSelected === false);
+    }
+    document.querySelectorAll('[data-date-filter]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.dateFilter === datePreset));
+    });
 
-  function revealDatePreset() {
-    const track = document.getElementById('datePresets');
-    const active = track.querySelector('.tab-btn.active');
-    if (!active) return;
-    const viewport = track.getBoundingClientRect();
-    const button = active.getBoundingClientRect();
-    const offset = Math.min(0, button.left - viewport.left) || Math.max(0, button.right - viewport.right);
-    if (offset) track.scrollBy({ left: offset, behavior: 'instant' });
-  }
-
-  function setupDateCarousel() {
-    const track = document.getElementById('datePresets');
-    const back = document.getElementById('datePresetsBack');
-    const forward = document.getElementById('datePresetsForward');
-    const updateArrows = () => {
-      const fullWidth = track.clientWidth + back.offsetWidth + forward.offsetWidth;
-      const overflow = track.scrollWidth > fullWidth + 1;
-      back.hidden = forward.hidden = !overflow;
-      back.disabled = track.scrollLeft < 1;
-      forward.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
-    };
-    const resize = () => {
-      updateArrows();
-      revealDatePreset();
-    };
-    back.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.8 }));
-    forward.addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.8 }));
-    track.addEventListener('scroll', updateArrows, { passive: true });
-    window.addEventListener('resize', resize);
-    document.fonts?.ready.then(resize);
-    updateArrows();
+    const range = selectedRange();
+    const summary = document.getElementById('dateRangeSummary');
+    const label = CALENDAR_DATE_LABEL.formatRange?.(calendarDay(range.start), calendarDay(range.end)) ?? rangeLabel(range);
+    if (summary.textContent !== label) summary.textContent = label;
   }
 
   function filterEvents() {
@@ -1064,7 +1025,6 @@ const SECTION_TITLES = {
       .map(({ ev, day }) => buildEventCardHTML(ev, { listingDate: day })).join('');
     document.getElementById('onNowResults').innerHTML = ongoingCards;
     document.getElementById('onNowEvents').hidden = !ongoingCards;
-    document.getElementById('dateRangeSummary').textContent = rangeLabel({ start, end });
 
     if (dates.length) {
       results.innerHTML = dates.map(iso => {
@@ -1224,39 +1184,12 @@ const SECTION_TITLES = {
     on('infoInstallBtn', 'click', () => { handleInstallClick(); closeInfoPopover(); });
 
     // Calendar filters share the same date range and results.
-    document.querySelectorAll('[data-filter-region]').forEach(btn =>
-      btn.addEventListener('click', () => { currentRegion = btn.dataset.filterRegion; filterEvents(); })
-    );
-    const categoryMenu = document.getElementById('categoryFilter');
-    const categoryTrigger = categoryMenu.querySelector('summary');
-    const closeCategoryMenu = () => {
-      categoryMenu.open = false;
-      categoryTrigger.focus({ preventScroll: true });
-    };
-    categoryMenu.querySelectorAll('[data-filter-category]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentCategory = btn.dataset.filterCategory;
-        filterEvents();
-        closeCategoryMenu();
-      });
-    });
-    categoryMenu.addEventListener('keydown', e => {
-      if (e.key !== 'Escape' || !categoryMenu.open) return;
-      e.preventDefault();
-      e.stopPropagation();
-      closeCategoryMenu();
-    });
-    categoryMenu.addEventListener('focusout', e => {
-      if (e.relatedTarget && !categoryMenu.contains(e.relatedTarget)) categoryMenu.open = false;
-    });
-    document.addEventListener('click', e => {
-      if (categoryMenu.open && !categoryMenu.contains(e.target)) categoryMenu.open = false;
-    });
-    on('priceFilter', 'input', e => { maxPriceLevel = e.target.valueAsNumber; filterEvents(); });
+    on('regionFilter', 'change', e => { currentRegion = e.target.value; filterEvents(); });
+    on('categoryFilter', 'change', e => { currentCategory = e.target.value; filterEvents(); });
+    on('priceFilter', 'change', e => { maxPriceLevel = Number(e.target.value); filterEvents(); });
     document.querySelectorAll('[data-date-filter]').forEach(btn =>
       btn.addEventListener('click', () => changeDatePreset(btn.dataset.dateFilter))
     );
-    setupDateCarousel();
     const dialog = document.getElementById('customDates');
     on('closeCalendar', 'click', () => dialog.close());
     on('customDates', 'close', () => {
@@ -1285,7 +1218,7 @@ const SECTION_TITLES = {
       if (e.target.closest('.no-results-reset')) {
         resetEventFilters();
         filterEvents();
-        categoryTrigger.focus();
+        document.getElementById('categoryFilter').focus();
         return;
       }
       const pill = e.target.closest('.day-pill');
@@ -1293,8 +1226,7 @@ const SECTION_TITLES = {
       pill.closest('.day-selector').querySelector('.day-pill.active')?.classList.remove('active');
       pill.classList.add('active');
       const label = document.getElementById('day-' + pill.dataset.date);
-      const offset = document.querySelector('.tabs-bar').offsetHeight + 12;
-      window.scrollTo({ top: window.scrollY + label.getBoundingClientRect().top - offset, behavior: 'smooth' });
+      window.scrollTo({ top: window.scrollY + label.getBoundingClientRect().top - 12, behavior: 'smooth' });
     });
 
     const holidayLink = document.getElementById('holidayCta');
