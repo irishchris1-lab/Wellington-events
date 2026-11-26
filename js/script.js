@@ -118,6 +118,9 @@ const SECTION_TITLES = {
     '$$': 'NZ$30 to under NZ$80',
     '$$$': 'NZ$80 or more',
   };
+  const PRICE_TIERS = Object.keys(PRICE_LABELS);
+  const MAX_PRICE_LEVEL = PRICE_TIERS.length - 1;
+  const PRICE_FILTER_LABELS = ['Free only', 'Under $30', 'Under $80', 'Any price'];
   const staticEvents = (typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
     .map((ev, i) => ({ ...ev, _static: true, _staticId: `s${i}` }));
   const curatedEvents = new Map(staticEvents.map(ev => [eventListingKey(ev), ev]));
@@ -130,7 +133,7 @@ const SECTION_TITLES = {
 
   let currentRegion = 'all';
   let currentCategory = 'all';
-  let freeOnly = false;
+  let maxPriceLevel = MAX_PRICE_LEVEL;
 
   function eventListingKey(ev) {
     return `${(ev.title || '').trim()}|${eventDate(ev)}`;
@@ -145,6 +148,8 @@ const SECTION_TITLES = {
   // Keys are Wellington Mondays; values are event slugs in editorial order.
   // An explicit week replaces legacy pick flags for that week, without filling empty slots.
   const EDITORIAL_PICKS_BY_WEEK = Object.freeze({
+    '2026-11-23': ['johnsonville-rotary-christmas-market-2026-11-28'],
+    '2026-11-30': ['upper-hutt-santa-parade-2026-12-06'],
   });
 
   function pickWeekStart(date) {
@@ -412,7 +417,8 @@ const SECTION_TITLES = {
     if (section !== 'events') params.set('s', section);
     if (currentRegion !== 'all') params.set('r', currentRegion);
     if (currentCategory !== 'all') params.set('c', currentCategory);
-    if (freeOnly) params.set('free', '1');
+    if (maxPriceLevel === 0) params.set('free', '1');
+    else if (maxPriceLevel < MAX_PRICE_LEVEL) params.set('price', PRICE_TIERS[maxPriceLevel]);
     if (datePreset !== 'this-week') params.set('dates', datePreset);
     if (datePreset === 'custom') {
       params.set('from', customRange.start);
@@ -433,7 +439,9 @@ const SECTION_TITLES = {
       currentRegion = region;
     }
     if (CATEGORIES.includes(params.get('c'))) currentCategory = params.get('c');
-    freeOnly = params.get('free') === '1';
+    const priceLevel = PRICE_TIERS.indexOf(params.get('price'));
+    if (priceLevel >= 0) maxPriceLevel = priceLevel;
+    else if (params.get('free') === '1') maxPriceLevel = 0;
     const preset = params.get('dates');
     const from = params.get('from'), to = params.get('to');
     if (preset === 'next-week') {
@@ -486,7 +494,11 @@ const SECTION_TITLES = {
   function syncFilterControls() {
     setPressed('[data-filter-region]', b => b.dataset.filterRegion === currentRegion);
     setPressed('[data-filter-category]', b => b.dataset.filterCategory === currentCategory);
-    setPressed('[data-filter-free]', () => freeOnly);
+    const slider = document.getElementById('priceFilter');
+    const priceLabel = PRICE_FILTER_LABELS[maxPriceLevel];
+    slider.value = maxPriceLevel;
+    slider.setAttribute('aria-valuetext', priceLabel);
+    document.getElementById('priceFilterValue').textContent = priceLabel;
     const previous = document.querySelector('[data-date-filter].active');
     setPressed('[data-date-filter]', b => b.dataset.dateFilter === datePreset);
     if (previous?.dataset.dateFilter !== datePreset) revealDatePreset();
@@ -576,7 +588,7 @@ const SECTION_TITLES = {
 
   function resetEventFilters() {
     currentRegion = currentCategory = 'all';
-    freeOnly = false;
+    maxPriceLevel = MAX_PRICE_LEVEL;
   }
 
   let pickedRange, pickerFocus, pickingEnd;
@@ -696,7 +708,7 @@ const SECTION_TITLES = {
 
   function eventMatchesFilters(ev) {
     if (currentRegion !== 'all' && ev.region !== currentRegion) return false;
-    if (freeOnly && eventPrice(ev).tier !== 'Free') return false;
+    if (maxPriceLevel < MAX_PRICE_LEVEL && PRICE_TIERS.indexOf(eventPrice(ev).tier) > maxPriceLevel) return false;
     if (currentCategory === 'rainy') return ev.indoor === true;
     return currentCategory === 'all' || eventCategory(ev) === currentCategory;
   }
@@ -1022,7 +1034,7 @@ const SECTION_TITLES = {
 
     if (!dates.length) {
       const message = datesHaveEvents
-        ? (freeOnly ? 'No free events match these filters.' : 'No events match these filters.')
+        ? (maxPriceLevel === 0 ? 'No free events match these filters.' : 'No events match these filters.')
         : 'No events are listed for these dates.';
       results.innerHTML = `<div class="no-results" role="status"><p>${message}</p>
         ${datesHaveEvents ? '<button type="button" class="no-results-reset">Clear event filters</button>' : ''}
@@ -1181,7 +1193,7 @@ const SECTION_TITLES = {
     document.querySelectorAll('[data-filter-category]').forEach(btn =>
       btn.addEventListener('click', () => { currentCategory = btn.dataset.filterCategory; filterEvents(); })
     );
-    on('freeFilterBtn', 'click', () => { freeOnly = !freeOnly; filterEvents(); });
+    on('priceFilter', 'input', e => { maxPriceLevel = e.target.valueAsNumber; filterEvents(); });
     document.querySelectorAll('[data-date-filter]').forEach(btn =>
       btn.addEventListener('click', () => changeDatePreset(btn.dataset.dateFilter))
     );

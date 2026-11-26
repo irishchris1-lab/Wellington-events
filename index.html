@@ -269,18 +269,35 @@
 
 <main id="main-content" tabindex="-1">
 
-<!-- ── EVENT TYPE FILTER ── -->
-<div class="type-filter" role="group" aria-label="Filter events">
-  <span class="type-filter-label">Show</span>
-  <button class="type-filter-btn active" aria-pressed="true"  data-filter-category="all">All</button>
-  <button type="button" class="type-filter-btn" id="freeFilterBtn" aria-pressed="false" data-filter-free>Free</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="music"><span aria-hidden="true">🎤</span> Concerts &amp; Gigs</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="festivals"><span aria-hidden="true">🎪</span> Festivals &amp; Lifestyle</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="sports"><span aria-hidden="true">🏃</span> Sports &amp; Outdoors</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="exhibitions"><span aria-hidden="true">🖼</span> Exhibitions</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="workshops"><span aria-hidden="true">✏️</span> Workshops, Conferences &amp; Classes</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="food"><span aria-hidden="true">☕</span> Food &amp; Drink</button>
-  <button class="type-filter-btn"        aria-pressed="false" data-filter-category="rainy"><span aria-hidden="true">🌧</span> Rainy Day</button>
+<!-- ── CATEGORY AND PRICE FILTERS ── -->
+<div class="event-filters">
+  <div class="type-filter" role="group" aria-label="Event categories">
+    <span class="type-filter-label">Show</span>
+    <button class="type-filter-btn active" aria-pressed="true"  data-filter-category="all">All</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="music"><span aria-hidden="true">🎤</span> Concerts &amp; Gigs</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="festivals"><span aria-hidden="true">🎪</span> Festivals &amp; Lifestyle</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="sports"><span aria-hidden="true">🏃</span> Sports &amp; Outdoors</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="exhibitions"><span aria-hidden="true">🖼</span> Exhibitions</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="workshops"><span aria-hidden="true">✏️</span> Workshops, Conferences &amp; Classes</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="food"><span aria-hidden="true">☕</span> Food &amp; Drink</button>
+    <button class="type-filter-btn"        aria-pressed="false" data-filter-category="rainy"><span aria-hidden="true">🌧</span> Rainy Day</button>
+  </div>
+  <div class="price-filter">
+    <div class="price-filter-caption">
+      <label class="type-filter-label" for="priceFilter">Max price</label>
+      <span class="price-filter-value" id="priceFilterValue">Any price</span>
+    </div>
+    <div class="price-filter-slider">
+      <input id="priceFilter" type="range" min="0" max="3" step="1" value="3" list="priceFilterStops" aria-valuetext="Any price">
+      <datalist id="priceFilterStops">
+        <option value="0"></option>
+        <option value="1"></option>
+        <option value="2"></option>
+        <option value="3"></option>
+      </datalist>
+      <div class="price-filter-stops" aria-hidden="true"><span>Free</span><span>$</span><span>$$</span><span>$$$</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- ── EVENT PICKS — compact editorial rail, sits in the results area ── -->
