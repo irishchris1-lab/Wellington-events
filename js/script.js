@@ -129,16 +129,13 @@ const SECTION_TITLES = {
     return `${base}480px-${name} 480w, ${url} 960w`;
   }
 
-  // Shared onerror: hides broken img and marks the wrap so CSS can show a fallback state.
+  // Keep the image frame when a picture is unavailable.
   function onImgError(img) {
-    img.onerror = null;
-    img.parentElement.classList.add('img-failed');
-    img.remove();
+    const frame = img.closest('.card-img-wrap');
+    frame.classList.add('img-failed');
+    frame.replaceChildren();
   }
 
-  // Walk all img.card-img in `container` (or entire document) and:
-  //   • add width/height if missing  • add Wikimedia srcset if not already set
-  //   • set onerror/onload  • add .loaded immediately for already-cached images
   function safeUrl(url) {
     if (!url) return '';
     try {
@@ -152,7 +149,7 @@ const SECTION_TITLES = {
   }
 
   function setEagerImages() {
-    document.querySelectorAll('#calendarResults img.card-img').forEach((img, i) => {
+    document.querySelectorAll('.event-home .card-listing img.card-img').forEach((img, i) => {
       img.loading = i < 2 ? 'eager' : 'lazy';
       if (i === 0) img.setAttribute('fetchpriority', 'high');
     });
@@ -162,7 +159,7 @@ const SECTION_TITLES = {
 
   // For locally-hosted images (path starts with "images/"), emit a <picture>
   // element with WebP source + JPEG fallback.  Pass useThumb=true to use the
-  // 400 px thumbnail variant (highlights carousel).
+  // 400 px thumbnail variant for listing cards and Picks.
   function localImgHTML(base, altEsc, useThumb, generated) {
     const src = useThumb ? `${base}-thumb` : base;
     return `<div class="card-img-wrap"><picture><source srcset="${src}.webp" type="image/webp"><img class="card-img" src="${src}.jpg" width="960" height="540" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="onImgError(this)" alt="${altEsc}"></picture>${generated ? generatedImageCredit : ''}</div>`;
@@ -233,29 +230,6 @@ const SECTION_TITLES = {
     btn.focus();
     panel.inert = true;
     panel.setAttribute('aria-hidden', 'true');
-  }
-
-  let cardObserver;
-
-  function observeCards(container) {
-    cardObserver?.disconnect();
-    if (!window.IntersectionObserver) {
-      container.querySelectorAll('.card').forEach(c => c.classList.add('revealed'));
-      return;
-    }
-    const cards = [...container.querySelectorAll('.card:not(.revealed)')];
-    if (!cards.length) return;
-    let revealCount = 0;
-    const obs = cardObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        obs.unobserve(entry.target);
-        entry.target.style.transitionDelay = Math.min(revealCount, 6) * 50 + 'ms';
-        entry.target.classList.add('revealed');
-        revealCount++;
-      });
-    }, { threshold: 0.05 });
-    cards.forEach(card => obs.observe(card));
   }
 
   function toggleInfoPopover() {
@@ -383,7 +357,6 @@ const SECTION_TITLES = {
     currentSection = section;
     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
     document.getElementById('section-' + section).classList.add('active');
-    document.querySelectorAll('.filter-bar').forEach(bar => bar.hidden = section !== 'events');
     document.title = SECTION_TITLES[section];
     const eventRobots = document.getElementById('eventRobots');
     if (section !== 'event' && eventRobots) {
@@ -481,11 +454,12 @@ const SECTION_TITLES = {
       pickerFocus = laterDate(pickerFocus);
       renderDatePicker(Boolean(document.activeElement.dataset.pickerDate));
     }
-    document.getElementById('holidayCta').hidden = currentToday > SCHOOL_HOLIDAYS.end;
+    document.getElementById('seasonalGuides').hidden = currentToday > SCHOOL_HOLIDAYS.end;
 
     if (currentSection === 'event') renderLinkedEvent(now);
     if (currentSection === 'events') {
       syncFilterControls();
+      renderWeekendPicks(now);
       renderCalendar(now);
     }
 
@@ -712,9 +686,10 @@ const SECTION_TITLES = {
   async function shareEvent(card) {
     const url = eventLink(card);
     const title = card.querySelector('.card-title')?.textContent.trim() || "What's On Wellington";
-    let when = card.querySelector('.meta-row')?.textContent.replace('🕐', '').trim() || '';
+    const firstMeta = card.querySelector('.meta-row');
+    let when = (firstMeta?.querySelector('.meta-text') || firstMeta)?.textContent.replace(/^[🕐📅]/u, '').trim() || '';
     // Times like "5:00 pm" need the date in front to make sense in a message
-    if (!MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.date) {
+    if (!card.classList.contains('card-listing') && !MONTHS_FULL.some(mo => when.includes(mo)) && card.dataset.date) {
       const day = CALENDAR_DAY_LABEL.format(calendarDay(card.dataset.date));
       when = when ? `${day} · ${when}` : day;
     }
@@ -766,13 +741,16 @@ const SECTION_TITLES = {
   }
 
   const EVENT_END_LABEL = new Intl.DateTimeFormat('en-NZ', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+  const EVENT_LISTING_DAY = new Intl.DateTimeFormat('en-NZ', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
   const EVENT_CLOCK_LABEL = new Intl.DateTimeFormat('en-NZ', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
   const SCHEMA_WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  function ongoingEndHTML(schedule) {
-    const end = eventScheduleRange(schedule)?.end;
-    return end ? `<div class="meta-row event-until">On until <time datetime="${end}">${EVENT_END_LABEL.format(calendarDay(end))}</time></div>`
-      : '<div class="meta-row event-until">Ongoing</div>';
+  function listingDateHTML(ev, date) {
+    if (eventScheduleType(ev) === 'ongoing') {
+      const end = eventScheduleRange(scheduleFor(ev))?.end;
+      return end ? `On until <time datetime="${end}">${EVENT_END_LABEL.format(calendarDay(end))}</time>` : 'Ongoing';
+    }
+    return `<time datetime="${date}">${EVENT_LISTING_DAY.format(calendarDay(date))}</time>`;
   }
 
   function scheduleHoursLabel(schedule) {
@@ -785,11 +763,14 @@ const SECTION_TITLES = {
     return unique.length > 1 && schedule.every(period => !period.days) ? '' : unique.join(' / ');
   }
 
+  function formatEventClock(time) {
+    return time === '24:00:00' ? 'midnight' : EVENT_CLOCK_LABEL.format(new Date(`2000-01-01T${time}Z`));
+  }
+
   function scheduleHours(period) {
-    const clock = time => time === '24:00:00' ? 'midnight' : EVENT_CLOCK_LABEL.format(new Date(`2000-01-01T${time}Z`));
-    if (period.opening && period.closing) return `${clock(period.opening)} – ${clock(period.closing)}`;
-    if (period.opening) return `From ${clock(period.opening)}`;
-    return period.closing ? `Until ${clock(period.closing)}` : '';
+    if (period.opening && period.closing) return `${formatEventClock(period.opening)} – ${formatEventClock(period.closing)}`;
+    if (period.opening) return `From ${formatEventClock(period.opening)}`;
+    return period.closing ? `Until ${formatEventClock(period.closing)}` : '';
   }
 
   function sessionDatesHTML(schedule) {
@@ -880,7 +861,7 @@ const SECTION_TITLES = {
     </section>` : '';
   }
 
-  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev), picked = false, compact = false } = {}) {
+  function buildEventCardHTML(ev, { detail = false, past = false, dateLabel = '', listingDate = eventDate(ev), picked = false } = {}) {
     const tm = EVENT_TYPE_MAP[ev.type] || { strip: 'strip-other', label: '<span aria-hidden="true">📅</span> Event' };
     const region  = ev.region || 'all';
     const idSuffix = ev._static ? escHtml(ev._staticId || 'sx') : escHtml(ev.id || 'fx');
@@ -901,30 +882,35 @@ const SECTION_TITLES = {
     const catStyle = ev.labelStyle ? ` style="${escHtml(ev.labelStyle)}"` : '';
 
     const price = eventPrice(ev, curatedEvents);
-    // Price is also shown on collapsed mobile cards.
     const badgeParts = [priceBadge(price.tier, price.estimated)];
-    if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
-    if (ev.ticketed && !past) badgeParts.push(`<span class="badge badge-ticketed">Ticketed</span>`);
-    if (ev.family)   badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
-    if (picked && !past) badgeParts.push(`<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor's pick</span></span>`);
-    const badgesHtml = badgeParts.length ? `<div class="card-badges">${badgeParts.join('')}</div>` : '';
+    if (detail) {
+      if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
+      if (ev.ticketed && !past) badgeParts.push('<span class="badge badge-ticketed">Ticketed</span>');
+      if (ev.family) badgeParts.push(`<span class="badge badge-family">${escHtml(ev.family)}</span>`);
+      if (picked && !past) badgeParts.push('<span class="badge badge-hot"><span aria-hidden="true">🔥</span><span class="sr-only">Editor’s pick</span></span>');
+    }
+    const badgesHtml = `<div class="card-badges">${badgeParts.join('')}</div>`;
 
     const mapUrl = safeUrl(ev.mapUrl);
     const venue = escHtml(ev.venue || '');
     const venueHtml = mapUrl ? `<a href="${escHtml(mapUrl)}" target="_blank" rel="noopener noreferrer">${venue}</a>` : venue;
     const ongoing = eventScheduleType(ev) === 'ongoing';
     const schedule = scheduleFor(ev);
-    const structuredHours = scheduleHoursLabel(schedule);
+    const structuredHours = detail ? scheduleHoursLabel(schedule) : '';
     const timeLabel = (ev.scheduleType && (ev.startTime || ev.endTime || ev.daysOfOperation?.length || ev.openingHours)
       ? structuredHours : '') || ev.time || structuredHours;
-    const endLabel = ongoing && !past ? ongoingEndHTML(schedule) : '';
-    const meta = [
-      endLabel,
+    const weekday = !detail && !ongoing ? EVENT_WEEKDAYS[calendarDay(listingDate).getUTCDay()] : '';
+    const period = weekday && schedule.find(slot => slot.start <= listingDate &&
+      (!slot.end || listingDate <= slot.end) && (!slot.days || slot.days.includes(weekday)));
+    const hours = period?.opening && formatEventClock(period.opening);
+    const meta = detail ? [
+      ongoing && !past ? `<div class="meta-row event-until">${listingDateHTML(ev, listingDate)}</div>` : '',
       dateLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📅</span>${escHtml(dateLabel)}</div>` : '',
-      !compact && timeLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(timeLabel)}</div>` : '',
+      timeLabel ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">🕐</span>${escHtml(timeLabel)}</div>` : '',
       ev.venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span>${venueHtml}</div>` : '',
-      !compact && ev.cost ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>` : '',
-    ].join('');
+      ev.cost ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">💰</span>${escHtml(ev.cost)}</div>` : '',
+    ].join('') : `<div class="meta-row${ongoing ? ' event-until' : ''}"><span class="meta-icon" aria-hidden="true">📅</span><span class="meta-text">${listingDateHTML(ev, listingDate)}${hours ? ` · ${escHtml(hours)}` : ''}</span></div>
+      ${venue ? `<div class="meta-row"><span class="meta-icon" aria-hidden="true">📍</span><span class="meta-text" title="${venue}">${venueHtml}</span></div>` : ''}`;
     const detailsUrl = safeUrl(ev.url);
     const detailsLabel = past ? 'Original event details' :
       detailsUrl.startsWith('https://www.google.com/search?') ? 'Search for details' : 'View event';
@@ -933,91 +919,54 @@ const SECTION_TITLES = {
       ? `<a class="event-btn" href="${escHtml(detailsUrl)}" target="_blank" rel="noopener noreferrer">${detailsLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens ${escHtml(extractDomain(detailsUrl))} in a new tab)</span></a>`
       : detail ? '' : `<a class="event-btn" href="${eventHref(eventId)}">Event details <span aria-hidden="true">→</span></a>`) +
       `<button type="button" class="share-btn" aria-label="Share ${escHtml(ev.title)}">${SHARE_ICON}<span class="share-btn-label">Share</span></button>`;
-    const tierAttr = picked && !past ? 'featured' : 'standard';
-    const titleTag = detail ? 'h2' : 'div';
+    const tierAttr = detail && picked && !past ? 'featured' : 'standard';
     const title = escHtml(ev.title);
-    const titleHTML = ongoing && !detail ? `<a href="${eventHref(eventId)}">${title}</a>` : title;
+    const titleHTML = detail ? title : `<a href="${eventHref(eventId)}" title="${title}">${title}</a>`;
+    const image = ev.img ? cardImgHTML(ev.img, detail ? ev.title : '', !detail && !ev.imgPoster, ev.imgGenerated)
+      : detail ? '' : '<div class="card-img-wrap img-failed" aria-hidden="true"></div>';
     return `
-      <article class="card card-${tierAttr}${ev.imgPoster ? ' card-poster' : ''}${detail ? ' open revealed' : ''}${compact ? ' on-now-card open' : ''}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${listingDate}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${picked && !past ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
-        ${compact ? '' : stripHtml}
-        ${ev.img ? cardImgHTML(ev.img, ev.title, compact, ev.imgGenerated) : ''}
+      <article class="card card-${tierAttr} revealed${ev.imgPoster ? ' card-poster' : ''}${detail ? ' open' : ' card-listing'}" aria-labelledby="${titleId}" data-tier="${tierAttr}" data-region="${escHtml(region)}" data-event-id="${escHtml(eventId)}" ${idAttr} data-weekend="${escHtml(ev.weekend || '')}" data-day="${escHtml(ev.day || 'sat')}" data-date="${listingDate}" data-category="${eventCategory(ev)}" data-price-tier="${price.tier}"${ev.img ? ` data-img="${escHtml(ev.img)}"` : ''}${ev.imgGenerated ? ' data-img-generated="1"' : ''}${picked && !past ? ' data-pick="1"' : ''}${ev.indoor ? ' data-indoor="1"' : ''}>
+        ${detail ? stripHtml : ''}
+        ${image}
         <div class="card-body">
           <div class="card-top">
-            <div>
-              <div class="card-cat"${catStyle}>${catLabel}</div>
-              <${titleTag} class="card-title" id="${titleId}">${titleHTML}</${titleTag}>
-            </div>
+            ${detail ? `<div><div class="card-cat"${catStyle}>${catLabel}</div><h2 class="card-title" id="${titleId}">${titleHTML}</h2></div>`
+              : `<div class="card-cat"${catStyle}>${catLabel}</div>`}
             ${badgesHtml}
           </div>
-          ${detail || compact ? '' : `<button type="button" class="card-toggle" aria-expanded="false" aria-controls="${titleId}-more" aria-label="Show details for ${title}"></button>`}
+          ${detail ? '' : `<div class="card-title" id="${titleId}">${titleHTML}</div>`}
           ${meta ? `<div class="card-meta">${meta}</div>` : ''}
           ${detail && schedule.length && ev.occurrences?.length ? sessionDatesHTML(schedule) : ''}
-          ${compact ? '' : ev.description ? `<div class="card-desc" id="${titleId}-more">${escHtml(ev.description)}</div>` : `<div id="${titleId}-more" hidden></div>`}
+          ${detail && !ev.description ? '' : `<div class="card-desc">${escHtml(ev.description)}</div>`}
         </div>
-        ${compact ? '' : `<div class="card-footer">${footer}</div>`}
+        <div class="card-footer">${footer}</div>
       </article>`;
   }
 
-  function buildHighlightsRow() {
-    const track   = document.getElementById('highlightsTrack');
-    const section = document.getElementById('highlights-section');
-    if (!track || !section) return;
+  let renderedWeekendPicks = '';
 
-    const eyebrow = section.querySelector('.highlights-eyebrow');
-    if (eyebrow) eyebrow.textContent = `🔥 Picks for ${rangeLabel(selectedRange())}`;
-    const picks = [...document.querySelectorAll('#calendarResults .card[data-pick="1"]')];
-
-    track.innerHTML = '';
-    if (!picks.length) { section.style.display = 'none'; return; }
-    section.style.display = '';
-
-    picks.forEach((card, pickIdx) => {
-      const title     = card.querySelector('.card-title')?.textContent.trim() || '';
-      const img       = card.dataset.img || '';
-      const metaRows  = [...card.querySelectorAll('.meta-row')];
-      const timeText  = metaRows[0]?.textContent.trim() || '';
-      const venueText = metaRows[1]?.textContent.trim() || '';
-      const price     = card.querySelector('.badge-price')?.outerHTML || '';
-      const el        = document.createElement('div');
-      el.className    = 'highlight-card';
-      const altH = escHtml(title);
-      // Highlights are always above the fold — eager-load all of them; high-priority for the first.
-      const loadAttr = 'eager';
-      const prioAttr = pickIdx === 0 ? ' fetchpriority="high"' : '';
-      let imgWrapHtml;
-      if (!img) {
-        imgWrapHtml = '<div class="highlight-card-img"></div>';
-      } else if (img.startsWith('images/')) {
-        const base = img.replace(/\.(webp|jpe?g|png)$/i, '');
-        const credit = card.dataset.imgGenerated === '1' ? generatedImageCredit : '';
-        imgWrapHtml = `<div class="highlight-card-img"><picture><source srcset="${base}-thumb.webp" type="image/webp"><img src="${base}-thumb.jpg" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></picture>${credit}</div>`;
-      } else {
-        imgWrapHtml = `<div class="highlight-card-img"><img src="${img.replace(/"/g,'&quot;')}" width="400" height="225" loading="${loadAttr}"${prioAttr} decoding="async" onload="this.classList.add('loaded')" onerror="this.onerror=null;this.remove()" alt="${altH}"></div>`;
-      }
-      el.innerHTML    = `
-        ${imgWrapHtml}
+  function renderWeekendPicks(now) {
+    const week = eventWeekStart(currentToday);
+    const byId = new Map(calendarEvents.map(ev => [eventSlug(ev), ev]));
+    const html = [...weeklyPickIds(week, now)].map(id => {
+      const event = byId.get(id);
+      const date = eventDateInWeek(scheduleFor(event), week, now);
+      const title = escHtml(event.title);
+      const price = eventPrice(event, curatedEvents);
+      const image = cardImgHTML(event.img, '', true, event.imgGenerated) || '<div class="card-img-wrap" aria-hidden="true"></div>';
+      return `<a class="highlight-card" href="${eventHref(id)}" title="${title}">
+        ${image}
         <div class="highlight-card-body">
-          <div class="highlight-card-title-row">
-            <div class="highlight-card-title">${escHtml(title)}</div>
-            ${price}
-          </div>
-          <div class="highlight-card-meta">
-            ${timeText  ? `<span>${escHtml(timeText)}</span>`  : ''}
-            ${venueText ? `<span>${escHtml(venueText)}</span>` : ''}
-          </div>
-        </div>`;
-      el.onclick = () => scrollToPickCard(card);
-      track.appendChild(el);
-    });
-  }
-
-  function scrollToPickCard(card) {
-    if (compactCards.matches && card.querySelector('.card-toggle')) setCardOpen(card, true);
-    requestAnimationFrame(() => {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.classList.add('card-flash');
-      card.addEventListener('animationend', () => card.classList.remove('card-flash'), { once: true });
-    });
+          <div class="highlight-card-title">${title}</div>
+          <div class="highlight-card-meta"><span>${listingDateHTML(event, date)}</span>${priceBadge(price.tier, price.estimated)}</div>
+        </div>
+      </a>`;
+    }).join('');
+    if (renderedWeekendPicks !== html) {
+      document.getElementById('highlightsTrack').innerHTML = html;
+      renderedWeekendPicks = html;
+    }
+    document.getElementById('highlights-section').hidden = !html;
   }
 
   function escHtml(str) {
@@ -1030,47 +979,20 @@ const SECTION_TITLES = {
 
   function renderCalendar(now) {
     const results = document.getElementById('calendarResults');
-    const openId = results.querySelector('.card.open:not(.on-now-card)')?.dataset.eventId;
     const { start, end } = selectedRange();
     const groups = new Map();
     const onNow = [];
     const seenOngoing = new Set();
-    let datesHaveEvents = false;
-    const picksByWeek = new Map();
-    const displayedPickIds = new Set();
-    const configuredWeeks = Object.keys(savedWeeklyPicks).filter(week => week <= end && addCalendarDays(week, 6) >= start);
-    const isPicked = (ev, date) => {
-      const id = eventSlug(ev);
-      const week = eventWeekStart(date);
-      const weeks = new Set([week]);
-      if (ev.pick && isCalendarDate(ev.pickWeek)) weeks.add(ev.pickWeek);
-      for (const configured of configuredWeeks) {
-        if (savedWeeklyPicks[configured].includes(id) || savedWeeklyPicks[configured].includes(legacyEventSlug(ev))) {
-          weeks.add(configured);
-        }
-      }
-      for (const candidate of weeks) {
-        const weekEnd = addCalendarDays(candidate, 6);
-        const from = candidate > start ? candidate : start;
-        const to = weekEnd < end ? weekEnd : end;
-        if (from > to) continue;
-        if (!picksByWeek.has(candidate)) picksByWeek.set(candidate, weeklyPickIds(candidate, now));
-        const key = candidate + '|' + id;
-        if (picksByWeek.get(candidate).has(id) && !displayedPickIds.has(key) &&
-            (candidate === week || nextEventDate(scheduleFor(ev), from, to, now))) {
-          displayedPickIds.add(key);
-          return true;
-        }
-      }
-      return false;
-    };
+    let filteredEvents = false;
 
     for (const ev of calendarEvents) {
       const schedule = scheduleFor(ev);
       const day = nextEventDate(schedule, start, end, now);
       if (!day) continue;
-      datesHaveEvents = true;
-      if (!eventMatchesFilters(ev)) continue;
+      if (!eventMatchesFilters(ev)) {
+        filteredEvents = true;
+        continue;
+      }
       if (eventScheduleType(ev) === 'ongoing') {
         const id = eventSlug(ev);
         if (seenOngoing.has(id)) continue;
@@ -1086,37 +1008,29 @@ const SECTION_TITLES = {
 
     const dates = [...groups.keys()].sort();
     const ongoingCards = onNow.sort((a, b) => a.end.localeCompare(b.end) || a.ev.title.localeCompare(b.ev.title))
-      .map(({ ev, day }) => buildEventCardHTML(ev, { listingDate: day, compact: true, picked: isPicked(ev, day) })).join('');
-    const onNowHTML = ongoingCards ? `<section class="on-now-section" aria-labelledby="onNowHeading">
-      <h2 class="highlights-eyebrow" id="onNowHeading">On Now in Wellington</h2><div class="events-grid">${ongoingCards}</div>
-    </section>` : '';
+      .map(({ ev, day }) => buildEventCardHTML(ev, { listingDate: day })).join('');
+    document.getElementById('onNowResults').innerHTML = ongoingCards;
+    document.getElementById('onNowEvents').hidden = !ongoingCards;
     document.getElementById('dateRangeSummary').textContent = rangeLabel({ start, end });
-    const headings = dates.map(iso => {
-      const d = calendarDay(iso);
-      const weekday = CALENDAR_DAY_LABEL.formatToParts(d).find(part => part.type === 'weekday').value;
-      return `<div class="day-label day-${weekday.slice(0, 3).toLowerCase()}" id="day-${iso}" data-date="${iso}">
-        <span class="pip"></span><h2>${CALENDAR_DAY_LABEL.format(d)}</h2><span class="line"></span>
-      </div><div class="events-grid">${groups.get(iso).map(ev => buildEventCardHTML(ev, { listingDate: iso, picked: isPicked(ev, iso) })).join('')}</div>`;
-    }).join('');
 
-    if (!dates.length && !ongoingCards) {
-      const message = datesHaveEvents
-        ? (maxPriceLevel === 0 ? 'No free events match these filters.' : 'No events match these filters.')
-        : 'No events are listed for these dates.';
-      results.innerHTML = `<div class="no-results" role="status"><p>${message}</p>
-        ${datesHaveEvents ? '<button type="button" class="no-results-reset">Clear event filters</button>' : ''}
-      </div>`;
-    } else {
-      results.innerHTML = onNowHTML + headings;
+    if (dates.length) {
+      results.innerHTML = dates.map(iso => {
+        const d = calendarDay(iso);
+        const weekday = CALENDAR_DAY_LABEL.formatToParts(d).find(part => part.type === 'weekday').value;
+        return `<div class="day-label day-${weekday.slice(0, 3).toLowerCase()}" id="day-${iso}" data-date="${iso}">
+          <span class="pip"></span><h3>${CALENDAR_DAY_LABEL.format(d)}</h3><span class="line"></span>
+        </div><div class="events-grid">${groups.get(iso).map(ev => buildEventCardHTML(ev, { listingDate: iso })).join('')}</div>`;
+      }).join('');
       if (dates.length > 1) renderDaySelector(results, dates, groups);
-      if (openId) {
-        const openCard = [...results.querySelectorAll('.card')].find(card => card.dataset.eventId === openId);
-        if (openCard) setCardOpen(openCard, true);
-      }
+    } else {
+      const message = filteredEvents
+        ? (maxPriceLevel === 0 ? 'No free upcoming events match these filters.' : 'No upcoming events match these filters.')
+        : 'No upcoming events are listed for these dates.';
+      results.innerHTML = `<div class="no-results" role="status"><p>${message}</p>
+        ${filteredEvents ? '<button type="button" class="no-results-reset">Clear event filters</button>' : ''}
+      </div>`;
     }
-    buildHighlightsRow();
     setEagerImages();
-    observeCards(results);
   }
 
   function renderDaySelector(results, dates, groups) {
@@ -1133,9 +1047,7 @@ const SECTION_TITLES = {
         <span class="day-pill-count">${count}</span>
       </button>`;
     }).join('');
-    const onNow = results.querySelector('.on-now-section');
-    if (onNow) onNow.after(selector);
-    else results.prepend(selector);
+    results.prepend(selector);
   }
 
   function loadFirestoreEvents() {
@@ -1181,44 +1093,6 @@ const SECTION_TITLES = {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
-  // ── Collapsible event cards (phones) ──
-  // On narrow screens cards start as a compact row (thumbnail, title, time,
-  // venue). Tapping one expands it to the full card and closes any other
-  // open card, so the list stays easy to scan.
-  const compactCards = window.matchMedia('(max-width: 600px)');
-
-  function setCardOpen(card, open) {
-    card.classList.toggle('open', open);
-    const toggle = card.querySelector('.card-toggle');
-    if (toggle) {
-      toggle.setAttribute('aria-expanded', String(open));
-      const title = card.querySelector('.card-title')?.textContent.trim() || 'event';
-      toggle.setAttribute('aria-label', `${open ? 'Hide' : 'Show'} details for ${title}`);
-    }
-  }
-
-  function toggleCard(card) {
-    const open = !card.classList.contains('open');
-    if (open) document.querySelectorAll('.events-grid .card.open').forEach(c => { if (c !== card) setCardOpen(c, false); });
-    setCardOpen(card, open);
-    if (open) {
-      requestAnimationFrame(() => {
-        const top = card.getBoundingClientRect().top;
-        const navH = document.querySelector('.tabs-bar')?.offsetHeight || 0;
-        if (top < navH + 8) window.scrollBy({ top: top - navH - 8, behavior: 'smooth' });
-      });
-    }
-  }
-
-  document.addEventListener('click', e => {
-    if (!compactCards.matches) return;
-    const card = e.target.closest('.events-grid .card:not(.on-now-card)');
-    if (!card) return;
-    // Links and other buttons keep working; the chevron button toggles
-    if (e.target.closest('a, button:not(.card-toggle)')) return;
-    toggleCard(card);
-  });
-
   document.addEventListener('click', e => {
     const btn = e.target.closest('.share-btn');
     if (!btn) return;
@@ -1233,10 +1107,6 @@ const SECTION_TITLES = {
     on('headerInstallBtn', 'click', () => handleInstallClick());
     on('mobileInfoBtn',    'click', () => toggleInfoPopover());
     on('hamburgerBtn',     'click', () => toggleMenu());
-
-    // Highlights
-    document.querySelector('.highlights-see-all')
-      ?.addEventListener('click', () => showSection('events'));
 
     // Dropdown menu
     on('dropdownMenu',  'click', () => closeMenu());
@@ -1327,13 +1197,14 @@ const SECTION_TITLES = {
     });
 
     const holidayLink = document.getElementById('holidayCta');
-    holidayLink.querySelector('.holiday-cta-text').textContent = 'School holidays · 19 Dec – 2 Feb';
     holidayLink.addEventListener('click', e => {
       e.preventDefault();
       datePreset = 'custom';
       customRange = SCHOOL_HOLIDAYS;
-      showSection('events');
-      document.getElementById('eventDateFilters').scrollIntoView();
+      filterEvents();
+      const filters = document.getElementById('eventDateFilters');
+      filters.focus({ preventScroll: true });
+      filters.scrollIntoView();
     });
 
     // Install banner

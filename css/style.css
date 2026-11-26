@@ -130,15 +130,14 @@
   h1 em { font-style: italic; color: var(--gold); }
   .header-sub { margin-top: 8px; font-size: 13.5px; color: rgba(255,255,255,0.72); line-height: 1.55; max-width: 540px; }
   .holiday-cta {
-    display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+    display: inline-flex; align-items: center; gap: 6px;
     min-height: 44px; padding: 8px 14px; border-radius: 999px;
     background: #FFD77A; color: #6E1016;
     font-size: 13px; font-weight: 700; line-height: 1.35; text-align: center; text-decoration: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.18); transition: background-color 0.15s, box-shadow 0.15s;
   }
-  .holiday-cta[hidden] { display: none; }
   .holiday-cta:hover { background: #ffe4a3; box-shadow: 0 4px 14px rgba(0,0,0,0.22); }
-  .holiday-cta:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 999px; }
+  .holiday-cta:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 999px; }
   .header-connect { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .header-mailing-link {
     display: inline-flex; align-items: center; min-height: 44px;
@@ -157,50 +156,37 @@
   .social-icon-link:hover { background: rgba(255,255,255,0.15); }
   .social-icon-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
-  /* ── This Weekend's Picks — compact editorial rail inside the results area ── */
-  .highlights-section { background: transparent; padding: 0; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid rgba(11,85,99,0.12); }
-  .highlights-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0 10px; }
+  /* Shared with the admin Picks panel. */
+  .highlights-section { padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid rgba(11,85,99,0.12); }
+  .highlights-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; }
   .highlights-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); }
-  .highlights-see-all { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 4px 2px; font-family: inherit; font-weight: 600; }
-  .highlights-see-all:hover { color: var(--teal); }
+
   .highlights-track {
-    display: flex; gap: 12px; overflow-x: auto;
-    padding: 2px 0 4px; scroll-snap-type: x mandatory;
-    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    display: flex; gap: 10px; overflow-x: auto;
+    padding: 2px 2px 5px; scroll-snap-type: x proximity; scrollbar-width: thin;
   }
-  .highlights-track::-webkit-scrollbar { display: none; }
   .highlight-card {
-    flex-shrink: 0; width: 160px; border-radius: 8px; background: #fff;
-    overflow: hidden; border: 1px solid rgba(0,0,0,0.07);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer;
-    scroll-snap-align: start; transition: transform 0.2s, box-shadow 0.2s;
-    -webkit-tap-highlight-color: transparent;
+    display: grid; grid-template-columns: 68px minmax(0, 1fr);
+    flex: 0 0 clamp(205px, 65vw, 254px); min-height: 80px;
+    color: var(--teal); text-decoration: none; background: #fff;
+    border: 1px solid rgba(0,0,0,0.07); border-radius: 8px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); scroll-snap-align: start;
   }
-  .highlight-card:active { transform: scale(0.97); }
-  @media (hover: hover) {
-    .highlight-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11,85,99,0.1); }
-  }
-  .highlight-card-img { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #e8e4dc; }
-  .highlight-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.3s ease; }
-  .highlight-card-img img.loaded { opacity: 1; }
-  .highlight-card-body { padding: 10px 11px 12px; }
+  .highlight-card .card-img-wrap { aspect-ratio: auto; background: #e8e4dc; }
+  .highlight-card .event-image-credit { font-size: 8px; right: 2px; bottom: 2px; padding: 1px 2px; }
+  .highlight-card-body { display: grid; align-content: space-between; gap: 4px; padding: 8px 9px; }
   .highlight-card-title {
-    font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700;
-    color: var(--teal); line-height: 1.25; margin-bottom: 5px;
+    font: 700 14px/1.25 'Fraunces', serif; overflow-wrap: anywhere;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .highlight-card-meta { display: flex; flex-direction: column; gap: 2px; }
-  .highlight-card-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
-  .highlight-card-meta span { font-size: 10.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (min-width: 640px) {
-    .highlight-card { width: 200px; }
+  .highlight-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 11px; color: #4a5a5a; }
+  .highlight-card-meta > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .highlight-card-meta .badge { padding-inline: 5px; letter-spacing: 0; }
+  .highlight-card:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; }
+  @media (hover: hover) {
+    .highlight-card:hover { border-color: var(--teal2); }
+    .highlight-card:hover .highlight-card-title { text-decoration: underline; }
   }
-  /* Card flash — triggered when scrolling to a picked event */
-  @keyframes card-flash {
-    0%, 30% { box-shadow: 0 0 0 3px rgba(200,144,26,0.8), 0 12px 36px rgba(11,85,99,0.12); }
-    100%     { box-shadow: none; }
-  }
-  .card-flash { animation: card-flash 1.5s ease-out forwards; }
 
   /* ── DATE FILTERS ── */
   .tabs-bar { background: #0A4750; border-bottom: 1px solid rgba(255,255,255,0.07); position: sticky; top: 0; z-index: 100; }
@@ -374,7 +360,7 @@
     font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
     margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
   }
-  .day-label h2 { font: inherit; }
+  .day-label :is(h2, h3) { font: inherit; }
   .day-label { color: var(--teal2); }
   .day-label .pip { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: currentColor; }
   .day-label .line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(13,122,138,0.2), transparent); }
@@ -390,11 +376,12 @@
 
   /* ── DAY SELECTOR ── */
   .day-selector {
-    display: flex; gap: 6px; padding: 0 0 24px; justify-content: center; flex-wrap: wrap;
+    display: flex; gap: 6px; padding: 0 2px 8px; margin-bottom: 12px;
+    overflow-x: auto; scrollbar-width: thin;
   }
   .day-pill {
     display: flex; flex-direction: column; align-items: center;
-    padding: 8px 16px; border-radius: 10px;
+    padding: 5px 10px; min-height: 44px; border-radius: 10px;
     border: 1.5px solid #d0d5c8; background: transparent;
     cursor: pointer; transition: border-color 0.18s, background 0.18s;
     min-width: 56px; flex-shrink: 0;
@@ -419,11 +406,6 @@
   @media (hover: hover) {
     .day-pill:not(.active):hover { border-color: var(--teal); background: rgba(11,85,99,0.07); }
   }
-  @media (max-width: 767px) {
-    .day-selector { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 16px 20px; justify-content: flex-start; }
-    .day-pill { padding: 7px 13px; min-width: 50px; }
-  }
-
   /* ── EVENTS GRID ── */
   .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 18px; margin-bottom: 36px; }
 
@@ -446,14 +428,6 @@
   .card.card-featured .card-title { font-size: 20px; }
   .card.card-featured .card-body  { padding: 18px 20px 14px; }
   .card.card-featured .badge-hot  { font-size: 10px; padding: 4px 12px; }
-
-  /* ── Events section day timeline ── */
-  #calendarResults > .events-grid {
-    border-left: 2px solid rgba(11,85,99,0.10);
-    margin-left: 18px;
-    padding-left: 16px;
-  }
-  #calendarResults > .day-label { padding-left: 12px; }
 
   .card-strip { height: 4px; flex-shrink: 0; }
 
@@ -494,54 +468,9 @@
   }
   picture:not(:has(img.loaded)) + .event-image-credit { display: none; }
 
-  /* ── COLLAPSIBLE CARDS (phones) — compact row until tapped ── */
-  .card-toggle { display: none; }
-  @media (max-width: 600px) {
-    .events-grid { gap: 10px; }
-    .card { position: relative; cursor: pointer; }
-    .card-toggle {
-      display: block; position: absolute; top: 0; right: 0; width: 44px; height: 56px;
-      background: none; border: none; cursor: pointer; color: var(--muted);
-    }
-    .card-toggle::before {
-      content: '›'; display: block; font-size: 24px; line-height: 1; font-weight: 300;
-      transform: rotate(90deg); transition: transform 0.2s;
-    }
-    .card.open .card-toggle {
-      top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(255,255,255,0.92); color: var(--teal); z-index: 1; box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-    }
-    .card.open .card-toggle::before { transform: rotate(-90deg); font-size: 20px; }
-
-    .card:not(.open) { display: grid; grid-template-columns: 88px minmax(0, 1fr); }
-    .card:not([data-img]):not(.open), .card[data-img=""]:not(.open) { grid-template-columns: minmax(0, 1fr); }
-    .card:not(.open) .card-strip,
-    .card:not(.open) .card-desc,
-    .card:not(.open) .card-footer,
-    .card:not(.open) .event-image-credit { display: none; }
-    .card:not(.open) .card-img-wrap { aspect-ratio: auto; height: 100%; min-height: 88px; }
-    .card.card-poster:not(.open) .card-img-wrap { aspect-ratio: auto; }
-    .card.card-poster:not(.open) .card-img { object-fit: cover; }
-    .card:not(.open) .card-body,
-    .card.card-featured:not(.open) .card-body { padding: 10px 40px 10px 12px; }
-    .card:not(.open) .card-top { margin-bottom: 4px; }
-    .card:not(.open) .card-badges .badge:not(.badge-price) { display: none; }
-    .card:not(.open) .badge-price { padding: 2px 5px; letter-spacing: 0; }
-    .card:not(.open) .card-cat { margin-bottom: 3px; font-size: 9px; }
-    .card:not(.open) .card-title,
-    .card.card-featured:not(.open) .card-title {
-      font-size: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .card:not(.open) .card-meta { gap: 1px; margin-bottom: 0; }
-    .card:not(.open) .meta-row { display: block; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card:not(.open) .meta-row:nth-child(n+3) { display: none; }   /* cost shows when opened */
-    .card:not(.open):hover .card-img { transform: none; }
-  }
   .card:hover .card-img { transform: scale(1.04); }
   .card.card-poster .card-img-wrap { aspect-ratio: 4 / 5; }
   .card.card-poster .card-img { object-fit: contain; transform: none; }
-  .card:not([data-img]) .card-img-wrap,
-  .card[data-img=""] .card-img-wrap { display: none; }
 
   .card-body { padding: 16px 18px 12px; flex: 1; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
@@ -610,23 +539,102 @@
   .event-recommendations li + li { border-top: 1px solid rgba(11,85,99,0.12); }
   .event-recommendations time { display: block; font-size: 13px; color: var(--muted); }
 
-  .on-now-section { margin-bottom: 24px; }
-  .on-now-section .highlights-eyebrow { margin-bottom: 10px; }
-  .on-now-section .events-grid { margin-bottom: 0; gap: 10px; }
-  .card.on-now-card { display: grid; grid-template-columns: 100px minmax(0, 1fr); border-radius: 8px; cursor: default; }
-  .card.on-now-card:not([data-img]) { grid-template-columns: minmax(0, 1fr); }
-  .on-now-card .card-img-wrap { aspect-ratio: auto; min-height: 88px; }
-  .card.on-now-card .card-body { min-width: 0; padding: 10px 12px; }
-  .card.on-now-card .card-title { font-size: 15px; }
-  .on-now-card .card-meta { margin-bottom: 0; gap: 2px; }
-  .on-now-card .card-cat { margin-bottom: 3px; }
-  .on-now-card .badge:not(.badge-price) { display: none; }
-  .on-now-card .event-image-credit { padding: 1px 3px; right: 3px; font-size: 8px; }
   .card-title a { color: inherit; text-underline-offset: 2px; }
   .event-until { gap: 3px; color: var(--teal); font-weight: 700; }
   .event-sessions { margin-bottom: 12px; color: var(--teal); font-size: 13px; }
   .event-sessions summary { cursor: pointer; font-weight: 700; }
   .event-sessions ul { margin: 6px 0 0 18px; line-height: 1.6; }
+
+  /* Homepage sections and shared discovery tiles */
+  main.event-home { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; padding-top: 16px; padding-bottom: 28px; }
+  .home-section-heading {
+    margin-bottom: 8px; color: var(--teal);
+    font: 700 clamp(20px, 3vw, 24px)/1.2 'Fraunces', serif;
+  }
+  .event-home .tabs-bar { border-radius: 8px 8px 0 0; }
+  .event-home .date-carousel { padding-inline: 6px; }
+  .event-home .date-presets .tab-btn { min-height: 40px; padding-block: 8px; }
+  .event-home .date-range-summary { padding: 2px 14px 6px; }
+  .event-home .filter-bar { border-radius: 0 0 8px 8px; }
+  .event-home .filter-inner { padding: 5px 10px; }
+  .event-home .filter-btn { min-height: 34px; padding: 5px 11px; }
+  .event-home .event-filters { margin: 8px 0 12px; }
+  .event-home .category-filter-trigger, .event-home .price-filter { min-height: 48px; }
+  .event-home .day-label { margin-bottom: 8px; letter-spacing: 0.16em; }
+  .event-home .no-results { text-align: left; padding: 12px 0 0; }
+  .event-home .no-results p { margin-bottom: 0; }
+  .event-home .no-results-reset { margin-top: 10px; }
+  .event-home .events-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 0; }
+  #calendarResults > .events-grid + .day-label { margin-top: 18px; }
+
+  .card.card-listing {
+    display: grid; position: relative;
+    grid-template-columns: clamp(82px, 25vw, 126px) minmax(0, 1fr);
+    grid-template-areas: 'image body' 'image actions';
+    grid-template-rows: 1fr auto;
+    border-radius: 8px;
+  }
+  .card-listing .card-img-wrap { display: block; grid-area: image; aspect-ratio: auto; }
+  .highlight-card .card-img, .card-listing .card-img { position: absolute; inset: 0; }
+  .card-listing.card-poster .card-img-wrap { aspect-ratio: auto; }
+  .card-listing .card-body { grid-area: body; min-width: 0; padding: 8px 10px 5px; }
+  .card-listing .card-top { align-items: center; height: 18px; margin-bottom: 3px; }
+  .card-listing .card-cat { margin: 0; letter-spacing: 0.1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-listing .badge-price { padding-inline: 6px; letter-spacing: 0; }
+  .card-listing .card-title { height: 2.5em; font-size: 16px; overflow-wrap: anywhere; }
+  .card-listing .card-title a {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; text-decoration: none;
+  }
+  .card-listing .card-title a::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+  .card-listing .card-title a:focus-visible { outline: none; text-decoration: underline; }
+  .card-listing:has(.card-title a:focus-visible) { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .card-listing .card-meta { height: calc(2.8em + 2px); margin: 4px 0 0; gap: 2px; font-size: 12px; }
+  .card-listing .meta-row { font-size: inherit; gap: 5px; }
+  .card-listing .meta-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-listing .meta-text a { position: relative; z-index: 2; }
+  .card-listing .card-desc { display: none; }
+  .card-listing .card-footer { grid-area: actions; gap: 4px; padding: 4px 10px 8px; }
+  .card-listing .card-footer > :is(a, button) { position: relative; z-index: 2; min-height: 34px; font-size: 12px; padding: 5px 9px; }
+  .card-listing .share-btn-label { display: none; }
+  .card-listing .event-image-credit { font-size: 8px; right: 3px; bottom: 3px; padding: 1px 2px; }
+  .newsletter-section {
+    padding: 12px 14px; border: 1px solid rgba(11,85,99,0.14); border-radius: 8px; background: #fff;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px;
+  }
+  .newsletter-section .home-section-heading { margin-bottom: 0; }
+  .newsletter-section .event-btn { min-height: 44px; }
+
+  @media (max-width: 600px) {
+    .card-listing.card-poster .card-img { object-fit: cover; }
+    .event-home .event-filters { display: grid; grid-template-columns: minmax(0, 118px) minmax(0, 212px); gap: 8px; }
+    .event-home .category-filter, .event-home .price-filter { width: 100%; }
+    .event-home .price-filter { gap: 6px; padding-inline: 8px; }
+    .event-home .price-filter-caption { min-width: 0; }
+  }
+  @media (max-width: 360px) {
+    .event-home .date-presets .tab-btn { padding-inline: 6px; }
+  }
+  @media (min-width: 601px) {
+    .event-home .events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card.card-listing { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'image' 'body' 'actions'; grid-template-rows: auto 1fr auto; }
+    .card-listing .card-img-wrap, .card-listing.card-poster .card-img-wrap { aspect-ratio: 16 / 9; }
+    .card-listing .card-body { padding: 10px 14px 8px; }
+    .card-listing .card-title { font-size: 17px; }
+    .card-listing .card-meta { font-size: 12.5px; }
+    .card-listing .card-desc {
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+      height: 3em; margin-top: 6px; padding: 0; border: 0; overflow: hidden; line-height: 1.5;
+    }
+    .card-listing .card-footer { padding: 5px 14px 9px; }
+    .card-listing .share-btn-label { display: inline; }
+  }
+  @media (min-width: 910px) {
+    .event-home .events-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (hover: hover) {
+    .card-listing:hover .card-title a { text-decoration: underline; }
+  }
 
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 48px 20px; color: #bbb; }
@@ -650,7 +658,8 @@
   @keyframes fadeUp        { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  @media (max-width: 600px) {
+  @media (max-width: 767px) {
+    main.event-home { padding-inline: 16px; }
     .header-inner { padding: 12px 16px 16px; }
     .header-top { margin-bottom: 10px; }
     .eyebrow { display: none; }             /* identity carried by the H1 on small screens */
@@ -658,6 +667,8 @@
     .header-connect { margin-inline-start: auto; gap: 0; flex-shrink: 1; min-width: 0; }
     .header-connect .header-mailing-link { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.86); text-align: end; text-wrap: balance; }
     .header-connect .social-icon-link svg { width: 20px; height: 20px; padding: 1px; border-radius: 5px; }
+  }
+  @media (max-width: 600px) {
     .category-filter { width: min(100%, 118px); }
     .price-filter { width: min(100%, 212px); }
     main { padding: 16px 16px 64px; }
@@ -818,6 +829,9 @@
 @media (min-width: 768px) {
   #mobileInfoBtn      { display: none !important; }
   .info-popover       { display: none !important; }
+  .header-auth-area { flex-wrap: nowrap; }
+  .hero-weather { flex-shrink: 1; min-width: 0; }
+  .hero-weather-message { overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* ══ CARD HOVER (desktop pointer devices only) ══ */
@@ -885,9 +899,6 @@
    keeping full-width backgrounds on their outer elements.
    Mobile layout is completely unchanged below this breakpoint. */
 @media (min-width: 768px) {
-
-  /* Picks rail sits inside <main>, which already centres and pads — no extra insets */
-  .highlight-card { width: 220px; }
 
   /* Venue section content — food, walks, parks, activities, markets */
 

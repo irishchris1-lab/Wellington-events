@@ -168,8 +168,7 @@
       </div>
     </div>
     <h1>What's on <em>Wellington</em><span class="festive-star" aria-hidden="true">✦</span></h1>
-    <p class="header-sub">Santa parades, carols, summer festivals and family days out across the region — pick dates and an area to start.</p>
-    <a class="holiday-cta" id="holidayCta" href="#school-holidays" hidden><span aria-hidden="true">🎄</span> <span class="holiday-cta-text">School holidays guide</span> <span aria-hidden="true">→</span></a>
+    <p class="header-sub">Find events, exhibitions and family days out across the Wellington region.</p>
   </div>
 </header>
 
@@ -204,24 +203,19 @@
 </div>
 <div class="info-popover-overlay" id="infoPopoverOverlay"></div>
 
-<!-- ── AREA FILTER ── -->
-<div class="filter-bar" role="region" aria-label="Filter by area">
-  <div class="filter-inner">
-    <span class="filter-label" id="filter-label">Area:</span>
-    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all">🗺 All regions</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
-    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
-  </div>
-</div>
-
 <!-- ══════════════════════════════════════
      EVENTS SECTION
 ═══════════════════════════════════════ -->
 <div class="app-section active" id="section-events">
+<main class="event-home" id="main-content" tabindex="-1">
+
+<section id="highlights-section" aria-labelledby="picksHeading" hidden>
+  <h2 class="home-section-heading" id="picksHeading">Weekend Picks</h2>
+  <div class="highlights-track" id="highlightsTrack"></div>
+</section>
+
+<section class="upcoming-section" aria-labelledby="upcomingHeading">
+<h2 class="home-section-heading" id="upcomingHeading">Upcoming Events</h2>
 <nav class="tabs-bar" id="eventDateFilters" aria-label="Event dates" tabindex="-1">
   <div class="date-carousel">
     <button type="button" class="date-carousel-arrow" id="datePresetsBack" aria-label="Scroll date filters left" aria-controls="datePresets" hidden>‹</button>
@@ -234,6 +228,19 @@
   </div>
   <p class="date-range-summary" id="dateRangeSummary" aria-live="polite" aria-atomic="true"></p>
 </nav>
+
+<div class="filter-bar" role="group" aria-label="Filter by area">
+  <div class="filter-inner">
+    <span class="filter-label">Area:</span>
+    <button class="filter-btn active" aria-pressed="true"  data-filter-region="all">🗺 All regions</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wellington"><span class="region-dot" style="background:#0B5563"></span>Wellington City</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="lower-hutt"><span class="region-dot" style="background:#1A8A6E"></span>Lower Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="upper-hutt"><span class="region-dot" style="background:#C8901A"></span>Upper Hutt</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="kapiti"><span class="region-dot" style="background:#C4522A"></span>Kāpiti Coast</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="porirua"><span class="region-dot" style="background:#2478A8"></span>Porirua</button>
+    <button class="filter-btn"        aria-pressed="false" data-filter-region="wairarapa"><span class="region-dot" style="background:#7A3B8A"></span>Wairarapa</button>
+  </div>
+</div>
 
 <dialog class="calendar-dialog" id="customDates" aria-labelledby="calendarTitle" aria-describedby="calendarInstructions">
   <div class="calendar-dialog-header">
@@ -263,8 +270,6 @@
     <button type="button" class="calendar-apply" id="applyCalendarDates">Apply dates</button>
   </div>
 </dialog>
-
-<main id="main-content" tabindex="-1">
 
 <!-- ── CATEGORY AND PRICE FILTERS ── -->
 <div class="event-filters">
@@ -304,16 +309,23 @@
   </div>
 </div>
 
-<!-- ── EVENT PICKS — compact editorial rail, sits in the results area ── -->
-<section class="highlights-section" id="highlights-section" style="display:none" aria-label="Event picks">
-  <div class="highlights-header">
-    <span class="highlights-eyebrow">🔥 Picks</span>
-    <button class="highlights-see-all">See all →</button>
-  </div>
-  <div class="highlights-track" id="highlightsTrack"></div>
+<div id="calendarResults"></div>
 </section>
 
-<section id="calendarResults" aria-label="Events by day"></section>
+<section aria-labelledby="onNowHeading" id="onNowEvents" hidden>
+  <h2 class="home-section-heading" id="onNowHeading">On Now in Wellington</h2>
+  <div class="events-grid" id="onNowResults"></div>
+</section>
+
+<section aria-labelledby="seasonalHeading" id="seasonalGuides" hidden>
+  <h2 class="home-section-heading" id="seasonalHeading">Seasonal Guides</h2>
+  <a class="holiday-cta" id="holidayCta" href="#school-holidays"><span aria-hidden="true">🎄</span> <span>School holidays · 19 Dec – 2 Feb</span> <span aria-hidden="true">→</span></a>
+</section>
+
+<section class="newsletter-section" aria-labelledby="newsletterHeading">
+  <h2 class="home-section-heading" id="newsletterHeading">Newsletter</h2>
+  <a class="event-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSeXLPLoTGZZYSEZGSKKObtnJfBd3_QSbigC0rj3cQ0P1nEVBw/viewform?usp=publish-editor">Join our mailing list</a>
+</section>
 
 </main>
 
@@ -391,7 +403,6 @@
         <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor"/>
       </svg>
     </a>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeXLPLoTGZZYSEZGSKKObtnJfBd3_QSbigC0rj3cQ0P1nEVBw/viewform?usp=publish-editor">Join our mailing list</a>
     <a href="mailto:whatsonwelly@gmail.com?subject=Question%20about%20What%27s%20on%20Wellington">Ask a question</a>
     <a href="mailto:whatsonwelly@gmail.com?subject=New%20Wellington%20event&amp;body=Event%20name%3A%0D%0ADate%20and%20time%3A%0D%0AVenue%3A%0D%0AEvent%20link%3A%0D%0ADetails%3A%0D%0A">Suggest an event</a>
   </nav>
