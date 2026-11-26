@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
+const vm = require('vm');
 
 const root = path.join(__dirname, '..');
 const errors = [];
@@ -22,7 +23,7 @@ const fail = (check, msg) => errors.push(`${check}: ${msg}`);
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 
 // ── 1. syntax ──────────────────────────────────────────────────────────
-const scripts = ['js/event-dates.js', 'js/events-data.js', 'js/script.js', 'admin/admin.js', 'sw.js',
+const scripts = ['js/event-dates.js', 'js/event-catalogue.js', 'js/events-data.js', 'js/script.js', 'admin/admin.js', 'sw.js',
                  'scripts/process-image.js',
                  'scripts/generate-event-image.js', 'scripts/ai-event-image.js',
                  'scripts/import-event-image.js'];
@@ -35,24 +36,13 @@ for (const f of scripts) {
   }
 }
 
-// ── 2. global-scope collisions between the two classic scripts ─────────
-const topLevel = f => {
-  const names = new Map();
-  read(f).split('\n').forEach((line, i) => {
-    const m = /^(?:const|let|var|class)\s+([A-Za-z_$][\w$]*)/.exec(line)
-           || /^function\s+([A-Za-z_$][\w$]*)/.exec(line);
-    if (m && !names.has(m[1])) names.set(m[1], i + 1);
-  });
-  return names;
-};
-const a = topLevel('js/events-data.js');
-const b = topLevel('js/script.js');
-for (const [name, lineA] of a) {
-  if (b.has(name)) {
-    fail('global-collision',
-      `"${name}" is declared at top level in both js/events-data.js:${lineA} ` +
-      `and js/script.js:${b.get(name)} — both load as classic scripts into one ` +
-      `global scope, so this is a SyntaxError that stops script.js running`);
+// ── 2. shared classic scripts must coexist in both pages ───────────────
+const sharedScripts = ['js/event-dates.js', 'js/event-catalogue.js', 'js/events-data.js'];
+for (const entry of ['js/script.js', 'admin/admin.js']) {
+  try {
+    new vm.Script([...sharedScripts, entry].map(read).join('\n;\n'));
+  } catch (err) {
+    fail('global-collision', `${entry}: ${err.message}`);
   }
 }
 
@@ -105,7 +95,6 @@ for (const m of read('index.html').matchAll(/<meta\s+(?:property|name)="(og:imag
 // ── 6. every event has a category ──────────────────────────────────
 // The Show filter reads `category` (see EVENT_CATEGORIES in js/script.js);
 // Rainy Day reads `indoor`.
-const vm = require('vm');
 const sandbox = {};
 vm.runInNewContext(data + '\n;this.STATIC_EVENTS = STATIC_EVENTS;', sandbox);
 const {
@@ -205,6 +194,25 @@ if (nextEventDate(overnightWeekly, sunday, sunday, Date.parse('2026-11-28T11:30:
 }
 if (eventSlug({ title: 'Renamed exhibition', date, publicId: 'stable-exhibition-link' }) !== 'stable-exhibition-link') {
   fail('event URL', 'an assigned public ID must survive title and date changes');
+}
+
+const { eventCatalogue, readWeeklyPicks, resolveWeeklyPicks } = vm.runInNewContext(
+  read('js/event-dates.js') + '\n' + read('js/event-catalogue.js') + '\n({ eventCatalogue, readWeeklyPicks, resolveWeeklyPicks })');
+const pickWeek = '2026-12-07';
+const currentTime = aucklandInstant(pickWeek, '09:00:00');
+const legacyPick = { title: 'Catalogue pick', date: pickWeek, pick: true };
+const draftPick = { ...legacyPick, active: false, id: 'draft-doc' };
+const activePick = { title: 'Published pick', publicId: 'live-event', date: pickWeek, active: true };
+const { published, drafts } = eventCatalogue([legacyPick], [draftPick, activePick]);
+if (drafts.length !== 1 || published.length !== 2 || resolveWeeklyPicks(published, pickWeek, {}, currentTime).length !== 1) {
+  fail('picks', 'the public catalogue must retain its listing when a draft exists');
+}
+const selection = readWeeklyPicks({ [pickWeek]: ['live-event', 'live-event', 'unavailable'], '2026-12-08': ['bad-week'] });
+if (resolveWeeklyPicks(published, pickWeek, selection, currentTime).join(',') !== 'live-event' || Object.hasOwn(selection, '2026-12-08')) {
+  fail('picks', 'an explicit Wellington week must resolve selected published events, with duplicates and unavailable events removed');
+}
+if (resolveWeeklyPicks(published, pickWeek, { [pickWeek]: [] }, currentTime).length) {
+  fail('picks', 'an explicitly empty week must not fall back to defaults');
 }
 
 // ── report ─────────────────────────────────────────────────────────────

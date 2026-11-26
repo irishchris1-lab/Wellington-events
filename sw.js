@@ -1,6 +1,6 @@
-const CACHE = 'wow-v10';   // v10: ongoing event schedules and event details
+const CACHE = 'wow-v11';   // v11: shared catalogue and weekly Picks
 const SHELL = [
-  '/', '/css/style.css', '/js/event-dates.js', '/js/events-data.js', '/js/script.js',
+  '/', '/css/style.css', '/js/event-dates.js', '/js/event-catalogue.js', '/js/events-data.js', '/js/script.js',
   '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'
 ];
 

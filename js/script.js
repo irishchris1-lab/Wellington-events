@@ -91,42 +91,14 @@ const SECTION_TITLES = {
     event:   "Event details — What's On Wellington",
   };
 
-  // Event categories, shown as the "Show" filter. Every event has exactly one.
-  // Keep in step with the filter buttons in index.html, the admin form and
-  // scripts/validate.js.
-  const EVENT_CATEGORIES = {
-    music:       'Concerts & Gigs',
-    festivals:   'Festivals & Lifestyle',
-    sports:      'Sports & Outdoors',
-    exhibitions: 'Exhibitions',
-    workshops:   'Workshops, Conferences & Classes',
-    food:        'Food & Drink',
-  };
-  // Events saved before categories existed fall back on their type
-  const TYPE_TO_CATEGORY = {
-    music: 'music', culture: 'music', festival: 'festivals', market: 'festivals',
-    outdoor: 'sports', kids: 'festivals', whanau: 'festivals', other: 'festivals',
-  };
-  function eventCategory(ev) {
-    return EVENT_CATEGORIES[ev.category] ? ev.category : (TYPE_TO_CATEGORY[ev.type] || 'festivals');
-  }
   // Filter values: 'all', a category, or 'rainy' (anything marked indoor)
   const CATEGORIES = ['all', ...Object.keys(EVENT_CATEGORIES), 'rainy'];
-  const PRICE_LABELS = {
-    Free: 'Free entry',
-    '$': 'Under NZ$30',
-    '$$': 'NZ$30 to under NZ$80',
-    '$$$': 'NZ$80 or more',
-  };
   const PRICE_TIERS = Object.keys(PRICE_LABELS);
   const MAX_PRICE_LEVEL = PRICE_TIERS.length - 1;
   const PRICE_FILTER_LABELS = ['Free only', 'Under $30', 'Under $80', 'Any price'];
   const staticEvents = (typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
     .map((ev, i) => ({ ...ev, _static: true, _staticId: `s${i}` }));
   const curatedEvents = new Map(staticEvents.map(ev => [eventListingKey(ev), ev]));
-  const curatedEventsById = new Map(staticEvents.map(ev => [eventSlug(ev), ev]));
-  const legacyEventDates = new Map(staticEvents.filter(ev => isCalendarDate(ev.date))
-    .map(ev => [legacyEventKey(ev), ev.date]));
   let calendarEvents = staticEvents;
   let calendarReady = false;
   let liveEventsLoaded = false;
@@ -136,77 +108,15 @@ const SECTION_TITLES = {
   let currentCategory = 'all';
   let maxPriceLevel = MAX_PRICE_LEVEL;
 
-  function eventListingKey(ev) {
-    return `${(ev.title || '').trim()}|${eventDate(ev)}`;
-  }
-
   function scheduleFor(ev) {
     if (!scheduleCache.has(ev)) scheduleCache.set(ev, eventSchedule(ev));
     return scheduleCache.get(ev);
   }
 
-  const MAX_WEEKLY_PICKS = 3;
-  // Keys are Wellington Mondays; values are event slugs in editorial order.
-  // Explicit weeks replace legacy pick flags. An admin can schedule a pick for that week.
-  const EDITORIAL_PICKS_BY_WEEK = Object.freeze({
-    '2026-11-23': ['johnsonville-rotary-christmas-market-2026-11-28'],
-    '2026-11-30': ['upper-hutt-santa-parade-2026-12-06'],
-  });
+  let savedWeeklyPicks = {};
 
-  function weeklyPickIds(week) {
-    const weekEnd = addCalendarDays(week, 6);
-    const weekStart = aucklandInstant(week);
-    const approved = EDITORIAL_PICKS_BY_WEEK[week];
-    const candidates = calendarEvents.flatMap(ev => {
-      const scheduled = ev.pick === true && ev.pickWeek === week;
-      const approvedId = approved?.find(id => id === eventSlug(ev) || id === legacyEventSlug(ev));
-      const legacyPick = !approved && ev.pick && !ev.pickWeek;
-      if (!scheduled && !approvedId && !legacyPick) return [];
-      const date = nextEventDate(scheduleFor(ev), week, weekEnd, weekStart);
-      return date ? [{ id: eventSlug(ev), approvedId, date, scheduled }] : [];
-    });
-    candidates.sort((a, b) => Number(b.scheduled) - Number(a.scheduled) || a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
-    const ordered = approved
-      ? [...approved.flatMap(id => candidates.filter(candidate => candidate.approvedId === id)), ...candidates.filter(candidate => candidate.scheduled)]
-      : candidates;
-    return new Set([...new Set(ordered.map(({ id }) => id))].slice(0, MAX_WEEKLY_PICKS));
-  }
-
-  function legacyEventKey(ev) {
-    return `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
-  }
-
-  function eventPrice(ev) {
-    if (ev.priceUnknown === true) return { tier: 'Unknown', estimated: false };
-    if (Object.hasOwn(PRICE_LABELS, ev.priceTier)) {
-      return { tier: ev.priceTier, estimated: ev.priceEstimated === true };
-    }
-
-    // Older and newly imported Firestore events may not have an assigned tier.
-    const cost = String(ev.cost || '').trim();
-    const freeEntry = /^free(?: entry| to watch| to spectate)?(?:$|\s*[·—–.-])/i;
-    if (ev.free === true || freeEntry.test(ev.free || '') || freeEntry.test(cost)) {
-      return { tier: 'Free', estimated: false };
-    }
-    const amount = cost.match(/\$\s*(\d[\d,]*(?:\.\d+)?)/);
-    if (amount) {
-      const n = Number(amount[1].replace(/,/g, ''));
-      return { tier: n === 0 ? 'Free' : n < 30 ? '$' : n < 80 ? '$$' : '$$$', estimated: false };
-    }
-    if (!cost && Array.isArray(ev.tags) && ev.tags.some(tag => /^free$/i.test(tag))) {
-      return { tier: 'Free', estimated: false };
-    }
-    const curated = curatedEvents.get(eventListingKey(ev));
-    if (curated && Object.hasOwn(PRICE_LABELS, curated.priceTier)) {
-      return { tier: curated.priceTier, estimated: curated.priceEstimated === true };
-    }
-    return { tier: eventCategory(ev) === 'music' ? '$$' : '$', estimated: true };
-  }
-
-  function priceBadge(tier, estimated) {
-    if (tier === 'Unknown') return '<span class="badge badge-price badge-ticketed" title="Price not confirmed">Price TBC</span>';
-    const style = tier === 'Free' ? 'badge-free' : 'badge-ticketed';
-    return `<span class="badge badge-price ${style}" title="${PRICE_LABELS[tier]}${estimated ? ' (estimated)' : ''}">${tier}${estimated ? ' <abbr title="Estimated">est.</abbr>' : ''}</span>`;
+  function weeklyPickIds(week, now = Date.now()) {
+    return new Set(resolveWeeklyPicks(calendarEvents, week, savedWeeklyPicks, now, scheduleFor));
   }
 
   // Generate a 2-stop srcset from a Wikimedia thumb URL by swapping the width token.
@@ -728,7 +638,7 @@ const SECTION_TITLES = {
   function eventMatchesFilters(ev) {
     if (currentRegion !== 'all' && ev.region !== currentRegion) return false;
     if (maxPriceLevel < MAX_PRICE_LEVEL) {
-      const tierIndex = PRICE_TIERS.indexOf(eventPrice(ev).tier);
+      const tierIndex = PRICE_TIERS.indexOf(eventPrice(ev, curatedEvents).tier);
       if (tierIndex < 0 || tierIndex > maxPriceLevel) return false;
     }
     if (currentCategory === 'rainy') return ev.indoor === true;
@@ -990,7 +900,7 @@ const SECTION_TITLES = {
     const catLabel = ev.label ? escHtml(ev.label) : tm.label;   // ev.label is data; tm.label is trusted markup
     const catStyle = ev.labelStyle ? ` style="${escHtml(ev.labelStyle)}"` : '';
 
-    const price = eventPrice(ev);
+    const price = eventPrice(ev, curatedEvents);
     // Price is also shown on collapsed mobile cards.
     const badgeParts = [priceBadge(price.tier, price.estimated)];
     if (ev.free && ev.free !== true && price.tier !== 'Free') badgeParts.push(`<span class="badge badge-free">${escHtml(ev.free)}</span>`);
@@ -1128,20 +1038,31 @@ const SECTION_TITLES = {
     let datesHaveEvents = false;
     const picksByWeek = new Map();
     const displayedPickIds = new Set();
+    const configuredWeeks = Object.keys(savedWeeklyPicks).filter(week => week <= end && addCalendarDays(week, 6) >= start);
     const isPicked = (ev, date) => {
-      let week = eventWeekStart(date);
-      if (ev.pick && isCalendarDate(ev.pickWeek) && ev.pickWeek !== week) {
-        const weekEnd = addCalendarDays(ev.pickWeek, 6);
-        const from = ev.pickWeek > start ? ev.pickWeek : start;
-        const to = weekEnd < end ? weekEnd : end;
-        if (from <= to && nextEventDate(scheduleFor(ev), from, to, now)) week = ev.pickWeek;
-      }
-      if (!picksByWeek.has(week)) picksByWeek.set(week, weeklyPickIds(week));
       const id = eventSlug(ev);
-      const key = week + '|' + id;
-      if (!picksByWeek.get(week).has(id) || displayedPickIds.has(key)) return false;
-      displayedPickIds.add(key);
-      return true;
+      const week = eventWeekStart(date);
+      const weeks = new Set([week]);
+      if (ev.pick && isCalendarDate(ev.pickWeek)) weeks.add(ev.pickWeek);
+      for (const configured of configuredWeeks) {
+        if (savedWeeklyPicks[configured].includes(id) || savedWeeklyPicks[configured].includes(legacyEventSlug(ev))) {
+          weeks.add(configured);
+        }
+      }
+      for (const candidate of weeks) {
+        const weekEnd = addCalendarDays(candidate, 6);
+        const from = candidate > start ? candidate : start;
+        const to = weekEnd < end ? weekEnd : end;
+        if (from > to) continue;
+        if (!picksByWeek.has(candidate)) picksByWeek.set(candidate, weeklyPickIds(candidate, now));
+        const key = candidate + '|' + id;
+        if (picksByWeek.get(candidate).has(id) && !displayedPickIds.has(key) &&
+            (candidate === week || nextEventDate(scheduleFor(ev), from, to, now))) {
+          displayedPickIds.add(key);
+          return true;
+        }
+      }
+      return false;
     };
 
     for (const ev of calendarEvents) {
@@ -1220,15 +1141,8 @@ const SECTION_TITLES = {
   function loadFirestoreEvents() {
     if (!firebaseReady) return;
     db.collection('events').where('active', '==', true).onSnapshot(snapshot => {
-      const liveEvents = snapshot.docs.map(doc => {
-        const ev = doc.data();
-        const date = isCalendarDate(ev.date) ? ev.date : (legacyEventDates.get(legacyEventKey(ev)) || eventDate(ev));
-        const curated = curatedEventsById.get(ev.publicId) || curatedEvents.get(eventListingKey({ ...ev, date }));
-        return { ...eventScheduleFields(curated || {}), ...ev, id: doc.id, date };
-      });
-      const liveKeys = new Set(liveEvents.map(eventListingKey));
-      const liveIds = new Set(liveEvents.map(eventSlug));
-      calendarEvents = [...staticEvents.filter(ev => !liveKeys.has(eventListingKey(ev)) && !liveIds.has(eventSlug(ev))), ...liveEvents];
+      const liveEvents = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      calendarEvents = eventCatalogue(staticEvents, liveEvents).published;
       liveEventsLoaded = true;
       if (calendarReady) renderEventView();
     }, err => {
@@ -1240,9 +1154,11 @@ const SECTION_TITLES = {
 
   function loadAboutContent() {
     if (!firebaseReady) return;
-    db.collection('siteConfig').doc('about').get().then(doc => {
-      if (!doc.exists) return;
-      const d = doc.data();
+    db.collection('siteConfig').doc('about').onSnapshot(doc => {
+      const d = doc.data() || {};
+      const picks = readWeeklyPicks(d.weeklyPicks);
+      const changed = JSON.stringify(picks) !== JSON.stringify(savedWeeklyPicks);
+      savedWeeklyPicks = picks;
       [['para1', 'aboutPara1', 'dropAboutPara1'],
        ['para2', 'aboutPara2', 'dropAboutPara2'],
        ['para3', 'aboutPara3', 'dropAboutPara3']].forEach(([field, mainId, dropId]) => {
@@ -1252,7 +1168,8 @@ const SECTION_TITLES = {
           if (el) el.textContent = d[field];
         });
       });
-    }).catch(e => console.warn('Could not load about content:', e));
+      if (changed && calendarReady) renderEventView();
+    }, e => console.warn('Could not load site configuration:', e));
   }
 
   // ── Toast notification ──

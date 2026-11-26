@@ -21,24 +21,34 @@ const storage = firebase.storage();
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let allEvents       = [];
-let filteredEvents  = [];
+let publishedEvents = [];
 let editingDocId     = null;
 let deletingDocId    = null;
 let deletingTitle    = '';
 let deletingStaticId = null;
 let hiddenStaticKeys = new Set();
 let unsubscribeSnap = null;
+let unsubscribePicks = null;
 let showPast        = false;
-let firstLoad       = true;
+let dashboardSession = 0;
+let selectedWeek = eventWeekStart(aucklandToday());
+let savedWeeklyPicks = {};
+let picksState = 'loading';
+let savingPick = false;
+let eventsState = 'loading';
+const adminStaticEvents = (typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS)
+  .map((ev, i) => ({ ...ev, ...adminEventSchedule(ev), id: `static-${i}`, _static: true, _staticId: i, active: true }));
+const adminCurated = new Map(adminStaticEvents.map(ev => [eventListingKey(ev), ev]));
+const adminSchedules = new WeakMap();
 
-function isPastListing(ev, now = Date.now()) {
-  return eventIsPast(eventSchedule(ev), now);
+function adminSchedule(ev) {
+  if (!adminSchedules.has(ev)) adminSchedules.set(ev, eventSchedule(ev));
+  return adminSchedules.get(ev);
 }
 
 function toggleShowPast(btn) {
   showPast = !showPast;
   btn.textContent = showPast ? 'Hide past' : 'Show past';
-  populateWeekendFilter();
   applyFilters();
 }
 
@@ -64,23 +74,37 @@ function signIn() {
 }
 
 function signOut() {
-  if (unsubscribeSnap) { unsubscribeSnap(); unsubscribeSnap = null; }
   auth.signOut();
 }
 
 function showLogin() {
+  dashboardSession++;
+  unsubscribeSnap?.();
+  unsubscribePicks?.();
+  unsubscribeSnap = unsubscribePicks = null;
+  allEvents = publishedEvents = [];
+  savedWeeklyPicks = {};
+  hiddenStaticKeys = new Set();
+  picksState = eventsState = 'loading';
+  savingPick = false;
+  closeModal();
+  closeDeleteModal();
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('dashboard').classList.add('hidden');
 }
 
 function showDashboard(user) {
+  const session = ++dashboardSession;
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('adminEmail').textContent = user.email;
+  selectedWeek = eventWeekStart(aucklandToday());
+  applyFilters();
+  subscribeToWeeklyPicks();
   db.collection('settings').doc('hiddenStatics').get().then(doc => {
-    if (doc.exists) (doc.data().keys || []).forEach(k => hiddenStaticKeys.add(k));
+    if (session === dashboardSession && doc.exists) (doc.data().keys || []).forEach(k => hiddenStaticKeys.add(k));
   }).catch(() => {}).finally(() => {
-    subscribeToEvents();
+    if (session === dashboardSession) subscribeToEvents();
   });
   loadAbout();
   openFromUrlParams();
@@ -111,148 +135,270 @@ function openFromUrlParams() {
   }, 300);
 }
 
-// ── Firestore real-time listener ───────────────────────────────────────────────
+// ── Catalogue and Picks listeners ───────────────────────────────────────────
 function subscribeToEvents() {
-  if (unsubscribeSnap) unsubscribeSnap();
-  unsubscribeSnap = db.collection('events')
-    .onSnapshot(snapshot => {
-      const staticEvents = typeof STATIC_EVENTS === 'undefined' ? [] : STATIC_EVENTS;
-      const curated = new Map(staticEvents.map(ev => [`${(ev.title || '').trim()}|${eventDate(ev)}`, ev]));
-      const curatedById = new Map(staticEvents.map(ev => [eventSlug(ev), ev]));
-      allEvents = snapshot.docs
-        .map(doc => {
-          const ev = doc.data();
-          const original = curatedById.get(ev.publicId) || curated.get(`${(ev.title || '').trim()}|${eventDate(ev)}`);
-          return { ...eventScheduleFields(original || {}), ...ev, id: doc.id };
-        })
-        .sort((a, b) => {
-          const w = (a.weekend || '').localeCompare(b.weekend || '');
-          return w !== 0 ? w : (a.title || '').localeCompare(b.title || '');
-        });
-
-      // Merge in STATIC_EVENTS not yet imported to Firestore
-      if (typeof STATIC_EVENTS !== 'undefined' && STATIC_EVENTS.length) {
-        const firestoreKeys = new Set(
-          allEvents.map(e => `${(e.title || '').trim()}|${e.weekend || ''}|${e.day || 'sat'}`)
-        );
-        const firestoreIds = new Set(allEvents.map(eventSlug));
-        STATIC_EVENTS.forEach((ev, i) => {
-          const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
-          if (!firestoreKeys.has(key) && !firestoreIds.has(eventSlug(ev)) && !hiddenStaticKeys.has(key)) {
-            allEvents.push({ ...ev, ...adminEventSchedule(ev), id: `static-${i}`, _static: true, _staticId: i, active: true });
-          }
-        });
-        allEvents.sort((a, b) => {
-          const w = (a.weekend || '').localeCompare(b.weekend || '');
-          return w !== 0 ? w : (a.title || '').localeCompare(b.title || '');
-        });
-      }
-
-      updateStats();
-      populateWeekendFilter();
-      if (firstLoad) {
-        firstLoad = false;
-        const today = aucklandToday();
-        const upcoming = allEvents.filter(e => e.weekend >= weekendForDate(today) && !isPastListing(e))
-          .map(e => e.weekend).sort()[0];
-        if (upcoming) document.getElementById('weekendFilter').value = upcoming;
-      }
-      applyFilters();
-    }, err => {
-      console.error('Firestore error:', err);
-      document.getElementById('eventTableBody').innerHTML =
-        `<tr class="table-empty"><td colspan="6" style="color:#c00">
-          Firestore error: ${err.message}<br>
-          <small>Check browser console and Firebase security rules.</small>
-        </td></tr>`;
-    });
-}
-
-// ── Stats ──────────────────────────────────────────────────────────────────────
-function updateStats() {
-  const fsEvents  = allEvents.filter(e => !e._static);
-  const stEvents  = allEvents.filter(e => e._static);
-  const active    = fsEvents.filter(e => e.active).length;
-  const draft     = fsEvents.filter(e => !e.active).length;
-  const weekends  = new Set(allEvents.map(e => e.weekend)).size;
-  document.getElementById('statTotal').textContent    = fsEvents.length + (stEvents.length ? ` (+${stEvents.length} static)` : '');
-  document.getElementById('statActive').textContent   = active;
-  document.getElementById('statDraft').textContent    = draft + (stEvents.length ? ` (+${stEvents.length} static)` : '');
-  document.getElementById('statWeekends').textContent = weekends;
-}
-
-// ── Weekend filter population ──────────────────────────────────────────────────
-function populateWeekendFilter() {
-  const sel     = document.getElementById('weekendFilter');
-  const current = sel.value;
-  const now = Date.now();
-  const weekends = [...new Set(allEvents.filter(ev => showPast || !isPastListing(ev, now))
-    .map(ev => ev.weekend).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">All weekends</option>' +
-    weekends.map(w => `<option value="${w}" ${w === current ? 'selected' : ''}>${formatWeekend(w)}</option>`).join('');
-}
-
-function formatWeekend(isoSat) {
-  if (!isoSat) return isoSat;
-  const sat = calendarDay(isoSat);
-  const sun = calendarDay(addCalendarDays(isoSat, 1));
-  const fmt = (d, showMonth) => {
-    const day = d.getUTCDate();
-    const mon = d.toLocaleString('en-NZ', { month: 'short', timeZone: 'UTC' });
-    return showMonth ? `${day} ${mon}` : `${day}`;
-  };
-  const sameMon = sat.getUTCMonth() === sun.getUTCMonth();
-  return sameMon ? `${fmt(sat, false)}–${fmt(sun, true)}` : `${fmt(sat, true)}–${fmt(sun, true)}`;
-}
-
-// ── Filters & render ──────────────────────────────────────────────────────────
-function applyFilters() {
-  const q       = document.getElementById('searchInput').value.trim().toLowerCase();
-  const weekend = document.getElementById('weekendFilter').value;
-  const region  = document.getElementById('regionFilter').value;
-  const status  = document.getElementById('statusFilter').value;
-  const now = Date.now();
-
-  filteredEvents = allEvents.filter(ev => {
-    if (!showPast && isPastListing(ev, now)) return false;
-    if (weekend && ev.weekend !== weekend && (eventScheduleType(ev) !== 'ongoing' ||
-        !nextEventDate(eventSchedule(ev), weekend, addCalendarDays(weekend, 1), showPast ? aucklandInstant(weekend) : now))) return false;
-    if (region  && ev.region  !== region)  return false;
-    if (status === 'active' && !ev.active)  return false;
-    if (status === 'draft'  && ev.active)   return false;
-    if (q && !`${ev.title} ${ev.description || ''} ${ev.venue || ''}`.toLowerCase().includes(q)) return false;
-    return true;
+  unsubscribeSnap?.();
+  unsubscribeSnap = db.collection('events').onSnapshot(snapshot => {
+    const live = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    const catalogue = eventCatalogue(adminStaticEvents, live);
+    publishedEvents = catalogue.published.filter(ev => !ev._static || !hiddenStaticKeys.has(legacyEventKey(ev)));
+    allEvents = [...publishedEvents, ...catalogue.drafts];
+    eventsState = 'ready';
+    applyFilters();
+  }, err => {
+    console.error('Could not load events:', err);
+    eventsState = 'error';
+    applyFilters();
   });
-
-  renderTable();
 }
 
-function renderTable() {
-  const tbody = document.getElementById('eventTableBody');
-  if (!filteredEvents.length) {
-    tbody.innerHTML = '<tr class="table-empty"><td colspan="6">No events found.</td></tr>';
+function subscribeToWeeklyPicks() {
+  unsubscribePicks?.();
+  unsubscribePicks = db.collection('siteConfig').doc('about').onSnapshot(doc => {
+    savedWeeklyPicks = readWeeklyPicks(doc.data()?.weeklyPicks);
+    picksState = 'ready';
+    applyFilters();
+  }, err => {
+    console.error('Could not load weekly picks:', err);
+    picksState = 'error';
+    applyFilters();
+  });
+}
+
+// ── Week selection and filtering ────────────────────────────────────────────
+const adminWeekLabel = new Intl.DateTimeFormat('en-NZ', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const adminDayLabel = new Intl.DateTimeFormat('en-NZ', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+
+function selectAdminWeek(date) {
+  if (date && !isCalendarDate(date)) return;
+  selectedWeek = date ? eventWeekStart(date) : '';
+  applyFilters();
+}
+
+function chooseRelativeWeek(offset) {
+  selectAdminWeek(addCalendarDays(eventWeekStart(aucklandToday()), offset));
+}
+
+function shiftAdminWeek(offset) {
+  if (selectedWeek) selectAdminWeek(addCalendarDays(selectedWeek, offset));
+}
+
+function syncWeekControls() {
+  const thisWeek = eventWeekStart(aucklandToday());
+  const nextWeek = addCalendarDays(thisWeek, 7);
+  for (const [id, active] of [
+    ['thisWeekBtn', selectedWeek === thisWeek], ['nextWeekBtn', selectedWeek === nextWeek], ['allDatesBtn', !selectedWeek],
+  ]) {
+    const button = document.getElementById(id);
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  }
+  document.getElementById('weekDate').value = selectedWeek;
+  document.getElementById('previousWeekBtn').disabled = !selectedWeek;
+  document.getElementById('followingWeekBtn').disabled = !selectedWeek;
+  document.getElementById('adminPicksSection').hidden = !selectedWeek;
+  if (!selectedWeek) return;
+  document.getElementById('adminPicksHeading').textContent = selectedWeek === thisWeek ? 'This Week’s Picks'
+    : selectedWeek === nextWeek ? 'Next Week’s Picks' : 'Weekly Picks';
+  const start = calendarDay(selectedWeek);
+  const end = calendarDay(addCalendarDays(selectedWeek, 6));
+  document.getElementById('adminRange').textContent = adminWeekLabel.formatRange?.(start, end)
+    ?? `${adminWeekLabel.format(start)} – ${adminWeekLabel.format(end)}`;
+}
+
+function adminWeekPicks(week, saved, now) {
+  if (!Object.hasOwn(saved, week)) return resolveWeeklyPicks(publishedEvents, week, saved, now, adminSchedule);
+  // Keep explicit picks visible and removable when a listing was unpublished or expired.
+  return [...new Set(saved[week].map(id => {
+    const event = publishedEvents.find(ev => eventSlug(ev) === id || legacyEventSlug(ev) === id);
+    return event ? eventSlug(event) : id;
+  }))];
+}
+
+function canEditPicks(week, now) {
+  return week && addCalendarDays(week, 6) >= aucklandToday(now) && eventsState === 'ready' && picksState === 'ready';
+}
+
+function applyFilters() {
+  const focus = document.activeElement?.dataset;
+  syncWeekControls();
+  const now = Date.now();
+  const picks = selectedWeek ? adminWeekPicks(selectedWeek, savedWeeklyPicks, now) : [];
+  if (selectedWeek) renderAdminPicks(picks, now);
+  const results = document.getElementById('adminEventResults');
+  if (eventsState !== 'ready') {
+    results.innerHTML = `<p class="admin-empty" role="status">${eventsState === 'error' ? 'Could not load events from Firestore.' : 'Loading events…'}</p>`;
     return;
   }
-  tbody.innerHTML = filteredEvents.map(ev => `
-    <tr${ev._static ? ' style="background:#fdf8ee"' : ''}>
-      <td><strong>${esc(ev.title)}</strong>${ev.venue ? `<br><small style="color:#888">${esc(ev.venue)}</small>` : ''}</td>
-      <td><span class="badge-cat">${esc(ev.type || ev.category || '—')}</span></td>
-      <td>${esc(ev.region || '—')}</td>
-      <td>${ev._static
-        ? '<span class="badge badge-draft" title="Hardcoded in site — import to manage via admin">Static</span>'
-        : `<span class="badge ${ev.active ? 'badge-active' : 'badge-draft'}">${ev.active ? 'Active' : 'Draft'}</span>`
-      }</td>
-      <td class="col-actions">
-        ${ev._static
-          ? `<button class="action-btn edit" onclick="editStaticEvent(${ev._staticId}, this)">Edit</button>
-             <button class="action-btn delete" onclick="openDeleteModal(null, '${escAttr(ev.title)}', ${ev._staticId})">Del</button>`
-          : `<button class="action-btn edit"   onclick="openModal('${ev.id}')">Edit</button>
-             <button class="action-btn delete" onclick="openDeleteModal('${ev.id}', '${escAttr(ev.title)}')">Del</button>`
-        }
-      </td>
-    </tr>
-  `).join('');
+
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const region = document.getElementById('regionFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const today = aucklandToday(now);
+  const weekEnd = selectedWeek && addCalendarDays(selectedWeek, 6);
+  const includePast = showPast || (weekEnd && weekEnd < today);
+  const groups = new Map();
+  for (const ev of allEvents) {
+    if (region && ev.region !== region || status === 'active' && !ev.active || status === 'draft' && ev.active) continue;
+    if (query && !`${ev.title} ${ev.description || ''} ${ev.venue || ''}`.toLowerCase().includes(query)) continue;
+    const schedule = adminSchedule(ev);
+    const past = eventIsPast(schedule, now);
+    if (past && !includePast) continue;
+    const date = selectedWeek
+      ? nextEventDate(schedule, includePast || selectedWeek > today ? selectedWeek : today, weekEnd,
+        includePast ? aucklandInstant(selectedWeek) : now)
+      : nextEventDate(schedule, today, '9999-12-31', now) || eventStartDate(ev);
+    if (!date) continue;
+    const ongoing = eventScheduleType(ev) === 'ongoing' && !past && schedule.some(period => period.startsAt <= now);
+    const group = ongoing ? '' : date;
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push({ ev, date, past });
+  }
+
+  const days = [...groups.keys()].sort();
+  results.innerHTML = days.length ? days.map(day => {
+    const cards = groups.get(day).sort((a, b) => a.ev.title.localeCompare(b.ev.title))
+      .map(({ ev, date, past }) => renderAdminCard(ev, date, past, picks, now)).join('');
+    const title = day ? adminDayLabel.format(calendarDay(day)) : 'On Now in Wellington';
+    return `<section class="admin-event-group" aria-labelledby="admin-day-${day || 'ongoing'}">
+      <div class="day-label"><span class="pip"></span><h2 id="admin-day-${day || 'ongoing'}">${title}</h2><span class="line"></span></div>
+      <div class="events-grid">${cards}</div>
+    </section>`;
+  }).join('') : '<p class="admin-empty" role="status">No events match these filters.</p>';
+  if (focus?.adminAction) {
+    const replacement = [...document.querySelectorAll('[data-admin-action]')].find(button =>
+      button.dataset.adminAction === focus.adminAction && button.dataset.eventId === focus.eventId &&
+      button.dataset.recordId === focus.recordId && button.dataset.pickLocation === focus.pickLocation);
+    if (replacement && !replacement.disabled) replacement.focus({ preventScroll: true });
+    else if (focus.eventId) [...results.querySelectorAll('[data-admin-action="pick"]')]
+      .find(button => button.dataset.eventId === focus.eventId && !button.disabled)?.focus({ preventScroll: true });
+  }
 }
+
+function adminEventImage(ev) {
+  const image = typeof ev.img === 'string' ? ev.img : '';
+  if (/^images\/[\w./-]+$/.test(image)) {
+    const base = '../' + image.replace(/\.(webp|jpe?g|png)$/i, '');
+    return `<picture class="admin-event-image"><source srcset="${esc(base)}-thumb.webp" type="image/webp"><img src="${esc(base)}.jpg" alt="" loading="lazy" decoding="async" onerror="this.hidden=true"></picture>`;
+  }
+  if (/^https?:\/\//i.test(image)) return `<img class="admin-event-image" src="${esc(image)}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">`;
+  return '<span class="admin-event-image" aria-hidden="true"></span>';
+}
+
+function pickButton(id, title, starred, canEdit, location) {
+  const label = starred ? 'Remove from Picks' : 'Star for selected week';
+  return `<button type="button" class="pick-star" data-admin-action="pick" data-event-id="${esc(id)}"
+    data-pick-location="${location}" aria-pressed="${starred}" aria-label="${label} · ${esc(title)}"
+    title="${label}"${canEdit ? '' : ' disabled'}${savingPick ? ' aria-disabled="true"' : ''}>${starred ? '★' : '☆'}</button>`;
+}
+
+function renderAdminPicks(ids, now) {
+  const count = document.getElementById('picksCount');
+  count.textContent = `${ids.length} of ${MAX_WEEKLY_PICKS} picks`;
+  const status = document.getElementById('picksStatus');
+  status.textContent = picksState === 'error' ? 'Could not load Picks from Firestore.'
+    : savingPick ? 'Saving Picks…' : picksState === 'loading' || eventsState === 'loading' ? 'Loading Picks…'
+    : !ids.length && canEditPicks(selectedWeek, now) ? 'Star an event for this week’s public Picks.' : '';
+  document.getElementById('adminPicks').innerHTML = ids.map(id => {
+    const event = publishedEvents.find(ev => eventSlug(ev) === id);
+    const date = event && eventDateInWeek(adminSchedule(event), selectedWeek, now);
+    const title = event?.title || 'Unavailable event';
+    return `<li class="admin-pick">
+      ${event ? adminEventImage(event) : ''}
+      <div class="admin-pick-label"><strong>${esc(title)}</strong><small>${date ? adminDayLabel.format(calendarDay(date)) : 'Unavailable this week'}</small></div>
+      ${pickButton(id, title, true, canEditPicks(selectedWeek, now), 'picks')}
+    </li>`;
+  }).join('');
+}
+
+function renderAdminCard(ev, date, past, picks, now) {
+  const id = eventSlug(ev);
+  const label = EVENT_CATEGORIES[eventCategory(ev)];
+  const price = eventPrice(ev, adminCurated);
+  const starred = ev.active && picks.includes(id);
+  const showStar = Boolean(selectedWeek && ev.active && !past);
+  const activeBadge = ev.active ? ev._static ? 'Catalogue' : 'Published' : 'Draft';
+  const state = past ? 'Past' : activeBadge;
+  const badgeStyle = past ? 'past' : ev.active ? 'active' : 'draft';
+  const action = name => `data-admin-action="${name}" data-record-id="${esc(ev.id)}"`;
+  const range = eventScheduleRange(adminSchedule(ev));
+  const until = eventScheduleType(ev) === 'ongoing' && range?.end;
+  const dateText = until ? `On until ${adminWeekLabel.format(calendarDay(until))}`
+    : adminDayLabel.format(calendarDay(date));
+  const title = ev.active ? `<a href="../?e=${encodeURIComponent(id)}">${esc(ev.title)}</a>` : esc(ev.title);
+  return `<article class="card revealed open admin-event-card${starred ? ' card-featured' : ''}${showStar ? ' has-star' : ''}">
+    <div class="admin-event-media">${adminEventImage(ev)}</div>
+    ${showStar ? pickButton(id, ev.title, starred, canEditPicks(selectedWeek, now), 'card') : ''}
+    <div class="card-body">
+      <div class="admin-card-labels"><span class="card-cat">${label}</span><span class="badge badge-${badgeStyle}">${state}</span>${priceBadge(price.tier, price.estimated)}</div>
+      <h3 class="card-title">${title}</h3>
+      <div class="card-meta">
+        <span class="meta-row">${esc(dateText)}</span>
+        ${ev.time ? `<span class="meta-row">${esc(ev.time)}</span>` : ''}
+        ${ev.venue ? `<span class="meta-row">${esc(ev.venue)}</span>` : ''}
+      </div>
+    </div>
+    <div class="card-footer">
+      <button type="button" class="action-btn edit" ${action('edit')}>Edit</button>
+      <button type="button" class="action-btn delete" ${action('delete')}>${ev._static ? 'Remove' : 'Delete'}</button>
+    </div>
+  </article>`;
+}
+
+async function toggleWeeklyPick(id) {
+  const week = selectedWeek;
+  const now = Date.now();
+  if (savingPick || !canEditPicks(week, now)) return;
+  const current = adminWeekPicks(week, savedWeeklyPicks, now);
+  const add = !current.includes(id);
+  const event = publishedEvents.find(ev => eventSlug(ev) === id);
+  if (add && (!event || !eventDateInWeek(adminSchedule(event), week, now))) return;
+  if (add && current.length >= MAX_WEEKLY_PICKS) {
+    showToast(`Remove a Pick before adding another. A week can have ${MAX_WEEKLY_PICKS} Picks.`);
+    return;
+  }
+
+  savingPick = true;
+  const session = dashboardSession;
+  applyFilters();
+  const config = db.collection('siteConfig').doc('about');
+  try {
+    await db.runTransaction(async transaction => {
+      const snapshot = await transaction.get(config);
+      const ids = adminWeekPicks(week, readWeeklyPicks(snapshot.data()?.weeklyPicks), now);
+      const next = add ? [...new Set([...ids, id])] : ids.filter(key => key !== id);
+      if (next.length > MAX_WEEKLY_PICKS) throw new Error(`This week already has ${MAX_WEEKLY_PICKS} Picks.`);
+      // Merge only this week, keeping the About text and other weeks intact.
+      transaction.set(config, { weeklyPicks: { [week]: next } }, { merge: true });
+    });
+    if (session === dashboardSession) showToast(add ? 'Added to this week’s Picks.' : 'Removed from this week’s Picks.');
+  } catch (err) {
+    if (session === dashboardSession) showToast('Could not save Picks. ' + err.message);
+  } finally {
+    if (session === dashboardSession) {
+      savingPick = false;
+      applyFilters();
+    }
+  }
+}
+
+document.getElementById('dashboard').addEventListener('click', event => {
+  const button = event.target.closest('button[data-admin-action]');
+  if (!button || button.getAttribute('aria-disabled') === 'true') return;
+  const { adminAction, eventId, recordId } = button.dataset;
+  if (adminAction === 'pick') {
+    toggleWeeklyPick(eventId);
+    return;
+  }
+  const record = allEvents.find(ev => ev.id === recordId);
+  if (!record) return;
+  if (adminAction === 'edit') {
+    if (record._static) editStaticEvent(record._staticId, button);
+    else openModal(record.id);
+  } else if (adminAction === 'delete') {
+    openDeleteModal(record._static ? null : record.id, record.title, record._static ? record._staticId : null);
+  }
+});
 
 // ── Modal (add / edit) ─────────────────────────────────────────────────────────
 function syncScheduleForm() {
@@ -773,7 +919,7 @@ async function confirmDelete() {
     if (typeof STATIC_EVENTS === 'undefined') { closeDeleteModal(); return; }
     const ev = STATIC_EVENTS[deletingStaticId];
     if (!ev) { closeDeleteModal(); return; }
-    const key = `${(ev.title || '').trim()}|${ev.weekend || ''}|${ev.day || 'sat'}`;
+    const key = legacyEventKey(ev);
     try {
       await db.collection('settings').doc('hiddenStatics').set(
         { keys: firebase.firestore.FieldValue.arrayUnion(key) },
@@ -781,6 +927,7 @@ async function confirmDelete() {
       );
       hiddenStaticKeys.add(key);
       allEvents = allEvents.filter(e => !(e._static && e._staticId === deletingStaticId));
+      publishedEvents = publishedEvents.filter(e => !(e._static && e._staticId === deletingStaticId));
       showToast(`"${deletingTitle}" removed.`);
       closeDeleteModal();
       applyFilters();
@@ -824,10 +971,6 @@ function esc(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-function escAttr(str) {
-  return String(str ?? '').replace(/'/g, "\\'");
 }
 
 // ── Bulk import (uses STATIC_EVENTS from js/events-data.js) ──────────────────
@@ -928,7 +1071,9 @@ async function editStaticEvent(staticId, btn) {
         updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
       });
       docId = ref.id;
-      allEvents.push({ ...ev, ...adminEventSchedule(ev), id: docId, _static: false, active: false, tags: [] });
+      if (!allEvents.some(event => event.id === docId)) {
+        allEvents.push({ ...ev, ...adminEventSchedule(ev), id: docId, _static: false, active: false, tags: [] });
+      }
     }
     btn.disabled = false;
     btn.textContent = 'Edit';
