@@ -4093,7 +4093,7 @@ const STATIC_EVENTS = [
     venue: "Wainuiomata Community Hall, Queen Street, Wainuiomata",
     url: "https://events.huttcity.govt.nz/event?id=264796",
     cost: "Free entry, no booking",
-    description: "A Wainuiomata Christmas celebration with live entertainment, activities, kai and local stalls. All ages welcome. This is the Community Hall event, separate from the morning activities at the Neighbourhood Hub.",
+    description: "A Wainuiomata Christmas celebration with live entertainment, activities, kai and local stalls. All ages welcome. The Community Hall runs 11 am–3 pm. At the Wainuiomata Neighbourhood Hub, free stories, crafts, soft play and Santa’s Grotto run 10:30 am–2:30 pm, with free face painting until 12:30 pm. No booking for the Hub.",
     img: 'images/events/christmas-in-the-nui-2026',
     imgGenerated: true,
     imgAlt: "Illustration of a festive community hall with market stalls and paper stars.",
